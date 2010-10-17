@@ -1,0 +1,15 @@
+## Author: Baudzila, Maintained by Suddendeath2000, Fixed by Thurmal
+## DefaultState: Enabled
+## Interface: 40000
+## LoadOnDemand: 0
+## Notes: Allows you to combine bags as well as customize their display.
+## Notes-zhCN: 以整合方式显示你的背包和银行|N本地化:Isler
+## Notes-zhTW: 以整合方式顯示你的背包和銀行|N本地化:Isler
+## SavedVariablesPerCharacter: BaudBag_Cfg,BaudBag_Cache
+## Title: Baud Bag
+## Title-zhCN: 背包整合 Baud Bag
+## Title-zhTW: 背包整合 Baud Bag
+## Version: 4.0.1
+Localization.lua
+BaudBag.xml
+BaudBag-Options.xml
