@@ -1,4 +1,4 @@
-## Author: Baudzila, Maintained by Suddendeath2000, Fixed by Thurmal
+## Author: Originally by Baudzila, Maintained by Suddendeath2000, currently developed by Thurmal
 ## DefaultState: Enabled
 ## Interface: 40000
 ## LoadOnDemand: 0
