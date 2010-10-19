@@ -46,7 +46,7 @@ BaudBagIcons = {
   [-2] = "Interface\\ContainerFrame\\KeyRing-Bag-Icon"
 };
 
-BaudBag_Debug = true;
+BaudBag_Debug = false;
 
 local function DebugMsg(msg)
   if BaudBag_Debug then
