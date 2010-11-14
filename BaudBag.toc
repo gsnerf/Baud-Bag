@@ -1,4 +1,4 @@
-## Author: Originally by Baudzila, Maintained by Suddendeath2000, currently developed by Thurmal
+## Author: Thurmal (Author), Suddendeath2000 (Maintainer), Baudzila (Original Author)
 ## DefaultState: Enabled
 ## Interface: 40000
 ## LoadOnDemand: 0
@@ -9,7 +9,9 @@
 ## Title: Baud Bag
 ## Title-zhCN: 背包整合 Baud Bag
 ## Title-zhTW: 背包整合 Baud Bag
-## Version: 4.0.1
+## Version: 4.0.2beta
+
 Localization.lua
-BaudBag.xml
+BaudBagConfig.lua
 BaudBag-Options.xml
+BaudBag.xml

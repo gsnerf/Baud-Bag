@@ -1,0 +1,66 @@
+﻿-- Author      : gsnerf
+-- Create Date : 11/11/2010 6:16:49 PM
+
+testEntry = "testentrytext";
+
+-- config related stuff
+-- function BaudBagRestoreCfg()
+  -- --DebugMsg("Restoring config structure.");
+  -- 
+  -- if (type(BaudBag_Cfg)~="table") then BaudBag_Cfg = {}; end
+  -- Config = BaudBag_Cfg;
+  -- 
+  -- for BagSet = 1, 2 do
+	-- -- DebugMsg("Checking for consistent BagSet ("..BagSet..")");
+    -- if (type(Config[BagSet]) ~= "table") then
+		-- Config[BagSet] = {};
+	-- end
+    -- if (type(Config[BagSet].Enabled) ~= "boolean") then
+		-- Config[BagSet].Enabled = true;
+    -- end
+    -- if (type(Config[BagSet].Joined) ~= "table") then
+		-- Config[BagSet].Joined = {};
+    -- end
+    -- if (type(Config[BagSet].ShowBags) ~= "boolean") then
+		-- Config[BagSet].ShowBags = ((BagSet == 2) and true or false);
+	-- end
+    -- 
+    -- local Container = 0;
+    -- -- BaudBagForEachBag(BagSet, function(Bag, Index)
+      -- -- if (Bag == -2) and (Config[BagSet].Joined[Index] == nil) then
+        -- -- Config[BagSet].Joined[Index] = false;
+      -- -- end
+      -- -- if (Container == 0) or (Config[BagSet].Joined[Index] == false) then
+        -- -- Container = Container + 1;
+        -- -- if(type(Config[BagSet][Container])~="table")then
+          -- -- if(Container == 1)or(Bag==-2)then
+            -- -- Config[BagSet][Container] = {};
+          -- -- else
+            -- -- Config[BagSet][Container] = CopyTable(Config[BagSet][Container-1]);
+          -- -- end
+        -- -- end
+        -- -- if not Config[BagSet][Container].Name then
+          -- -- --With the key ring, there isn't enough room for the player name aswell
+          -- -- Config[BagSet][Container].Name = (Bag==-2)and Localized.KeyRing or UnitName("player")..Localized.Of..((BagSet==1)and Localized.Inventory or Localized.BankBox);
+        -- -- end
+        -- -- if(type(Config[BagSet][Container].Background)~="number")then
+          -- -- Config[BagSet][Container].Background = (Bag==-2)and 3 or 1;
+        -- -- end
+        -- -- for Key, Value in ipairs(SliderBars)do
+          -- -- if(type(Config[BagSet][Container][Value.SavedVar])~="number")then
+            -- -- Config[BagSet][Container][Value.SavedVar] = (Bag==-2)and(Value.SavedVar=="Columns")and 4 or Value.Default[BagSet];
+          -- -- end
+        -- -- end
+        -- -- for Key, Value in ipairs(CheckButtons)do
+          -- -- if(type(Config[BagSet][Container][Value.SavedVar])~="boolean")then
+            -- -- Config[BagSet][Container][Value.SavedVar] = Value.Default;
+          -- -- end
+        -- -- end
+      -- -- end
+    -- -- end);
+  -- end
+-- 
+  -- --BaudUpdateJoinedBags();
+  -- --BaudBagUpdateBagFrames();
+  -- --BaudBagOptionsUpdate();
+-- end
