@@ -4,6 +4,7 @@ local Localized	= BaudBagLocalized;
 local MaxBags		= NUM_BANKBAGSLOTS + 1;
 local Prefix		= "BaudBagOptions";
 local Config;
+local Updating, CfgBackup;
 
 local SelectedBags			= 1;
 local SelectedContainer	= 1;
@@ -11,8 +12,8 @@ local SetSize						= {6, NUM_BANKBAGSLOTS + 1};
 
 
 local SliderBars = {
-	{Text=Localized.Columns,	Low="2",	High="20",	SavedVar="Columns",	Default={8,12},		TooltipText = Localized.ColumnsTooltip},
-	{Text=Localized.Scale,	Low="50%",	High="200%",	SavedVar="Scale",	Default={100,100},	TooltipText = Localized.ScaleTooltip}
+	{Text=Localized.Columns,	Low="2",	High="20",		SavedVar="Columns",	Default={8,12},			TooltipText = Localized.ColumnsTooltip},
+	{Text=Localized.Scale,	Low="50%",	High="200%",	SavedVar="Scale",		Default={100,100},	TooltipText = Localized.ScaleTooltip}
 };
 
 local CheckButtons = {
@@ -35,14 +36,6 @@ local TextureNames = {
 	Localized.Solid
 };
 
-local BaudBag_Debug = true;
-
-local function BaudBag_DebugMsg(msg)
-  if BaudBag_Debug then
-    DEFAULT_CHAT_FRAME:AddMessage(msg);
-  end
-end
-
 --[[
 	Needed functions:
 		- option window loaded => set all basic control settings and add dynamic components
@@ -53,11 +46,22 @@ end
 
 --[[ BaudBagOptions frame related events and methods ]]--
 function BaudBagOptions_OnLoad(self, event, ...)
+	BaudBagSetCfgPreReq(SliderBars, CheckButtons);
+	self:RegisterEvent("ADDON_LOADED");
+end
+
+function BaudBagOptions_OnEvent(self, event, ...)
+	local arg1 = ...;
+	if ((event ~= "ADDON_LOADED") or (arg1 ~= "BaudBag")) then return; end
 	-- make sure there is a config
-	BaudBagRestoreCfg();
+	Config		= BaudBagRestoreCfg();
+	CfgBackup	= CopyTable(Config);
 	
 	-- add to options windows
-	self.name = "Baud Bag";
+	self.name			= "Baud Bag";
+	self.okay			= BaudBagOptions_OnOkay;
+	self.cancel		= BaudBagOptions_OnCancel;
+	self.refresh	= BaudBagOptions_OnRefresh;
 	InterfaceOptions_AddCategory(self);
 	
 	-- set localized labels
@@ -82,15 +86,11 @@ function BaudBagOptions_OnLoad(self, event, ...)
 		_G[Prefix.."Slider"..Key].tooltipText = Value.TooltipText;
 	end
 	
-	-- init dropdowns (does not change while playing)
-	
-	-- needed?
-	self:RegisterEvent("PLAYER_LOGIN");
-	self:RegisterEvent("ADDON_LOADED");
-	-- SlashCmdList[Prefix.."_Options"] = function() BaudBagOptionsFrame:Show();end
-	-- SLASH_BaudBag_Options1 = "/baudbag";
-	-- SLASH_BaudBag_OptionsMenuName = "Baud Bag"; --Baud Menu Info
-	-- DEFAULT_CHAT_FRAME:AddMessage(Localized.AddMessage);
+	-- some slash command settings
+	SlashCmdList[Prefix..'_SLASHCMD'] = function() InterfaceOptionsFrame_OpenToCategory(self); end
+	_G["SLASH_"..Prefix.."_SLASHCMD1"] = '/baudbag';
+	_G["SLASH_"..Prefix.."_SLASHCMD2"] = '/bb';
+	DEFAULT_CHAT_FRAME:AddMessage(Localized.AddMessage);
 
 	--[[
 		create stubs for all possibly needed bag buttons:
@@ -116,20 +116,20 @@ function BaudBagOptions_OnLoad(self, event, ...)
 	end
 end
 
-function BaudBagOptions_OnShow(self, event, ...)
-	-- CfgBackup = CopyTable(Config);
-	-- self.SaveChanges = false;
+function BaudBagOptions_OnRefresh(self, event, ...)
+	BaudBag_DebugMsg("OnRefresh was called!");
 	BaudBagOptionsUpdate();
 end
 
-function BaudBagOptionsFrame_OnHide(self, event, ...)
-  -- if(self.SaveChanges==false)and CfgBackup then
-    -- DebugMsg("Restoring config from backup.");
-    -- self.SaveChanges = true;
-    -- BaudBag_Cfg = CfgBackup;
-    -- BaudBagRestoreCfg();
-  -- end
-  -- CfgBackup = nil;
+function BaudBagOptions_OnOkay(self, event, ...)
+	BaudBag_DebugMsg("'Okay' pressed, saving config.");
+  CfgBackup = Config;
+  BaudBagSaveCfg(Config);
+end
+
+function BaudBagOptions_OnCancel(self, event, ...)
+	BaudBag_DebugMsg("'Cancel' pressed, reset to last config.");
+	Config = CfgBackup;
 end
 
 
@@ -282,23 +282,6 @@ function BaudBagSlider_OnValueChanged(self)
 end
 
 
-
---[[ This function takes a set of bags and a function, and then applies the function to each bag of the set ]]--
-function BaudBagForEachBag(BagSet,Func)
-  if(BagSet==1)then
-    for Bag = 1, 5 do
-      Func(Bag - 1, Bag);
-    end
-    Func(-2, 6);
-  else
-    Func(-1, 1);
-    for Bag = 1, NUM_BANKBAGSLOTS do
-      Func(Bag + 4, Bag + 1);
-    end
-  end
-end
-
-
 function BaudBagOptionsUpdate()
 	-- prepare vars
   local Button, Check, Container, Texture;
@@ -403,91 +386,3 @@ function BaudBagOptionsUpdate()
   end
   Updating = false;
 end
-
-
--- config related stuff
-function BaudBagRestoreCfg()
-  --BaudBag_DebugMsg("Restoring config structure.");
-  
-  if (type(BaudBag_Cfg)~="table") then BaudBag_Cfg = {}; end
-  Config = BaudBag_Cfg;
-  
-  for BagSet = 1, 2 do
-	-- BaudBag_DebugMsg("Checking for consistent BagSet ("..BagSet..")");
-    if (type(Config[BagSet]) ~= "table") then
-		Config[BagSet] = {};
-	end
-    if (type(Config[BagSet].Enabled) ~= "boolean") then
-		Config[BagSet].Enabled = true;
-    end
-    if (type(Config[BagSet].Joined) ~= "table") then
-		Config[BagSet].Joined = {};
-    end
-    if (type(Config[BagSet].ShowBags) ~= "boolean") then
-		Config[BagSet].ShowBags = ((BagSet == 2) and true or false);
-	end
-    
-    local Container = 0;
-    BaudBagForEachBag(BagSet, function(Bag, Index)
-      if (Bag == -2) and (Config[BagSet].Joined[Index] == nil) then
-        Config[BagSet].Joined[Index] = false;
-      end
-      if (Container == 0) or (Config[BagSet].Joined[Index] == false) then
-        Container = Container + 1;
-        if(type(Config[BagSet][Container])~="table")then
-          if(Container == 1)or(Bag==-2)then
-            Config[BagSet][Container] = {};
-          else
-            Config[BagSet][Container] = CopyTable(Config[BagSet][Container-1]);
-          end
-        end
-        if not Config[BagSet][Container].Name then
-          --With the key ring, there isn't enough room for the player name aswell
-          Config[BagSet][Container].Name = (Bag==-2)and Localized.KeyRing or UnitName("player")..Localized.Of..((BagSet==1)and Localized.Inventory or Localized.BankBox);
-        end
-        if(type(Config[BagSet][Container].Background)~="number")then
-          Config[BagSet][Container].Background = (Bag==-2)and 3 or 1;
-        end
-        for Key, Value in ipairs(SliderBars)do
-          if(type(Config[BagSet][Container][Value.SavedVar])~="number")then
-            Config[BagSet][Container][Value.SavedVar] = (Bag==-2)and(Value.SavedVar=="Columns")and 4 or Value.Default[BagSet];
-          end
-        end
-        for Key, Value in ipairs(CheckButtons)do
-          if(type(Config[BagSet][Container][Value.SavedVar])~="boolean")then
-            Config[BagSet][Container][Value.SavedVar] = Value.Default;
-          end
-        end
-      end
-    end);
-  end
-
-  --BaudUpdateJoinedBags();
-  --BaudBagUpdateBagFrames();
-  --BaudBagOptionsUpdate();
-end
-
-
---This function updates misc. options for a bag
--- function BaudUpdateContainerData(BagSet, ContNum)
-  -- local Container = _G["BBCont"..BagSet.."_"..ContNum];
-  -- BaudBag_DebugMsg("Updating container data: "..Container:GetName());
-  -- _G[Container:GetName().."Name"]:SetText(Config[BagSet][ContNum].Name or "");
-  -- local Scale = Config[BagSet][ContNum].Scale / 100;
-  -- Container:SetScale(Scale);
-  -- if not Config[BagSet][ContNum].Coords then
-    -- --BaudBagContainerSaveCoords(Container);
-  -- end
-  -- Container:ClearAllPoints();
-  -- local X, Y = unpack(Config[BagSet][ContNum].Coords);
-  -- Container:SetPoint("CENTER",UIParent,"BOTTOMLEFT",(X / Scale), (Y / Scale));
--- end
-
-
--- function BaudBagOptions_Defaults()
-  -- DebugMsg("Setting default config.");
-  -- BaudBag_Cfg = nil;
-  -- BaudBagRestoreCfg();
--- end
--- 
--- 

@@ -12,6 +12,7 @@
 ## Version: 4.0.2beta
 
 Localization.lua
+BaudBagFunctions.lua
 BaudBagConfig.lua
-BaudBag-Options.xml
+BaudBagOptions.xml
 BaudBag.xml
