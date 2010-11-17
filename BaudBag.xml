@@ -1,7 +1,6 @@
 <Ui xmlns="http://www.blizzard.com/wow/ui/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.blizzard.com/wow/ui/ ..\FrameXML\UI.xsd">
 	
-  <!--<Script file="Localization.lua" />
-	<Script file="BaudBag.lua" />
+  <Script file="BaudBag.lua" />
   
 	<Frame name="BaudBagBagsFrameTemplate" virtual="true" enableMouse="true">
 		<Anchors>
@@ -25,6 +24,7 @@
 			<OnShow function="BaudBagBagsFrame_OnShow" />
 		</Scripts>
 	</Frame>
+	
 	<Frame topLevel="true" name="BaudBagContainerTemplate" virtual="true" hidden="true" parent="UIParent" movable="true" frameStrata="MEDIUM" enableMouse="true">
 		<Size>
 			<AbsDimension x="640" y="560" />
@@ -60,7 +60,7 @@
 					</Anchor>
 				</Anchors>
 				<Scripts>
-					<OnClick function="BaudBagContainerDropDown_Show" />
+					<!--<OnClick function="BaudBagContainerDropDown_Show" />-->
 				</Scripts>
 				<NormalTexture file="Interface\Buttons\UI-PlusButton-Up" />
 				<PushedTexture file="Interface\Buttons\UI-PlusButton-Down" />
@@ -85,6 +85,7 @@
 			<OnDragStop function="BaudBagContainer_OnDragStop" />
 		</Scripts>
 	</Frame>
+	
 	<Frame name="BaudBagFirstContainerTemplate" virtual="true" inherits="BaudBagContainerTemplate">
 		<Frames>
 			<CheckButton name="$parentBagsButton">
@@ -99,7 +100,7 @@
 					</Anchor>
 				</Anchors>
 				<Scripts>
-					<OnClick function="BaudBagBagsButton_OnClick" />
+					<!--<OnClick function="BaudBagBagsButton_OnClick" />-->
 				</Scripts>
 				<NormalTexture file="Interface\Buttons\UI-SpellbookIcon-PrevPage-Up" />
 				<PushedTexture file="Interface\Buttons\UI-SpellbookIcon-PrevPage-Down" />
@@ -127,12 +128,71 @@
       <OnEvent function="BaudBagSubBag_OnEvent" />
 		</Scripts>
 	</Frame>
+	
 	<Frame name="BaudBagContainerDropDown" inherits="UIDropDownMenuTemplate" hidden="true" id="1">
 		<Scripts>
 			<OnLoad function="BaudBagContainerDropDown_OnLoad" />
 		</Scripts>
 	</Frame>
-	<Frame name="BBCont1_1" inherits="BaudBagFirstContainerTemplate">
+
+	<Button name="BaudBagTokenTemplate" hidden="true" virtual="true">
+		<Size>
+			<AbsDimension x="50" y="12"/>
+		</Size>
+		<Layers>
+			<Layer level="BACKGROUND">
+				<FontString name="$parentCount" inherits="GameFontHighlightSmall" justifyH="RIGHT">
+					<Size x="38" y="10"/>
+					<Anchors>
+						<Anchor point="TOPLEFT">
+							<Offset x="0" y="0"/>
+						</Anchor>
+					</Anchors>
+				</FontString>
+				<Texture name="$parentIcon">
+					<Size>
+						<AbsDimension x="12" y="12"/>
+					</Size>
+					<Anchors>
+						<Anchor point="LEFT" relativeTo="$parentCount" relativePoint="RIGHT">
+							<Offset x="0" y="0"/>
+						</Anchor>
+					</Anchors>
+				</Texture>
+			</Layer>
+		</Layers>
+		<Scripts>
+			<OnLoad>
+				local name = self:GetName();
+				self.icon = _G[name.."Icon"];
+				self.count = _G[name.."Count"];
+			</OnLoad>
+			<OnEnter>
+          GameTooltip:SetOwner(self, "ANCHOR_RIGHT");
+          if ( self.extraCurrencyType == 1 ) then
+						GameTooltip:SetText(ARENA_POINTS, HIGHLIGHT_FONT_COLOR.r, HIGHLIGHT_FONT_COLOR.g, HIGHLIGHT_FONT_COLOR.b);
+						GameTooltip:AddLine(TOOLTIP_ARENA_POINTS, nil, nil, nil, 1);
+						GameTooltip:Show();
+          elseif ( self.extraCurrencyType == 2 ) then
+						GameTooltip:SetText(HONOR_POINTS, HIGHLIGHT_FONT_COLOR.r, HIGHLIGHT_FONT_COLOR.g, HIGHLIGHT_FONT_COLOR.b);
+						GameTooltip:AddLine(TOOLTIP_HONOR_POINTS, nil, nil, nil, 1);
+						GameTooltip:Show();
+          else
+						GameTooltip:SetBackpackToken(self:GetID());
+          end
+        </OnEnter>
+			<OnLeave>
+				GameTooltip:Hide();
+			</OnLeave>
+			<!--<OnClick>
+            BackpackTokenButton_OnClick(self, button, down);
+          </OnClick>-->
+		</Scripts>
+	</Button>
+	
+	
+	
+	<Frame name="BaudBagContainer1_1" inherits="BaudBagFirstContainerTemplate">
 		<Frames>
 			<Frame name="$parentBagsFrame" inherits="BaudBagBagsFrameTemplate">
 				<Frames>
@@ -148,7 +208,7 @@
 							</Anchor>
 						</Anchors>
 						<Scripts>
-							<OnLoad function="BaudBagKeyRing_OnLoad" />
+							<!--<OnLoad function="BaudBagKeyRing_OnLoad" />-->
 						</Scripts>
 						<NormalTexture file="Interface\Buttons\UI-Button-KeyRing" />
 						<PushedTexture file="Interface\Buttons\UI-Button-KeyRing-Down" />
@@ -156,60 +216,7 @@
 					</Button>
 				</Frames>
 			</Frame>
-      <Button name="$parentTokenTemplate" hidden="true" virtual="true">
-        <Size>
-          <AbsDimension x="50" y="12"/>
-        </Size>
-        <Layers>
-          <Layer level="BACKGROUND">
-            <FontString name="$parentCount" inherits="GameFontHighlightSmall" justifyH="RIGHT">
-              <Size x="38" y="10"/>
-              <Anchors>
-                <Anchor point="TOPLEFT">
-                  <Offset x="0" y="0"/>
-                </Anchor>
-              </Anchors>
-            </FontString>
-            <Texture name="$parentIcon">
-              <Size>
-                <AbsDimension x="12" y="12"/>
-              </Size>
-              <Anchors>
-                <Anchor point="LEFT" relativeTo="$parentCount" relativePoint="RIGHT">
-                  <Offset x="0" y="0"/>
-                </Anchor>
-              </Anchors>
-            </Texture>
-          </Layer>
-        </Layers>
-        <Scripts>
-          <OnLoad>
-            local name = self:GetName();
-            self.icon = _G[name.."Icon"];
-            self.count = _G[name.."Count"];
-          </OnLoad>
-          <OnEnter>
-            GameTooltip:SetOwner(self, "ANCHOR_RIGHT");
-            if ( self.extraCurrencyType == 1 ) then
-            GameTooltip:SetText(ARENA_POINTS, HIGHLIGHT_FONT_COLOR.r, HIGHLIGHT_FONT_COLOR.g, HIGHLIGHT_FONT_COLOR.b);
-            GameTooltip:AddLine(TOOLTIP_ARENA_POINTS, nil, nil, nil, 1);
-            GameTooltip:Show();
-            elseif ( self.extraCurrencyType == 2 ) then
-            GameTooltip:SetText(HONOR_POINTS, HIGHLIGHT_FONT_COLOR.r, HIGHLIGHT_FONT_COLOR.g, HIGHLIGHT_FONT_COLOR.b);
-            GameTooltip:AddLine(TOOLTIP_HONOR_POINTS, nil, nil, nil, 1);
-            GameTooltip:Show();
-            else
-            GameTooltip:SetBackpackToken(self:GetID());
-            end
-          </OnEnter>
-          <OnLeave>
-            GameTooltip:Hide();
-          </OnLeave>
-          <OnClick>
-            BackpackTokenButton_OnClick(self, button, down);
-          </OnClick>
-        </Scripts>
-      </Button>
+			
       <Frame name="$parentTokenFrame" parent="UIParent">
         <Size>
           <AbsDimension x="183" y="32"/>
@@ -229,21 +236,21 @@
           </Layer>
         </Layers>
         <Frames>
-          <Button name="$parentToken1" inherits="$parentTokenTemplate" id="1">
+          <Button name="$parentToken1" inherits="BaudBagTokenTemplate" id="1">
             <Anchors>
               <Anchor point="LEFT">
                 <Offset x="13" y="0"/>
               </Anchor>
             </Anchors>
           </Button>
-          <Button name="$parentToken2" inherits="$parentTokenTemplate" id="2">
+          <Button name="$parentToken2" inherits="BaudBagTokenTemplate" id="2">
             <Anchors>
               <Anchor point="LEFT" relativeTo="$parentToken1" relativePoint="RIGHT">
                 <Offset x="2" y="0"/>
               </Anchor>
             </Anchors>
           </Button>
-          <Button name="$parentToken3" inherits="$parentTokenTemplate" id="3">
+          <Button name="$parentToken3" inherits="BaudBagTokenTemplate" id="3">
             <Anchors>
               <Anchor point="LEFT" relativeTo="$parentToken2" relativePoint="RIGHT">
                 <Offset x="2" y="0"/>
@@ -254,11 +261,12 @@
       </Frame>
     </Frames>
 	</Frame>
-	<Frame name="BBCont2_1" inherits="BaudBagFirstContainerTemplate">
+	
+	<Frame name="BaudBagContainer2_1" inherits="BaudBagFirstContainerTemplate">
 		<Frames>
 			<Frame name="$parentBagsFrame" inherits="BaudBagBagsFrameTemplate">
 				<Frames>
-					<Frame name="BaudBagBankSlotPurchaseFrame" setAllPoints="true" parent="BBCont2_1BagsFrame">
+					<Frame name="BaudBagBankSlotPurchaseFrame" setAllPoints="true" parent="BaudBagContainer2_1BagsFrame">
 						<Frames>
 							<Button name="BaudBagBankSlotPurchaseButton" inherits="UIPanelButtonTemplate" text="BANKSLOTPURCHASE">
 								<Size>
@@ -322,10 +330,12 @@
 			<Frame name="BaudBagSubBag-1" />
 		</Frames>
 	</Frame>
+	
 	<Frame name="BaudBagFrame">
 		<Scripts>
 			<OnLoad function="BaudBag_OnLoad" />
       <OnEvent function="BaudBag_OnEvent" />
 		</Scripts>
-	</Frame>-->
+	</Frame>
+	
 </Ui>

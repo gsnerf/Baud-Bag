@@ -55,7 +55,7 @@ function BaudBagRestoreCfg()
           if (Container == 1) or (Bag==-2) then
             BaudBag_Cfg[BagSet][Container] = {};
           else
-            BaudBag_Cfg[BagSet][Container] = CopyTable(BaudBag_Cfg[BagSet][Container-1]);
+            BaudBag_Cfg[BagSet][Container] = BaudBagCopyTable(BaudBag_Cfg[BagSet][Container-1]);
           end
         end
         
@@ -93,13 +93,12 @@ function BaudBagRestoreCfg()
     end);
   end
 
-  --BaudUpdateJoinedBags();
-  --BaudBagUpdateBagFrames();
-  --BaudBagOptionsUpdate();
-  
-  return CopyTable(BaudBag_Cfg);
+  return BaudBagCopyTable(BaudBag_Cfg);
 end
 
 function BaudBagSaveCfg(Config)
-	BaudBag_Cfg = CopyTable(Config);
+	BaudBag_Cfg = BaudBagCopyTable(Config);
+	--BaudUpdateJoinedBags();
+  --BaudBagUpdateBagFrames();
+  --BaudBagOptionsUpdate();
 end

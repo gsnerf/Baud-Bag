@@ -296,10 +296,8 @@
 			</Button>-->
 		</Frames>
 		<Scripts>
-			<OnLoad function="BaudBagOptions_OnLoad" />
-			<OnShow function="BaudBagOptions_OnShow" /> 
+			<OnLoad		function="BaudBagOptions_OnLoad" />
 			<OnEvent	function="BaudBagOptions_OnEvent" />
-			<!--<OnHide		function="BaudBagOptions_OnHide" />-->
 		</Scripts>
 	</Frame>
 </Ui>

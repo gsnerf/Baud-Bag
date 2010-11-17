@@ -55,7 +55,7 @@ function BaudBagOptions_OnEvent(self, event, ...)
 	if ((event ~= "ADDON_LOADED") or (arg1 ~= "BaudBag")) then return; end
 	-- make sure there is a config
 	Config		= BaudBagRestoreCfg();
-	CfgBackup	= CopyTable(Config);
+	CfgBackup	= BaudBagCopyTable(Config);
 	
 	-- add to options windows
 	self.name			= "Baud Bag";
@@ -167,8 +167,8 @@ function BaudBagEnabledCheck_OnClick(self, event, ...)
     --BaudBagCloseBagSet(SelectedBags);
   end
   Config[SelectedBags].Enabled = (self:GetChecked() == 1);
-  --if Config and (Config[2].Enabled == true) then BankFrame:UnregisterEvent("BANKFRAME_OPENED") end
-  --if Config and (Config[2].Enabled == false) then BankFrame:RegisterEvent("BANKFRAME_OPENED") end
+  if Config and (Config[2].Enabled == true) then BankFrame:UnregisterEvent("BANKFRAME_OPENED") end
+  if Config and (Config[2].Enabled == false) then BankFrame:RegisterEvent("BANKFRAME_OPENED") end
 end
 
 
@@ -195,7 +195,7 @@ function BaudBagOptionsJoinCheck_OnClick(self, event, ...)
   if self:GetChecked()then
     tremove(Config[SelectedBags],ContNum);
   else
-    tinsert(Config[SelectedBags],ContNum,CopyTable(Config[SelectedBags][ContNum-1]));
+    tinsert(Config[SelectedBags], ContNum, BaudBagCopyTable(Config[SelectedBags][ContNum-1]));
   end
   BaudBagOptionsUpdate();
   --BaudUpdateJoinedBags();
