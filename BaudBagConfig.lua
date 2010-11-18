@@ -98,7 +98,11 @@ end
 
 function BaudBagSaveCfg(Config)
 	BaudBag_Cfg = BaudBagCopyTable(Config);
-	--BaudUpdateJoinedBags();
-  --BaudBagUpdateBagFrames();
-  --BaudBagOptionsUpdate();
+	BaudUpdateJoinedBags();
+  BaudBagUpdateBagFrames();
+  BaudBagOptionsUpdate();
+end
+
+function BaudBagGetSavedConfig()
+	return BaudBagCopyTable(BaudBag_Cfg);
 end

@@ -1,7 +1,7 @@
 ﻿-- Author      : gsnerf
 -- Create Date : 11/14/2010 11:52:55 PM
 
-local BaudBag_Debug = true;
+local BaudBag_Debug = false;
 function BaudBag_DebugMsg(msg)
   if BaudBag_Debug then
     DEFAULT_CHAT_FRAME:AddMessage(msg);

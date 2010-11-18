@@ -22,7 +22,7 @@ local CheckButtons = {
 	{Text=Localized.RarityColoring,	SavedVar="RarityColor",	Default=true,	TooltipText=Localized.RarityColoringTooltip}
 };
 
-local BaudBagIcons = {
+BaudBagIcons = {
   [0]		= "Interface\\Buttons\\Button-Backpack-Up",
   [-1]	= "Interface\\Icons\\INV_Box_02",
   [-2]	= "Interface\\ContainerFrame\\KeyRing-Bag-Icon"
@@ -164,11 +164,11 @@ function BaudBagEnabledCheck_OnClick(self, event, ...)
     PlaySound("igMainMenuOptionCheckBoxOff");
   else
     PlaySound("igMainMenuOptionCheckBoxOn");
-    --BaudBagCloseBagSet(SelectedBags);
+    --BaudBagCloseBagSet(SelectedBags); -- TODO: move to BaudBagConfig save?
   end
   Config[SelectedBags].Enabled = (self:GetChecked() == 1);
-  if Config and (Config[2].Enabled == true) then BankFrame:UnregisterEvent("BANKFRAME_OPENED") end
-  if Config and (Config[2].Enabled == false) then BankFrame:RegisterEvent("BANKFRAME_OPENED") end
+  --if Config and (Config[2].Enabled == true) then BankFrame:UnregisterEvent("BANKFRAME_OPENED") end -- TODO: move to BaudBagConfig save?
+  --if Config and (Config[2].Enabled == false) then BankFrame:RegisterEvent("BANKFRAME_OPENED") end -- TODO: move to BaudBagConfig save?
 end
 
 
@@ -198,7 +198,6 @@ function BaudBagOptionsJoinCheck_OnClick(self, event, ...)
     tinsert(Config[SelectedBags], ContNum, BaudBagCopyTable(Config[SelectedBags][ContNum-1]));
   end
   BaudBagOptionsUpdate();
-  --BaudUpdateJoinedBags();
   --Newly created bags could "Jump" infront of the options frame
   --BaudBagOptions:Raise();
 end
@@ -210,7 +209,7 @@ function BaudBagOptionsNameEditBox_OnTextChanged()
     return;
   end
   Config[SelectedBags][SelectedContainer].Name = _G[Prefix.."NameEditBox"]:GetText();
-  --BaudBagUpdateName(_G["BBCont"..SelectedBags.."_"..SelectedContainer]);
+  BaudBagUpdateName(_G["BaudBagContainer"..SelectedBags.."_"..SelectedContainer]);  -- TODO: move to BaudBagConfig save?
 end
 
 
@@ -234,7 +233,7 @@ end
 function BaudBagOptionsBackgroundDropDown_OnClick(self)
   Config[SelectedBags][SelectedContainer].Background = self.value;
   UIDropDownMenu_SetSelectedValue(BaudBagOptionsBackgroundDropDown, self.value);
-  --BaudBagUpdateContainer(_G["BBCont"..SelectedBags.."_"..SelectedContainer]);
+  BaudBagUpdateContainer(_G["BaudBagContainer"..SelectedBags.."_"..SelectedContainer]); -- TODO: move to BaudBagConfig save?
 end
 
 
@@ -248,7 +247,8 @@ function BaudBagOptionsCheckButton_OnClick(self, event, ...)
   local SavedVar = CheckButtons[self:GetID()].SavedVar;
   Config[SelectedBags][SelectedContainer][SavedVar] = (self:GetChecked() == 1);
   if (SavedVar == "BlankTop") or (SavedVar == "RarityColor") then
-    --BaudBagUpdateContainer(_G["BBCont"..SelectedBags.."_"..SelectedContainer]);
+		BaudBag_DebugMsg("Want to update container: "..Prefix.."Container"..SelectedBags.."_"..SelectedContainer);
+    BaudBagUpdateContainer(_G["BaudBagContainer"..SelectedBags.."_"..SelectedContainer]); -- TODO: move to BaudBagConfig save?
   end
 end
 
@@ -273,12 +273,12 @@ function BaudBagSlider_OnValueChanged(self)
   local SavedVar = SliderBars[self:GetID()].SavedVar;
   Config[SelectedBags][SelectedContainer][SavedVar] = self:GetValue();
   
-  -- cause the appropriate update
-  -- if(SavedVar=="Scale")then
-    -- BaudUpdateContainerData(SelectedBags,SelectedContainer);
-  -- elseif(SavedVar=="Columns")then
-    -- BaudBagUpdateContainer(_G["BBCont"..SelectedBags.."_"..SelectedContainer]);
-  -- end
+  -- cause the appropriate update  -- TODO: move to BaudBagConfig save?
+  if (SavedVar == "Scale") then
+    BaudUpdateContainerData(SelectedBags, SelectedContainer);
+  elseif (SavedVar=="Columns") then
+    BaudBagUpdateContainer(_G["BaudBagContainer"..SelectedBags.."_"..SelectedContainer]);
+  end
 end
 
 
@@ -385,4 +385,10 @@ function BaudBagOptionsUpdate()
     Button:SetChecked(Config[SelectedBags][SelectedContainer][Value.SavedVar]);
   end
   Updating = false;
+end
+
+function BaudBagOptionsSelectContainer(BagSet, Container)
+  SelectedBags = BagSet;
+	SelectedContainer = Container;
+	--BaudBagOptionsUpdate();
 end

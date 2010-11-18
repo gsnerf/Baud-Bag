@@ -60,7 +60,7 @@
 					</Anchor>
 				</Anchors>
 				<Scripts>
-					<!--<OnClick function="BaudBagContainerDropDown_Show" />-->
+					<OnClick function="BaudBagContainerDropDown_Show" />
 				</Scripts>
 				<NormalTexture file="Interface\Buttons\UI-PlusButton-Up" />
 				<PushedTexture file="Interface\Buttons\UI-PlusButton-Down" />
@@ -100,7 +100,7 @@
 					</Anchor>
 				</Anchors>
 				<Scripts>
-					<!--<OnClick function="BaudBagBagsButton_OnClick" />-->
+					<OnClick function="BaudBagBagsButton_OnClick" />
 				</Scripts>
 				<NormalTexture file="Interface\Buttons\UI-SpellbookIcon-PrevPage-Up" />
 				<PushedTexture file="Interface\Buttons\UI-SpellbookIcon-PrevPage-Down" />
@@ -208,7 +208,7 @@
 							</Anchor>
 						</Anchors>
 						<Scripts>
-							<!--<OnLoad function="BaudBagKeyRing_OnLoad" />-->
+							<OnLoad function="BaudBagKeyRing_OnLoad" />
 						</Scripts>
 						<NormalTexture file="Interface\Buttons\UI-Button-KeyRing" />
 						<PushedTexture file="Interface\Buttons\UI-Button-KeyRing-Down" />
@@ -337,5 +337,7 @@
       <OnEvent function="BaudBag_OnEvent" />
 		</Scripts>
 	</Frame>
+
+	<Frame name="BagContainer" />
 	
 </Ui>
