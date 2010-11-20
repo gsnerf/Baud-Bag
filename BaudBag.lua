@@ -916,42 +916,51 @@ function BaudBagCloseBagSet(BagSet)
   end
 end
 
-function OpenBackpack() 
-  BaudBag_DebugMsg("[OpenBackpack] opened!");
-  return true;
+local pre_OpenBackpack = OpenBackpack;
+OpenBackpack = function() 
+	BaudBag_DebugMsg("[OpenBackpack] opened!");
+	if Config and (Config[1].Enabled == false) then
+		pre_OpenBackpack();
+	end
 end
 
-
+-- save the original ToggleBag function before overwriting with own
 local pre_ToggleBag = ToggleBag;
 ToggleBag = function(id)
-  local self = this;
-  if(id > 4)then
-    if Config and(Config[2].Enabled == false)then
+	-- this does not work anymore (this does not exist anymore)
+  -- local self = this;
+  
+  -- if bank should be toggled and baudbag does not show the bank itself call original event
+  if (id > 4) then
+    if Config and (Config[2].Enabled == false) then
       return pre_ToggleBag(id);
     end
     if not BagsReady then
       return;
     end
   --The close button thing allows the original blizzard bags to be closed if they're still open
-  elseif (Config[1].Enabled == false) or self and (strsub(self:GetName(),-11)=="CloseButton") then
-    return pre_ToggleBag(id);
+  -- elseif (Config[1].Enabled == false) or self and (strsub(self:GetName(),-11) == "CloseButton") then
+    -- return pre_ToggleBag(id);
   end
+  
   --Blizzard's stuff will automaticaly try open the bags at the mailbox and vendor.  Baud Bag will be in charge of that.
-  BaudBag_DebugMsg("[ToggleBag] self: "..self:GetName());
-  if not BagsReady or (self == MailFrame) or (self == MerchantFrame) then
-    return;
-  end
-  BaudBag_DebugMsg("Toggling bag: "..id.."("..(self and self:GetName() or "nil")..")");
+  -- BaudBag_DebugMsg("[ToggleBag] self: "..self:GetName());
+  -- if not BagsReady or (self == MailFrame) or (self == MerchantFrame) then
+    -- return;
+  -- end
+  
+  -- BaudBag_DebugMsg("Toggling bag: "..id.."("..(self and self:GetName() or "nil")..")");
   local Container = _G[Prefix.."SubBag"..id];
   if not Container then
     return pre_ToggleBag(id);
   end
   Container = Container:GetParent();
+  
   --if the bag to open is inside the main bank container, don't toggle it
-  if self and ((Container == _G[Prefix.."Container2_1"]) and (strsub(self:GetName(),1,9) == "BaudBBank") or
-  (Container == _G[Prefix.."Container1_1"]) and ((strsub(self:GetName(),1,9)== "BaudBInve") or (self == BaudBagKeyRingButton))) then
-    return;
-  end
+  -- if self and ((Container == _G[Prefix.."Container2_1"]) and (strsub(self:GetName(),1,9) == "BaudBBank") or
+  -- (Container == _G[Prefix.."Container1_1"]) and ((strsub(self:GetName(),1,9)== "BaudBInve") or (self == BaudBagKeyRingButton))) then
+    -- return;
+  -- end
   
   if Container:IsShown() then
     Container:Hide();
@@ -963,12 +972,16 @@ end
 
 local pre_OpenAllBags = OpenAllBags;
 OpenAllBags = function(forceOpen)
+	-- call default bags if the addon is disabled for regular bags
   if Config and(Config[1].Enabled == false) then
     return pre_OpenAllBags(forceOpen);
   end
+  
+  -- also cancel if bags can't be viewed at the moment (CAN this actually happen?)
   if not BagsReady then
     return;
   end
+  
   local Container, AnyShown;
   for Bag = 0, 4 do
     Container = _G[Prefix.."SubBag"..Bag]:GetParent();
@@ -985,7 +998,7 @@ end
 
 local pre_BagSlotButton_OnClick = BagSlotButton_OnClick;
 BagSlotButton_OnClick = function(self, event, ...)
-  if Config and(Config[1].Enabled == false)then
+  if Config and (Config[1].Enabled == false) then
     return pre_BagSlotButton_OnClick(self, event, ...);
   end
   if not PutItemInBag(self:GetID())then

@@ -52,7 +52,7 @@ function BaudBagCopyTable(Value)
 end
 
 
-local function ShowHyperlink(Owner, Link)
+function ShowHyperlink(Owner, Link)
   local ItemString = strmatch(Link or "","(item[%d:%-]+)");
   if not ItemString then
     return;
