@@ -16,7 +16,6 @@ local NumCont = {};
 local BankOpen = false;
 local FadeTime = 0.2;
 local BagsReady;
-local Config;
  
 local function UseCache(Bag)
   return (((Bag==-1) or (Bag >= 5)) and not BankOpen);
@@ -24,7 +23,7 @@ end
 
 
 local function ShowCachedTooltip(self, event, ...)
-  if Config and (Config[2].Enabled == false) and not (self and (strsub(self:GetName(), 1, 9) == Prefix.."Bank"))then
+  if BBConfig and (BBConfig[2].Enabled == false) and not (self and (strsub(self:GetName(), 1, 9) == Prefix.."Bank"))then
     return;
   end
   local Bag, Slot;
@@ -56,12 +55,12 @@ hooksecurefunc(GameTooltip, "SetInventoryItem", function(Data, Unit, InvID)
   end
   
   if (InvID >= 20) and (InvID <= 23) then
-    if Config and (Config[1].Enabled==false) then
+    if BBConfig and (BBConfig[1].Enabled==false) then
       return;
     end
     BaudBagModifyBagTooltip(InvID - 19);
   elseif (InvID >= 68) and (InvID < 68 + NUM_BANKBAGSLOTS) then
-    if Config and (Config[2].Enabled == false) then
+    if BBConfig and (BBConfig[2].Enabled == false) then
       return;
     end
     BaudBagModifyBagTooltip(4 + InvID - 67);
@@ -70,7 +69,7 @@ end);
 
 
 MainMenuBarBackpackButton:HookScript("OnEnter", function(...)
-  if Config and (Config[1].Enabled ~= false) then
+  if BBConfig and (BBConfig[1].Enabled ~= false) then
     BaudBagModifyBagTooltip(0);
   end
 end);
@@ -81,7 +80,7 @@ function BaudBagModifyBagTooltip(BagID)
     return;
   end
   local Container = _G[Prefix.."SubBag"..BagID]:GetParent();
-  Container = Config[Container.BagSet][Container:GetID()].Name;
+  Container = BBConfig[Container.BagSet][Container:GetID()].Name;
   if not Container or not strfind(Container, "%S") then
     return;
   end  
@@ -179,8 +178,8 @@ local EventFuncs =
     --Height changes depending if there is a purchase button
     BBContainer2.Height = 13 + ceil(NUM_BANKBAGSLOTS / 2) * 39;
     BaudBagBankBags_Update();
-    BaudBagUpdateFromConfig();
-		if Config and (Config[2].Enabled == true) then 
+    BaudBagUpdateFromBBConfig();
+		if BBConfig and (BBConfig[2].Enabled == true) then 
 			BankFrame:UnregisterEvent("BANKFRAME_OPENED"); 
 		end 
   end,
@@ -244,7 +243,7 @@ local Func = function(self, event, ...)
   end
 
 	-- everything coming now is only needed if the bank is visible
-  if (Config[2].Enabled == false) or (event ~= "BANKFRAME_OPENED") then
+  if (BBConfig[2].Enabled == false) or (event ~= "BANKFRAME_OPENED") then
     return;
   end
   
@@ -407,6 +406,10 @@ function BaudBagContainer_OnShow(self, event, ...)
   if (self:GetID() == 1) then
     BaudBagUpdateFreeSlots(self);
   end
+  -- If there are tokens watched then decide if we should show the bar
+	if ( ManageBackpackTokenFrame ) then
+		ManageBackpackTokenFrame();
+	end
 end
 
 
@@ -425,7 +428,7 @@ function BaudBagContainer_OnHide(self, event, ...)
   self.AutoOpened = false;
   BaudBagUpdateOpenBags();
   if (self.BagSet == 2) and (self:GetID() == 1) then
-    if BankOpen and (Config[2].Enabled == true) then
+    if BankOpen and (BBConfig[2].Enabled == true) then
       CloseBankFrame();
     end
     BaudBagCloseBagSet(2);
@@ -435,7 +438,7 @@ end
 
 
 function BaudBagContainer_OnDragStart(self, event, ...)
-  if not Config[self.BagSet][self:GetID()].Locked then
+  if not BBConfig[self.BagSet][self:GetID()].Locked then
     self:StartMoving();
   end
 end
@@ -463,7 +466,7 @@ end
 
 
 local function ToggleContainerLock(self)
-  Config[DropDownBagSet][DropDownContainer].Locked = not Config[DropDownBagSet][DropDownContainer].Locked;
+  BBConfig[DropDownBagSet][DropDownContainer].Locked = not BBConfig[DropDownBagSet][DropDownContainer].Locked;
 end
 
 
@@ -486,7 +489,7 @@ end
 function BaudBagContainerDropDown_Initialize()
   local info = UIDropDownMenu_CreateInfo();
 
-  info.text = not (DropDownBagSet and Config[DropDownBagSet][DropDownContainer].Locked) and Localized.LockPosition or Localized.UnlockPosition;
+  info.text = not (DropDownBagSet and BBConfig[DropDownBagSet][DropDownContainer].Locked) and Localized.LockPosition or Localized.UnlockPosition;
   info.func = ToggleContainerLock;
   UIDropDownMenu_AddButton(info);
 
@@ -507,14 +510,14 @@ end
 function BaudUpdateContainerData(BagSet, ContNum)
   local Container = _G[Prefix.."Container"..BagSet.."_"..ContNum];
   BaudBag_DebugMsg("Updating container data: "..Container:GetName());
-  _G[Container:GetName().."Name"]:SetText(Config[BagSet][ContNum].Name or "");
-  local Scale = Config[BagSet][ContNum].Scale / 100;
+  _G[Container:GetName().."Name"]:SetText(BBConfig[BagSet][ContNum].Name or "");
+  local Scale = BBConfig[BagSet][ContNum].Scale / 100;
   Container:SetScale(Scale);
-  if not Config[BagSet][ContNum].Coords then
+  if not BBConfig[BagSet][ContNum].Coords then
     BaudBagContainerSaveCoords(Container);
   end
   Container:ClearAllPoints();
-  local X, Y = unpack(Config[BagSet][ContNum].Coords);
+  local X, Y = unpack(BBConfig[BagSet][ContNum].Coords);
   Container:SetPoint("CENTER",UIParent,"BOTTOMLEFT",(X / Scale), (Y / Scale));
 end
 
@@ -547,22 +550,22 @@ end
 
 
 function BaudBagUpdateBackground(Container)
-  local Background = Config[Container.BagSet][Container:GetID()].Background;
+  local Background = BBConfig[Container.BagSet][Container:GetID()].Background;
   local Backdrop = _G[Container:GetName().."Backdrop"];
   Backdrop:SetFrameLevel(Container:GetFrameLevel());
   local Left, Right, Top, Bottom;
   --This shifts the name of the bank frame over to make room for the extra button
-  local ShiftName = (Container:GetID()==1)and 25 or 0;
+  local ShiftName = (Container:GetID()==1) and 25 or 0;
 
   if (Background <= 3) then
     Left, Right, Top, Bottom = 10, 10, 25, 7;
-    local Cols = Config[Container.BagSet][Container:GetID()].Columns;
+    local Cols = BBConfig[Container.BagSet][Container:GetID()].Columns;
     if(Container.Slots < Cols)then
       Cols = Container.Slots;
     end
     local Col = 0;
     local Blanks = Cols - mod(Container.Slots - 1, Cols) - 1;
-    local BlankTop = Config[Container.BagSet][Container:GetID()].BlankTop and(Blanks ~= 0);
+    local BlankTop = BBConfig[Container.BagSet][Container:GetID()].BlankTop and(Blanks ~= 0);
 
     if BlankTop then
       Col = Blanks;
@@ -687,7 +690,7 @@ function BaudBagUpdateBackground(Container)
     end
 
     --Adds the box for the money/slot indicators
-    if(Container:GetID()==1)then
+    if(Container:GetID() == 1)then
       Bottom = Bottom + 20;
       TextureFile = "Interface\\ContainerFrame\\UI-BackpackBackground.blp";
       TextureWidth, TextureHeight = 256, 256;
@@ -802,7 +805,7 @@ function BaudUpdateJoinedBags()
   for BagSet = 1, 2 do
     ContNum = 0;
     BaudBagForEachBag(BagSet, function(Bag, Index)
-      if (ContNum==0) or (Config[BagSet].Joined[Index] == false) then
+      if (ContNum==0) or (BBConfig[BagSet].Joined[Index] == false) then
         if (ContNum ~= 0) then
           FinishContainer();
         end
@@ -885,10 +888,10 @@ function BaudBagAutoOpenSet(BagSet, Close)
   
 	--[[ DEBUG ]]--
 	local autoOpenState = "";
-	if (Config[BagSet][ContNum].AutoOpen) then autoOpenState = "true" else autoOpenState = "false" end
+	if (BBConfig[BagSet][ContNum].AutoOpen) then autoOpenState = "true" else autoOpenState = "false" end
 	BaudBag_DebugMsg("[AutoOpenSet FOR] ContNum: "..ContNum.."; AutoOpen: "..autoOpenState);
   
-    if Config[BagSet][ContNum].AutoOpen then
+    if BBConfig[BagSet][ContNum].AutoOpen then
       Container = _G[Prefix.."Container"..BagSet.."_"..ContNum];
       if not Close then
         if not Container:IsShown() then
@@ -919,7 +922,7 @@ end
 local pre_OpenBackpack = OpenBackpack;
 OpenBackpack = function() 
 	BaudBag_DebugMsg("[OpenBackpack] opened!");
-	if Config and (Config[1].Enabled == false) then
+	if BBConfig and (BBConfig[1].Enabled == false) then
 		pre_OpenBackpack();
 	end
 end
@@ -932,15 +935,15 @@ ToggleBag = function(id)
   
   -- if bank should be toggled and baudbag does not show the bank itself call original event
   if (id > 4) then
-    if Config and (Config[2].Enabled == false) then
+    if BBConfig and (BBConfig[2].Enabled == false) then
       return pre_ToggleBag(id);
     end
     if not BagsReady then
       return;
     end
   --The close button thing allows the original blizzard bags to be closed if they're still open
-  -- elseif (Config[1].Enabled == false) or self and (strsub(self:GetName(),-11) == "CloseButton") then
-    -- return pre_ToggleBag(id);
+  elseif (BBConfig[1].Enabled == false) then-- or self and (strsub(self:GetName(),-11) == "CloseButton") then
+    return pre_ToggleBag(id);
   end
   
   --Blizzard's stuff will automaticaly try open the bags at the mailbox and vendor.  Baud Bag will be in charge of that.
@@ -964,8 +967,17 @@ ToggleBag = function(id)
   
   if Container:IsShown() then
     Container:Hide();
+    -- Hide the token bar if closing the backpack
+		if ( id == 0 and BackpackTokenFrame ) then
+			BackpackTokenFrame:Hide();
+		end
   else
     Container:Show();
+    -- If there are tokens watched then show the bar
+		if ( id == 0 and ManageBackpackTokenFrame ) then
+			BackpackTokenFrame_Update();
+			ManageBackpackTokenFrame();
+		end
   end
 end
 
@@ -973,7 +985,7 @@ end
 local pre_OpenAllBags = OpenAllBags;
 OpenAllBags = function(forceOpen)
 	-- call default bags if the addon is disabled for regular bags
-  if Config and(Config[1].Enabled == false) then
+  if BBConfig and(BBConfig[1].Enabled == false) then
     return pre_OpenAllBags(forceOpen);
   end
   
@@ -998,7 +1010,7 @@ end
 
 local pre_BagSlotButton_OnClick = BagSlotButton_OnClick;
 BagSlotButton_OnClick = function(self, event, ...)
-  if Config and (Config[1].Enabled == false) then
+  if BBConfig and (BBConfig[1].Enabled == false) then
     return pre_BagSlotButton_OnClick(self, event, ...);
   end
   if not PutItemInBag(self:GetID())then
@@ -1009,23 +1021,26 @@ end
 
 local pre_ToggleBackpack = ToggleBackpack;
 ToggleBackpack = function()
-  if Config and (Config[1].Enabled == false) then
-    return pre_ToggleBackpack();
-  end
-  if not BagsReady then
-    return;
-  end
-  if this and (this == FuBarPluginBagFuFrame) then
-    OpenAllBags();
-  else
+	-- make sure the old is called when BaudBag is disabled for the backpack
+	if BBConfig and (BBConfig[1].Enabled == false) then
+		return pre_ToggleBackpack();
+	end
+	
+	if not BagsReady then
+		return;
+	end
+	
+	if this and (this == FuBarPluginBagFuFrame) then
+		OpenAllBags();
+	else
     ToggleBag(0);
-  end
+	end
 end
 
 
 local pre_ToggleKeyRing = ToggleKeyRing;
 ToggleKeyRing = function(self)
-  if Config and (Config[1].Enabled == false) then
+  if BBConfig and (BBConfig[1].Enabled == false) then
     return pre_ToggleKeyRing();
   end
   if not BagsReady then
@@ -1042,7 +1057,7 @@ end
 
 
 local function UpdateThisHighlight(self)
-  if Config and (Config[1].Enabled == false) then
+  if BBConfig and (BBConfig[1].Enabled == false) then
     return;
   end
   self:SetChecked(IsBagShown(self:GetID() - CharacterBag0Slot:GetID() + 1));
@@ -1053,14 +1068,14 @@ hooksecurefunc("BagSlotButton_OnClick",UpdateThisHighlight);
 hooksecurefunc("BagSlotButton_OnDrag",UpdateThisHighlight);
 hooksecurefunc("BagSlotButton_OnModifiedClick",UpdateThisHighlight);
 hooksecurefunc("BackpackButton_OnClick",function(self)
-  if Config and(Config[1].Enabled == false)then
+  if BBConfig and(BBConfig[1].Enabled == false)then
     return;
   end
   self:SetChecked(IsBagShown(0));
 end);
 
 hooksecurefunc("UpdateMicroButtons",function()
-  if Config and(Config[1].Enabled == false)then
+  if BBConfig and(BBConfig[1].Enabled == false)then
     return;
   end
 	if IsBagShown(KEYRING_CONTAINER)then
@@ -1074,7 +1089,7 @@ end);
 --self is hooked to be able to replace the original bank box with this one
 local pre_BankFrame_OnEvent = BankFrame_OnEvent;
 BankFrame_OnEvent = function(self, event, ...)
-  if Config and(Config[2].Enabled == false)then
+  if BBConfig and(BBConfig[2].Enabled == false)then
     return pre_BankFrame_OnEvent(self, event, ...);
   end
 end
@@ -1125,7 +1140,7 @@ end
 
 function BaudBagUpdateSubBag(SubBag)
   local Link, Quality, Texture, ItemButton;
-  local ShowColor = Config[SubBag.BagSet][SubBag:GetParent():GetID()].RarityColor;
+  local ShowColor = BBConfig[SubBag.BagSet][SubBag:GetParent():GetID()].RarityColor;
   SubBag.FreeSlots = 0;
   
   for Slot = 1, SubBag.size do
@@ -1189,7 +1204,7 @@ function BaudBagContainerSaveCoords(Frame)
   local X, Y = Frame:GetCenter();
   X = X * Scale;
   Y = Y * Scale;
-  Config[Frame.BagSet][Frame:GetID()].Coords = {X, Y};
+  BBConfig[Frame.BagSet][Frame:GetID()].Coords = {X, Y};
 end
 
 
@@ -1290,7 +1305,7 @@ end
 function BaudBagBagsButton_OnClick(self, event, ...)
   local Set = self:GetParent().BagSet;
   --Bank set is automaticaly shown, and main bags are not
-  Config[Set].ShowBags = (Config[Set].ShowBags==false);
+  BBConfig[Set].ShowBags = (BBConfig[Set].ShowBags==false);
   BaudBagUpdateBagFrames();
 end
 
@@ -1298,7 +1313,7 @@ end
 function BaudBagUpdateBagFrames()
   local Shown, BagFrame;
   for BagSet = 1, 2 do
-    Shown = (Config[BagSet].ShowBags ~= false);
+    Shown = (BBConfig[BagSet].ShowBags ~= false);
     _G[Prefix.."Container"..BagSet.."_1BagsButton"]:SetChecked(Shown);
     BagFrame = _G[Prefix.."Container"..BagSet.."_1BagsFrame"];
     if Shown then
@@ -1313,10 +1328,10 @@ end
 function BaudBagUpdateName(Container)
   local Name = _G[Container:GetName().."Name"];
   if (Container.BagSet ~= 2) or BankOpen then
-    Name:SetText(Config[Container.BagSet][Container:GetID()].Name or "");
+    Name:SetText(BBConfig[Container.BagSet][Container:GetID()].Name or "");
     Name:SetTextColor(NORMAL_FONT_COLOR.r,NORMAL_FONT_COLOR.g,NORMAL_FONT_COLOR.b);
   else
-    Name:SetText(Config[Container.BagSet][Container:GetID()].Name..Localized.Offline);
+    Name:SetText(BBConfig[Container.BagSet][Container:GetID()].Name..Localized.Offline);
     Name:SetTextColor(RED_FONT_COLOR.r,RED_FONT_COLOR.g,RED_FONT_COLOR.b);
   end
 end
@@ -1326,7 +1341,7 @@ function BaudBagUpdateContainer(Container)
   Container.Refresh = false;
   BaudBagUpdateName(Container);
   local SlotLevel = Container:GetFrameLevel() + 1;
-  local ContCfg = Config[Container.BagSet][Container:GetID()];
+  local ContCfg = BBConfig[Container.BagSet][Container:GetID()];
   local Background = ContCfg.Background;
   local MaxCols = ContCfg.Columns;
   local Size, KeyRing;
@@ -1498,15 +1513,13 @@ function BaudBagKeyRing_OnLoad(self, event, ...)
   self:GetPushedTexture():SetTexCoord(0.5625,0,0,0,0.5625,0.60937,0,0.60937);
 end
 
-function BaudBagUpdateFromConfig()
-	Config = BaudBagGetSavedConfig();
-	
+function BaudBagUpdateFromBBConfig()
 	BaudUpdateJoinedBags();
-  BaudBagUpdateBagFrames();
+	BaudBagUpdateBagFrames();
 	
 	for BagSet = 1, 2 do
 		-- make sure the enabled states are current
-		if (Config[BagSet].Enabled ~= true) then
+		if (BBConfig[BagSet].Enabled ~= true) then
 			BaudBagCloseBagSet(BagSet);
 			if (BagSet == 2) then BankFrame:UnregisterEvent("BANKFRAME_OPENED") end
 		elseif (BagSet == 2) then

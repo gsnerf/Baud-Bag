@@ -238,62 +238,6 @@
 					</Anchor>
 				</Anchors>
 			</Slider>
-
-			<!--<Button name="$parentDefaults" inherits="GameMenuButtonTemplate" text="DEFAULTS">
-				<Size>
-					<AbsDimension x="100" y="21"/>
-				</Size>
-				<Anchors>
-					<Anchor point="BOTTOMLEFT">
-						<Offset>
-							<AbsDimension x="16" y="16"/>
-						</Offset>
-					</Anchor>
-				</Anchors>
-				<Scripts>
-					<OnClick>
-						PlaySound("igMainMenuOptionCheckBoxOn");
-						BaudBagOptions_Defaults();
-					</OnClick>
-				</Scripts>
-			</Button>
-			<Button name="$parentCancel" inherits="GameMenuButtonTemplate" text="CANCEL">
-				<Size>
-					<AbsDimension x="100" y="21"/>
-				</Size>
-				<Anchors>
-					<Anchor point="BOTTOMRIGHT">
-						<Offset>
-							<AbsDimension x="-16" y="16"/>
-						</Offset>
-					</Anchor>
-				</Anchors>
-				<Scripts>
-					<OnClick>
-						PlaySound("gsTitleOptionExit");
-						self:GetParent():Hide();
-					</OnClick>
-				</Scripts>
-			</Button>
-			<Button name="$parentOkay" inherits="GameMenuButtonTemplate" text="OKAY">
-				<Size>
-					<AbsDimension x="100" y="21"/>
-				</Size>
-				<Anchors>
-					<Anchor point="RIGHT" relativeTo="$parentCancel" relativePoint="LEFT">
-						<Offset>
-							<AbsDimension x="0" y="0"/>
-						</Offset>
-					</Anchor>
-				</Anchors>
-				<Scripts>
-					<OnClick>
-						PlaySound("gsTitleOptionOK");
-						self:GetParent().SaveChanges = true;
-						self:GetParent():Hide();
-					</OnClick>
-				</Scripts>
-			</Button>-->
 		</Frames>
 		<Scripts>
 			<OnLoad		function="BaudBagOptions_OnLoad" />

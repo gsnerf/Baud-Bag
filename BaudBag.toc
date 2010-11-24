@@ -15,4 +15,5 @@ Localization.lua
 BaudBagFunctions.lua
 BaudBagConfig.lua
 BaudBagOptions.xml
+BaudBagToken.xml
 BaudBag.xml

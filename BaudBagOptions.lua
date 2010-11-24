@@ -3,13 +3,11 @@
 local Localized	= BaudBagLocalized;
 local MaxBags		= NUM_BANKBAGSLOTS + 1;
 local Prefix		= "BaudBagOptions";
-local Config;
 local Updating, CfgBackup;
 
 local SelectedBags			= 1;
 local SelectedContainer	= 1;
 local SetSize						= {6, NUM_BANKBAGSLOTS + 1};
-
 
 local SliderBars = {
 	{Text=Localized.Columns,	Low="2",	High="20",		SavedVar="Columns",	Default={8,12},			TooltipText = Localized.ColumnsTooltip},
@@ -53,15 +51,15 @@ end
 function BaudBagOptions_OnEvent(self, event, ...)
 	local arg1 = ...;
 	if ((event ~= "ADDON_LOADED") or (arg1 ~= "BaudBag")) then return; end
-	-- make sure there is a config
-	Config		= BaudBagRestoreCfg();
-	CfgBackup	= BaudBagCopyTable(Config);
+	-- make sure there is a BBConfig
+	BaudBagRestoreCfg();
+	CfgBackup	= BaudBagCopyTable(BBConfig);
 	
 	-- add to options windows
 	self.name			= "Baud Bag";
 	self.okay			= BaudBagOptions_OnOkay;
-	self.cancel		= BaudBagOptions_OnCancel;
-	self.refresh	= BaudBagOptions_OnRefresh;
+	self.cancel			= BaudBagOptions_OnCancel;
+	self.refresh		= BaudBagOptions_OnRefresh;
 	InterfaceOptions_AddCategory(self);
 	
 	-- set localized labels
@@ -114,6 +112,9 @@ function BaudBagOptions_OnEvent(self, event, ...)
 			Check.tooltipText = Localized.CheckTooltip;
 		end
 	end
+	
+	-- make sure the view is updated with the data loaded from the config
+	BaudBagOptionsUpdate();
 end
 
 function BaudBagOptions_OnRefresh(self, event, ...)
@@ -122,14 +123,15 @@ function BaudBagOptions_OnRefresh(self, event, ...)
 end
 
 function BaudBagOptions_OnOkay(self, event, ...)
-	BaudBag_DebugMsg("'Okay' pressed, saving config.");
-  CfgBackup = Config;
-  BaudBagSaveCfg(Config);
+	BaudBag_DebugMsg("'Okay' pressed, saving BBConfig.");
+	CfgBackup = BBConfig;
+	BaudBagSaveCfg(BBConfig);
 end
 
 function BaudBagOptions_OnCancel(self, event, ...)
-	BaudBag_DebugMsg("'Cancel' pressed, reset to last config.");
-	Config = CfgBackup;
+	BaudBag_DebugMsg("'Cancel' pressed, reset to last BBConfig.");
+	BBConfig = CfgBackup;
+	ReloadConfigDependant();
 end
 
 
@@ -164,11 +166,11 @@ function BaudBagEnabledCheck_OnClick(self, event, ...)
     PlaySound("igMainMenuOptionCheckBoxOff");
   else
     PlaySound("igMainMenuOptionCheckBoxOn");
-    --BaudBagCloseBagSet(SelectedBags); -- TODO: move to BaudBagConfig save?
+    BaudBagCloseBagSet(SelectedBags); -- TODO: move to BaudBagBBConfig save?
   end
-  Config[SelectedBags].Enabled = (self:GetChecked() == 1);
-  --if Config and (Config[2].Enabled == true) then BankFrame:UnregisterEvent("BANKFRAME_OPENED") end -- TODO: move to BaudBagConfig save?
-  --if Config and (Config[2].Enabled == false) then BankFrame:RegisterEvent("BANKFRAME_OPENED") end -- TODO: move to BaudBagConfig save?
+  BBConfig[SelectedBags].Enabled = (self:GetChecked() == 1);
+  --if BBConfig and (BBConfig[2].Enabled == true) then BankFrame:UnregisterEvent("BANKFRAME_OPENED") end -- TODO: move to BaudBagBBConfig save?
+  --if BBConfig and (BBConfig[2].Enabled == false) then BankFrame:RegisterEvent("BANKFRAME_OPENED") end -- TODO: move to BaudBagBBConfig save?
 end
 
 
@@ -185,21 +187,19 @@ function BaudBagOptionsJoinCheck_OnClick(self, event, ...)
     PlaySound("igMainMenuOptionCheckBoxOn");
   end
   
-  Config[SelectedBags].Joined[self:GetID()] = self:GetChecked() and true or false;
+  BBConfig[SelectedBags].Joined[self:GetID()] = self:GetChecked() and true or false;
   local ContNum = 2;
   for Bag = 2,(self:GetID()-1)do
-    if (Config[SelectedBags].Joined[Bag] == false) then
+    if (BBConfig[SelectedBags].Joined[Bag] == false) then
       ContNum = ContNum + 1;
     end
   end
   if self:GetChecked()then
-    tremove(Config[SelectedBags],ContNum);
+    tremove(BBConfig[SelectedBags],ContNum);
   else
-    tinsert(Config[SelectedBags], ContNum, BaudBagCopyTable(Config[SelectedBags][ContNum-1]));
+    tinsert(BBConfig[SelectedBags], ContNum, BaudBagCopyTable(BBConfig[SelectedBags][ContNum-1]));
   end
   BaudBagOptionsUpdate();
-  --Newly created bags could "Jump" infront of the options frame
-  --BaudBagOptions:Raise();
 end
 
 
@@ -208,8 +208,8 @@ function BaudBagOptionsNameEditBox_OnTextChanged()
   if Updating then
     return;
   end
-  Config[SelectedBags][SelectedContainer].Name = _G[Prefix.."NameEditBox"]:GetText();
-  BaudBagUpdateName(_G["BaudBagContainer"..SelectedBags.."_"..SelectedContainer]);  -- TODO: move to BaudBagConfig save?
+  BBConfig[SelectedBags][SelectedContainer].Name = _G[Prefix.."NameEditBox"]:GetText();
+  BaudBagUpdateName(_G["BaudBagContainer"..SelectedBags.."_"..SelectedContainer]);  -- TODO: move to BaudBagBBConfig save?
 end
 
 
@@ -219,7 +219,7 @@ end
 function BaudBagOptionsBackgroundDropDown_Initialize()
   local info			= UIDropDownMenu_CreateInfo();
   info.func				= BaudBagOptionsBackgroundDropDown_OnClick;
-  local Selected	= Config[SelectedBags][SelectedContainer].Background;
+  local Selected	= BBConfig[SelectedBags][SelectedContainer].Background;
 
   for Key, Value in pairs(TextureNames)do
     info.text			= Value;
@@ -231,9 +231,9 @@ end
 
 -- onclick
 function BaudBagOptionsBackgroundDropDown_OnClick(self)
-  Config[SelectedBags][SelectedContainer].Background = self.value;
+  BBConfig[SelectedBags][SelectedContainer].Background = self.value;
   UIDropDownMenu_SetSelectedValue(BaudBagOptionsBackgroundDropDown, self.value);
-  BaudBagUpdateContainer(_G["BaudBagContainer"..SelectedBags.."_"..SelectedContainer]); -- TODO: move to BaudBagConfig save?
+  BaudBagUpdateContainer(_G["BaudBagContainer"..SelectedBags.."_"..SelectedContainer]); -- TODO: move to BaudBagBBConfig save?
 end
 
 
@@ -245,10 +245,10 @@ function BaudBagOptionsCheckButton_OnClick(self, event, ...)
     PlaySound("igMainMenuOptionCheckBoxOn");
   end
   local SavedVar = CheckButtons[self:GetID()].SavedVar;
-  Config[SelectedBags][SelectedContainer][SavedVar] = (self:GetChecked() == 1);
+  BBConfig[SelectedBags][SelectedContainer][SavedVar] = (self:GetChecked() == 1);
   if (SavedVar == "BlankTop") or (SavedVar == "RarityColor") then
 		BaudBag_DebugMsg("Want to update container: "..Prefix.."Container"..SelectedBags.."_"..SelectedContainer);
-    BaudBagUpdateContainer(_G["BaudBagContainer"..SelectedBags.."_"..SelectedContainer]); -- TODO: move to BaudBagConfig save?
+    BaudBagUpdateContainer(_G["BaudBagContainer"..SelectedBags.."_"..SelectedContainer]); -- TODO: move to BaudBagBBConfig save?
   end
 end
 
@@ -258,7 +258,7 @@ function BaudBagSlider_OnValueChanged(self)
 --[[
 	This is called when the value of a slider is changed.
 	First the new value directly shown in the title.
-	Next the new value is saved in the correct config entry.
+	Next the new value is saved in the correct BBConfig entry.
 ]]--
 
   -- change appearance
@@ -269,11 +269,11 @@ function BaudBagSlider_OnValueChanged(self)
     return;
   end
   
-  -- save config entry
+  -- save BBConfig entry
   local SavedVar = SliderBars[self:GetID()].SavedVar;
-  Config[SelectedBags][SelectedContainer][SavedVar] = self:GetValue();
+  BBConfig[SelectedBags][SelectedContainer][SavedVar] = self:GetValue();
   
-  -- cause the appropriate update  -- TODO: move to BaudBagConfig save?
+  -- cause the appropriate update  -- TODO: move to BaudBagBBConfig save?
   if (SavedVar == "Scale") then
     BaudUpdateContainerData(SelectedBags, SelectedContainer);
   elseif (SavedVar=="Columns") then
@@ -284,31 +284,31 @@ end
 
 function BaudBagOptionsUpdate()
 	-- prepare vars
-  local Button, Check, Container, Texture;
-  local ContNum = 1;
-  local Bags = SetSize[SelectedBags];
-  Updating = true;
+	local Button, Check, Container, Texture;
+	local ContNum = 1;
+	local Bags = SetSize[SelectedBags];
+	Updating = true;
 
 	-- first reload the drop down (weird problems if not done)
 	UIDropDownMenu_Initialize(_G[Prefix.."SetDropDown"], BaudBagOptionsSetDropDown_Initialize);
-  UIDropDownMenu_SetSelectedValue(_G[Prefix.."SetDropDown"], SelectedBags);
+	UIDropDownMenu_SetSelectedValue(_G[Prefix.."SetDropDown"], SelectedBags);
   
 	-- is the box enabled
-  _G[Prefix.."EnabledCheck"]:SetChecked(Config[SelectedBags].Enabled~=false);
+	_G[Prefix.."EnabledCheck"]:SetChecked(BBConfig[SelectedBags].Enabled~=false);
 
 	-- load bag specific options (position and show each button that belongs to the current set,
 	--		check joined box and create container frames)
-  BaudBagForEachBag(SelectedBags,
+	BaudBagForEachBag(SelectedBags,
 		function(Bag,Index)
 			Button	= _G[Prefix.."Bag"..Index];
-			Check		= _G[Prefix.."JoinCheck"..Index];
+			Check	= _G[Prefix.."JoinCheck"..Index];
 
 			if (Index == 1) then
 				-- only the first bag needs its position set, since the others are anchored to it
 				Button:SetPoint("LEFT", BaudBagOptions, "TOP", (Bags / 2) * -44,-140);
 			else
 				-- all bags after the first may have a joined state
-				Check:SetChecked(Config[SelectedBags].Joined[Index]~=false);
+				Check:SetChecked(BBConfig[SelectedBags].Joined[Index]~=false);
 				if not Check:GetChecked()then
 					-- if not joined the last container needs to be aligned to the last bag and the current container needs to start here
 					_G[Prefix.."Container"..ContNum]:SetPoint("RIGHT", Prefix.."Bag"..(Index - 1), "RIGHT", 6,0);
@@ -367,28 +367,28 @@ function BaudBagOptionsUpdate()
     end
   end
   
-  -- load textbox name (TODO: does not work on first load, why?)
-  _G[Prefix.."NameEditBox"]:SetText(Config[SelectedBags][SelectedContainer].Name or "test");
+  -- load container name into the textbox
+  _G[Prefix.."NameEditBox"]:SetText(BBConfig[SelectedBags][SelectedContainer].Name or "test");
   _G[Prefix.."NameEditBox"]:SetCursorPosition(0);
 
 	-- load background state (initialized here to work around some strange behavior)
 	UIDropDownMenu_Initialize(_G[Prefix.."BackgroundDropDown"], BaudBagOptionsBackgroundDropDown_Initialize);
-	UIDropDownMenu_SetSelectedValue(_G[Prefix.."BackgroundDropDown"], Config[SelectedBags][SelectedContainer].Background);
+	UIDropDownMenu_SetSelectedValue(_G[Prefix.."BackgroundDropDown"], BBConfig[SelectedBags][SelectedContainer].Background);
  
   for Key, Value in ipairs(SliderBars)do
     local Slider = _G[Prefix.."Slider"..Key];
-    Slider:SetValue(Config[SelectedBags][SelectedContainer][Value.SavedVar]);
+    Slider:SetValue(BBConfig[SelectedBags][SelectedContainer][Value.SavedVar]);
   end
 
   for Key, Value in ipairs(CheckButtons)do
     local Button = _G[Prefix.."CheckButton"..Key];
-    Button:SetChecked(Config[SelectedBags][SelectedContainer][Value.SavedVar]);
+    Button:SetChecked(BBConfig[SelectedBags][SelectedContainer][Value.SavedVar]);
   end
   Updating = false;
 end
 
 function BaudBagOptionsSelectContainer(BagSet, Container)
-  SelectedBags = BagSet;
+	SelectedBags = BagSet;
 	SelectedContainer = Container;
-	--BaudBagOptionsUpdate();
+	BaudBagOptionsUpdate();
 end
