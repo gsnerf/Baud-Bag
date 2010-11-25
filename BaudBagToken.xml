@@ -7,7 +7,7 @@
 		</Size>
 		<Layers>
 			<Layer level="BACKGROUND">
-				<FontString name="$parentCount" inherits="GameFontHighlightSmall" justifyH="RIGHT">
+				<FontString name="$parentCount" inherits="NumberFontNormalRight" justifyH="RIGHT">
 					<Size x="38" y="10"/>
 					<Anchors>
 						<Anchor point="TOPLEFT">
@@ -17,7 +17,7 @@
 				</FontString>
 				<Texture name="$parentIcon">
 					<Size>
-						<AbsDimension x="12" y="12"/>
+						<AbsDimension x="14" y="14"/>
 					</Size>
 					<Anchors>
 						<Anchor point="LEFT" relativeTo="$parentCount" relativePoint="RIGHT">
