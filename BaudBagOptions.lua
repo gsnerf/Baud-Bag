@@ -21,7 +21,7 @@ local CheckButtons = {
 };
 
 BaudBagIcons = {
-  [0]		= "Interface\\Buttons\\Button-Backpack-Up",
+  [0]	= "Interface\\Buttons\\Button-Backpack-Up",
   [-1]	= "Interface\\Icons\\INV_Box_02",
   [-2]	= "Interface\\ContainerFrame\\KeyRing-Bag-Icon"
 };
@@ -118,18 +118,18 @@ function BaudBagOptions_OnEvent(self, event, ...)
 end
 
 function BaudBagOptions_OnRefresh(self, event, ...)
-	BaudBag_DebugMsg("OnRefresh was called!");
+	BaudBag_DebugMsg(2, "OnRefresh was called!");
 	BaudBagOptionsUpdate();
 end
 
 function BaudBagOptions_OnOkay(self, event, ...)
-	BaudBag_DebugMsg("'Okay' pressed, saving BBConfig.");
+	BaudBag_DebugMsg(2, "'Okay' pressed, saving BBConfig.");
 	CfgBackup = BBConfig;
 	BaudBagSaveCfg(BBConfig);
 end
 
 function BaudBagOptions_OnCancel(self, event, ...)
-	BaudBag_DebugMsg("'Cancel' pressed, reset to last BBConfig.");
+	BaudBag_DebugMsg(2, "'Cancel' pressed, reset to last BBConfig.");
 	BBConfig = CfgBackup;
 	ReloadConfigDependant();
 end
@@ -166,11 +166,12 @@ function BaudBagEnabledCheck_OnClick(self, event, ...)
     PlaySound("igMainMenuOptionCheckBoxOff");
   else
     PlaySound("igMainMenuOptionCheckBoxOn");
-    BaudBagCloseBagSet(SelectedBags); -- TODO: move to BaudBagBBConfig save?
+    BaudBagCloseBagSet(SelectedBags); -- TODO: move to BaudBagConfig save?
   end
   BBConfig[SelectedBags].Enabled = (self:GetChecked() == 1);
-  --if BBConfig and (BBConfig[2].Enabled == true) then BankFrame:UnregisterEvent("BANKFRAME_OPENED") end -- TODO: move to BaudBagBBConfig save?
-  --if BBConfig and (BBConfig[2].Enabled == false) then BankFrame:RegisterEvent("BANKFRAME_OPENED") end -- TODO: move to BaudBagBBConfig save?
+  if BBConfig and (BBConfig[2].Enabled == true) then BankFrame:UnregisterEvent("BANKFRAME_OPENED") end -- TODO: move to BaudBagBBConfig save?
+  if BBConfig and (BBConfig[2].Enabled == false) then BankFrame:RegisterEvent("BANKFRAME_OPENED") end -- TODO: move to BaudBagBBConfig save?
+  BackpackTokenFrame_Update();
 end
 
 
@@ -247,7 +248,7 @@ function BaudBagOptionsCheckButton_OnClick(self, event, ...)
   local SavedVar = CheckButtons[self:GetID()].SavedVar;
   BBConfig[SelectedBags][SelectedContainer][SavedVar] = (self:GetChecked() == 1);
   if (SavedVar == "BlankTop") or (SavedVar == "RarityColor") then
-		BaudBag_DebugMsg("Want to update container: "..Prefix.."Container"..SelectedBags.."_"..SelectedContainer);
+		BaudBag_DebugMsg(2, "Want to update container: "..Prefix.."Container"..SelectedBags.."_"..SelectedContainer);
     BaudBagUpdateContainer(_G["BaudBagContainer"..SelectedBags.."_"..SelectedContainer]); -- TODO: move to BaudBagBBConfig save?
   end
 end

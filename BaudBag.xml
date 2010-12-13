@@ -80,7 +80,7 @@
 			<OnLoad function="BaudBagContainer_OnLoad" />
 			<OnShow function="BaudBagContainer_OnShow" />
 			<OnHide function="BaudBagContainer_OnHide" />
-      <OnUpdate function="BaudBagContainer_OnUpdate" />
+			<OnUpdate function="BaudBagContainer_OnUpdate" />
 			<OnDragStart function="BaudBagContainer_OnDragStart" />
 			<OnDragStop function="BaudBagContainer_OnDragStop" />
 		</Scripts>
@@ -112,6 +112,11 @@
 					<AbsDimension x="206" y="14" />
 				</Size>
 			</Frame>
+			<Frame name="$parentTokenFrame" inherits="BaudBagTokenFrameTemplate" hidden="true">
+				<Size>
+					<AbsDimension x="206" y="14" />
+				</Size>
+			</Frame>
 		</Frames>
 		<Layers>
 			<Layer>
@@ -125,7 +130,7 @@
 		</Anchors>
 		<Scripts>
 			<OnLoad function="BaudBagSubBag_OnLoad" />
-      <OnEvent function="BaudBagSubBag_OnEvent" />
+			<OnEvent function="BaudBagSubBag_OnEvent" />
 		</Scripts>
 	</Frame>
 	
@@ -167,6 +172,22 @@
 			<Frame name="$parentBagsFrame" inherits="BaudBagBagsFrameTemplate">
 				<Frames>
 					<Frame name="BaudBagBankSlotPurchaseFrame" setAllPoints="true" parent="BaudBagContainer2_1BagsFrame">
+						<Layers>
+							<Layer level="BACKGROUND">
+								<FontString name="$parentSlotCost" inherits="GameFontHighlight" text="Slot:" justifyH="LEFT">
+									<Size>
+										<AbsDimension x="30" y="20" />
+									</Size>
+									<Anchors>
+										<Anchor point="BOTTOMLEFT">
+											<Offset>
+												<AbsDimension x="15" y="25" />
+											</Offset>
+										</Anchor>
+									</Anchors>
+								</FontString>
+							</Layer>
+						</Layers>
 						<Frames>
 							<Button name="BaudBagBankSlotPurchaseButton" inherits="UIPanelButtonTemplate" text="BANKSLOTPURCHASE">
 								<Size>
@@ -191,9 +212,9 @@
 								</Anchors>
 								<Scripts>
 									<OnClick>
-                    PlaySound("igMainMenuOption");
-                    StaticPopup_Show("CONFIRM_BUY_BANK_SLOT");
-                  </OnClick>
+										PlaySound("igMainMenuOption");
+										StaticPopup_Show("CONFIRM_BUY_BANK_SLOT");
+									</OnClick>
 								</Scripts>
 							</Button>
 							<Frame name="$parentMoneyFrame" inherits="SmallMoneyFrameTemplate">
@@ -202,28 +223,12 @@
 								</Anchors>
 								<Scripts>
 									<OnLoad>
-                    SmallMoneyFrame_OnLoad(self);
-                    MoneyFrame_SetType(self, "STATIC");
-                  </OnLoad>
+										SmallMoneyFrame_OnLoad(self);
+										MoneyFrame_SetType(self, "STATIC");
+									</OnLoad>
 								</Scripts>
 							</Frame>
 						</Frames>
-						<Layers>
-							<Layer level="BACKGROUND">
-								<FontString name="$parentSlotCost" inherits="GameFontHighlight" text="Slot:" justifyH="LEFT">
-									<Size>
-										<AbsDimension x="30" y="20" />
-									</Size>
-									<Anchors>
-										<Anchor point="BOTTOMLEFT">
-											<Offset>
-												<AbsDimension x="15" y="25" />
-											</Offset>
-										</Anchor>
-									</Anchors>
-								</FontString>
-							</Layer>
-						</Layers>
 					</Frame>
 				</Frames>
 			</Frame>

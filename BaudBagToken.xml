@@ -17,11 +17,11 @@
 				</FontString>
 				<Texture name="$parentIcon">
 					<Size>
-						<AbsDimension x="14" y="14"/>
+						<AbsDimension x="12" y="12"/>
 					</Size>
 					<Anchors>
 						<Anchor point="LEFT" relativeTo="$parentCount" relativePoint="RIGHT">
-							<Offset x="0" y="0"/>
+							<Offset x="1" y="0"/>
 						</Anchor>
 					</Anchors>
 				</Texture>
@@ -46,24 +46,10 @@
 		</Scripts>
 	</Button>
 	
-	<Frame name="BaudBagTokenFrame" parent="UIParent" hidden="true">
+	<!--<Frame name="BaudBagTokenFrame" parent="UIParent" hidden="true">
 		<Size>
-			<AbsDimension x="183" y="32"/>
+			<AbsDimension y="32"/>
 		</Size>
-		<Layers>
-			<Layer level="BACKGROUND">
-				<Texture file="Interface\ContainerFrame\UI-Backpack-TokenFrame">
-					<Size>
-						<AbsDimension x="256" y="32"/>
-					</Size>
-					<Anchors>
-						<Anchor point="TOPLEFT">
-							<Offset x="0" y="0"/>
-						</Anchor>
-					</Anchors>
-				</Texture>
-			</Layer>
-		</Layers>
 		<Frames>
 			<Button name="$parentToken1" inherits="BaudBagTokenTemplate" id="1">
 				<Anchors>
@@ -83,6 +69,49 @@
 				<Anchors>
 					<Anchor point="LEFT" relativeTo="$parentToken2" relativePoint="RIGHT">
 						<Offset x="2" y="0"/>
+					</Anchor>
+				</Anchors>
+			</Button>
+		</Frames>
+	</Frame>-->
+
+	<Frame name="BaudBagTokenFrameTemplate" hidden="true" virtual="true">
+		<Size>
+			<AbsDimension y="32"/>
+		</Size>
+		<Frames>
+			<Button name="$parentToken1" inherits="BaudBagTokenTemplate" id="1">
+				<Anchors>
+					<Anchor point="RIGHT">
+						<Offset x="-13" y="0"/>
+					</Anchor>
+				</Anchors>
+			</Button>
+			<Button name="$parentToken2" inherits="BaudBagTokenTemplate" id="2">
+				<Anchors>
+					<Anchor point="RIGHT" relativeTo="$parentToken1" relativePoint="LEFT">
+						<Offset x="-2" y="0"/>
+					</Anchor>
+				</Anchors>
+			</Button>
+			<Button name="$parentToken3" inherits="BaudBagTokenTemplate" id="3">
+				<Anchors>
+					<Anchor point="RIGHT" relativeTo="$parentToken2" relativePoint="LEFT">
+						<Offset x="-2" y="0"/>
+					</Anchor>
+				</Anchors>
+			</Button>
+			<Button name="$parentToken4" inherits="BaudBagTokenTemplate" id="4">
+				<Anchors>
+					<Anchor point="RIGHT" relativeTo="$parentToken3" relativePoint="LEFT">
+						<Offset x="-2" y="0"/>
+					</Anchor>
+				</Anchors>
+			</Button>
+			<Button name="$parentToken5" inherits="BaudBagTokenTemplate" id="5">
+				<Anchors>
+					<Anchor point="RIGHT" relativeTo="$parentToken4" relativePoint="LEFT">
+						<Offset x="-2" y="0"/>
 					</Anchor>
 				</Anchors>
 			</Button>

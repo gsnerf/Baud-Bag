@@ -1,11 +1,18 @@
 ﻿-- Author      : gsnerf
 -- Create Date : 11/14/2010 11:52:55 PM
 
-local BaudBag_Debug = true;
-function BaudBag_DebugMsg(msg)
-  if BaudBag_Debug then
-    DEFAULT_CHAT_FRAME:AddMessage("BaudBag: "..msg);
-  end
+local BaudBag_DebugCfg = {
+	{ Name = "Config", Active = false},
+	{ Name = "Options", Active = false},
+	{ Name = "Token", Active = false},
+	{ Name = "Bags", Active = false},
+	{ Name = "Bank", Active = false}
+};
+
+function BaudBag_DebugMsg(type, msg)
+	if (BaudBag_DebugCfg[type].Active) then
+		DEFAULT_CHAT_FRAME:AddMessage(GetTime().." BaudBag ("..BaudBag_DebugCfg[type].Name.."): "..msg);
+	end
 end
 
 
@@ -16,10 +23,10 @@ end
 function BaudBagForEachBag(BagSet, Func)
 --[[
 	BagsSet Indices:
-		1 == inventory; 2 == bank
+		 1 == inventory;   2 == bank
 	Bag Indices:
-	 -4 == tokens bag; -2 == keyring;          -1 == bank
-		0 == backpack;  1-4 == inventory bags; 5-11 == bank bags
+		-4 == tokens bag; -2 == keyring;          -1 == bank
+		 0 == backpack;  1-4 == inventory bags; 5-11 == bank bags
 ]]--
   if (BagSet==1) then
 		-- regular bags
@@ -64,4 +71,15 @@ function ShowHyperlink(Owner, Link)
   end
   GameTooltip:SetHyperlink(ItemString);
   return true;
+end
+
+function BaudBag_InitTexturePiece(Texture, File, Width, Height, MinX, MaxX, MinY, MaxY, Layer)
+  Texture:ClearAllPoints();
+  -- Texture:SetTexture(1.0, 0, 0, 1);
+  Texture:SetTexture(File);
+  Texture:SetTexCoord(MinX / Width, (MaxX + 1) / Width, MinY / Height, (MaxY + 1) / Height);
+  Texture:SetWidth(MaxX - MinX + 1);
+  Texture:SetHeight(MaxY - MinY + 1);
+  Texture:SetDrawLayer(Layer);
+  Texture:Show();
 end

@@ -6,29 +6,45 @@
 	The original frame has to be called in two cases:
 	1. BaudBag is not enabled for the backpack
 	2. The user disabled to show the frame in the options (TODO: not implemented yet!!!)
-	
-	NOTICE:
-	As the BaudBag_Cfg only needs to be READ here (no local changes whatsoever) it is read directly
-	from the automatically saved BaudBag_Cfg instead of handling a local copy of the variable!
+
+	Additionally to the self rendering in our bags (done in BaudBag.lua BaudBagUpdateBackground()) the max trackable tokens are raised to 5.
 ]]--
+MAX_WATCHED_TOKENS_ORIG = MAX_WATCHED_TOKENS;
+MAX_WATCHED_TOKENS_BAUD_BAG = 5;
+
+-- MAX_WATCHED_TOKENS = function()
+	-- BaudBag_DebugMsg(3, "Accessing MAX_WATCHED_TOKENS");
+	-- if (BBConfig and BBConfig[1].Enabled == false) then
+		-- BaudBag_DebugMsg(3, "BaudBag disabled for Backpack, returning original!");
+		-- return MAX_WATCHED_TOKENS_ORIG;
+	-- end
+	-- 
+	-- return MAX_WATCHED_TOKENS_BAUD_BAG;
+-- end
 
 local pre_BackpackTokenFrame_Update = BackpackTokenFrame_Update;
 BackpackTokenFrame_Update = function()
-	BaudBag_DebugMsg("Update was called on BaudBagTokenFrame");
+	BaudBag_DebugMsg(3, "Update was called on TokenFrame");
 	-- make sure the old is called when BaudBag is disabled for the backpack
-	if (BaudBag_Cfg and BaudBag_Cfg[1].Enabled == false) then
-		BaudBag_DebugMsg("BaudBag disabled for Backpack, calling original!");
+	if (BBConfig and BBConfig[1].Enabled == false) then
+		BaudBag_DebugMsg(3, "BaudBag disabled for Backpack, calling original!");
+		MAX_WATCHED_TOKENS = MAX_WATCHED_TOKENS_ORIG;
 		return pre_BackpackTokenFrame_Update();
 	end
+	
+	-- get the token frame
+	local TokenFrame = _G["BaudBagContainer1_1TokenFrame"];
 
 	-- do whatever the original does but for our own frame
+	MAX_WATCHED_TOKENS = MAX_WATCHED_TOKENS_BAUD_BAG;
 	local watchButton;
 	local name, count, icon;
 	for i=1, MAX_WATCHED_TOKENS do
 		name, count, icon, itemID = GetBackpackCurrencyInfo(i);
 		-- Update watched tokens
 		if ( name ) then
-			watchButton = _G["BaudBagTokenFrameToken"..i];
+			BaudBag_DebugMsg(3, "Update: Token "..i.." found");
+			watchButton = _G[TokenFrame:GetName().."Token"..i];
 			
 			-- set icon
 			watchButton.icon:SetTexture(icon);
@@ -42,15 +58,17 @@ BackpackTokenFrame_Update = function()
 			
 			-- make visible
 			watchButton:Show();
-			BaudBagTokenFrame.shouldShow = 1;
-			BaudBagTokenFrame.numWatchedTokens = i;
+			TokenFrame.shouldShow = 1;
+			TokenFrame.numWatchedTokens = i;
 			watchButton.itemID = itemID;
 		else
-			_G["BaudBagTokenFrameToken"..i]:Hide();
+			BaudBag_DebugMsg(3, "Update: Token "..i.." NOT found");
+			_G[TokenFrame:GetName().."Token"..i]:Hide();
 			if ( i == 1 ) then
-				BackpackTokenFrame.shouldShow = nil;
+				BaudBag_DebugMsg(3, "Update: Token 1 => hiding backpack");
+				TokenFrame.shouldShow = 0;
 			end
-			_G["BaudBagTokenFrameToken"..i].itemID = nil;
+			_G[TokenFrame:GetName().."Token"..i].itemID = nil;
 		end
 	end
 end
@@ -59,56 +77,54 @@ end
 local pre_GetNumWatchedTokens = GetNumWatchedTokens;
 GetNumWatchedTokens = function()
 	-- make sure the old is called when baudbag is disabled for the bagpack
-	if (BaudBag_Cfg and BaudBag_Cfg[1].Enabled == false) then
-		BaudBag_DebugMsg("BaudBag disabled for Backpack, calling original!");
+	if (BBConfig and BBConfig[1].Enabled == false) then
+		BaudBag_DebugMsg(3, "BaudBag disabled for Backpack, calling original!");
 		return pre_GetNumWatchedTokens();
 	end
 	
-	if (not BaudBagTokenFrame.numWatchedTokens) then
+	local TokenFrame = _G["BaudBagContainer1_1TokenFrame"];
+	
+	if (not TokenFrame.numWatchedTokens) then
 		-- No count yet so get it 
 		BackpackTokenFrame_Update(); 
 	end
-	return BaudBagTokenFrame.numWatchedTokens or 0;
+	return TokenFrame.numWatchedTokens or 0;
 end
 
 local pre_BackpackTokenFrame_IsShown = BackpackTokenFrame_IsShown;
 BackpackTokenFrame_IsShown = function()
-	BaudBag_DebugMsg("IsShown was called on BaudBagTokenFrame");
+	BaudBag_DebugMsg(3, "IsShown was called on BaudBagTokenFrame");
 	-- make sure the old is called when BaudBag is disabled for the backpack
-	if (BaudBag_Cfg and BaudBag_Cfg[1].Enabled == false) then
-		BaudBag_DebugMsg("BaudBag disabled for Backpack, calling original!");
+	if (BBConfig and BBConfig[1].Enabled == false) then
+		BaudBag_DebugMsg(3, "BaudBag disabled for Backpack, calling original!");
 		return pre_BackpackTokenFrame_IsShown();
 	end
 
-	return BaudBagTokenFrame.shouldShow; 
+	return _G["BaudBagContainer1_1TokenFrame"].shouldShow; 
 end
+
 
 local pre_ManageBackpackTokenFrame = ManageBackpackTokenFrame;
 ManageBackpackTokenFrame = function(backpack)
-	BaudBag_DebugMsg("Manage was called on BaudBagTokenFrame");
+	BaudBag_DebugMsg(3, "Manage was called on TokenFrame");
 	-- make sure the old is called when baudbag is disabled for the bagpack
-	if (BaudBag_Cfg and BaudBag_Cfg[1].Enabled == false) then
-		BaudBag_DebugMsg("BaudBag disabled for Backpack, calling original!");
-		pre_ManageBackpackTokenFrame(backpack);
+	if (BBConfig and BBConfig[1].Enabled == false) then
+		BaudBag_DebugMsg(3, "BaudBag disabled for Backpack, calling original!");
+		return pre_ManageBackpackTokenFrame(backpack);
 	end
+	
+	-- get references to all frames needed for the management
+	local TokenFrame = _G["BaudBagContainer1_1TokenFrame"];
+	local Backpack   = _G["BaudBagContainer1_1"];
 
-	if (not backpack) then
-		backpack = _G["BaudBagContainer1_1"];--GetBackpackFrame(); -- TODO!!!
-	end
-	if (not backpack) then
-		-- If still no backpack then we don't show the frame 
-		BaudBagTokenFrame:Hide(); 
-		return; 
-	end
-	if (BackpackTokenFrame_IsShown() and (not BaudBagTokenFrame:IsShown())) then
-		BaudBagTokenFrame:SetParent(backpack); 
-		BaudBagTokenFrame:SetPoint("TOPLEFT", backpack, "BOTTOMLEFT", 0, -BACKPACK_TOKENFRAME_HEIGHT); 
-		--backpack:SetHeight(backpack:GetHeight() + BACKPACK_TOKENFRAME_HEIGHT); 
-		BaudBagTokenFrame:SetWidth(backpack:GetWidth());
-		BaudBagTokenFrame:Show(); 
-	elseif (not BackpackTokenFrame_IsShown() and BaudBagTokenFrame:IsShown()) then 
-		--backpack:SetHeight(backpack:GetHeight() - BACKPACK_TOKENFRAME_HEIGHT); 
-		BaudBagTokenFrame:Hide(); 
+	if (BackpackTokenFrame_IsShown() == 1) and (not TokenFrame:IsShown()) then
+		BaudBag_DebugMsg(3, "Manage: TokenFrame visible, update settings");
+		TokenFrame:Show();
+		BaudBagUpdateContainer(Backpack);
+	elseif (BackpackTokenFrame_IsShown() ~= 1 and TokenFrame:IsShown()) then
+		BaudBag_DebugMsg(3, "Manage: TokenFrame NOT visible, hide it");
+		TokenFrame:Hide(); 
+		BaudBagUpdateContainer(Backpack);
 	end
 end
 
@@ -116,7 +132,7 @@ local pre_BackpackTokenButton_OnClick = BackpackTokenButton_OnClick;
 BackpackTokenButton_OnClick = function(self, button) 
 
 	-- make sure the old is called when baudbag is disabled for the bagpack
-	if (BaudBag_Cfg and BaudBag_Cfg[1].Enabled == false) then
+	if (BBConfig and BBConfig[1].Enabled == false) then
 		pre_BackpackTokenButton_OnClick(self, button);
 	end
 	
