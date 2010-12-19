@@ -17,7 +17,8 @@ local SliderBars = {
 local CheckButtons = {
 	{Text=Localized.AutoOpen,	SavedVar="AutoOpen",	Default=false,	TooltipText=Localized.AutoOpenTooltip},
 	{Text=Localized.BlankOnTop,	SavedVar="BlankTop",	Default=false,	TooltipText=Localized.BlankOnTopTooltip},
-	{Text=Localized.RarityColoring,	SavedVar="RarityColor",	Default=true,	TooltipText=Localized.RarityColoringTooltip}
+	{Text=Localized.RarityColoring,	SavedVar="RarityColor",	Default=true,	TooltipText=Localized.RarityColoringTooltip}--,
+	--{Text=Localized.RarityColoringAltern,	SavedVar="RarityColorAltern",	Default=false,	TooltipText=Localized.RarityColoringAlternTooltip}
 };
 
 BaudBagIcons = {
@@ -201,6 +202,7 @@ function BaudBagOptionsJoinCheck_OnClick(self, event, ...)
     tinsert(BBConfig[SelectedBags], ContNum, BaudBagCopyTable(BBConfig[SelectedBags][ContNum-1]));
   end
   BaudBagOptionsUpdate();
+  BaudUpdateJoinedBags();
 end
 
 
@@ -247,7 +249,7 @@ function BaudBagOptionsCheckButton_OnClick(self, event, ...)
   end
   local SavedVar = CheckButtons[self:GetID()].SavedVar;
   BBConfig[SelectedBags][SelectedContainer][SavedVar] = (self:GetChecked() == 1);
-  if (SavedVar == "BlankTop") or (SavedVar == "RarityColor") then
+  if (SavedVar == "BlankTop") or (SavedVar == "RarityColor") then -- or (SavedVar == "RarityColorAltern") then
 		BaudBag_DebugMsg(2, "Want to update container: "..Prefix.."Container"..SelectedBags.."_"..SelectedContainer);
     BaudBagUpdateContainer(_G["BaudBagContainer"..SelectedBags.."_"..SelectedContainer]); -- TODO: move to BaudBagBBConfig save?
   end

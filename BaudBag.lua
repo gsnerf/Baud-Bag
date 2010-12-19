@@ -710,7 +710,8 @@ function BaudBagUpdateBackground(Container)
 
 		-- Adds the box for the money/slot indicators and if needed the token frame
 		if (Container:GetID() == 1) then
-			if (BackpackTokenFrame_IsShown() == 1) then
+			if (BackpackTokenFrame_IsShown() == 1 and Container:GetName() == "BaudBagContainer1_1") then
+				BaudBag_DebugMsg(3, "Showing Token Frame for Container '"..Container:GetName().."' ("..Container:GetID()..")");
 				-- make sure the window gets big enough and the correct texture is chosen
 				Bottom = Bottom + 39;
 				TextureFile = "Interface\\ContainerFrame\\UI-BackpackBackground.blp";
@@ -799,7 +800,7 @@ function BaudBagUpdateBackground(Container)
 		_G[Container:GetName().."CloseButton"]:SetPoint("TOPRIGHT",Backdrop,"TOPRIGHT",3,3);
 		TextureParent:Show();
 		if (Container:GetID() == 1) then
-			if (BackpackTokenFrame_IsShown() == 1) then
+			if (BackpackTokenFrame_IsShown() == 1 and Container:GetName() == "BaudBagContainer1_1") then
 				_G[Container:GetName().."Slots"]:SetPoint("BOTTOMLEFT",Backdrop,"BOTTOMLEFT",12,26);
 				_G[Container:GetName().."MoneyFrame"]:SetPoint("BOTTOMRIGHT",Backdrop,"BOTTOMRIGHT",0,26);
 				_G[Container:GetName().."TokenFrame"]:SetPoint("BOTTOMRIGHT",Backdrop,"BOTTOMRIGHT",0,4);
@@ -814,7 +815,7 @@ function BaudBagUpdateBackground(Container)
 		_G[Container:GetName().."Name"]:SetPoint("TOPLEFT",(2 + ShiftName),18);
 		_G[Container:GetName().."CloseButton"]:SetPoint("TOPRIGHT",8,28);
 		if (Container:GetID() == 1) then
-			if (BackpackTokenFrame_IsShown() == 1) then
+			if (BackpackTokenFrame_IsShown() == 1  and Container:GetName() == "BaudBagContainer1_1") then
 				_G[Container:GetName().."Slots"]:SetPoint("BOTTOMLEFT",2,-17);
 				_G[Container:GetName().."MoneyFrame"]:SetPoint("BOTTOMRIGHT",8,-18);
 				_G[Container:GetName().."TokenFrame"]:SetPoint("BOTTOMRIGHT",8,-36);
@@ -856,14 +857,14 @@ end
 
 --This function updates the parent containers for each bag, according to the options setup
 function BaudUpdateJoinedBags()
-  BaudBag_DebugMsg(4, "Updating joined bags...");
-  local OpenBags = {};
-  for Bag = -2, LastBagID do
-    OpenBags[Bag] = _G[Prefix.."SubBag"..Bag]:GetParent():IsShown();
-    if OpenBags[Bag]then
-      BaudBag_DebugMsg(4, "Bag open: "..Bag);
-    end
-  end
+	BaudBag_DebugMsg(4, "Updating joined bags...");
+	local OpenBags = {};
+	for Bag = -2, LastBagID do
+		OpenBags[Bag] = _G[Prefix.."SubBag"..Bag]:GetParent():IsShown();
+		if OpenBags[Bag]then
+			BaudBag_DebugMsg(4, "Bag open: "..Bag);
+		end
+	end
   local SubBag, Container, IsOpen, ContNum, BagID;
   local function FinishContainer()
     if IsOpen then
@@ -914,36 +915,36 @@ function BaudUpdateJoinedBags()
 end
 
 function BaudBagUpdateOpenBags()
-  local Open, Frame, Highlight, Highlight2;
-  --The bank bag(-1) has no open indicator
-  for Bag = -2, LastBagID do
-    Frame = _G[Prefix.."SubBag"..Bag];
-    Open	= Frame:IsShown()and Frame:GetParent():IsShown()and not Frame:GetParent().Closing;
-    if (Bag == -2) then
-    	if Open then
-    		BaudBagKeyRingButton:SetButtonState("PUSHED", 1);
-    		KeyRingButton:SetButtonState("PUSHED", 1);
-    	else
-    		BaudBagKeyRingButton:SetButtonState("NORMAL");
-    		KeyRingButton:SetButtonState("NORMAL");
-    	end
-    elseif (Bag == 0) then
-      MainMenuBarBackpackButton:SetChecked(Open);
-    elseif(Bag > 4)then
-      Highlight = _G["BaudBBankBag"..(Bag-4).."HighlightFrameTexture"];
-      Highlight2 = _G["BankFrameBag"..(Bag-4).."HighlightFrameTexture"];
-      if Open then
-        Highlight:Show();
-        Highlight2:Show();
-      else
-        Highlight:Hide();
-        Highlight2:Hide();
-      end
-    elseif(Bag > 0)then
-      _G["CharacterBag"..(Bag-1).."Slot"]:SetChecked(Open);
-      _G["BaudBInveBag"..(Bag-1).."Slot"]:SetChecked(Open);
-    end
-  end
+	local Open, Frame, Highlight, Highlight2;
+	--The bank bag(-1) has no open indicator
+	for Bag = -2, LastBagID do
+		Frame = _G[Prefix.."SubBag"..Bag];
+		Open	= Frame:IsShown()and Frame:GetParent():IsShown()and not Frame:GetParent().Closing;
+		if (Bag == -2) then
+			if Open then
+				BaudBagKeyRingButton:SetButtonState("PUSHED", 1);
+				KeyRingButton:SetButtonState("PUSHED", 1);
+			else
+				BaudBagKeyRingButton:SetButtonState("NORMAL");
+				KeyRingButton:SetButtonState("NORMAL");
+			end
+		elseif (Bag == 0) then
+			MainMenuBarBackpackButton:SetChecked(Open);
+		elseif(Bag > 4)then
+			Highlight  = _G["BaudBBankBag"..(Bag-4).."HighlightFrameTexture"];
+			Highlight2 = _G["BankFrameBag"..(Bag-4).."HighlightFrameTexture"];
+			if Open then
+				Highlight:Show();
+				Highlight2:Show();
+			else
+				Highlight:Hide();
+				Highlight2:Hide();
+			end
+		elseif(Bag > 0)then
+			_G["CharacterBag"..(Bag-1).."Slot"]:SetChecked(Open);
+			_G["BaudBInveBag"..(Bag-1).."Slot"]:SetChecked(Open);
+		end
+	end
 end
 
 --[[
@@ -1215,6 +1216,7 @@ end
 function BaudBagUpdateSubBag(SubBag)
   local Link, Quality, Texture, ItemButton;
   local ShowColor = BBConfig[SubBag.BagSet][SubBag:GetParent():GetID()].RarityColor;
+  --local ShowColorAltern = BBConfig[SubBag.BagSet][SubBag:GetParent():GetID()].RarityColorAltern;
   SubBag.FreeSlots = 0;
   
   for Slot = 1, SubBag.size do
@@ -1251,13 +1253,20 @@ function BaudBagUpdateSubBag(SubBag)
     
     Texture = _G[ItemButton:GetName().."Border"];
     if Quality and (Quality > 1) and ShowColor then
-      Texture:SetVertexColor(GetItemQualityColor(Quality));
-      Texture:Show();
---[[      getglobal(ItemButton:GetName().."Border"):SetVertexColor(GetItemQualityColor(Quality));
-      getglobal(ItemButton:GetName().."Border"):Show();]]
+		-- default with set option
+		-- Texture:SetVertexColor(GetItemQualityColor(Quality));
+		-- alternative rarity coloring
+		if(Quality ~=2)and(Quality ~= 3)and(Quality ~= 4)then
+			Texture:SetVertexColor(GetItemQualityColor(Quality));
+		elseif(Quality == 2)then        --uncommon
+			Texture:SetVertexColor(0.1,1,0,0.5);
+		elseif(Quality == 3)then        --rare
+			Texture:SetVertexColor(0,0.4,0.8,0.8);
+		elseif(Quality == 4)then        --epic
+			Texture:SetVertexColor(0.6,0.2,0.9,0.5);
+		end
+		Texture:Show();
     else
---[[      getglobal(ItemButton:GetName().."NormalTexture"):SetTexture("Interface\\Buttons\\UI-Quickslot2");
-      SetItemButtonNormalTextureVertexColor(ItemButton,1,1,1);]]
       Texture:Hide();
     end
   end

@@ -126,7 +126,7 @@ elseif (Locale == "deDE") then -- Translator: Thurmal
     BlankOnTop = "Leerplätze oben",
     BlankOnTopTooltip = "Nicht von Taschenplätzen belegter Platz im Fenster wird oben angezeigt anstatt unten.",
     RarityColoring = "Seltenheitseinfärbung",
-    RarityColoringTooltip = "Der Rand von Gegenständen wird entsprechend der seltenheit eingefärbt (grün, blau, etc).",
+    RarityColoringTooltip = "Der Rand von Gegenständen wird entsprechend der Seltenheit eingefärbt (grün, blau, etc).",
     Columns = "Spalten - %d",
     ColumnsTooltip = "Anzahl der angezeigten Taschenplätze (Spalten) pro Zeile in der gewählten Tasche.",
     Scale = "Skalierung - %d%%",
