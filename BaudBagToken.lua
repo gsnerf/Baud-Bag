@@ -12,16 +12,6 @@
 MAX_WATCHED_TOKENS_ORIG = MAX_WATCHED_TOKENS;
 MAX_WATCHED_TOKENS_BAUD_BAG = 5;
 
--- MAX_WATCHED_TOKENS = function()
-	-- BaudBag_DebugMsg(3, "Accessing MAX_WATCHED_TOKENS");
-	-- if (BBConfig and BBConfig[1].Enabled == false) then
-		-- BaudBag_DebugMsg(3, "BaudBag disabled for Backpack, returning original!");
-		-- return MAX_WATCHED_TOKENS_ORIG;
-	-- end
-	-- 
-	-- return MAX_WATCHED_TOKENS_BAUD_BAG;
--- end
-
 local pre_BackpackTokenFrame_Update = BackpackTokenFrame_Update;
 BackpackTokenFrame_Update = function()
 	BaudBag_DebugMsg(3, "Update was called on TokenFrame");
