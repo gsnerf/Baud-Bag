@@ -16,16 +16,21 @@ local NumCont = {};
 local BankOpen = false;
 local FadeTime = 0.2;
 local BagsReady;
- 
+
+--[[ CACHING FOR BANK BAGS ]]
+
+--[[ this returns a boolean value wether the data of the chosen bag is cached or not ]]
 local function UseCache(Bag)
   return (((Bag==-1) or (Bag >= 5)) and not BankOpen);
 end
 
-
+--[[ Show the ToolTip for a cached item ]]
 local function ShowCachedTooltip(self, event, ...)
+  -- failsafe if the current item is not a bank item or BB is turned of for the bank
   if BBConfig and (BBConfig[2].Enabled == false) and not (self and (strsub(self:GetName(), 1, 9) == Prefix.."Bank"))then
     return;
   end
+  -- show tooltip for a bag
   local Bag, Slot;
   if self.isBag then
     Bag = self:GetID();
@@ -37,6 +42,7 @@ local function ShowCachedTooltip(self, event, ...)
     end
     return;
   end
+  -- show tooltip for an item inside a bag
   Bag, Slot = self:GetParent():GetID(), self:GetID();
   if not UseCache(Bag) or GameTooltip:IsShown() or not BaudBag_Cache[Bag][Slot] then
     return;
@@ -48,7 +54,7 @@ end
 hooksecurefunc("ContainerFrameItemButton_OnEnter", ShowCachedTooltip);
 hooksecurefunc("BankFrameItemButton_OnEnter", ShowCachedTooltip);
 
---Adds container name when mousing over bags, aswell as simulating offline bank item mouse over
+-- Adds container name when mousing over bags, aswell as simulating offline bank item mouse over
 hooksecurefunc(GameTooltip, "SetInventoryItem", function(Data, Unit, InvID)
   if (Unit ~= "player") then
     return;
@@ -73,7 +79,6 @@ MainMenuBarBackpackButton:HookScript("OnEnter", function(...)
     BaudBagModifyBagTooltip(0);
   end
 end);
-
 
 function BaudBagModifyBagTooltip(BagID)
   if not GameTooltip:IsShown()then
@@ -278,7 +283,7 @@ EventFuncs.MAIL_CLOSED = Func;
 EventFuncs.AUCTION_HOUSE_CLOSED = Func;
 
 Func = function(self, event, ...)
-  BaudBag_DebugMsg(4, "Event "..event.." fired");
+  BaudBag_DebugMsg(4, "Event "..event.." fired for "..self:GetName());
   local arg1 = ...;
   -- if there are new bank slots the whole view has to be updated
   if (event == "PLAYERBANKSLOTS_CHANGED") then
@@ -287,7 +292,7 @@ Func = function(self, event, ...)
       return;
     end
   
-		-- if the main bag is visible make sure the content of the sub-bags is also shown  
+	-- if the main bag is visible make sure the content of the sub-bags is also shown  
     local BankBag = _G[Prefix.."SubBag-1"];
     if BankBag:GetParent():IsShown()then
        BaudBagUpdateSubBag(BankBag);
@@ -298,10 +303,11 @@ Func = function(self, event, ...)
     BagSet = (arg1 ~= -1) and (arg1 <= 4) and 1 or 2;
   end
   local Container = _G[Prefix.."Container"..BagSet.."_1"];
-  if not Container:IsShown()then
+  if not Container:IsShown() then
     return;
   end
   Container.UpdateSlots = true;
+  
 end
 EventFuncs.BAG_UPDATE = Func;
 EventFuncs.BAG_CLOSED = Func;
@@ -395,18 +401,23 @@ end
 
 
 function BaudBagContainer_OnShow(self, event, ...)
-  BaudBag_DebugMsg(4, "BaudBagContainer_OnShow was called");
-  if self.FadeStart then
-    return;
-  end
-  self.FadeStart = GetTime();
-  PlaySound("igBackPackOpen");
-  BaudBagUpdateContainer(self);
-  BaudBagUpdateOpenBags();
-  if (self:GetID() == 1) then
-    BaudBagUpdateFreeSlots(self);
-  end
-  -- If there are tokens watched then decide if we should show the bar
+	BaudBag_DebugMsg(4, "BaudBagContainer_OnShow was called for "..self:GetName());
+	
+	-- check if the container was open before and closing now
+	if self.FadeStart then
+		return;
+	end
+	
+	-- container seems to not be visible, open and update
+	self.FadeStart = GetTime();
+	PlaySound("igBackPackOpen");
+	BaudBagUpdateContainer(self);
+	BaudBagUpdateOpenBags();
+	if (self:GetID() == 1) then
+		BaudBagUpdateFreeSlots(self);
+	end
+	
+	-- If there are tokens watched then decide if we should show the bar
 	if ( ManageBackpackTokenFrame ) then
 		ManageBackpackTokenFrame();
 	end
@@ -414,7 +425,7 @@ end
 
 
 function BaudBagContainer_OnHide(self, event, ...)
-  
+  -- correctly handle if this is called while the container is still fading out
   if self.Closing then
     if self.FadeStart then
       self:Show();
@@ -422,6 +433,7 @@ function BaudBagContainer_OnHide(self, event, ...)
     return;
   end
   
+  -- set vars for fading out ans start process
   self.FadeStart = GetTime();
   self.Closing = true;
   PlaySound("igBackPackClose");
@@ -434,6 +446,11 @@ function BaudBagContainer_OnHide(self, event, ...)
     BaudBagCloseBagSet(2);
   end
   self:Show();
+  
+  -- make sure the search field is closed (and therefor the items are update) before the bag is
+  BaudBagSearchFrame_CheckClose(self);
+  
+  -- TODO: if the bag is closed and there is a search running clear the items inside the bag from the search marks!
 end
 
 
@@ -1150,7 +1167,7 @@ hooksecurefunc("BackpackButton_OnClick",function(self)
 end);
 
 hooksecurefunc("UpdateMicroButtons",function()
-  if BBConfig and(BBConfig[1].Enabled == false)then
+  if BBConfig and (BBConfig[1].Enabled == false) then
     return;
   end
 	if IsBagShown(KEYRING_CONTAINER)then
@@ -1214,7 +1231,7 @@ end
 
 
 function BaudBagUpdateSubBag(SubBag)
-  local Link, Quality, Texture, ItemButton;
+  local Name, Link, Quality, Texture, ItemButton;
   local ShowColor = BBConfig[SubBag.BagSet][SubBag:GetParent():GetID()].RarityColor;
   --local ShowColorAltern = BBConfig[SubBag.BagSet][SubBag:GetParent():GetID()].RarityColorAltern;
   SubBag.FreeSlots = 0;
@@ -1234,13 +1251,13 @@ function BaudBagUpdateSubBag(SubBag)
       end
       
       if Link then
-        Quality = select(3,GetItemInfo(Link));
+        Name, _, Quality, _, _, _, _, _, _, _ = GetItemInfo(Link);
       end
     elseif BaudBag_Cache[SubBag:GetID()][Slot]then
       Link = BaudBag_Cache[SubBag:GetID()][Slot].Link;
       SetItemButtonCount(ItemButton, BaudBag_Cache[SubBag:GetID()][Slot].Count or 0);
       if Link then
-         _, _, Quality, _, _, _, _, _, _, Texture = GetItemInfo(Link);
+         Name, _, Quality, _, _, _, _, _, _, Texture = GetItemInfo(Link);
       else
         Texture = nil;
       end
@@ -1251,19 +1268,20 @@ function BaudBagUpdateSubBag(SubBag)
       SubBag.FreeSlots = SubBag.FreeSlots + 1;
     end
     
-    Texture = _G[ItemButton:GetName().."Border"];
-    if Quality and (Quality > 1) and ShowColor then
+    -- add rarity coloring
+	Texture = _G[ItemButton:GetName().."Border"];
+	if Quality and (Quality > 1) and ShowColor then
 		-- default with set option
 		-- Texture:SetVertexColor(GetItemQualityColor(Quality));
 		-- alternative rarity coloring
 		if(Quality ~=2)and(Quality ~= 3)and(Quality ~= 4)then
 			Texture:SetVertexColor(GetItemQualityColor(Quality));
 		elseif(Quality == 2)then        --uncommon
-			Texture:SetVertexColor(0.1,1,0,0.5);
+			Texture:SetVertexColor(0.1,   1,   0, 0.5);
 		elseif(Quality == 3)then        --rare
-			Texture:SetVertexColor(0,0.4,0.8,0.8);
+			Texture:SetVertexColor(  0, 0.4, 0.8, 0.8);
 		elseif(Quality == 4)then        --epic
-			Texture:SetVertexColor(0.6,0.2,0.9,0.5);
+			Texture:SetVertexColor(0.6, 0.2, 0.9, 0.5);
 		end
 		Texture:Show();
     else
@@ -1615,3 +1633,192 @@ function BaudBagUpdateFromBBConfig()
 		-- BaudBagUpdateName(_G[Prefix.."Container"..BagSet.."_"..SelectedContainer]);
 	end
 end
+
+
+function BaudBagSearchButton_Click(self, event, ...)
+	-- get references to all needed frames and data
+	local SearchFrame	= _G[Prefix.."SearchFrame"];
+	local Container		= self:GetParent();
+	local Scale			= BBConfig[Container.BagSet][Container:GetID()].Scale / 100;
+	local Background	= BBConfig[Container.BagSet][Container:GetID()].Background;
+	local Backdrop		= _G[SearchFrame:GetName().."Backdrop"];
+	local BagSearchHeightOffset = 0;
+	local BagSearchHeight = 20;
+	
+	-- remember the element the search frame is attached to
+	SearchFrame.AttachedTo = Container:GetName();
+	
+	-- draw the background depending on the containers background
+	--Backdrop:SetFrameLevel(SearchFrame:GetFrameLevel());
+	local Left, Right, Top, Bottom;
+	
+	-- these are the default blizz-frames
+	if (Background <= 3) then
+	
+		Left, Right, Top, Bottom = 10, 10, 25, 7;
+		BagSearchHeightOffset = 22;
+		local Parent = Backdrop:GetName().."Textures";
+		TextureParent = _G[Parent];
+		TextureParent:SetFrameLevel(SearchFrame:GetFrameLevel());
+		local Texture;
+		
+		-- choose the correct texture file with correct sizes
+		TextureFile = "Interface\\ContainerFrame\\UI-Bag-Components";
+		if (Background == 2) then
+			TextureFile = TextureFile.."-Bank";
+		elseif (Background == 3)then
+			TextureFile = TextureFile.."-Keyring";
+		end
+		TextureWidth, TextureHeight = 256, 512;
+
+		-- --------------------------
+		-- create new textures now
+		-- --------------------------
+		-- BORDERS FIRST
+		-- transparent circle top left
+		Texture = GetTexturePiece("Left", 106, 117, 5, 30,"ARTWORK");
+		Texture:SetPoint("TOPLEFT");
+
+		-- right end of header + transparent piece for close button (with or without blank part on the bottom)
+		Texture = GetTexturePiece("Right", 223, 252, 5, 30,"ARTWORK");
+		Texture:SetPoint("TOPRIGHT");
+
+		-- container header (contains name, with or without blank part on the bottom)
+		Texture = GetTexturePiece("Center", 117, 222, 5, 30,"ARTWORK");
+		Texture:SetPoint("TOP");
+		Texture:SetPoint("RIGHT",Parent.."Right","LEFT");
+		Texture:SetPoint("LEFT",Parent.."Left","RIGHT");
+
+		-- fix positions of some elements
+		_G[SearchFrame:GetName().."CloseButton"]:SetPoint("TOPRIGHT",Backdrop,"TOPRIGHT",3,3);
+		
+		-- make sure the backdrop of "else" is removed and the texture is actually shown
+		Backdrop:SetBackdrop(nil);
+		TextureParent:Show();
+	else
+		Left, Right, Top, Bottom = 8, 8, 8, 8;
+		BagSearchHeightOffset = 32;
+		BagSearchHeight	= 12;
+		_G[Backdrop:GetName().."Textures"]:Hide();
+		_G[SearchFrame:GetName().."CloseButton"]:SetPoint("TOPRIGHT",9,10);
+		
+		if (Background == 5) then
+			Backdrop:SetBackdrop({
+				bgFile = "Interface\\Buttons\\WHITE8X8",
+				edgeFile = "Interface\\DialogFrame\\UI-DialogBox-Border",
+				tile = true, tileSize = 8, edgeSize = 32,
+				insets = { left = 11, right = 12, top = 12, bottom = 11 }
+			});
+			Left, Right, Top, Bottom = Left+8, Right+8, Top+8, Bottom+8;
+			BagSearchHeightOffset = BagSearchHeightOffset + 8;
+			Backdrop:SetBackdropColor(0.1,0.1,0.1,1);
+		else
+			Backdrop:SetBackdrop({
+				bgFile = "Interface\\Tooltips\\UI-Tooltip-Background",
+				edgeFile = "Interface\\Tooltips\\UI-Tooltip-Border",
+				tile = true, tileSize = 14, edgeSize = 14,
+				insets = { left = 2, right = 2, top = 2, bottom = 2 }
+			});
+			Backdrop:SetBackdropColor(0,0,0,1);
+		end
+	end
+	
+	-- correct the sizes depending on the frame backdrop
+	Backdrop:ClearAllPoints();
+	Backdrop:SetPoint("TOPLEFT",-Left,Top);
+	Backdrop:SetPoint("BOTTOMRIGHT",Right,-Bottom);
+	SearchFrame:SetHitRectInsets(-Left,-Right,-Top,-Bottom);
+	
+	-- position the frame above the calling container
+	SearchFrame:SetPoint("BOTTOMLEFT", self:GetParent(), "TOPLEFT", 0, BagSearchHeightOffset);
+	SearchFrame:SetPoint("RIGHT", self:GetParent(), "RIGHT");
+	SearchFrame:SetHeight(BagSearchHeight);
+	
+	-- make sure the frame lies on the same lvl as the calling container
+	SearchFrame:SetFrameLevel(self:GetParent():GetFrameLevel());
+	_G[SearchFrame:GetName().."CloseButton"]:SetFrameLevel(SearchFrame:GetFrameLevel()+1);
+	
+	-- adjust the scaling according to the calling container
+	SearchFrame:SetScale(Scale);
+	
+	-- finally show it
+	BaudBagSearchFrame:Show();
+	BaudBagSearchFrameEditBox:SetFocus();
+end
+
+function BaudBagSearchFrame_CheckClose(caller)
+	BaudBag_DebugMsg(6, "Checking if searchframe needs to be closed:");
+	if (BaudBagSearchFrame:IsVisible()) then
+		BaudBag_DebugMsg(6, caller:GetName().." "..BaudBagSearchFrame.AttachedTo);
+		local isSelf		= (caller:GetName() == BaudBagSearchFrame:GetName());
+		local isAttached	= (caller:GetName() == BaudBagSearchFrame.AttachedTo);
+		local isClosed		= _G[BaudBagSearchFrame.AttachedTo].Closing or (not _G[BaudBagSearchFrame.AttachedTo]:IsVisible());
+		local selfString	 = isSelf and "true" or "false";
+		local attachedString = isAttached and "true" or "false";
+		local closedString	 = isClosed and "true" or "false";
+		
+		BaudBag_DebugMsg(6, selfString.." "..attachedString.." "..closedString);
+		if (isSelf or (isAttached and isClosed)) then
+			BaudBagSearchFrame:Hide();
+		end
+	end
+end
+
+--[[
+	if the SearchFrame is hidden the search text and any existing search markers needs to be cleared
+ ]]--
+function BaudBagSearchFrame_OnHide(self, event, ...)
+	_G[self:GetName().."EditBox"]:SetText("");
+	BaudBagSearchFrame.AttachedTo = nil;
+	BaudBagSearchFrameEditBox_OnTextChanged(self, false);
+	BaudBagUpdateOpenBags();
+end
+
+function BaudBagSearchFrameEditBox_OnTextChanged(self, isUserInput)
+	BaudBag_DebugMsg(6, "Changed search phrase, researching open bags");
+	local compareString = _G[Prefix.."SearchFrameEditBox"]:GetText();
+	
+	-- go through all bags to find the open ones
+	local Frame, Open, ItemButton, Link, Name, Texture;
+	for Bag = -2, LastBagID do
+		SubBag = _G[Prefix.."SubBag"..Bag];
+		Open	= SubBag:IsShown()and SubBag:GetParent():IsShown() and not SubBag:GetParent().Closing;
+		
+		-- if the bag is open go through its items and compare the itemname
+		if (Open) then
+			BaudBag_DebugMsg(6, "Bag '"..Bag.."' is open, going through items");
+		
+			for Slot = 1, SubBag.size do
+				ItemButton = _G[SubBag:GetName().."Item"..Slot];
+				
+				-- get item link according to the type of bag
+				if (SubBag.BagSet ~= 2) or BankOpen then
+					Link = GetContainerItemLink(SubBag:GetID(), Slot);
+				elseif BaudBag_Cache[SubBag:GetID()][Slot] then
+					Link = BaudBag_Cache[SubBag:GetID()][Slot].Link;
+				end
+				
+				-- get the name for that link
+				if Link then
+					Name, _, _, _, _, _, _, _, _, _ = GetItemInfo(Link);
+				end
+				
+				-- add transparency if search active but not a result
+				Texture = ItemButton;
+				if (Link and compareString ~= "") then
+					BaudBag_DebugMsg(6, "Searching for String: '"..compareString.."' in Item '"..Name.."'");
+					if (string.find(Name, compareString) == nil) then
+						BaudBag_DebugMsg(6, "Itemname does not match");
+						Texture:SetAlpha(0.2);
+					else
+						BaudBag_DebugMsg(6, "Item seems to match");
+						Texture:SetAlpha(1);
+					end
+				else
+					Texture:SetAlpha(1);
+				end
+			end
+		end
+	end
+end
+

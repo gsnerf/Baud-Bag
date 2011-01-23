@@ -6,7 +6,8 @@ local BaudBag_DebugCfg = {
 	{ Name = "Options", Active = false},
 	{ Name = "Token", Active = false},
 	{ Name = "Bags", Active = false},
-	{ Name = "Bank", Active = false}
+	{ Name = "Bank", Active = false},
+	{ Name = "Search", Active = false}
 };
 
 function BaudBag_DebugMsg(type, msg)
