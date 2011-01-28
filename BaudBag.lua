@@ -16,6 +16,7 @@ local NumCont = {};
 local BankOpen = false;
 local FadeTime = 0.2;
 local BagsReady;
+local BagsSearched = {};
 
 --[[ CACHING FOR BANK BAGS ]]
 
@@ -439,12 +440,31 @@ function BaudBagContainer_OnHide(self, event, ...)
   PlaySound("igBackPackClose");
   self.AutoOpened = false;
   BaudBagUpdateOpenBags();
-  if (self.BagSet == 2) and (self:GetID() == 1) then
-    if BankOpen and (BBConfig[2].Enabled == true) then
-      CloseBankFrame();
+  
+  --[[TODO: look into merging the set specific close handling!!!]]--
+  --[[
+    if the option entry requires it close all remaining containers of the bag set
+    (first the bag set so the "offline" title doesn't show up before closing and then the bank to disconnect)
+  ]]--
+  if (self:GetID() == 1) and (BBConfig[self.BagSet].Enabled) and (BBConfig[self.BagSet].CloseAll) then
+	if (self.BagSet == 2) and BankOpen then
+		CloseBankFrame();
     end
-    BaudBagCloseBagSet(2);
+    BaudBagCloseBagSet(self.BagSet);
   end
+  
+  -- -- if first backpack container and option is set close whole bag set
+  -- if (self.BagSet == 1) and (self:GetID() == 1) and (BBConfig[1].Enabled) and (BBConfig[1].CloseAll) then
+	-- BaudBagCloseBagSet(1);
+  -- end
+  -- 
+  -- -- if first bank container close whole bank set
+  -- if (self.BagSet == 2) and (self:GetID() == 1) then
+    -- if BankOpen and (BBConfig[2].Enabled == true) then
+      -- CloseBankFrame();
+    -- end
+    -- BaudBagCloseBagSet(2);
+  -- end
   self:Show();
   
   -- make sure the search field is closed (and therefor the items are update) before the bag is
@@ -496,9 +516,10 @@ end
 function BaudBagToggleBank(self)
   if _G[Prefix.."Container2_1"]:IsShown() then
     _G[Prefix.."Container2_1"]:Hide();
+    BaudBagAutoOpenSet(2, true);
   else
     _G[Prefix.."Container2_1"]:Show();
-    BaudBagAutoOpenSet(2);
+    BaudBagAutoOpenSet(2, false);
   end
 end
 
@@ -987,18 +1008,18 @@ function BaudBagAutoOpenSet(BagSet, Close)
       Container = _G[Prefix.."Container"..BagSet.."_"..ContNum];
       if not Close then
         if not Container:IsShown() then
-					BaudBag_DebugMsg(4, "[AutoOpenSet FOR (IsShown)] FALSE");
+          BaudBag_DebugMsg(4, "[AutoOpenSet FOR (IsShown)] FALSE");
           Container.AutoOpened = true;
           Container:Show();
         else
-					BaudBag_DebugMsg(4, "[AutoOpenSet FOR (IsShown)] TRUE");
+          BaudBag_DebugMsg(4, "[AutoOpenSet FOR (IsShown)] TRUE");
         end
 
       elseif Container.AutoOpened then
-				BaudBag_DebugMsg(4, "[AutoOpenSet FOR (AutoOpened)] TRUE");
+        BaudBag_DebugMsg(4, "[AutoOpenSet FOR (AutoOpened)] TRUE");
         Container:Hide();
       else
-				BaudBag_DebugMsg(4, "[AutoOpenSet FOR (AutoOpened)] FALSE");
+        BaudBag_DebugMsg(4, "[AutoOpenSet FOR (AutoOpened)] FALSE");
       end
     end
   end
@@ -1125,7 +1146,7 @@ ToggleBackpack = function()
 	if this and (this == FuBarPluginBagFuFrame) then
 		OpenAllBags();
 	else
-    ToggleBag(0);
+		ToggleBag(0);
 	end
 end
 
@@ -1770,8 +1791,7 @@ end
 function BaudBagSearchFrame_OnHide(self, event, ...)
 	_G[self:GetName().."EditBox"]:SetText("");
 	BaudBagSearchFrame.AttachedTo = nil;
-	BaudBagSearchFrameEditBox_OnTextChanged(self, false);
-	BaudBagUpdateOpenBags();
+	BaudBagSearchFrameEditBox_RemoveHighlights();
 end
 
 function BaudBagSearchFrameEditBox_OnTextChanged(self, isUserInput)
@@ -1779,7 +1799,7 @@ function BaudBagSearchFrameEditBox_OnTextChanged(self, isUserInput)
 	local compareString = _G[Prefix.."SearchFrameEditBox"]:GetText();
 	
 	-- go through all bags to find the open ones
-	local Frame, Open, ItemButton, Link, Name, Texture;
+	local SubBag, Frame, Open, ItemButton, Link, Name, Texture;
 	for Bag = -2, LastBagID do
 		SubBag = _G[Prefix.."SubBag"..Bag];
 		Open	= SubBag:IsShown()and SubBag:GetParent():IsShown() and not SubBag:GetParent().Closing;
@@ -1787,6 +1807,7 @@ function BaudBagSearchFrameEditBox_OnTextChanged(self, isUserInput)
 		-- if the bag is open go through its items and compare the itemname
 		if (Open) then
 			BaudBag_DebugMsg(6, "Bag '"..Bag.."' is open, going through items");
+			BagsSearched[Bag] = true;
 		
 			for Slot = 1, SubBag.size do
 				ItemButton = _G[SubBag:GetName().."Item"..Slot];
@@ -1807,7 +1828,7 @@ function BaudBagSearchFrameEditBox_OnTextChanged(self, isUserInput)
 				Texture = ItemButton;
 				if (Link and compareString ~= "") then
 					BaudBag_DebugMsg(6, "Searching for String: '"..compareString.."' in Item '"..Name.."'");
-					if (string.find(Name, compareString) == nil) then
+					if (string.find(string.lower(Name), string.lower(compareString)) == nil) then
 						BaudBag_DebugMsg(6, "Itemname does not match");
 						Texture:SetAlpha(0.2);
 					else
@@ -1822,3 +1843,16 @@ function BaudBagSearchFrameEditBox_OnTextChanged(self, isUserInput)
 	end
 end
 
+function BaudBagSearchFrameEditBox_RemoveHighlights()
+	local SubBag, Frame, Open, ItemButton, Link, Name, Texture;
+	for Bag = -2, LastBagID do
+		if (BagsSearched[Bag]) then
+			SubBag = _G[Prefix.."SubBag"..Bag];
+			for Slot = 1, SubBag.size do
+				ItemButton = _G[SubBag:GetName().."Item"..Slot];
+				ItemButton:SetAlpha(1);
+			end
+			BagsSearched[Bag] = false;
+		end
+	end
+end

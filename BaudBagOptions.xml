@@ -120,6 +120,9 @@
 			</Frame>
 
 			<CheckButton name="$parentEnabledCheck" inherits="OptionsCheckButtonTemplate">
+				<HitRectInsets>
+					<AbsInset left="0" right="-70" top="0" bottom="0"/>
+				</HitRectInsets>
 				<Anchors>
 					<Anchor point="TOPLEFT" relativeTo="$parentSetDropDown" relativePoint="TOPRIGHT">
 						<Offset>
@@ -129,6 +132,19 @@
 				</Anchors>
 				<Scripts>
 					<OnClick function="BaudBagEnabledCheck_OnClick" />
+				</Scripts>
+			</CheckButton>
+
+			<CheckButton name="$parentCloseAllCheck" inherits="OptionsCheckButtonTemplate">
+				<Anchors>
+					<Anchor point="TOPLEFT" relativeTo="$parentEnabledCheck" relativePoint="TOPRIGHT">
+						<Offset>
+							<AbsDimension x="70" y="0" />
+						</Offset>
+					</Anchor>
+				</Anchors>
+				<Scripts>
+					<OnClick function="BaudBagCloseAllCheck_OnClick" />
 				</Scripts>
 			</CheckButton>
 

@@ -31,6 +31,11 @@ function BaudBagRestoreCfg()
 			BBConfig[BagSet].Enabled = true;
     end
     
+    if (type(BBConfig[BagSet].CloseAll) ~= "boolean") then
+			BaudBag_DebugMsg(1, "- close all state for BagSet "..BagSet.." damaged or missing, creating now");
+			BBConfig[BagSet].CloseAll = true;
+    end
+    
     if (type(BBConfig[BagSet].Joined) ~= "table") then
 			BaudBag_DebugMsg(1, "- joins for BagSet "..BagSet.." damaged or missing, creating now");
 			BBConfig[BagSet].Joined = {};

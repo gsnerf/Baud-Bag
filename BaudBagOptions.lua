@@ -17,8 +17,7 @@ local SliderBars = {
 local CheckButtons = {
 	{Text=Localized.AutoOpen,	SavedVar="AutoOpen",	Default=false,	TooltipText=Localized.AutoOpenTooltip},
 	{Text=Localized.BlankOnTop,	SavedVar="BlankTop",	Default=false,	TooltipText=Localized.BlankOnTopTooltip},
-	{Text=Localized.RarityColoring,	SavedVar="RarityColor",	Default=true,	TooltipText=Localized.RarityColoringTooltip}--,
-	--{Text=Localized.RarityColoringAltern,	SavedVar="RarityColorAltern",	Default=false,	TooltipText=Localized.RarityColoringAlternTooltip}
+	{Text=Localized.RarityColoring,	SavedVar="RarityColor",	Default=true,	TooltipText=Localized.RarityColoringTooltip}
 };
 
 BaudBagIcons = {
@@ -70,7 +69,9 @@ function BaudBagOptions_OnEvent(self, event, ...)
 	BaudBagOptionsNameEditBoxText:SetText(Localized.ContainerName);
 	BaudBagOptionsBackgroundDropDownLabel:SetText(Localized.Background);
 	BaudBagOptionsEnabledCheckText:SetText(Localized.Enabled);
-	BaudBagOptionsEnabledCheck.tooltipText = Localized.EnabledTooltip;
+	BaudBagOptionsEnabledCheck.tooltipText  = Localized.EnabledTooltip;
+	BaudBagOptionsCloseAllCheckText:SetText(Localized.CloseAll);
+	BaudBagOptionsCloseAllCheck.tooltipText = Localized.CloseAllTooltip;
 	
 	-- localized checkbox labels
 	for Key, Value in ipairs(CheckButtons) do
@@ -173,6 +174,17 @@ function BaudBagEnabledCheck_OnClick(self, event, ...)
   if BBConfig and (BBConfig[2].Enabled == true) then BankFrame:UnregisterEvent("BANKFRAME_OPENED") end -- TODO: move to BaudBagBBConfig save?
   if BBConfig and (BBConfig[2].Enabled == false) then BankFrame:RegisterEvent("BANKFRAME_OPENED") end -- TODO: move to BaudBagBBConfig save?
   BackpackTokenFrame_Update();
+end
+
+
+--[[ CloseAll CheckBox functions ]]--
+function BaudBagCloseAllCheck_OnClick(self, event, ...)
+	if(self:GetChecked())then
+    PlaySound("igMainMenuOptionCheckBoxOff");
+  else
+    PlaySound("igMainMenuOptionCheckBoxOn");
+  end
+  BBConfig[SelectedBags].CloseAll = (self:GetChecked() == 1);
 end
 
 
@@ -298,6 +310,7 @@ function BaudBagOptionsUpdate()
   
 	-- is the box enabled
 	_G[Prefix.."EnabledCheck"]:SetChecked(BBConfig[SelectedBags].Enabled~=false);
+	_G[Prefix.."CloseAllCheck"]:SetChecked(BBConfig[SelectedBags].CloseAll~=false);
 
 	-- load bag specific options (position and show each button that belongs to the current set,
 	--		check joined box and create container frames)

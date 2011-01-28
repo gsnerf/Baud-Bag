@@ -2,6 +2,7 @@
 
 v4.0.3 (planned)
   - added bag search
+  - added option setting to close the whole bag set when closing the first container of a set
   - added highlighting of container slots when mouse hovers over bags slots in bank or backpack
 
 v4.0.2
