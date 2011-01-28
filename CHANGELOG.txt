@@ -1,0 +1,25 @@
+﻿=== Changelog ===
+
+v4.0.3 (planned)
+  - added bag search
+  - added option setting to close the whole bag set when closing the first container of a set
+  - added highlighting of container slots when mouse hovers over bags slots in bank or backpack
+
+v4.0.2
+  - major restructuring of inner workings
+  - added new token view for up to 5 tokens in the first backpack container
+  - moved options to regular wow options interface
+  - changed rarity coloring to be a bit more discrete (thanks to eldaveo)
+  - added russian and korean translations
+  - fixed cost view for next bank slot
+  
+v4.0.1
+  - fixed auto open issue when visiting a vendor or mail
+
+v4.0.0
+  - updated a big part of the addon to comply with recent changes in the UI-API
+  - updated toc to 40000
+
+=== Known Issues ===
+
+If the columns of the first bagpack container are set to a low value the visible tokens and money may be visible outside the bag frame.
