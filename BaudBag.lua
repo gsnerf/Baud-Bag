@@ -191,7 +191,7 @@ local EventFuncs =
   end,
 
   BANKFRAME_CLOSED = function(self, event, ...)
-	BaudBag_DebugMsg(4, "Event BANKFRAME_CLOSED fired");
+	BaudBag_DebugMsg(5, "Event BANKFRAME_CLOSED fired");
     BankOpen = false;
     BaudBagBankSlotPurchaseButton:Disable();
     if _G[Prefix.."Container2_1"].AutoOpened then
@@ -226,7 +226,7 @@ local EventFuncs =
 --[[ here come functions that will be hooked up to multiple events ]]--
 local Func = function(self, event, ...)
 	
-	BaudBag_DebugMsg(4, "Event "..event.." fired");
+	BaudBag_DebugMsg(5, "Event "..event.." fired");
 	
 	-- set bank open marker if it was opend
   if (event == "BANKFRAME_OPENED") then
@@ -358,6 +358,7 @@ end
 
 -- this just makes sure the bags will be visible at the correct layer position when opened
 function BaudBagBagsFrame_OnShow(self, event, ...)
+	BaudBag_DebugMsg(5, "BaudBagBagsFrame is shown, correcting frame layer lvls of childs");
   --Adjust frame level because of Blizzard's screw up
   local Level = self:GetFrameLevel() + 1;
   for Key, Value in pairs(self:GetChildren())do
@@ -1663,8 +1664,9 @@ function BaudBagSearchButton_Click(self, event, ...)
 	local Scale			= BBConfig[Container.BagSet][Container:GetID()].Scale / 100;
 	local Background	= BBConfig[Container.BagSet][Container:GetID()].Background;
 	local Backdrop		= _G[SearchFrame:GetName().."Backdrop"];
+	local EditBox		= _G[SearchFrame:GetName().."EditBox"];
 	local BagSearchHeightOffset = 0;
-	local BagSearchHeight = 20;
+	local BagSearchHeight		= 20;
 	
 	-- remember the element the search frame is attached to
 	SearchFrame.AttachedTo = Container:GetName();
@@ -1676,10 +1678,10 @@ function BaudBagSearchButton_Click(self, event, ...)
 	-- these are the default blizz-frames
 	if (Background <= 3) then
 	
-		Left, Right, Top, Bottom = 10, 10, 25, 7;
-		BagSearchHeightOffset = 22;
-		local Parent = Backdrop:GetName().."Textures";
-		TextureParent = _G[Parent];
+		Left, Right, Top, Bottom	= 10, 10, 25, 7;
+		BagSearchHeightOffset		= 22;
+		local Parent	= Backdrop:GetName().."Textures";
+		TextureParent	= _G[Parent];
 		TextureParent:SetFrameLevel(SearchFrame:GetFrameLevel());
 		local Texture;
 		
@@ -1707,11 +1709,12 @@ function BaudBagSearchButton_Click(self, event, ...)
 		-- container header (contains name, with or without blank part on the bottom)
 		Texture = GetTexturePiece("Center", 117, 222, 5, 30,"ARTWORK");
 		Texture:SetPoint("TOP");
-		Texture:SetPoint("RIGHT",Parent.."Right","LEFT");
-		Texture:SetPoint("LEFT",Parent.."Left","RIGHT");
+		Texture:SetPoint("RIGHT", Parent.."Right", "LEFT");
+		Texture:SetPoint("LEFT", Parent.."Left", "RIGHT");
 
 		-- fix positions of some elements
 		_G[SearchFrame:GetName().."CloseButton"]:SetPoint("TOPRIGHT",Backdrop,"TOPRIGHT",3,3);
+		_G[SearchFrame:GetName().."EditBox"]:SetPoint("TOPLEFT", -1, 18);
 		
 		-- make sure the backdrop of "else" is removed and the texture is actually shown
 		Backdrop:SetBackdrop(nil);
@@ -1721,8 +1724,10 @@ function BaudBagSearchButton_Click(self, event, ...)
 		BagSearchHeightOffset = 32;
 		BagSearchHeight	= 12;
 		_G[Backdrop:GetName().."Textures"]:Hide();
-		_G[SearchFrame:GetName().."CloseButton"]:SetPoint("TOPRIGHT",9,10);
+		_G[SearchFrame:GetName().."CloseButton"]:SetPoint("TOPRIGHT", 9, 10);
+		_G[SearchFrame:GetName().."EditBox"]:SetPoint("TOPLEFT", -1, 0);
 		
+		-- "solid"
 		if (Background == 5) then
 			Backdrop:SetBackdrop({
 				bgFile = "Interface\\Buttons\\WHITE8X8",
@@ -1732,7 +1737,8 @@ function BaudBagSearchButton_Click(self, event, ...)
 			});
 			Left, Right, Top, Bottom = Left+8, Right+8, Top+8, Bottom+8;
 			BagSearchHeightOffset = BagSearchHeightOffset + 8;
-			Backdrop:SetBackdropColor(0.1,0.1,0.1,1);
+			Backdrop:SetBackdropColor(0.1, 0.1, 0.1, 1);
+		-- "transparent"
 		else
 			Backdrop:SetBackdrop({
 				bgFile = "Interface\\Tooltips\\UI-Tooltip-Background",
@@ -1740,15 +1746,15 @@ function BaudBagSearchButton_Click(self, event, ...)
 				tile = true, tileSize = 14, edgeSize = 14,
 				insets = { left = 2, right = 2, top = 2, bottom = 2 }
 			});
-			Backdrop:SetBackdropColor(0,0,0,1);
+			Backdrop:SetBackdropColor(0.0, 0.0, 0.0, 1.0);
 		end
 	end
 	
 	-- correct the sizes depending on the frame backdrop
 	Backdrop:ClearAllPoints();
-	Backdrop:SetPoint("TOPLEFT",-Left,Top);
-	Backdrop:SetPoint("BOTTOMRIGHT",Right,-Bottom);
-	SearchFrame:SetHitRectInsets(-Left,-Right,-Top,-Bottom);
+	Backdrop:SetPoint("TOPLEFT", -Left, Top);
+	Backdrop:SetPoint("BOTTOMRIGHT", Right, -Bottom);
+	SearchFrame:SetHitRectInsets(-Left, -Right, -Top, -Bottom);
 	
 	-- position the frame above the calling container
 	SearchFrame:SetPoint("BOTTOMLEFT", self:GetParent(), "TOPLEFT", 0, BagSearchHeightOffset);
@@ -1757,7 +1763,9 @@ function BaudBagSearchButton_Click(self, event, ...)
 	
 	-- make sure the frame lies on the same lvl as the calling container
 	SearchFrame:SetFrameLevel(self:GetParent():GetFrameLevel());
+	Backdrop:SetFrameLevel(SearchFrame:GetFrameLevel());
 	_G[SearchFrame:GetName().."CloseButton"]:SetFrameLevel(SearchFrame:GetFrameLevel()+1);
+	_G[SearchFrame:GetName().."EditBox"]:SetFrameLevel(SearchFrame:GetFrameLevel()+1);
 	
 	-- adjust the scaling according to the calling container
 	SearchFrame:SetScale(Scale);
