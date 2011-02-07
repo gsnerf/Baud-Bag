@@ -1,0 +1,120 @@
+﻿<Ui xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns="http://www.blizzard.com/wow/ui/">
+	<Script file="BaudBagToken.lua" />
+
+	<Button name="BaudBagTokenTemplate" hidden="true" virtual="true">
+		<Size>
+			<AbsDimension x="50" y="12"/>
+		</Size>
+		<Layers>
+			<Layer level="BACKGROUND">
+				<FontString name="$parentCount" inherits="NumberFontNormalRight" justifyH="RIGHT">
+					<Size x="38" y="10"/>
+					<Anchors>
+						<Anchor point="TOPLEFT">
+							<Offset x="0" y="0"/>
+						</Anchor>
+					</Anchors>
+				</FontString>
+				<Texture name="$parentIcon">
+					<Size>
+						<AbsDimension x="12" y="12"/>
+					</Size>
+					<Anchors>
+						<Anchor point="LEFT" relativeTo="$parentCount" relativePoint="RIGHT">
+							<Offset x="1" y="0"/>
+						</Anchor>
+					</Anchors>
+				</Texture>
+			</Layer>
+		</Layers>
+		<Scripts>
+			<OnLoad>
+				local name = self:GetName();
+				self.icon = _G[name.."Icon"];
+				self.count = _G[name.."Count"];
+			</OnLoad>
+			<OnEnter>
+				GameTooltip:SetOwner(self, "ANCHOR_RIGHT");
+				GameTooltip:SetBackpackToken(self:GetID());
+			</OnEnter>
+			<OnLeave>
+				GameTooltip:Hide();
+			</OnLeave>
+			<OnClick>
+				BackpackTokenButton_OnClick(self, button, down);
+			</OnClick>
+		</Scripts>
+	</Button>
+	
+	<!--<Frame name="BaudBagTokenFrame" parent="UIParent" hidden="true">
+		<Size>
+			<AbsDimension y="32"/>
+		</Size>
+		<Frames>
+			<Button name="$parentToken1" inherits="BaudBagTokenTemplate" id="1">
+				<Anchors>
+					<Anchor point="LEFT">
+						<Offset x="13" y="0"/>
+					</Anchor>
+				</Anchors>
+			</Button>
+			<Button name="$parentToken2" inherits="BaudBagTokenTemplate" id="2">
+				<Anchors>
+					<Anchor point="LEFT" relativeTo="$parentToken1" relativePoint="RIGHT">
+						<Offset x="2" y="0"/>
+					</Anchor>
+				</Anchors>
+			</Button>
+			<Button name="$parentToken3" inherits="BaudBagTokenTemplate" id="3">
+				<Anchors>
+					<Anchor point="LEFT" relativeTo="$parentToken2" relativePoint="RIGHT">
+						<Offset x="2" y="0"/>
+					</Anchor>
+				</Anchors>
+			</Button>
+		</Frames>
+	</Frame>-->
+
+	<Frame name="BaudBagTokenFrameTemplate" hidden="true" virtual="true">
+		<Size>
+			<AbsDimension y="32"/>
+		</Size>
+		<Frames>
+			<Button name="$parentToken1" inherits="BaudBagTokenTemplate" id="1">
+				<Anchors>
+					<Anchor point="RIGHT">
+						<Offset x="-13" y="0"/>
+					</Anchor>
+				</Anchors>
+			</Button>
+			<Button name="$parentToken2" inherits="BaudBagTokenTemplate" id="2">
+				<Anchors>
+					<Anchor point="RIGHT" relativeTo="$parentToken1" relativePoint="LEFT">
+						<Offset x="-2" y="0"/>
+					</Anchor>
+				</Anchors>
+			</Button>
+			<Button name="$parentToken3" inherits="BaudBagTokenTemplate" id="3">
+				<Anchors>
+					<Anchor point="RIGHT" relativeTo="$parentToken2" relativePoint="LEFT">
+						<Offset x="-2" y="0"/>
+					</Anchor>
+				</Anchors>
+			</Button>
+			<Button name="$parentToken4" inherits="BaudBagTokenTemplate" id="4">
+				<Anchors>
+					<Anchor point="RIGHT" relativeTo="$parentToken3" relativePoint="LEFT">
+						<Offset x="-2" y="0"/>
+					</Anchor>
+				</Anchors>
+			</Button>
+			<Button name="$parentToken5" inherits="BaudBagTokenTemplate" id="5">
+				<Anchors>
+					<Anchor point="RIGHT" relativeTo="$parentToken4" relativePoint="LEFT">
+						<Offset x="-2" y="0"/>
+					</Anchor>
+				</Anchors>
+			</Button>
+		</Frames>
+	</Frame>
+</Ui>
