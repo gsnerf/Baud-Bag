@@ -185,9 +185,10 @@ local EventFuncs =
     BBContainer2.Height = 13 + ceil(NUM_BANKBAGSLOTS / 2) * 39;
     BaudBagBankBags_Update();
     BaudBagUpdateFromBBConfig();
-		if BBConfig and (BBConfig[2].Enabled == true) then 
-			BankFrame:UnregisterEvent("BANKFRAME_OPENED"); 
-		end 
+    if BBConfig and (BBConfig[2].Enabled == true) then 
+		BaudBag_DebugMsg(5, "BaudBag enabled for Bank, disable default bank event");
+        BankFrame:UnregisterEvent("BANKFRAME_OPENED"); 
+    end 
   end,
 
   BANKFRAME_CLOSED = function(self, event, ...)
@@ -1646,9 +1647,9 @@ function BaudBagUpdateFromBBConfig()
 		-- make sure the enabled states are current
 		if (BBConfig[BagSet].Enabled ~= true) then
 			BaudBagCloseBagSet(BagSet);
-			if (BagSet == 2) then BankFrame:UnregisterEvent("BANKFRAME_OPENED") end
+			if (BagSet == 2) then BankFrame:RegisterEvent("BANKFRAME_OPENED") end
 		elseif (BagSet == 2) then
-			BankFrame:RegisterEvent("BANKFRAME_OPENED")
+			BankFrame:UnegisterEvent("BANKFRAME_OPENED")
 		end
 		-- now make sure the bag names are up to date
 		-- for Container = 1, 
