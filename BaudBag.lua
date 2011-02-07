@@ -250,6 +250,7 @@ local Func = function(self, event, ...)
 
 	-- everything coming now is only needed if the bank is visible
   if (BBConfig[2].Enabled == false) or (event ~= "BANKFRAME_OPENED") then
+	BaudBag_DebugMsg(5, "Bankframe does not really seem to be open or event was not BANKFRAME_OPENED. Stepping over actually opening the Bankframes");
     return;
   end
   
@@ -1386,6 +1387,8 @@ function BaudBagBankBags_Update()
   local Purchase = BaudBagBankSlotPurchaseFrame;
   local Slots, Full = GetNumBankSlots();
   local BagSlot;
+  
+  BaudBag_DebugMsg(5, "BankBags: updating");
 
   for Bag = 1, NUM_BANKBAGSLOTS do
     BagSlot = _G["BaudBBankBag"..Bag];
@@ -1402,13 +1405,14 @@ function BaudBagBankBags_Update()
 	local BBContainer2 = _G[Prefix.."Container2_1BagsFrame"];
 
   if Full then
+	BaudBag_DebugMsg(5, "BankBags: all bags bought hiding purchase button");
     Purchase:Hide();
     BBContainer2:SetHeight(BBContainer2.Height);
     return;
   end
 
   local Cost = GetBankSlotCost(Slots);
-  BaudBag_DebugMsg(5, "PurchaseFrame: currentCost = "..Cost);
+  BaudBag_DebugMsg(5, "BankBags: buyable bag slots left, currentCost = "..Cost);
 
   -- This line allows the confirmation box to show the cost
   BankFrame.nextSlotCost = Cost;
