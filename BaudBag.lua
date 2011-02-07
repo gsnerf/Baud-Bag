@@ -1653,7 +1653,7 @@ function BaudBagUpdateFromBBConfig()
 			BaudBagCloseBagSet(BagSet);
 			if (BagSet == 2) then BankFrame:RegisterEvent("BANKFRAME_OPENED") end
 		elseif (BagSet == 2) then
-			BankFrame:UnegisterEvent("BANKFRAME_OPENED")
+			BankFrame:UnregisterEvent("BANKFRAME_OPENED")
 		end
 		-- now make sure the bag names are up to date
 		-- for Container = 1, 
