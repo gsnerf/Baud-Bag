@@ -1811,8 +1811,15 @@ function BaudBagSearchFrameEditBox_OnTextChanged(self, isUserInput)
 	BaudBag_DebugMsg(6, "Changed search phrase, researching open bags");
 	local compareString = _G[Prefix.."SearchFrameEditBox"]:GetText();
 	
+	-- check search text for validity
+	if (false) then
+		-- TODO!!!a
+		return
+	end
+	
 	-- go through all bags to find the open ones
 	local SubBag, Frame, Open, ItemButton, Link, Name, Texture;
+	local Status, Result;
 	for Bag = -2, LastBagID do
 		SubBag = _G[Prefix.."SubBag"..Bag];
 		Open	= SubBag:IsShown()and SubBag:GetParent():IsShown() and not SubBag:GetParent().Closing;
@@ -1841,12 +1848,24 @@ function BaudBagSearchFrameEditBox_OnTextChanged(self, isUserInput)
 				Texture = ItemButton;
 				if (Link and compareString ~= "") then
 					BaudBag_DebugMsg(6, "Searching for String: '"..compareString.."' in Item '"..Name.."'");
-					if (string.find(string.lower(Name), string.lower(compareString)) == nil) then
-						BaudBag_DebugMsg(6, "Itemname does not match");
-						Texture:SetAlpha(0.2);
+					
+					-- first run string search and go through results later (because of error handling)
+					Status, Result = pcall(string.find, string.lower(Name), string.lower(compareString));
+					
+					-- find was run successfull: act depending on result
+					if (Status) then
+						--if (string.find(string.lower(Name), string.lower(compareString)) == nil) then
+						if (Result == nil) then
+							BaudBag_DebugMsg(6, "Itemname does not match");
+							Texture:SetAlpha(0.2);
+						else
+							BaudBag_DebugMsg(6, "Item seems to match");
+							Texture:SetAlpha(1);
+						end
+					-- find failed, create debug message
 					else
-						BaudBag_DebugMsg(6, "Item seems to match");
-						Texture:SetAlpha(1);
+						BaudBag_DebugMsg(6, "current search creates problem: ("..Result..")");
+						return;
 					end
 				else
 					Texture:SetAlpha(1);
@@ -1869,3 +1888,26 @@ function BaudBagSearchFrameEditBox_RemoveHighlights()
 		end
 	end
 end
+
+-- local escape_lua_pattern
+-- do
+  -- local matches =
+  -- {
+    -- --["^"] = "%^";
+    -- --["$"] = "%$";
+    -- ["("] = "%(";
+    -- [")"] = "%)";
+    -- --["%"] = "%%";
+    -- --["."] = "%.";
+    -- ["["] = "%[";
+    -- ["]"] = "%]";
+    -- --["*"] = "%*";
+    -- --["+"] = "%+";
+    -- --["-"] = "%-";
+    -- --["?"] = "%?";
+  -- }
+-- 
+  -- function BaudBag(s)
+    -- return (s:gsub(".", matches))
+  -- end
+-- end
