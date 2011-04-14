@@ -105,6 +105,7 @@ end
 
 --[[ NON XML EVENT HANDLERS ]]--
 --[[ these are the custom defined BaudBagFrame event handlers attached to a single event type]]--
+
 local EventFuncs =
 {
 	ADDON_LOADED = function(self, event, ...)
@@ -115,31 +116,31 @@ local EventFuncs =
 		if (arg1 ~= "BaudBag") then return end;
 		
 		-- wtf is earth feature?
-    if (EarthFeature_AddButton) then   --add by Isler
-      EarthFeature_AddButton(
-        {
-          id = "BaudBag";
-          name = Localized.FeatureFrameName;
-          subtext = "BaudBag";
-          tooltip = Localized.FeatureFrameTooltip;
-          icon = "Interface\\Icons\\Spell_Fire_SunKey";
-          callback = function() InterfaceOptionsFrame_OpenToCategory(BaudBagOptionsFrame); end;
-        }
-      );
-    end
+		if (EarthFeature_AddButton) then   --add by Isler
+			EarthFeature_AddButton(
+			{
+				id = "BaudBag";
+				name = Localized.FeatureFrameName;
+				subtext = "BaudBag";
+				tooltip = Localized.FeatureFrameTooltip;
+				icon = "Interface\\Icons\\Spell_Fire_SunKey";
+				callback = function() InterfaceOptionsFrame_OpenToCategory(BaudBagOptionsFrame); end;
+			}
+			);
+		end
  
 		-- init bankcache if not already there
-    if (type(BaudBag_Cache) ~= "table") then
-      BaudBag_Cache = {};
-    end
-    if (type(BaudBag_Cache[-1]) ~= "table") then -- -1 = bank itself
-      BaudBag_Cache[-1] = {Size = NUM_BANKGENERIC_SLOTS};
-    end
+		if (type(BaudBag_Cache) ~= "table") then
+			BaudBag_Cache = {};
+		end
+		if (type(BaudBag_Cache[-1]) ~= "table") then -- -1 = bank itself
+			BaudBag_Cache[-1] = {Size = NUM_BANKGENERIC_SLOTS};
+		end
     
-    -- the rest of the bank slots are cleared in the next event
-    BaudBagBankSlotPurchaseButton:Disable();
+		-- the rest of the bank slots are cleared in the next event
+		BaudBagBankSlotPurchaseButton:Disable();
     
-  end,
+	end,
 
   PLAYER_LOGIN = function(self, event, ...)
 	BaudBag_DebugMsg(4, "Event PLAYER_LOGIN fired");
@@ -154,6 +155,11 @@ local EventFuncs =
       -- the slot name before "BagXSlot" has to be 10 chars long or else this will HARDCRASH
       BagSlot	= CreateFrame("CheckButton", "BaudBInveBag"..(Bag - 1).."Slot", BBContainer1, "BagSlotButtonTemplate");
       BagSlot:SetPoint("TOPLEFT", 8, -8 - (Bag - 1) * 39);
+      BagSlot.HighlightBag = false;
+      BagSlot.Bag = Bag;
+      BagSlot:HookScript("OnEnter", BaudBag_BagSlot_OnEnter);
+      BagSlot:HookScript("OnUpdate", BaudBag_BagSlot_OnUpdate);
+      BagSlot:HookScript("OnLeave", BaudBag_BagSlot_OnLeave);
       _G[BagSlot:GetName().."ItemAnim"]:UnregisterAllEvents();
     end
     BBContainer1:SetWidth(13 + 39);
@@ -164,7 +170,10 @@ local EventFuncs =
       -- the slot name before "BankBagX" has to be 10 chars long or else this will HARDCRASH
       BagSlot = CreateFrame("Button", "BaudBBankBag"..Bag, BBContainer2, "BankItemButtonBagTemplate");
       BagSlot:SetID(Bag + 4);
+      BagSlot.Bag = Bag + 4;
       BagSlot:SetPoint("TOPLEFT",8 + mod(Bag - 1, 2) * 39, -8 - floor((Bag - 1) / 2) * 39);
+      BagSlot:HookScript("OnEnter", BaudBag_BagSlot_OnEnter);
+      BagSlot:HookScript("OnLeave", BaudBag_BagSlot_OnLeave);
       
       -- init cache for the current bank bag
       if (type(BaudBag_Cache[Bag + 4]) ~= "table") then
@@ -902,57 +911,58 @@ function BaudUpdateJoinedBags()
 	local OpenBags = {};
 	for Bag = -2, LastBagID do
 		OpenBags[Bag] = _G[Prefix.."SubBag"..Bag]:GetParent():IsShown();
-		if OpenBags[Bag]then
+		if OpenBags[Bag] then
 			BaudBag_DebugMsg(4, "Bag open: "..Bag);
 		end
 	end
-  local SubBag, Container, IsOpen, ContNum, BagID;
-  local function FinishContainer()
-    if IsOpen then
-      BaudBag_DebugMsg(4, "Showing Container "..Container:GetName());
-      Container:Show();
-    else
-      BaudBag_DebugMsg(4, "Hiding Container "..Container:GetName());
-      Container:Hide();
-    end
-    BaudBagUpdateContainer(Container);
-  end
+	
+	local SubBag, Container, IsOpen, ContNum, BagID;
+	local function FinishContainer()
+		if IsOpen then
+			BaudBag_DebugMsg(4, "Showing Container "..Container:GetName());
+			Container:Show();
+		else
+			BaudBag_DebugMsg(4, "Hiding Container "..Container:GetName());
+			Container:Hide();
+		end
+		BaudBagUpdateContainer(Container);
+	end
 
-  for BagSet = 1, 2 do
-    ContNum = 0;
-    BaudBagForEachBag(BagSet, function(Bag, Index)
-      if (ContNum==0) or (BBConfig[BagSet].Joined[Index] == false) then
-        if (ContNum ~= 0) then
-          FinishContainer();
-        end
-        IsOpen = false;
-        ContNum = ContNum + 1;
-        if (MaxCont[BagSet] < ContNum) then
-          Container = CreateFrame("Frame",Prefix.."Container"..BagSet.."_"..ContNum, UIParent, "BaudBagContainerTemplate");
-          Container:SetID(ContNum);
-          Container.BagSet = BagSet;
-          MaxCont[BagSet] = ContNum;
-        end
-        Container = _G[Prefix.."Container"..BagSet.."_"..ContNum];
-        Container.Bags = {};
-        BaudUpdateContainerData(BagSet,ContNum);
-      end
-      SubBag = _G[Prefix.."SubBag"..Bag];
-      tinsert(Container.Bags, SubBag);
-      SubBag:SetParent(Container);
-      if OpenBags[Bag]then
-        IsOpen = true;
-      end
-    end);
-    FinishContainer();
+	for BagSet = 1, 2 do
+	ContNum = 0;
+	BaudBagForEachBag(BagSet, function(Bag, Index)
+		if (ContNum==0) or (BBConfig[BagSet].Joined[Index] == false) then
+			if (ContNum ~= 0) then
+				FinishContainer();
+			end
+			IsOpen = false;
+			ContNum = ContNum + 1;
+			if (MaxCont[BagSet] < ContNum) then
+				Container = CreateFrame("Frame",Prefix.."Container"..BagSet.."_"..ContNum, UIParent, "BaudBagContainerTemplate");
+				Container:SetID(ContNum);
+				Container.BagSet = BagSet;
+				MaxCont[BagSet] = ContNum;
+			end
+			Container = _G[Prefix.."Container"..BagSet.."_"..ContNum];
+			Container.Bags = {};
+			BaudUpdateContainerData(BagSet,ContNum);
+		end
+		SubBag = _G[Prefix.."SubBag"..Bag];
+		tinsert(Container.Bags, SubBag);
+		SubBag:SetParent(Container);
+		if OpenBags[Bag]then
+			IsOpen = true;
+		end
+	end);
+	FinishContainer();
 
-    NumCont[BagSet] = ContNum;
-    --Hide extra containers that were created before
-    for ContNum = (ContNum + 1), MaxCont[BagSet]do
-      _G[Prefix.."Container"..BagSet.."_"..ContNum]:Hide();
-    end
-  end
-  BagsReady = true;
+	NumCont[BagSet] = ContNum;
+	--Hide extra containers that were created before
+	for ContNum = (ContNum + 1), MaxCont[BagSet]do
+		_G[Prefix.."Container"..BagSet.."_"..ContNum]:Hide();
+	end
+	end
+	BagsReady = true;
 end
 
 function BaudBagUpdateOpenBags()
@@ -1215,28 +1225,28 @@ local SubBagEvents = {
 	BAG_UPDATE = function(self, event, ...)
 		-- only update if this bag needs to be updated
 		local arg1 = ...;
-    if (self:GetID() ~= arg1) then
-      return;
-    end
-    
-    -- BAG_UPDATE is the only event called when a bag is added, so if no bag existed before, refresh
-    if (self.size > 0) then
-      ContainerFrame_Update(self);
-      BaudBagUpdateSubBag(self);
-    else
-      self:GetParent().Refresh = true;
-    end
-  end,
+		if (self:GetID() ~= arg1) then
+			return;
+		end
+		
+		-- BAG_UPDATE is the only event called when a bag is added, so if no bag existed before, refresh
+		if (self.size > 0) then
+			ContainerFrame_Update(self);
+			BaudBagUpdateSubBag(self);
+		else
+			self:GetParent().Refresh = true;
+		end
+	end,
 
-  BAG_CLOSED = function(self, event, ...)
+	BAG_CLOSED = function(self, event, ...)
 		local arg1 = ...;
-    if (self:GetID() ~= arg1) then
-      return;
-    end
-    -- self event occurs when bags are swapped too, but updated information is not immediately
-    -- available to the addon, so the bag must be updated later.
-    self:GetParent().Refresh = true;
-  end
+		if (self:GetID() ~= arg1) then
+		  return;
+		end
+		-- self event occurs when bags are swapped too, but updated information is not immediately
+		-- available to the addon, so the bag must be updated later.
+		self:GetParent().Refresh = true;
+	end
 };
 
 local Func = function(self, event, ...)
@@ -1311,6 +1321,12 @@ function BaudBagUpdateSubBag(SubBag)
     else
       Texture:Hide();
     end
+    
+    -- highlight the slots to show the connection to the bag
+    if (SubBag.Highlight) then
+		Texture:SetVertexColor(0.5, 0.5, 0, 1);
+		Texture:Show();
+	end
   end
 end
 
@@ -1911,3 +1927,36 @@ end
     -- return (s:gsub(".", matches))
   -- end
 -- end
+
+--[[ if the mouse hovers over the bag slot item the slots belonging to this bag should be shown after a certain time (atm 350ms or 0.35s) ]]
+function BaudBag_BagSlot_OnEnter(self, event, ...)
+	BaudBag_DebugMsg(7, "Mouse is hovering above item");
+	self.HighlightBag		= true;
+	self.HighlightBagOn		= false;
+	self.HighlightBagCount	= GetTime() + 0.35;
+end
+
+--[[ determine if and how long the mouse was hovering and change bag according ]]
+function BaudBag_BagSlot_OnUpdate(self, event, ...)
+	if (self.HighlightBag and (not self.HighlightBagOn) and GetTime() >= self.HighlightBagCount) then
+		BaudBag_DebugMsg(7, "showing item '"..self:GetName().."'");
+		self.HighlightBagOn	= true;
+		local SubBag		= _G[Prefix.."SubBag"..self.Bag];
+		SubBag.Highlight	= true;
+		BaudBagUpdateSubBag(SubBag);
+	end
+end
+
+--[[ if the mouse was removed cancel all actions ]]
+function BaudBag_BagSlot_OnLeave(self, event, ...)
+	BaudBag_DebugMsg(7, "Mouse not hovering above item anymore");
+	self.HighlightBag		= false;
+	
+	if (self.HighlightBagOn) then
+		self.HighlightBagOn	= false;
+		local SubBag		= _G[Prefix.."SubBag"..self.Bag];
+		SubBag.Highlight	= false;
+		BaudBagUpdateSubBag(SubBag);
+	end
+	
+end
