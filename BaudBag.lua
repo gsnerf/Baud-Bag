@@ -1049,6 +1049,7 @@ local pre_OpenBackpack = OpenBackpack;
 OpenBackpack = function() 
 	BaudBag_DebugMsg(4, "[OpenBackpack] opened!");
 	if BBConfig and (BBConfig[1].Enabled == false) then
+        BaudBag_DebugMsg(4, "[OpenBackpack] somethings not right, sending to blizz-bags!");
 		pre_OpenBackpack();
 	end
 end
@@ -1056,6 +1057,7 @@ end
 -- save the original ToggleBag function before overwriting with own
 local pre_ToggleBag = ToggleBag;
 ToggleBag = function(id)
+    BaudBag_DebugMsg(4, "[ToggleBag] toggeled! ("..id..")");
 	-- this does not work anymore (this does not exist anymore)
   -- local self = this;
   
@@ -1110,8 +1112,10 @@ end
 
 local pre_OpenAllBags = OpenAllBags;
 OpenAllBags = function(forceOpen)
+    BaudBag_DebugMsg(4, "[OpenAllBags] called");
 	-- call default bags if the addon is disabled for regular bags
   if BBConfig and(BBConfig[1].Enabled == false) then
+    BaudBag_DebugMsg(4, "[OpenAllBags] called");
     return pre_OpenAllBags(forceOpen);
   end
   
@@ -1147,8 +1151,10 @@ end
 
 local pre_ToggleBackpack = ToggleBackpack;
 ToggleBackpack = function()
+    BaudBag_DebugMsg(4, "[ToggleBackpack] called");
 	-- make sure the old is called when BaudBag is disabled for the backpack
 	if BBConfig and (BBConfig[1].Enabled == false) then
+        BaudBag_DebugMsg(4, "[ToggleBackpack] called");
 		return pre_ToggleBackpack();
 	end
 	
@@ -1175,10 +1181,22 @@ ToggleKeyRing = function(self)
   ToggleBag(-2);
 end
 
-
 local function IsBagShown(BagID)
   local SubBag = _G[Prefix.."SubBag"..BagID];
   return SubBag:IsShown()and SubBag:GetParent():IsShown()and not SubBag:GetParent().Closing;
+end
+
+local pre_IsBagOpen = IsBagOpen;
+IsBagOpen = function(BagID)
+    -- make sure we really may give an answer else return answer from original addon
+    local bagContainer = (BagID > -1 and BagID <= NUM_BAG_FRAMES);
+    local bankContainer = (BagID > ITEM_INVENTORY_BANK_BAG_OFFSET and BagID <= ITEM_INVENTORY_BANK_BAG_OFFSET + NUM_BANKBAGSLOTS);
+    if (not BBConfig or (bagContainer and BBConfig[1].Enabled == false) or (bankContainer and BBConfig[2].Enabled == false)) then
+        return pre_IsBagOpen(BagID);
+    end
+    
+    local SubBag = _G[Prefix.."SubBag"..BagID];
+    return SubBag and SubBag:IsShown() and SubBag:GetParent():IsShown() and not SubBag:GetParent().Closing;
 end
 
 
@@ -1959,4 +1977,34 @@ function BaudBag_BagSlot_OnLeave(self, event, ...)
 		BaudBagUpdateSubBag(SubBag);
 	end
 	
+end
+
+-- TODO: this HAS to stay temporary! the whole addon needs an overhaul according to the recent changes in the official bag code!!!
+
+local pre_ToggleAllBags = ToggleAllBags;
+ToggleAllBags = function()
+    BaudBag_DebugMsg(4, "[ToggleAllBags] called");
+    return pre_ToggleAllBags();
+end
+
+local pre_OpenBag = OpenBag;
+OpenBag = function(id)
+    -- if there is now baud bag config we most likely do not work correctly => send to original bag frames
+    if (not BBConfig) then
+        return pre_OpenBag(id);
+    end
+
+    if (not IsBagOpen(id)) then
+        ToggleBag(id);
+    end
+end
+
+function CloseBag(id)
+    if (not BBConfig) then
+        return pre_OpenBag(id);
+    end
+
+    if (IsBagOpen(id)) then
+        ToggleBag(id);
+    end
 end
