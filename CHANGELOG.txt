@@ -1,5 +1,8 @@
 ﻿=== Changelog ===
 
+v4.1.0
+  - adopted Changes for Patch 4.1 (new ToggleAllBags behavior)
+
 v4.0.3
   - added bag search (allowing lua style pattern matching)
   - added option setting to close the whole bag set when closing the first container of a set

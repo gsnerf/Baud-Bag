@@ -1050,8 +1050,10 @@ OpenBackpack = function()
 	BaudBag_DebugMsg(4, "[OpenBackpack] opened!");
 	if BBConfig and (BBConfig[1].Enabled == false) then
         BaudBag_DebugMsg(4, "[OpenBackpack] somethings not right, sending to blizz-bags!");
-		pre_OpenBackpack();
+		return pre_OpenBackpack();
 	end
+
+    ToggleBackpack();
 end
 
 -- save the original ToggleBag function before overwriting with own
