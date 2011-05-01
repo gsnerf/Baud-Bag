@@ -1,4 +1,8 @@
 ﻿=== Changelog ===
+v4.1.1
+  - fixed open bags closing when opening merchant window
+  - backpack now opens correctly when all bags are opened even if it is not joined with other bags
+  - corrected backpack toggeling to close or open all bags at once instead of opening closed and closing opened bags
 
 v4.1.0
   - adopted Changes for Patch 4.1 (new ToggleAllBags behavior)
