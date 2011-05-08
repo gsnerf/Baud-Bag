@@ -1233,7 +1233,8 @@ local function IsBagShown(BagID)
 end
 
 local pre_IsBagOpen = IsBagOpen;
-IsBagOpen = function(BagID)
+-- IsBagOpen = function(BagID)
+function BaudBag_IsBagOpen(BagID)
     -- make sure we really may give an answer else return answer from original addon
     local bagContainer = (BagID > -1 and BagID <= NUM_BAG_FRAMES);
     local bankContainer = (BagID > ITEM_INVENTORY_BANK_BAG_OFFSET and BagID <= ITEM_INVENTORY_BANK_BAG_OFFSET + NUM_BANKBAGSLOTS);
@@ -1260,6 +1261,8 @@ IsBagOpen = function(BagID)
 
     return open;
 end
+
+-- hooksecurefunc("IsBagOpen", BaudBag_IsBagOpen);
 
 
 local function UpdateThisHighlight(self)
@@ -1308,12 +1311,14 @@ local SubBagEvents = {
 		if (self:GetID() ~= arg1) then
 			return;
 		end
-		
-		-- BAG_UPDATE is the only event called when a bag is added, so if no bag existed before, refresh
+
+        -- BAG_UPDATE is the only event called when a bag is added, so if no bag existed before, refresh
 		if (self.size > 0) then
+            BaudBag_DebugMsg(4, "Event BAG_UPDATE fired on BagID "..arg1.." (calling ContainerFrame_Update)");
 			ContainerFrame_Update(self);
 			BaudBagUpdateSubBag(self);
 		else
+            BaudBag_DebugMsg(4, "Event BAG_UPDATE fired on BagID "..arg1.." (refreshing)");
 			self:GetParent().Refresh = true;
 		end
 	end,
@@ -1325,6 +1330,7 @@ local SubBagEvents = {
 		end
 		-- self event occurs when bags are swapped too, but updated information is not immediately
 		-- available to the addon, so the bag must be updated later.
+        BaudBag_DebugMsg(4, "Event BAG_CLOSED fired on BagID "..arg1.." (refreshing)");
 		self:GetParent().Refresh = true;
 	end
 };
@@ -2023,7 +2029,39 @@ end
 local pre_ToggleAllBags = ToggleAllBags;
 ToggleAllBags = function()
     BaudBag_DebugMsg(8, "[ToggleAllBags] called");
-    return pre_ToggleAllBags();
+
+    if (not BBConfig) then
+        BaudBag_DebugMsg(8, "[ToggleAllBags] no config found, calling original");
+        return pre_ToggleAllBags();
+    end
+
+    if (BBConfig[1].Enabled) then
+        BaudBag_DebugMsg(8, "[ToggleAllBags] BaudBag bags are active, close & open");
+        
+        local bagsOpen = 0;
+        local totalBags = 1;
+    
+        -- first make sure all bags are closed
+        for i=0, NUM_BAG_FRAMES, 1 do
+            if ( GetContainerNumSlots(i) > 0 ) then     
+                totalBags = totalBags + 1;
+            end
+            if ( BaudBag_IsBagOpen(i) ) then
+                CloseBag(i);
+                bagsOpen = bagsOpen +1;
+            end
+        end
+        
+        -- now correctly open all of them
+        if (bagsOpen < totalBags) then
+            for i=0, NUM_BAG_FRAMES, 1 do
+                OpenBag(i);
+            end
+        end
+    end
+
+    -- if (BBConfig[2].Enabled) then
+    -- end
 
     -- -- copy from BlizzUI
     -- if (not UIParent:IsShown()) then
@@ -2080,7 +2118,8 @@ OpenBag = function(id)
         return pre_OpenBag(id);
     end
 
-    if (not IsBagOpen(id)) then
+    -- if (not IsBagOpen(id)) then
+    if (not BaudBag_IsBagOpen(id)) then
         local Container = _G[Prefix.."SubBag"..id]:GetParent();
         Container:Show();
     end
@@ -2093,7 +2132,8 @@ CloseBag = function(id)
         return pre_CloseBag(id);
     end
 
-    if (IsBagOpen(id)) then
+    -- if (IsBagOpen(id)) then
+    if (BaudBag_IsBagOpen(id)) then
         local Container = _G[Prefix.."SubBag"..id]:GetParent();
         Container:Hide();
     end
