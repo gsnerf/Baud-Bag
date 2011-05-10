@@ -1240,23 +1240,18 @@ function BaudBag_IsBagOpen(BagID)
     local bankContainer = (BagID > ITEM_INVENTORY_BANK_BAG_OFFSET and BagID <= ITEM_INVENTORY_BANK_BAG_OFFSET + NUM_BANKBAGSLOTS);
 
     if (not BBConfig or (bagContainer and BBConfig[1].Enabled == false) or (bankContainer and BBConfig[2].Enabled == false)) then
+        BaudBag_DebugMsg(8, "BaudBag is not responsible for this bag, calling default ui");
         return pre_IsBagOpen(BagID);
     end
     
     local SubBag = _G[Prefix.."SubBag"..BagID];
-    local open = SubBag and SubBag:IsShown() and SubBag:GetParent():IsShown() and not SubBag:GetParent().Closing
-    local openString = "";
-    if (open) then
-        openString = "true";
-    else
-        openString = "false";
-    end
+    local open = SubBag and SubBag:IsShown() and SubBag:GetParent():IsShown() and not SubBag:GetParent().Closing;
 
     if (bagContainer) then
-        BaudBag_DebugMsg(8, "[IsBagOpen] called on bag "..BagID.." with result "..openString);
+        BaudBag_DebugMsg(8, "[IsBagOpen] called on bag "..BagID.." with result "..tostring(open));
     end
     if (bankContainer) then
-        BaudBag_DebugMsg(8, "[IsBagOpen] called on bank bag "..BagID.." with result "..openString);
+        BaudBag_DebugMsg(8, "[IsBagOpen] called on bank bag "..BagID.." with result "..tostring(open));
     end
 
     return open;
@@ -2039,7 +2034,7 @@ ToggleAllBags = function()
         BaudBag_DebugMsg(8, "[ToggleAllBags] BaudBag bags are active, close & open");
         
         local bagsOpen = 0;
-        local totalBags = 1;
+        local totalBags = 0;
     
         -- first make sure all bags are closed
         for i=0, NUM_BAG_FRAMES, 1 do
@@ -2047,7 +2042,7 @@ ToggleAllBags = function()
                 totalBags = totalBags + 1;
             end
             if ( BaudBag_IsBagOpen(i) ) then
-                CloseBag(i);
+                --CloseBag(i);
                 bagsOpen = bagsOpen +1;
             end
         end
@@ -2057,57 +2052,12 @@ ToggleAllBags = function()
             for i=0, NUM_BAG_FRAMES, 1 do
                 OpenBag(i);
             end
+        else
+            for i=0, NUM_BAG_FRAMES, 1 do
+                CloseBag(i);
+            end
         end
     end
-
-    -- if (BBConfig[2].Enabled) then
-    -- end
-
-    -- -- copy from BlizzUI
-    -- if (not UIParent:IsShown()) then
-        -- return;
-    -- end
- -- 
-    -- local bagsOpen = 0;
-    -- local totalBags = 1;
-    -- if (IsBagOpen(0)) then
-        -- bagsOpen = bagsOpen +1;
-        -- CloseBackpack();
-    -- end
- -- 
-    -- for i=1, NUM_BAG_FRAMES, 1 do
-        -- if ( GetContainerNumSlots(i) > 0 ) then     
-            -- totalBags = totalBags +1;
-        -- end
-        -- if ( IsBagOpen(i) ) then
-            -- CloseBag(i);
-            -- bagsOpen = bagsOpen +1;
-        -- end
-    -- end
-    -- if (bagsOpen < totalBags) then
-        -- OpenBackpack();
-        -- for i=1, NUM_BAG_FRAMES, 1 do
-            -- OpenBag(i);
-        -- end
-    -- elseif( BankFrame:IsShown() ) then
-        -- bagsOpen = 0;
-        -- totalBags = 0;
-        -- for i=NUM_BAG_FRAMES+1, NUM_CONTAINER_FRAMES, 1 do
-            -- if ( GetContainerNumSlots(i) > 0 ) then     
-                -- totalBags = totalBags +1;
-            -- end
-            -- if ( IsBagOpen(i) ) then
-                -- CloseBag(i);
-                -- bagsOpen = bagsOpen +1;
-            -- end
-        -- end
-        -- if (bagsOpen < totalBags) then
-            -- OpenBackpack();
-            -- for i=1, NUM_CONTAINER_FRAMES, 1 do
-                -- OpenBag(i);
-            -- end
-        -- end
-    -- end
 end
 
 local pre_OpenBag = OpenBag;
