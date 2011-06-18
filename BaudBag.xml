@@ -211,6 +211,7 @@
 		<Frames>
 			<Frame name="$parentBagsFrame" inherits="BaudBagBagsFrameTemplate">
 				<Frames>
+					<!-- 
 					<Button name="BaudBagKeyRingButton">
 						<Size>
 							<AbsDimension x="39" y="18" />
@@ -229,8 +230,9 @@
 						<PushedTexture file="Interface\Buttons\UI-Button-KeyRing-Down" />
 						<HighlightTexture file="Interface\Buttons\UI-Button-KeyRing-Highlight" alphaMode="ADD" />
 					</Button>
-				</Frames>
-			</Frame>
+					-->
+					</Frames>
+				</Frame>
 		</Frames>
 	</Frame>
 	
