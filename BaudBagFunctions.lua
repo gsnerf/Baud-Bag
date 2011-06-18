@@ -36,8 +36,10 @@ function BaudBagForEachBag(BagSet, Func)
     for Bag = 1, 5 do
       Func(Bag - 1, Bag);
     end
-    -- keyring
-    Func(-2, 6);
+    
+    -- Keyring was REMOVED as of WoW 4.2
+	-- -- keyring
+    -- Func(-2, 6);
   else
 		-- bank
     Func(-1, 1);

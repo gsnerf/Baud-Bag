@@ -7,7 +7,7 @@ local Updating, CfgBackup;
 
 local SelectedBags			= 1;
 local SelectedContainer	= 1;
-local SetSize						= {6, NUM_BANKBAGSLOTS + 1};
+local SetSize						= {5, NUM_BANKBAGSLOTS + 1};
 
 local SliderBars = {
 	{Text=Localized.Columns,	Low="2",	High="20",		SavedVar="Columns",	Default={8,12},			TooltipText = Localized.ColumnsTooltip},
