@@ -1011,38 +1011,36 @@ end
 	Close (bool): should the set be closed instead of opened?
 ]]--
 function BaudBagAutoOpenSet(BagSet, Close)
-  -- debug messages:
-  local closeState = "";
-  if (Close) then closeState = "true" else closeState = "false" end
-  BaudBag_DebugMsg(8, "[AutoOpenSet Entry] BagSet: "..BagSet.."; Close: "..closeState);
-  --Set 2 doesn't need container 1 to be shown because that's a given
-  local Container;
-  for ContNum = BagSet, NumCont[BagSet] do
+    -- debug messages:
+    local closeState = Close and "true" or "false";
+    BaudBag_DebugMsg(8, "[AutoOpenSet Entry] BagSet: "..BagSet.."; Close: "..closeState);
+    
+    --Set 2 doesn't need container 1 to be shown because that's a given
+    local Container;
+    for ContNum = BagSet, NumCont[BagSet] do
   
-	--[[ DEBUG ]]--
-	local autoOpenState = "";
-	if (BBConfig[BagSet][ContNum].AutoOpen) then autoOpenState = "true" else autoOpenState = "false" end
-	BaudBag_DebugMsg(8, "[AutoOpenSet FOR] ContNum: "..ContNum.."; AutoOpen: "..autoOpenState);
+        --[[ DEBUG ]]--
+        local autoOpenState = BBConfig[BagSet][ContNum].AutoOpen and "true" or "false";
+        BaudBag_DebugMsg(8, "[AutoOpenSet FOR] ContNum: "..ContNum.."; AutoOpen: "..autoOpenState);
   
-    if BBConfig[BagSet][ContNum].AutoOpen then
-      Container = _G[Prefix.."Container"..BagSet.."_"..ContNum];
-      if not Close then
-        if not Container:IsShown() then
-          BaudBag_DebugMsg(8, "[AutoOpenSet FOR (IsShown)] FALSE");
-          Container.AutoOpened = true;
-          Container:Show();
-        else
-          BaudBag_DebugMsg(8, "[AutoOpenSet FOR (IsShown)] TRUE");
+        if BBConfig[BagSet][ContNum].AutoOpen then
+            Container = _G[Prefix.."Container"..BagSet.."_"..ContNum];
+            if not Close then
+                if not Container:IsShown() then
+                    BaudBag_DebugMsg(8, "[AutoOpenSet FOR (IsShown)] FALSE");
+                    Container.AutoOpened = true;
+                    Container:Show();
+                else
+                    BaudBag_DebugMsg(8, "[AutoOpenSet FOR (IsShown)] TRUE");
+                end
+            elseif Container.AutoOpened then
+                BaudBag_DebugMsg(8, "[AutoOpenSet FOR (AutoOpened)] TRUE");
+                Container:Hide();
+            else
+                BaudBag_DebugMsg(8, "[AutoOpenSet FOR (AutoOpened)] FALSE");
+            end
         end
-
-      elseif Container.AutoOpened then
-        BaudBag_DebugMsg(8, "[AutoOpenSet FOR (AutoOpened)] TRUE");
-        Container:Hide();
-      else
-        BaudBag_DebugMsg(8, "[AutoOpenSet FOR (AutoOpened)] FALSE");
-      end
     end
-  end
 end
 
 function BaudBagCloseBagSet(BagSet)
@@ -1152,25 +1150,31 @@ end
 
 local pre_OpenAllBags = OpenAllBags;
 OpenAllBags = function(frame)
-    BaudBag_DebugMsg(4, "[OpenAllBags] called");
-	-- call default bags if the addon is disabled for regular bags
+    BaudBag_DebugMsg(8, "[OpenAllBags] called from "..frame:GetName());
+    -- call default bags if the addon is disabled for regular bags
     if BBConfig and(BBConfig[1].Enabled == false) then
-        BaudBag_DebugMsg(4, "[OpenAllBags] sent to original frames");
+        BaudBag_DebugMsg(8, "[OpenAllBags] sent to original frames");
         return pre_OpenAllBags(frame);
     end
   
     -- also cancel if bags can't be viewed at the moment (CAN this actually happen?)
     if not BagsReady then
-        BaudBag_DebugMsg(4, "[OpenAllBags] bags not ready");
+        BaudBag_DebugMsg(8, "[OpenAllBags] bags not ready");
+        return;
+    end
+
+    -- failsafe check as opening mail or merchant seems to instantly call OpenAllBags instead of the bags registering for the events...
+    if (frame:GetName() == "MailFrame" or frame:GetName() == "MerchantFrame") then
+        BaudBag_DebugMsg(8, "[OpenAllBags] found merchant or mail call, stopping now!");
         return;
     end
   
     local Container, AnyShown;
     for Bag = 0, 4 do
-        BaudBag_DebugMsg(4, "[OpenAllBags] analyzing bag "..Bag);
+        BaudBag_DebugMsg(8, "[OpenAllBags] analyzing bag "..Bag);
         Container = _G[Prefix.."SubBag"..Bag]:GetParent();
         if (GetContainerNumSlots(Bag) > 0) and not Container:IsShown()then
-            BaudBag_DebugMsg(4, "[OpenAllBags] showing bag");
+            BaudBag_DebugMsg(8, "[OpenAllBags] showing bag");
             Container:Show();
             AnyShown = true;
         end

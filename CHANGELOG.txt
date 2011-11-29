@@ -2,6 +2,7 @@
 v4.3.0
   - removed obsolete code to get rid of some error messages
   - fixed up size of Bag Slot Container Frame (thx to KanadiaN for the patch!)
+  - finally fixed AutoOpen function for bags when going to a vendor or mail terminal
 v4.2.0
   - removed keyring to adapt to the current WoW Interface changes introduced with patch 4.2.0
 v4.1.1
