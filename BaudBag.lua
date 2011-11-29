@@ -369,16 +369,16 @@ function BaudBag_OnEvent(self, event, ...)
 end
 
 -- this just makes sure the bags will be visible at the correct layer position when opened
-function BaudBagBagsFrame_OnShow(self, event, ...)
-	BaudBag_DebugMsg(5, "BaudBagBagsFrame is shown, correcting frame layer lvls of childs");
-  --Adjust frame level because of Blizzard's screw up
-  local Level = self:GetFrameLevel() + 1;
-  for Key, Value in pairs(self:GetChildren())do
-    if(type(Value)=="table")then
-      Value:SetFrameLevel(Level);
-    end
-  end
-end
+-- function BaudBagBagsFrame_OnShow(self, event, ...)
+	-- BaudBag_DebugMsg(5, "BaudBagBagsFrame is shown, correcting frame layer lvls of childs");
+  -- --Adjust frame level because of Blizzard's screw up
+  -- local Level = self:GetFrameLevel() + 1;
+  -- for Key, Value in pairs(self:GetChildren())do
+    -- if(type(Value)=="table")then
+      -- Value:SetFrameLevel(Level);
+    -- end
+  -- end
+-- end
 
 --[[ Container events ]]--
 function BaudBagContainer_OnLoad(self, event, ...)
