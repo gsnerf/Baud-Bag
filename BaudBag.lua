@@ -152,18 +152,21 @@ local EventFuncs =
     
     -- create BagSlots for the bag overview in the inventory (frame that pops out and only shows the available bags)
     for Bag = 1, 4 do
-      -- the slot name before "BagXSlot" has to be 10 chars long or else this will HARDCRASH
-      BagSlot	= CreateFrame("CheckButton", "BaudBInveBag"..(Bag - 1).."Slot", BBContainer1, "BagSlotButtonTemplate");
-      BagSlot:SetPoint("TOPLEFT", 8, -8 - (Bag - 1) * 39);
-      BagSlot.HighlightBag = false;
-      BagSlot.Bag = Bag;
-      BagSlot:HookScript("OnEnter", BaudBag_BagSlot_OnEnter);
-      BagSlot:HookScript("OnUpdate", BaudBag_BagSlot_OnUpdate);
-      BagSlot:HookScript("OnLeave", BaudBag_BagSlot_OnLeave);
-      _G[BagSlot:GetName().."ItemAnim"]:UnregisterAllEvents();
+        -- the slot name before "BagXSlot" has to be 10 chars long or else this will HARDCRASH
+        BagSlot	= CreateFrame("CheckButton", "BaudBInveBag"..(Bag - 1).."Slot", BBContainer1, "BagSlotButtonTemplate");
+        -- BagSlot:SetPoint("TOPLEFT", 8, -8 - (Bag - 1) * 39);
+        BagSlot:SetPoint("TOPLEFT", 8, -8 - (Bag - 1) * 30);
+        BagSlot.HighlightBag = false;
+        BagSlot.Bag = Bag;
+        BagSlot:HookScript("OnEnter", BaudBag_BagSlot_OnEnter);
+        BagSlot:HookScript("OnUpdate", BaudBag_BagSlot_OnUpdate);
+        BagSlot:HookScript("OnLeave", BaudBag_BagSlot_OnLeave);
+        _G[BagSlot:GetName().."ItemAnim"]:UnregisterAllEvents();
     end
-    BBContainer1:SetWidth(13 + 39);
-    BBContainer1:SetHeight(13 + 4 * 39 + 20);
+    -- BBContainer1:SetWidth(13 + 39);
+    -- BBContainer1:SetHeight(13 + 4 * 39 + 20);
+    BBContainer1:SetWidth(15 + 30);
+    BBContainer1:SetHeight(15 + 4 * 30);
 
 		-- create BagSlots for the bag oberview in the bank (frame that pops out and only shows the available bags)
     for Bag = 1, NUM_BANKBAGSLOTS do
