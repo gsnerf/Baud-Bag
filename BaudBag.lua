@@ -1150,8 +1150,9 @@ end
 
 local pre_OpenAllBags = OpenAllBags;
 OpenAllBags = function(frame)
-    BaudBag_DebugMsg(8, "[OpenAllBags] called from "..frame:GetName());
-    -- call default bags if the addon is disabled for regular bags
+    BaudBag_DebugMsg(8, "[OpenAllBags] called from "..((frame ~= nil) and frame:GetName() or "[none]"));
+    
+-- call default bags if the addon is disabled for regular bags
     if BBConfig and(BBConfig[1].Enabled == false) then
         BaudBag_DebugMsg(8, "[OpenAllBags] sent to original frames");
         return pre_OpenAllBags(frame);
@@ -1164,7 +1165,7 @@ OpenAllBags = function(frame)
     end
 
     -- failsafe check as opening mail or merchant seems to instantly call OpenAllBags instead of the bags registering for the events...
-    if (frame:GetName() == "MailFrame" or frame:GetName() == "MerchantFrame") then
+    if (frame ~= nil and (frame:GetName() == "MailFrame" or frame:GetName() == "MerchantFrame")) then
         BaudBag_DebugMsg(8, "[OpenAllBags] found merchant or mail call, stopping now!");
         return;
     end
