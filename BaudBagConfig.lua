@@ -1,6 +1,8 @@
 ﻿-- Author      : gsnerf
 -- Create Date : 11/11/2010 6:16:49 PM
 
+local _;
+
 -- some locally needed variables
 local Localized	= BaudBagLocalized;
 local SliderBars, CheckButtons;

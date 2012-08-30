@@ -17,6 +17,7 @@ local BankOpen = false;
 local FadeTime = 0.2;
 local BagsReady;
 local BagsSearched = {};
+local _;
 
 --[[ CACHING FOR BANK BAGS ]]
 

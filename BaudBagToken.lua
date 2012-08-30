@@ -9,6 +9,7 @@
 
 	Additionally to the self rendering in our bags (done in BaudBag.lua BaudBagUpdateBackground()) the max trackable tokens are raised to 5.
 ]]--
+local _;
 MAX_WATCHED_TOKENS_ORIG = MAX_WATCHED_TOKENS;
 MAX_WATCHED_TOKENS_BAUD_BAG = 5;
 
