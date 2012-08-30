@@ -1,5 +1,7 @@
 ﻿-- Author      : gsnerf
 -- Create Date : 10/30/2010 10:13:36 PM
+local _;
+
 local Localized	= BaudBagLocalized;
 local MaxBags		= NUM_BANKBAGSLOTS + 1;
 local Prefix		= "BaudBagOptions";

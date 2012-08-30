@@ -1,6 +1,8 @@
 ﻿-- Author      : gsnerf
 -- Create Date : 11/14/2010 11:52:55 PM
 
+local _;
+
 local BaudBag_DebugCfg = {
 	{ Name = "Config", Active = false},
 	{ Name = "Options", Active = false},
