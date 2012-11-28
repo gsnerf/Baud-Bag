@@ -162,7 +162,7 @@ local EventFuncs =
         BagSlot:HookScript("OnEnter", BaudBag_BagSlot_OnEnter);
         BagSlot:HookScript("OnUpdate", BaudBag_BagSlot_OnUpdate);
         BagSlot:HookScript("OnLeave", BaudBag_BagSlot_OnLeave);
-        _G[BagSlot:GetName().."ItemAnim"]:UnregisterAllEvents();
+        -- _G[BagSlot:GetName().."ItemAnim"]:UnregisterAllEvents();
     end
     -- BBContainer1:SetWidth(13 + 39);
     -- BBContainer1:SetHeight(13 + 4 * 39 + 20);
