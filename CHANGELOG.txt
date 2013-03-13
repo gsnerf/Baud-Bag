@@ -1,4 +1,10 @@
 ﻿=== Changelog ===
+v5.2.0
+  - fixed faulty behaviour when BB is deativated for the inventory (Ticket 77)
+v5.1.0
+  - hotfix for changes made to original BagSlots by Blizz
+v5.0.0
+  - fixed my sloppy coding resulting in tainting sloppy coded blizzard addons with patch 5.0.4
 v4.3.0
   - removed obsolete code to get rid of some error messages
   - fixed up size of Bag Slot Container Frame (thx to KanadiaN for the patch!)
