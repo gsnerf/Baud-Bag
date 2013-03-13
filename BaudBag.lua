@@ -1054,8 +1054,8 @@ end
 local pre_OpenBackpack = OpenBackpack;
 OpenBackpack = function() 
 	BaudBag_DebugMsg(8, "[OpenBackpack] called!");
-	if (not BBConfig or (BBConfig[1].Enabled == false)) then
-        BaudBag_DebugMsg(4, "[OpenBackpack] somethings not right, sending to blizz-bags!");
+	if (not BBConfig or not BBConfig[1].Enabled) then
+        BaudBag_DebugMsg(8, "[OpenBackpack] somethings not right, sending to blizz-bags!");
 		return pre_OpenBackpack();
 	end
 
@@ -1065,9 +1065,9 @@ end
 local pre_CloseBackpack = CloseBackpack;
 CloseBackpack = function()
     BaudBag_DebugMsg(8, "[CloseBackpack] called!");
-	if (not BBConfig or (BBConfig[1].Enabled == false)) then
-        BaudBag_DebugMsg(4, "[CloseBackpack] somethings not right, sending to blizz-bags!");
-		return pre_OpenBackpack();
+	if (not BBConfig or not BBConfig[1].Enabled) then
+        BaudBag_DebugMsg(8, "[CloseBackpack] somethings not right, sending to blizz-bags!");
+		return pre_CloseBackpack();
 	end
 
     CloseBag(0);
@@ -1075,10 +1075,10 @@ end
 
 local pre_ToggleBackpack = ToggleBackpack;
 ToggleBackpack = function()
-    BaudBag_DebugMsg(4, "[ToggleBackpack] called");
-	-- make sure the old is called when BaudBag is disabled for the backpack
-	if BBConfig and (BBConfig[1].Enabled == false) then
-        BaudBag_DebugMsg(4, "[ToggleBackpack] called");
+    BaudBag_DebugMsg(8, "[ToggleBackpack] called");
+	-- make sure original is called when BaudBag is disabled for the backpack
+	if (not BBConfig or not BBConfig[1].Enabled) then
+        BaudBag_DebugMsg(8, "[ToggleBackpack] BaudBag disabled for inventory calling original UI");
 		return pre_ToggleBackpack();
 	end
 	
@@ -1153,8 +1153,8 @@ local pre_OpenAllBags = OpenAllBags;
 OpenAllBags = function(frame)
     BaudBag_DebugMsg(8, "[OpenAllBags] called from "..((frame ~= nil) and frame:GetName() or "[none]"));
     
--- call default bags if the addon is disabled for regular bags
-    if BBConfig and(BBConfig[1].Enabled == false) then
+    -- call default bags if the addon is disabled for regular bags
+    if (not BBConfig or not BBConfig[1].Enabled) then
         BaudBag_DebugMsg(8, "[OpenAllBags] sent to original frames");
         return pre_OpenAllBags(frame);
     end
@@ -1217,12 +1217,15 @@ end
 
 local pre_BagSlotButton_OnClick = BagSlotButton_OnClick;
 BagSlotButton_OnClick = function(self, event, ...)
-  if BBConfig and (BBConfig[1].Enabled == false) then
+
+  if (not BBConfig or not BBConfig[1].Enabled) then
     return pre_BagSlotButton_OnClick(self, event, ...);
   end
-  if not PutItemInBag(self:GetID())then
+
+  if not PutItemInBag(self:GetID()) then
     ToggleBag(self:GetID() - CharacterBag0Slot:GetID() + 1);
   end
+
 end
 
 
@@ -1246,11 +1249,9 @@ end
 local pre_IsBagOpen = IsBagOpen;
 -- IsBagOpen = function(BagID)
 function BaudBag_IsBagOpen(BagID)
-    -- make sure we really may give an answer else return answer from original addon
-    local bagContainer = (BagID > -1 and BagID <= NUM_BAG_FRAMES);
-    local bankContainer = (BagID > ITEM_INVENTORY_BANK_BAG_OFFSET and BagID <= ITEM_INVENTORY_BANK_BAG_OFFSET + NUM_BANKBAGSLOTS);
 
-    if (not BBConfig or (bagContainer and BBConfig[1].Enabled == false) or (bankContainer and BBConfig[2].Enabled == false)) then
+    -- fallback
+	if (not BBConfig or not BaudBag_BagHandledByBaudBag(BagID)) then
         BaudBag_DebugMsg(8, "BaudBag is not responsible for this bag, calling default ui");
         return pre_IsBagOpen(BagID);
     end
@@ -2033,41 +2034,40 @@ end
 
 -- TODO: this HAS to stay temporary! the whole addon needs an overhaul according to the recent changes in the official bag code!!!
 
+--[[ this usually only applies to inventory bags ]]--
 local pre_ToggleAllBags = ToggleAllBags;
 ToggleAllBags = function()
     BaudBag_DebugMsg(8, "[ToggleAllBags] called");
 
-    if (not BBConfig) then
-        BaudBag_DebugMsg(8, "[ToggleAllBags] no config found, calling original");
+    if (not BBConfig or not BBConfig[1].Enabled) then
+        BaudBag_DebugMsg(8, "[ToggleAllBags] no config found or addon deactivated for inventory, calling original");
         return pre_ToggleAllBags();
     end
 
-    if (BBConfig[1].Enabled) then
-        BaudBag_DebugMsg(8, "[ToggleAllBags] BaudBag bags are active, close & open");
+    BaudBag_DebugMsg(8, "[ToggleAllBags] BaudBag bags are active, close & open");
         
-        local bagsOpen = 0;
-        local totalBags = 0;
+    local bagsOpen = 0;
+    local totalBags = 0;
     
-        -- first make sure all bags are closed
-        for i=0, NUM_BAG_FRAMES, 1 do
-            if ( GetContainerNumSlots(i) > 0 ) then     
-                totalBags = totalBags + 1;
-            end
-            if ( BaudBag_IsBagOpen(i) ) then
-                --CloseBag(i);
-                bagsOpen = bagsOpen +1;
-            end
+    -- first make sure all bags are closed
+    for i=0, NUM_BAG_FRAMES, 1 do
+        if ( GetContainerNumSlots(i) > 0 ) then     
+            totalBags = totalBags + 1;
         end
+        if ( BaudBag_IsBagOpen(i) ) then
+            --CloseBag(i);
+            bagsOpen = bagsOpen +1;
+        end
+    end
         
-        -- now correctly open all of them
-        if (bagsOpen < totalBags) then
-            for i=0, NUM_BAG_FRAMES, 1 do
-                OpenBag(i);
-            end
-        else
-            for i=0, NUM_BAG_FRAMES, 1 do
-                CloseBag(i);
-            end
+    -- now correctly open all of them
+    if (bagsOpen < totalBags) then
+        for i=0, NUM_BAG_FRAMES, 1 do
+            OpenBag(i);
+        end
+    else
+        for i=0, NUM_BAG_FRAMES, 1 do
+            CloseBag(i);
         end
     end
 end
@@ -2075,8 +2075,10 @@ end
 local pre_OpenBag = OpenBag;
 OpenBag = function(id)
     BaudBag_DebugMsg(8, "[OpenBag] called on id: "..id);
-    -- if there is no baud bag config we most likely do not work correctly => send to original bag frames
-    if (not BBConfig) then
+	
+	-- if there is no baud bag config we most likely do not work correctly => send to original bag frames
+    if (not BBConfig or not BaudBag_BagHandledByBaudBag(id)) then
+		BaudBag_DebugMsg(8, "[OpenBag] no config or bag not handled by BaudBag, calling original");
         return pre_OpenBag(id);
     end
 
@@ -2090,7 +2092,8 @@ end
 local pre_CloseBag = CloseBag;
 CloseBag = function(id)
     BaudBag_DebugMsg(8, "[CloseBag] called on id: "..id);
-    if (not BBConfig) then
+    if (not BBConfig or not BaudBag_BagHandledByBaudBag(id)) then
+		BaudBag_DebugMsg(8, "[CloseBag] no config or bag not handled by BaudBag, calling original");
         return pre_CloseBag(id);
     end
 
