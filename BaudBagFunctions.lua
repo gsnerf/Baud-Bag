@@ -90,3 +90,24 @@ function BaudBag_InitTexturePiece(Texture, File, Width, Height, MinX, MaxX, MinY
   Texture:SetDrawLayer(Layer);
   Texture:Show();
 end
+
+--[[ this function determines if the given bag is currently handled by baudbag or not ]]--
+function BaudBag_BagHandledByBaudBag(id)
+	--[[
+	BagsSet Indices:
+		 1 == inventory;   2 == bank
+	Bag Indices:
+		-4 == tokens bag; -2 == keyring;          -1 == bank
+		 0 == backpack;  1-4 == inventory bags; 5-11 == bank bags
+
+	As the given indices > 0 may vary in the future use these constants instead:
+	  NUM_BAG_FRAMES (for max inventory bags)
+	  ITEM_INVENTORY_BANK_BAG_OFFSET (first bank bag)
+	  NUM_BANKBAGSLOTS (number of bank bags)
+
+	]]--
+	local isBank = (id == -1) or (id > ITEM_INVENTORY_BANK_BAG_OFFSET and id <= ITEM_INVENTORY_BANK_BAG_OFFSET + NUM_BANKBAGSLOTS);
+	local isInventory = (id >= 0 and id <= NUM_BAG_FRAMES);
+
+	return (isBank and BBConfig[2].Enabled) or (isInventory and BBConfig[1].Enabled);
+end
