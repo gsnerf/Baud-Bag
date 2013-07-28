@@ -1036,7 +1036,13 @@ function BaudBagAutoOpenSet(BagSet, Close)
                 end
             elseif Container.AutoOpened then
                 BaudBag_DebugMsg(8, "[AutoOpenSet FOR (AutoOpened)] TRUE");
-                Container:Hide();
+				Container.AutoOpened = false;
+				if BBConfig[BagSet][ContNum].AutoClose then
+					BaudBag_DebugMsg(8, "[AutoOpenSet FOR (AutoOpened)] AutoClose set, hiding!");
+					Container:Hide();
+				else
+					BaudBag_DebugMsg(8, "[AutoOpenSet FOR (AutoOpened)] AutoClose not set, ignoring hide!");
+				end
             else
                 BaudBag_DebugMsg(8, "[AutoOpenSet FOR (AutoOpened)] FALSE");
             end
@@ -1178,7 +1184,7 @@ OpenAllBags = function(frame)
         if (GetContainerNumSlots(Bag) > 0) and not Container:IsShown()then
             BaudBag_DebugMsg(8, "[OpenAllBags] showing bag");
             Container:Show();
-            AnyShown = true;
+--            AnyShown = true;
         end
     end
 
@@ -1188,25 +1194,25 @@ OpenAllBags = function(frame)
     -- end
 end
 
--- local pre_CloseAllBags = CloseAllBags;
--- CloseAllBags = function(frame)
-    -- if( frame ) then
-        -- if ( frame:GetName() == FRAME_THAT_OPENED_BAGS) then
-            -- FRAME_THAT_OPENED_BAGS = nil;
-            -- CloseBackpack();
-            -- for i=1, NUM_BAG_FRAMES, 1 do
-                -- CloseBag(i);
-            -- end
-        -- end
-        -- return;
-    -- end
-     -- 
-    -- FRAME_THAT_OPENED_BAGS = nil;
-    -- CloseBackpack();
-    -- for i=1, NUM_BAG_FRAMES, 1 do
-        -- CloseBag(i);
-    -- end
--- end
+local pre_CloseAllBags = CloseAllBags;
+CloseAllBags = function(frame)
+	BaudBag_DebugMsg(8, "[CloseAllBags] called from "..((frame ~= nil) and frame:GetName() or "[none]"));
+
+	-- failsafe check as opening mail or merchant seems to instantly call OpenAllBags instead of the bags registering for the events...
+    if (frame ~= nil and (frame:GetName() == "MailFrame" or frame:GetName() == "MerchantFrame")) then
+        BaudBag_DebugMsg(8, "[CloseAllBags] found merchant or mail call, stopping now!");
+        return;
+    end
+
+	for Bag = 0, 4 do
+        BaudBag_DebugMsg(8, "[CloseAllBags] analyzing bag "..Bag);
+        local Container = _G[Prefix.."SubBag"..Bag]:GetParent();
+        if (GetContainerNumSlots(Bag) > 0) and Container:IsShown()then
+            BaudBag_DebugMsg(8, "[CloseAllBags] hiding  bag");
+            Container:Hide();
+        end
+    end
+end
  -- 
 -- function CloseAllBags()
     -- CloseBackpack();
