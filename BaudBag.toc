@@ -1,6 +1,6 @@
 ## Author: Thurmal (Author), Suddendeath2000 (Former Author), Baudzila (Original Author)
 ## DefaultState: Enabled
-## Interface: 50200
+## Interface: 50300
 ## LoadOnDemand: 0
 ## Notes: Allows you to combine bags as well as customize their display.
 ## Notes-zhCN: 以整合方式显示你的背包和银行|N本地化:Isler
