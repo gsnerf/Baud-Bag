@@ -1951,7 +1951,23 @@ function BaudBagSearchFrameEditBox_OnTextChanged(self, isUserInput)
 				
 				-- get the name for that link
 				if Link then
-					Name, _, _, _, _, _, _, _, _, _ = GetItemInfo(Link);
+					-- debug message
+					printableLink = gsub(Link, "\124", "\124\124");
+					BaudBag_DebugMsg(6, "Found a link: '"..printableLink.."'");
+
+					-- we can have different types of links, usually it is an item...
+					if (strmatch(Link, "|HItem:")) then
+						Name, _, _, _, _, _, _, _, _, _ = GetItemInfo(Link);
+
+					-- ... or a cages battle pet ...
+					elseif (strmatch(Link, "|Hbattlepet:")) then
+						local _, speciesID, _, _, _, _, _, battlePetID = strsplit(":", link)
+						Name, _, _, _, _, _, _, _, _, _= C_PetJournal.GetPetInfoBySpeciesID(speciesID);
+
+					-- ... we don't know about everything else
+					else
+						Name = "Unknown";
+					end
 				end
 				
 				-- add transparency if search active but not a result
