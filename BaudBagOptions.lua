@@ -7,19 +7,20 @@ local MaxBags		= NUM_BANKBAGSLOTS + 1;
 local Prefix		= "BaudBagOptions";
 local Updating, CfgBackup;
 
-local SelectedBags			= 1;
+local SelectedBags		= 1;
 local SelectedContainer	= 1;
-local SetSize						= {5, NUM_BANKBAGSLOTS + 1};
+local SetSize			= {5, NUM_BANKBAGSLOTS + 1};
 
 local SliderBars = {
 	{Text=Localized.Columns,	Low="2",	High="20",		SavedVar="Columns",	Default={8,12},			TooltipText = Localized.ColumnsTooltip},
-	{Text=Localized.Scale,	Low="50%",	High="200%",	SavedVar="Scale",		Default={100,100},	TooltipText = Localized.ScaleTooltip}
+	{Text=Localized.Scale,		Low="50%",	High="200%",	SavedVar="Scale",		Default={100,100},	TooltipText = Localized.ScaleTooltip}
 };
 
 local CheckButtons = {
-	{Text=Localized.AutoOpen,	SavedVar="AutoOpen",	Default=false,	TooltipText=Localized.AutoOpenTooltip},
-	{Text=Localized.BlankOnTop,	SavedVar="BlankTop",	Default=false,	TooltipText=Localized.BlankOnTopTooltip},
-	{Text=Localized.RarityColoring,	SavedVar="RarityColor",	Default=true,	TooltipText=Localized.RarityColoringTooltip}
+	{Text=Localized.AutoOpen,		SavedVar="AutoOpen",	Default=false,	TooltipText=Localized.AutoOpenTooltip,			DependsOn=nil},
+	{Text=Localized.AutoClose,		SavedVar="AutoClose",	Default=true,	TooltipText=Localized.AutoCloseTooltip,			DependsOn="AutoOpen"},
+	{Text=Localized.BlankOnTop,		SavedVar="BlankTop",	Default=false,	TooltipText=Localized.BlankOnTopTooltip,		DependsOn=nil},
+	{Text=Localized.RarityColoring,	SavedVar="RarityColor",	Default=true,	TooltipText=Localized.RarityColoringTooltip,	DependsOn=nil}
 };
 
 BaudBagIcons = {
@@ -265,8 +266,9 @@ function BaudBagOptionsCheckButton_OnClick(self, event, ...)
   BBConfig[SelectedBags][SelectedContainer][SavedVar] = (self:GetChecked() == 1);
   if (SavedVar == "BlankTop") or (SavedVar == "RarityColor") then -- or (SavedVar == "RarityColorAltern") then
 		BaudBag_DebugMsg(2, "Want to update container: "..Prefix.."Container"..SelectedBags.."_"..SelectedContainer);
-    BaudBagUpdateContainer(_G["BaudBagContainer"..SelectedBags.."_"..SelectedContainer]); -- TODO: move to BaudBagBBConfig save?
+		BaudBagUpdateContainer(_G["BaudBagContainer"..SelectedBags.."_"..SelectedContainer]); -- TODO: move to BaudBagBBConfig save?
   end
+	BaudBagOptionsUpdate();
 end
 
 
@@ -352,57 +354,73 @@ function BaudBagOptionsUpdate()
 			Button:Show();
 		end
 	);
-  _G[Prefix.."Container"..ContNum]:SetPoint("RIGHT", Prefix.."Bag"..Bags,"RIGHT",6,0);
+	_G[Prefix.."Container"..ContNum]:SetPoint("RIGHT", Prefix.."Bag"..Bags,"RIGHT",6,0);
 
 	-- make sure all bags after the last visible bag to be shown is hidden (e.g. the inventory has less bags then the bank)
-  for Index = Bags + 1, MaxBags do
-    _G[Prefix.."Bag"..Index]:Hide();
-  end
+	for Index = Bags + 1, MaxBags do
+		_G[Prefix.."Bag"..Index]:Hide();
+	end
 
 	-- it must be made sure an existing container is selected
-  if (SelectedContainer > ContNum) then
-    SelectedContainer = 1;
-  end
+	if (SelectedContainer > ContNum) then
+		SelectedContainer = 1;
+	end
   
-  -- mark currently selected bags and container or reset the markings
-  -- (checked-state for buttons and border for container)
-  local R, G, B;
-  for Bag = 1, MaxBags do
-    Container	= _G[Prefix.."Container"..Bag];
-    Button		= _G[Prefix.."Bag"..Bag];
-    Button:SetChecked(Button:GetID()==SelectedContainer);
-    if(Bag <= ContNum)then
-      if(Bag==SelectedContainer)then
-        Container:SetBackdropColor(1,1,0);
-        Container:SetBackdropBorderColor(1,1,0);
-      else
-        Container:SetBackdropColor(1,1,1);
-        Container:SetBackdropBorderColor(1,1,1);
-      end
-      Container:Show();
-    else
-      Container:Hide();
-    end
-  end
+	-- mark currently selected bags and container or reset the markings
+	-- (checked-state for buttons and border for container)
+	local R, G, B;
+	for Bag = 1, MaxBags do
+		Container	= _G[Prefix.."Container"..Bag];
+		Button		= _G[Prefix.."Bag"..Bag];
+		Button:SetChecked(Button:GetID()==SelectedContainer);
+		if(Bag <= ContNum)then
+			if(Bag==SelectedContainer)then
+			Container:SetBackdropColor(1,1,0);
+			Container:SetBackdropBorderColor(1,1,0);
+			else
+			Container:SetBackdropColor(1,1,1);
+			Container:SetBackdropBorderColor(1,1,1);
+			end
+			Container:Show();
+		else
+			Container:Hide();
+		end
+	end
   
-  -- load container name into the textbox
-  _G[Prefix.."NameEditBox"]:SetText(BBConfig[SelectedBags][SelectedContainer].Name or "test");
-  _G[Prefix.."NameEditBox"]:SetCursorPosition(0);
+	-- load container name into the textbox
+	_G[Prefix.."NameEditBox"]:SetText(BBConfig[SelectedBags][SelectedContainer].Name or "test");
+	_G[Prefix.."NameEditBox"]:SetCursorPosition(0);
 
 	-- load background state (initialized here to work around some strange behavior)
 	UIDropDownMenu_Initialize(_G[Prefix.."BackgroundDropDown"], BaudBagOptionsBackgroundDropDown_Initialize);
 	UIDropDownMenu_SetSelectedValue(_G[Prefix.."BackgroundDropDown"], BBConfig[SelectedBags][SelectedContainer].Background);
  
-  for Key, Value in ipairs(SliderBars)do
-    local Slider = _G[Prefix.."Slider"..Key];
-    Slider:SetValue(BBConfig[SelectedBags][SelectedContainer][Value.SavedVar]);
-  end
+	-- load slider values
+	for Key, Value in ipairs(SliderBars)do
+		local Slider = _G[Prefix.."Slider"..Key];
+		Slider:SetValue(BBConfig[SelectedBags][SelectedContainer][Value.SavedVar]);
+	end
 
-  for Key, Value in ipairs(CheckButtons)do
-    local Button = _G[Prefix.."CheckButton"..Key];
-    Button:SetChecked(BBConfig[SelectedBags][SelectedContainer][Value.SavedVar]);
-  end
-  Updating = false;
+	-- load checkbox values
+	for Key, Value in ipairs(CheckButtons)do
+		local Button = _G[Prefix.."CheckButton"..Key];
+		Button:SetChecked(BBConfig[SelectedBags][SelectedContainer][Value.SavedVar]);
+	end
+	
+	-- load checkbox enabled
+	for Key, Value in ipairs(CheckButtons) do
+		local Button = _G[Prefix.."CheckButton"..Key];
+		local ButtonText = _G[Prefix.."CheckButton"..Key.."Text"];
+		if (Value.DependsOn ~= nil and not BBConfig[SelectedBags][SelectedContainer][Value.DependsOn]) then
+			Button:Disable();
+			ButtonText:SetFontObject("GameFontDisable");
+		else
+			Button:Enable();
+			ButtonText:SetFontObject("GameFontNormal");
+		end
+	end
+
+	Updating = false;
 end
 
 function BaudBagOptionsSelectContainer(BagSet, Container)
