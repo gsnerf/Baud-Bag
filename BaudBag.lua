@@ -1956,7 +1956,7 @@ function BaudBagSearchFrameEditBox_OnTextChanged(self, isUserInput)
 					BaudBag_DebugMsg(6, "Found a link: '"..printableLink.."'");
 
 					-- we can have different types of links, usually it is an item...
-					if (strmatch(Link, "|HItem:")) then
+					if (strmatch(Link, "|Hitem:")) then
 						Name, _, _, _, _, _, _, _, _, _ = GetItemInfo(Link);
 
 					-- ... or a cages battle pet ...
