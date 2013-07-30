@@ -1967,7 +1967,7 @@ function BaudBagSearchFrameEditBox_OnTextChanged(self, isUserInput)
 
 					-- ... or a cages battle pet ...
 					elseif (strmatch(Link, "|Hbattlepet:")) then
-						local _, speciesID, _, _, _, _, _, battlePetID = strsplit(":", link)
+						local _, speciesID, _, _, _, _, _, battlePetID = strsplit(":", Link)
 						Name, _, _, _, _, _, _, _, _, _= C_PetJournal.GetPetInfoBySpeciesID(speciesID);
 
 					-- ... we don't know about everything else
