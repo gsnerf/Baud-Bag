@@ -1,4 +1,7 @@
 ﻿=== Changelog ===
+v5.3.0
+  - fixed search when caged battle pets are present in the bags open for search
+  - added new option 
 v5.2.0
   - fixed faulty behaviour when BB is deativated for the inventory (Ticket 77)
 v5.1.0
