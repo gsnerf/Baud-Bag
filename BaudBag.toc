@@ -17,3 +17,4 @@ BaudBagConfig.lua
 BaudBagOptions.xml
 BaudBagToken.xml
 BaudBag.xml
+BaudBagVoidStorage.lua

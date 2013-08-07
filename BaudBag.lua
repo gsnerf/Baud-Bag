@@ -116,7 +116,7 @@ local EventFuncs =
 		local arg1 = ...;
 		if (arg1 ~= "BaudBag") then return end;
 		
-		-- wtf is earth feature?
+		-- this seem to be an embed to the no longer developed cosmos addon, propably safe to remove
 		if (EarthFeature_AddButton) then   --add by Isler
 			EarthFeature_AddButton(
 			{
@@ -334,8 +334,10 @@ EventFuncs.PLAYERBANKSLOTS_CHANGED = Func;
 
 --[[ xml defined (called) BaudBagFrame event handlers ]]--
 function BaudBag_OnLoad(self, event, ...)
-  BINDING_HEADER_BaudBag					= "Baud Bag";
-  BINDING_NAME_BaudBagToggleBank	= "Toggle Bank";
+	BINDING_HEADER_BaudBag					= "Baud Bag";
+	BINDING_NAME_BaudBagToggleBank			= "Toggle Bank";
+	BINDING_NAME_BaudBagToggleVoidStorage	= "Show Void Storage";
+
 	BaudBag_DebugMsg(4, "OnLoad was called");
 
 	-- register for global events (actually handled in OnEvent function)
@@ -539,7 +541,6 @@ function BaudBagToggleBank(self)
     BaudBagAutoOpenSet(2, false);
   end
 end
-
 
 function BaudBagContainerDropDown_Initialize()
   local info = UIDropDownMenu_CreateInfo();

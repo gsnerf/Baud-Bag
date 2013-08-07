@@ -11,7 +11,8 @@ local BaudBag_DebugCfg = {
 	{ Name = "Bank", Active = false},
 	{ Name = "Search", Active = false},
 	{ Name = "Bag Hover", Active = false},
-	{ Name = "Bag Opening", Active = false}
+	{ Name = "Bag Opening", Active = false},
+	{ Name = "Void Storage", Active = true}
 };
 
 function BaudBag_DebugMsg(type, msg)
