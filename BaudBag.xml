@@ -1,0 +1,317 @@
+<Ui xmlns="http://www.blizzard.com/wow/ui/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.blizzard.com/wow/ui/ ..\FrameXML\UI.xsd">
+	
+  <Script file="BaudBag.lua" />
+  
+	<Frame name="BaudBagBagsFrameTemplate" virtual="true" enableMouse="true">
+		<Anchors>
+			<Anchor point="TOPRIGHT" relativeTo="$parentBackdrop" relativePoint="TOPLEFT" />
+		</Anchors>
+		<Backdrop bgFile="Interface\Tooltips\UI-Tooltip-Background" edgeFile="Interface\Tooltips\UI-Tooltip-Border" tile="true">
+			<BackgroundInsets>
+				<AbsInset left="5" right="5" top="5" bottom="5" />
+			</BackgroundInsets>
+			<TileSize>
+				<AbsValue val="16" />
+			</TileSize>
+			<EdgeSize>
+				<AbsValue val="16" />
+			</EdgeSize>
+		</Backdrop>
+		<Scripts>
+			<OnLoad>
+				self:SetBackdropColor(0,0,0,1);
+			</OnLoad>
+			<OnShow function="BaudBagBagsFrame_OnShow" />
+		</Scripts>
+	</Frame>
+	
+	<Frame topLevel="true" name="BaudBagContainerTemplate" virtual="true" hidden="true" parent="UIParent" movable="true" frameStrata="MEDIUM" enableMouse="true">
+		<Size>
+			<AbsDimension x="640" y="560" />
+		</Size>
+		<Anchors>
+			<Anchor point="CENTER" />
+		</Anchors>
+		<Frames>
+			<Frame name="$parentBackdrop">
+				<Frames>
+					<Frame name="$parentTextures" setAllPoints="true" />
+				</Frames>
+			</Frame>
+			<Button name="$parentCloseButton" inherits="UIPanelCloseButton">
+				<Anchors>
+					<Anchor point="TOPRIGHT" />
+				</Anchors>
+				<Scripts>
+					<OnClick>
+						BaudBag_DebugMsg(8, "["..self:GetParent():GetName().."] Close Button pressed");
+						self:GetParent():Hide();
+					</OnClick>
+				</Scripts>
+			</Button>
+			<Button name="$parentMenuButton">
+				<Size>
+					<AbsDimension x="16" y="16" />
+				</Size>
+				<Anchors>
+					<Anchor point="TOPRIGHT" relativeTo="$parentCloseButton" relativePoint="TOPLEFT">
+						<Offset>
+							<AbsDimension x="0" y="-8" />
+						</Offset>
+					</Anchor>
+				</Anchors>
+				<Scripts>
+					<OnClick function="BaudBagContainerDropDown_Show" />
+				</Scripts>
+				<NormalTexture file="Interface\Buttons\UI-PlusButton-Up" />
+				<PushedTexture file="Interface\Buttons\UI-PlusButton-Down" />
+				<HighlightTexture file="Interface\Buttons\UI-PlusButton-Hilight" alphaMode="ADD" />
+			</Button>
+			<Button name="$parentSearchButton">
+				<Size>
+					<AbsDimension x="16" y="16" />
+				</Size>
+				<Anchors>
+					<Anchor point="TOPRIGHT" relativeTo="$parentMenuButton" relativePoint="TOPLEFT">
+						<Offset>
+							<AbsDimension x="0" y="0" />
+						</Offset>
+					</Anchor>
+				</Anchors>
+				<NormalTexture file="Interface\Minimap\TRACKING\None" />
+				<Scripts>
+					<OnClick function="BaudBagSearchButton_Click" />
+				</Scripts>
+			</Button>
+		</Frames>
+		<Layers>
+			<Layer>
+				<FontString name="$parentName" inherits="GameFontNormal" justifyH="LEFT">
+					<Size>
+						<AbsDimension x="0" y="12" />
+					</Size>
+				</FontString>
+			</Layer>
+		</Layers>
+		<Scripts>
+			<OnLoad function="BaudBagContainer_OnLoad" />
+			<OnShow function="BaudBagContainer_OnShow" />
+			<OnHide function="BaudBagContainer_OnHide" />
+			<OnUpdate function="BaudBagContainer_OnUpdate" />
+			<OnDragStart function="BaudBagContainer_OnDragStart" />
+			<OnDragStop function="BaudBagContainer_OnDragStop" />
+		</Scripts>
+	</Frame>
+
+	<Frame name="BaudBagSearchFrame" parent="UIParent" hidden="true">
+		<Anchors>
+			<Anchor Point="CENTER" />
+		</Anchors>
+		<Size>
+			<AbsDimension y="20" />
+		</Size>
+		<Frames>
+			<Frame name="$parentBackdrop">
+				<Frames>
+					<Frame name="$parentTextures" setAllPoints="true" />
+				</Frames>
+			</Frame>
+			
+			<Button name="$parentCloseButton" inherits="UIPanelCloseButton">
+				<Anchors>
+					<Anchor point="TOPRIGHT" />
+				</Anchors>
+				<Scripts>
+					<OnClick>
+						self:GetParent():Hide();
+					</OnClick>
+				</Scripts>
+			</Button>
+
+			<EditBox name="$parentEditBox"  inherits="InputBoxTemplate" autoFocus="false">
+				<Size>
+					<AbsDimension y="12" />
+				</Size>
+				<Anchors>
+					<Anchor point="TOPLEFT">
+						<Offset>
+							<AbsDimension x="-1" y="18" />
+						</Offset>
+					</Anchor>
+					<Anchor point="RIGHT" relativeTo="$parentCloseButton" relativePoint="LEFT">
+						<Offset>
+							<AbsDimension x="2" />
+						</Offset>
+					</Anchor>
+				</Anchors>
+				<Scripts>
+					<OnTextChanged function="BaudBagSearchFrameEditBox_OnTextChanged" />
+				</Scripts>
+			</EditBox>
+		</Frames>
+		<Scripts>
+			<OnHide function="BaudBagSearchFrame_OnHide" />
+		</Scripts>
+	</Frame>
+	<Frame name="BaudBagFirstContainerTemplate" virtual="true" inherits="BaudBagContainerTemplate">
+		<Frames>
+			<CheckButton name="$parentBagsButton">
+				<Size>
+					<AbsDimension x="24" y="24" />
+				</Size>
+				<Anchors>
+					<Anchor point="RIGHT" relativeTo="$parentName" relativePoint="LEFT">
+						<Offset>
+							<AbsDimension x="-5" y="0" />
+						</Offset>
+					</Anchor>
+				</Anchors>
+				<Scripts>
+					<OnClick function="BaudBagBagsButton_OnClick" />
+				</Scripts>
+				<NormalTexture file="Interface\Buttons\UI-SpellbookIcon-PrevPage-Up" />
+				<PushedTexture file="Interface\Buttons\UI-SpellbookIcon-PrevPage-Down" />
+				<HighlightTexture file="Interface\Buttons\UI-Common-MouseHilight" alphaMode="ADD" />
+				<CheckedTexture file="Interface\Buttons\UI-SpellbookIcon-PrevPage-Down" />
+			</CheckButton>
+			<Frame name="$parentMoneyFrame" inherits="SmallMoneyFrameTemplate">
+				<Size>
+					<AbsDimension x="206" y="14" />
+				</Size>
+			</Frame>
+			<Frame name="$parentTokenFrame" inherits="BaudBagTokenFrameTemplate" hidden="true">
+				<Size>
+					<AbsDimension x="206" y="14" />
+				</Size>
+			</Frame>
+		</Frames>
+		<Layers>
+			<Layer>
+				<FontString name="$parentSlots" inherits="GameFontNormal" justifyH="LEFT" />
+			</Layer>
+		</Layers>
+	</Frame>
+	<Frame name="BaudBagSubBagTemplate" virtual="true">
+		<Anchors>
+			<Anchor point="CENTER" />
+		</Anchors>
+		<Scripts>
+			<OnLoad function="BaudBagSubBag_OnLoad" />
+			<OnEvent function="BaudBagSubBag_OnEvent" />
+		</Scripts>
+	</Frame>
+	
+	<Frame name="BaudBagContainerDropDown" inherits="UIDropDownMenuTemplate" hidden="true" id="1">
+		<Scripts>
+			<OnLoad function="BaudBagContainerDropDown_OnLoad" />
+		</Scripts>
+	</Frame>
+
+	<Frame name="BaudBagContainer1_1" inherits="BaudBagFirstContainerTemplate">
+		<Frames>
+			<Frame name="$parentBagsFrame" inherits="BaudBagBagsFrameTemplate">
+				<Frames>
+					<!-- 
+					<Button name="BaudBagKeyRingButton">
+						<Size>
+							<AbsDimension x="39" y="18" />
+						</Size>
+						<Anchors>
+							<Anchor point="BOTTOM">
+								<Offset>
+									<AbsDimension x="0" y="8" />
+								</Offset>
+							</Anchor>
+						</Anchors>
+						<Scripts>
+							<OnLoad function="BaudBagKeyRing_OnLoad" />
+						</Scripts>
+						<NormalTexture file="Interface\Buttons\UI-Button-KeyRing" />
+						<PushedTexture file="Interface\Buttons\UI-Button-KeyRing-Down" />
+						<HighlightTexture file="Interface\Buttons\UI-Button-KeyRing-Highlight" alphaMode="ADD" />
+					</Button>
+					-->
+					</Frames>
+				</Frame>
+		</Frames>
+	</Frame>
+	
+	<Frame name="BaudBagContainer2_1" inherits="BaudBagFirstContainerTemplate">
+		<Frames>
+			<Frame name="$parentBagsFrame" inherits="BaudBagBagsFrameTemplate">
+				<Frames>
+					<Frame name="BaudBagBankSlotPurchaseFrame" setAllPoints="true" parent="BaudBagContainer2_1BagsFrame">
+						<Layers>
+							<Layer level="BACKGROUND">
+								<FontString name="$parentSlotCost" inherits="GameFontHighlight" text="Slot:" justifyH="LEFT">
+									<Size>
+										<AbsDimension x="30" y="20" />
+									</Size>
+									<Anchors>
+										<Anchor point="BOTTOMLEFT">
+											<Offset>
+												<AbsDimension x="15" y="25" />
+											</Offset>
+										</Anchor>
+									</Anchors>
+								</FontString>
+							</Layer>
+						</Layers>
+						<Frames>
+							<Button name="BaudBagBankSlotPurchaseButton" inherits="UIPanelButtonTemplate" text="BANKSLOTPURCHASE">
+								<Size>
+									<AbsDimension x="0" y="21" />
+								</Size>
+								<Anchors>
+									<Anchor point="BOTTOM">
+										<Offset>
+											<AbsDimension x="0" y="5" />
+										</Offset>
+									</Anchor>
+									<Anchor point="LEFT">
+										<Offset>
+											<AbsDimension x="5" y="0" />
+										</Offset>
+									</Anchor>
+									<Anchor point="RIGHT">
+										<Offset>
+											<AbsDimension x="-5" y="0" />
+										</Offset>
+									</Anchor>
+								</Anchors>
+								<Scripts>
+									<OnClick>
+										PlaySound("igMainMenuOption");
+										StaticPopup_Show("CONFIRM_BUY_BANK_SLOT");
+									</OnClick>
+								</Scripts>
+							</Button>
+							<Frame name="$parentMoneyFrame" inherits="SmallMoneyFrameTemplate">
+								<Anchors>
+									<Anchor point="LEFT" relativeTo="$parentSlotCost" relativePoint="RIGHT" />
+								</Anchors>
+								<Scripts>
+									<OnLoad>
+										SmallMoneyFrame_OnLoad(self);
+										MoneyFrame_SetType(self, "STATIC");
+									</OnLoad>
+								</Scripts>
+							</Frame>
+						</Frames>
+					</Frame>
+				</Frames>
+			</Frame>
+			<Frame name="BaudBagSubBag-1" />
+		</Frames>
+	</Frame>
+	
+	<Frame name="BaudBagFrame">
+		<Scripts>
+			<OnLoad function="BaudBag_OnLoad" />
+      <OnEvent function="BaudBag_OnEvent" />
+		</Scripts>
+	</Frame>
+
+	<Frame name="BagContainer" />
+	
+</Ui>

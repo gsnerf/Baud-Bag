@@ -1,0 +1,6 @@
+﻿package-as: BaudBag
+ignore:
+    - BaudBag.wowproj
+    - BaudBag.wowsln
+    - DevReadMe.txt
+manual-changelog: CHANGELOG.txt
