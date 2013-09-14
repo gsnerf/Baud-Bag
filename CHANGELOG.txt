@@ -1,0 +1,51 @@
+﻿=== Changelog ===
+v5.4.0
+  - added workaround for slider value bug introduced in live 5.4.0 builds (see http://www.wowwiki.com/Patch_5.4.0/API_changes#Issues)
+v5.3.0
+  - fixed search when caged battle pets are present in the bags open for search
+  - added new option 
+v5.2.0
+  - fixed faulty behaviour when BB is deativated for the inventory (Ticket 77)
+v5.1.0
+  - hotfix for changes made to original BagSlots by Blizz
+v5.0.0
+  - fixed my sloppy coding resulting in tainting sloppy coded blizzard addons with patch 5.0.4
+v4.3.0
+  - removed obsolete code to get rid of some error messages
+  - fixed up size of Bag Slot Container Frame (thx to KanadiaN for the patch!)
+  - finally fixed AutoOpen function for bags when going to a vendor or mail terminal
+v4.2.0
+  - removed keyring to adapt to the current WoW Interface changes introduced with patch 4.2.0
+v4.1.1
+  - fixed open bags closing when opening merchant window
+  - backpack now opens correctly when all bags are opened even if it is not joined with other bags
+  - corrected backpack toggeling to close or open all bags at once instead of opening closed and closing opened bags
+  - worked around some tainting issues
+
+v4.1.0
+  - adopted Changes for Patch 4.1 (new ToggleAllBags behavior)
+
+v4.0.3
+  - added bag search (allowing lua style pattern matching)
+  - added option setting to close the whole bag set when closing the first container of a set
+  - added highlighting of container slots when mouse hovers over bags slots in bank or backpack
+  - fixed opening of original bankframe when baudbags own bank frame is disabled
+
+v4.0.2
+  - major restructuring of inner workings
+  - added new token view for up to 5 tokens in the first backpack container
+  - moved options to regular wow options interface
+  - changed rarity coloring to be a bit more discrete (thanks to eldaveo)
+  - added russian and korean translations
+  - fixed cost view for next bank slot
+  
+v4.0.1
+  - fixed auto open issue when visiting a vendor or mail
+
+v4.0.0
+  - updated a big part of the addon to comply with recent changes in the UI-API
+  - updated toc to 40000
+
+=== Known Issues ===
+
+If the columns of the first bagpack container are set to a low value the visible tokens and money may be visible outside the bag frame.
