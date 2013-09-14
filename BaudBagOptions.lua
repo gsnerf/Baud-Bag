@@ -12,8 +12,8 @@ local SelectedContainer	= 1;
 local SetSize			= {5, NUM_BANKBAGSLOTS + 1};
 
 local SliderBars = {
-	{Text=Localized.Columns,	Low="2",	High="20",		SavedVar="Columns",	Default={8,12},			TooltipText = Localized.ColumnsTooltip},
-	{Text=Localized.Scale,		Low="50%",	High="200%",	SavedVar="Scale",		Default={100,100},	TooltipText = Localized.ScaleTooltip}
+	{Text=Localized.Columns,	Low="2",	High="20",		Step=1,		SavedVar="Columns",		Default={8,12},		TooltipText = Localized.ColumnsTooltip},
+	{Text=Localized.Scale,		Low="50%",	High="200%",	Step=1,		SavedVar="Scale",		Default={100,100},	TooltipText = Localized.ScaleTooltip}
 };
 
 local CheckButtons = {
@@ -87,6 +87,7 @@ function BaudBagOptions_OnEvent(self, event, ...)
 		_G[Prefix.."Slider"..Key.."Low"]:SetText(Value.Low);
 		_G[Prefix.."Slider"..Key.."High"]:SetText(Value.High);
 		_G[Prefix.."Slider"..Key].tooltipText = Value.TooltipText;
+		_G[Prefix.."Slider"..Key].valueStep = Value.Step;
 	end
 	
 	-- some slash command settings
@@ -274,30 +275,46 @@ end
 
 --[[ slider functions ]]--
 function BaudBagSlider_OnValueChanged(self)
---[[
-	This is called when the value of a slider is changed.
-	First the new value directly shown in the title.
-	Next the new value is saved in the correct BBConfig entry.
-]]--
+	--[[
+		This is called when the value of a slider is changed.
+		First the new value directly shown in the title.
+		Next the new value is saved in the correct BBConfig entry.
+	]]--
 
-  -- change appearance
-  _G[self:GetName().."Text"]:SetText(format(SliderBars[self:GetID()].Text,self:GetValue()));
+	--[[ !!!TEMPORARY!!! This is a workaround for a possible bug in the sliders behavior ignoring the set step size when dragging the slider]]--
+	if not self._onsetting then   -- is single threaded 
+		 self._onsetting = true
+		 self:SetValue(self:GetValue())
+		 value = self:GetValue()     -- cant use original 'value' parameter
+		 self._onsetting = false
+	else 
+		return 
+	end               -- ignore recursion for actual event handler
+   --[[ END !!!TEMPORARY!!! ]]--
+
+
+	BaudBag_DebugMsg(2, "Updating value of slider with id "..self:GetID().." to "..self:GetValue());
+
+	-- change appearance
+	_G[self:GetName().."Text"]:SetText(format(SliderBars[self:GetID()].Text,self:GetValue()));
   
-  -- TODO: find out why this check is necessary
-  if Updating then
-    return;
-  end
+	-- TODO: find out why this check is necessary
+	if Updating then
+		BaudBag_DebugMsg(2, "It seems we are already updating, skipping further update...");
+		return;
+	end
   
-  -- save BBConfig entry
-  local SavedVar = SliderBars[self:GetID()].SavedVar;
-  BBConfig[SelectedBags][SelectedContainer][SavedVar] = self:GetValue();
+	-- save BBConfig entry
+	local SavedVar = SliderBars[self:GetID()].SavedVar;
+	BaudBag_DebugMsg(2, "The variable associated with this value is "..SavedVar);
+	BBConfig[SelectedBags][SelectedContainer][SavedVar] = self:GetValue();
   
-  -- cause the appropriate update  -- TODO: move to BaudBagBBConfig save?
-  if (SavedVar == "Scale") then
-    BaudUpdateContainerData(SelectedBags, SelectedContainer);
-  elseif (SavedVar=="Columns") then
-    BaudBagUpdateContainer(_G["BaudBagContainer"..SelectedBags.."_"..SelectedContainer]);
-  end
+	-- cause the appropriate update  -- TODO: move to BaudBagBBConfig save?
+	if (SavedVar == "Scale") then
+		BaudUpdateContainerData(SelectedBags, SelectedContainer);
+	elseif (SavedVar=="Columns") then
+		BaudBagUpdateContainer(_G["BaudBagContainer"..SelectedBags.."_"..SelectedContainer]);
+	end
 end
 
 

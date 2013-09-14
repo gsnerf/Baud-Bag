@@ -752,6 +752,8 @@ function BaudBagUpdateBackground(Container)
 		HideObject(Parent.."Corner");
 		if (Blanks > 0) then
 			local Slot = BlankTop and (Cols + 1) or (Container.Slots - Cols);
+			BaudBag_DebugMsg(9, "There are blanks to show, this affects slot: "..Slot);
+			BaudBag_DebugMsg(9, "  slot is determined by: "..(BlankTop and "BlankTop with " or "!BlankTop with Slots "..Container.Slots.." and ").."Cols "..Cols);
 			if (Slot >= 1) or (Slot <= Container.Slots) then
 				if not BlankTop then
 					Texture = GetTexturePiece("Corner",154,164,248,258,"OVERLAY");
