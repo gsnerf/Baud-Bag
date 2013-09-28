@@ -1,0 +1,72 @@
+﻿-- Author      : gsnerf
+-- Create Date : 8/14/2013 12:20:35 PM
+
+--[[ 
+    This function initializes the cache if it does not already exist.
+    Needs to be called in ADDON_LOADED event!
+  ]]
+function BaudBagInitCache()
+	-- init cache as a whole
+	if (type(BaudBag_Cache) ~= "table") then
+		BaudBag_Cache = {};
+	end
+
+	-- init cache for bankbox (not the additional bags in the bank)
+	if (type(BaudBag_Cache[-1]) ~= "table") then
+		BaudBag_Cache[-1] = {Size = NUM_BANKGENERIC_SLOTS};
+	end
+end
+
+
+--[[ 
+	This returns a boolean value wether the data of the chosen bag is cached or not.
+	At the moment only: bag == bankbag
+  ]]
+function BaudBagUseCache(Bag)
+	return (((Bag==-1) or (Bag >= 5)) and not BankOpen);
+end
+
+--[[
+    Convencience method to access cached bags to be 
+    more flexible when messing with the cache system
+  ]]
+function BaudBagGetBagCache(Bag)
+	return BaudBag_Cache[Bag];
+end
+
+
+
+--[[ ####################################### ToolTip stuff ####################################### ]]
+
+--[[ Show the ToolTip for a cached item ]]
+function BaudBagShowCachedTooltip(self, event, ...)
+
+	-- failsafe if the current item is not a bank item or BB is turned of for the bank
+	if BBConfig and (BBConfig[2].Enabled == false) and not (self and (strsub(self:GetName(), 1, 9) == Prefix.."Bank")) then
+		return;
+	end
+
+	-- show tooltip for a bag
+	local Bag, Slot;
+	if self.isBag then
+		Bag = self:GetID();
+		if BaudBagUseCache(Bag) then
+			if not GameTooltip:GetItem()then
+				ShowHyperlink(self, BaudBag_Cache[Bag].BagLink);
+			end
+			BaudBagModifyBagTooltip(Bag);
+		end
+		return;
+	end
+
+	-- show tooltip for an item inside a bag
+	Bag, Slot = self:GetParent():GetID(), self:GetID();
+	if not BaudBagUseCache(Bag) or GameTooltip:IsShown() or not BaudBag_Cache[Bag][Slot] then
+		return;
+	end
+	ShowHyperlink(self, BaudBag_Cache[Bag][Slot].Link);
+end
+
+--[[ hook cached tooltip to item enter events ]]
+hooksecurefunc("ContainerFrameItemButton_OnEnter", BaudBagShowCachedTooltip);
+hooksecurefunc("BankFrameItemButton_OnEnter", BaudBagShowCachedTooltip);
