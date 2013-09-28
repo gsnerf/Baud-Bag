@@ -1,6 +1,7 @@
 ﻿=== Changelog ===
 v5.4.0
   - added workaround for slider value bug introduced in live 5.4.0 builds (see http://www.wowwiki.com/Patch_5.4.0/API_changes#Issues)
+  - fixed blue borders in offline bank view when bank hasn't been visited in a session
 v5.3.0
   - fixed search when caged battle pets are present in the bags open for search
   - added new option 
