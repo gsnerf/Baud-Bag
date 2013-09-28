@@ -19,45 +19,9 @@ local BagsReady;
 local BagsSearched = {};
 local _;
 
---[[ CACHING FOR BANK BAGS ]]
-
---[[ this returns a boolean value wether the data of the chosen bag is cached or not ]]
-local function UseCache(Bag)
-  return (((Bag==-1) or (Bag >= 5)) and not BankOpen);
-end
-
---[[ Show the ToolTip for a cached item ]]
-local function ShowCachedTooltip(self, event, ...)
-  -- failsafe if the current item is not a bank item or BB is turned of for the bank
-  if BBConfig and (BBConfig[2].Enabled == false) and not (self and (strsub(self:GetName(), 1, 9) == Prefix.."Bank"))then
-    return;
-  end
-  -- show tooltip for a bag
-  local Bag, Slot;
-  if self.isBag then
-    Bag = self:GetID();
-    if UseCache(Bag)then
-      if not GameTooltip:GetItem()then
-        ShowHyperlink(self, BaudBag_Cache[Bag].BagLink);
-      end
-      BaudBagModifyBagTooltip(Bag);
-    end
-    return;
-  end
-  -- show tooltip for an item inside a bag
-  Bag, Slot = self:GetParent():GetID(), self:GetID();
-  if not UseCache(Bag) or GameTooltip:IsShown() or not BaudBag_Cache[Bag][Slot] then
-    return;
-  end
-  ShowHyperlink(self, BaudBag_Cache[Bag][Slot].Link);
-end
-
-
-hooksecurefunc("ContainerFrameItemButton_OnEnter", ShowCachedTooltip);
-hooksecurefunc("BankFrameItemButton_OnEnter", ShowCachedTooltip);
 
 -- Adds container name when mousing over bags, aswell as simulating offline bank item mouse over
-hooksecurefunc(GameTooltip, "SetInventoryItem", function(Data, Unit, InvID)
+hooksecurefunc(GameTooltip, "SetInventoryItem", function (Data, Unit, InvID)
   if (Unit ~= "player") then
     return;
   end
@@ -110,13 +74,14 @@ end
 local EventFuncs =
 {
 	ADDON_LOADED = function(self, event, ...)
-		BaudBag_DebugMsg(4, "Event ADDON_LOADED fired");
-		
 		-- check if the event was loaded for this addon
 		local arg1 = ...;
 		if (arg1 ~= "BaudBag") then return end;
+
+		BaudBag_DebugMsg(4, "Event ADDON_LOADED fired");
 		
-		-- wtf is earth feature?
+		
+		-- this seem to be an embed to the no longer developed cosmos addon, propably safe to remove
 		if (EarthFeature_AddButton) then   --add by Isler
 			EarthFeature_AddButton(
 			{
@@ -129,14 +94,9 @@ local EventFuncs =
 			}
 			);
 		end
- 
-		-- init bankcache if not already there
-		if (type(BaudBag_Cache) ~= "table") then
-			BaudBag_Cache = {};
-		end
-		if (type(BaudBag_Cache[-1]) ~= "table") then -- -1 = bank itself
-			BaudBag_Cache[-1] = {Size = NUM_BANKGENERIC_SLOTS};
-		end
+
+		-- make sure the cache is initialized
+		BaudBagInitCache();
     
 		-- the rest of the bank slots are cleared in the next event
 		BaudBagBankSlotPurchaseButton:Disable();
@@ -169,7 +129,7 @@ local EventFuncs =
     BBContainer1:SetWidth(15 + 30);
     BBContainer1:SetHeight(15 + 4 * 30);
 
-		-- create BagSlots for the bag oberview in the bank (frame that pops out and only shows the available bags)
+    -- create BagSlots for the bag oberview in the bank (frame that pops out and only shows the available bags)
     for Bag = 1, NUM_BANKBAGSLOTS do
 		-- the slot name before "BankBagX" has to be 10 chars long or else this will HARDCRASH
 		BagSlot = CreateFrame("Button", "BaudBBankBag"..Bag, BBContainer2, "BankItemButtonBagTemplate");
@@ -334,8 +294,10 @@ EventFuncs.PLAYERBANKSLOTS_CHANGED = Func;
 
 --[[ xml defined (called) BaudBagFrame event handlers ]]--
 function BaudBag_OnLoad(self, event, ...)
-  BINDING_HEADER_BaudBag					= "Baud Bag";
-  BINDING_NAME_BaudBagToggleBank	= "Toggle Bank";
+	BINDING_HEADER_BaudBag					= "Baud Bag";
+	BINDING_NAME_BaudBagToggleBank			= "Toggle Bank";
+	BINDING_NAME_BaudBagToggleVoidStorage	= "Show Void Storage";
+
 	BaudBag_DebugMsg(4, "OnLoad was called");
 
 	-- register for global events (actually handled in OnEvent function)
@@ -539,7 +501,6 @@ function BaudBagToggleBank(self)
     BaudBagAutoOpenSet(2, false);
   end
 end
-
 
 function BaudBagContainerDropDown_Initialize()
   local info = UIDropDownMenu_CreateInfo();
@@ -1458,7 +1419,7 @@ local function AddFreeSlots(Bag)
   if (Bag<=-1) then
     return;
   end
-  local Cache = UseCache(Bag);
+  local Cache = BaudBagUseCache(Bag);
   local NumSlots;
   if not Cache then
     local Free, Family = GetContainerNumFreeSlots(Bag);
@@ -1724,15 +1685,17 @@ end
 
 
 function BaudBag_OnModifiedClick(self, button)
-  if not UseCache(self:GetParent():GetID())then
-    return;
-  end
-  if IsModifiedClick("SPLITSTACK")then
-    StackSplitFrame:Hide();
-  end
-  if BaudBag_Cache[self:GetParent():GetID()][self:GetID()]then
-    HandleModifiedItemClick(BaudBag_Cache[self:GetParent():GetID()][self:GetID()].Link);
-  end
+	if not BaudBagUseCache(self:GetParent():GetID()) then
+		return;
+	end
+
+	if IsModifiedClick("SPLITSTACK")then
+		StackSplitFrame:Hide();
+	end
+
+	if BaudBag_Cache[self:GetParent():GetID()][self:GetID()] then
+		HandleModifiedItemClick(BaudBag_Cache[self:GetParent():GetID()][self:GetID()].Link);
+	end
 end
 
 

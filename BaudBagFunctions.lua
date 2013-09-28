@@ -12,8 +12,30 @@ local BaudBag_DebugCfg = {
 	{ Name = "Search", Active = false},
 	{ Name = "Bag Hover", Active = false},
 	{ Name = "Bag Opening", Active = false},
-	{ Name = "Bag Backgrounds", Active = false}
+	{ Name = "Bag Backgrounds", Active = false},
+	
+	-- everything that has to do with configuration or configuring
+	Config = { Name = "Config", Active = false},
+	Options = { Name = "Options", Active = false},
+
+	-- bags including creation, rendering, opening and special functions
+	Bags           = { Name = "Bags", Active = false},
+	BagCreation    = { Name = "Bag Creation", Active = false},
+	BagHover       = { Name = "Bag Hover", Active = false},
+	BagOpening     = { Name = "Bag Opening", Active = false},
+	BagBackgrounds = { Name = "Bag Backgrounds", Active = false},
+	
+	-- everything that has to do with offline capabilities
+	Cache       = { Name = "Cache", Active = true },
+	Bank        = { Name = "Bank", Active = false},
+	VoidStorage = { Name = "Void Storage", Active = true},
+
+	-- additional functionality
+	Token = { Name = "Token", Active = false},
+	Search = { Name = "Search", Active = false}
 };
+
+
 
 function BaudBag_DebugMsg(type, msg)
 	if (BaudBag_DebugCfg[type].Active) then
