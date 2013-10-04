@@ -1,18 +1,33 @@
 ﻿-- Author      : gsnerf
 -- Create Date : 8/14/2013 12:20:35 PM
 
+--[[
+
+	The cache can be accessed through BaudBag_Cache. It has the following structure:
+	BaudBag_Cache = {
+		"VoidStorage" = {}
+		"Bank" = {
+			-1 = { Size = NUM_BANKGENERIC_SLOTS }
+		}
+	}
+]]
+
 --[[ 
     This function initializes the cache if it does not already exist.
     Needs to be called in ADDON_LOADED event!
   ]]
 function BaudBagInitCache()
+	BaudBag_DebugMsg("Cache", "initalizing cache");
+
 	-- init cache as a whole
 	if (type(BaudBag_Cache) ~= "table") then
+		BaudBag_DebugMsg("Cache", "no cache found, creating new one");
 		BaudBag_Cache = {};
 	end
 
 	-- init cache for bankbox (not the additional bags in the bank)
 	if (type(BaudBag_Cache[-1]) ~= "table") then
+		BaudBag_DebugMsg("Cache", "no bank cache found, creating new one");
 		BaudBag_Cache[-1] = {Size = NUM_BANKGENERIC_SLOTS};
 	end
 end
@@ -52,7 +67,7 @@ function BaudBagShowCachedTooltip(self, event, ...)
 		Bag = self:GetID();
 		if BaudBagUseCache(Bag) then
 			if not GameTooltip:GetItem()then
-				ShowHyperlink(self, BaudBag_Cache[Bag].BagLink);
+				ShowHyperlink(self, BaudBagGetBagCache(Bag).BagLink);
 			end
 			BaudBagModifyBagTooltip(Bag);
 		end

@@ -78,40 +78,42 @@ local EventFuncs =
 		local arg1 = ...;
 		if (arg1 ~= "BaudBag") then return end;
 
-		BaudBag_DebugMsg(4, "Event ADDON_LOADED fired");
+		BaudBag_DebugMsg("Bags", "Event ADDON_LOADED fired");
 		
 		
 		-- this seem to be an embed to the no longer developed cosmos addon, propably safe to remove
-		if (EarthFeature_AddButton) then   --add by Isler
-			EarthFeature_AddButton(
-			{
-				id = "BaudBag";
-				name = Localized.FeatureFrameName;
-				subtext = "BaudBag";
-				tooltip = Localized.FeatureFrameTooltip;
-				icon = "Interface\\Icons\\Spell_Fire_SunKey";
-				callback = function() InterfaceOptionsFrame_OpenToCategory(BaudBagOptionsFrame); end;
-			}
-			);
-		end
+		--if (EarthFeature_AddButton) then   --add by Isler
+		--	EarthFeature_AddButton(
+		--	{
+		--		id = "BaudBag";
+		--		name = Localized.FeatureFrameName;
+		--		subtext = "BaudBag";
+		--		tooltip = Localized.FeatureFrameTooltip;
+		--		icon = "Interface\\Icons\\Spell_Fire_SunKey";
+		--		callback = function() InterfaceOptionsFrame_OpenToCategory(BaudBagOptionsFrame); end;
+		--	}
+		--	);
+		--end
 
 		-- make sure the cache is initialized
 		BaudBagInitCache();
     
 		-- the rest of the bank slots are cleared in the next event
+		-- TODO: recheck why this is necessary and if it can be avoided
 		BaudBagBankSlotPurchaseButton:Disable();
     
 	end,
 
   PLAYER_LOGIN = function(self, event, ...)
-	BaudBag_DebugMsg(4, "Event PLAYER_LOGIN fired");
-    BaudBag_DebugMsg(4, "Creating bag slot buttons.");
+	BaudBag_DebugMsg("Bags", "Event PLAYER_LOGIN fired");
+
     -- prepare BagSlot creation
     local BagSlot, Texture;
     local BBContainer1 = _G[Prefix.."Container1_1BagsFrame"];
     local BBContainer2 = _G[Prefix.."Container2_1BagsFrame"];
     
     -- create BagSlots for the bag overview in the inventory (frame that pops out and only shows the available bags)
+    BaudBag_DebugMsg("Bags", "Creating bag slot buttons.");
     for Bag = 1, 4 do
         -- the slot name before "BagXSlot" has to be 10 chars long or else this will HARDCRASH
         BagSlot	= CreateFrame("CheckButton", "BaudBInveBag"..(Bag - 1).."Slot", BBContainer1, "BagSlotButtonTemplate");
@@ -159,13 +161,13 @@ local EventFuncs =
     BaudBagBankBags_Update();
     BaudBagUpdateFromBBConfig();
     if BBConfig and (BBConfig[2].Enabled == true) then 
-		BaudBag_DebugMsg(5, "BaudBag enabled for Bank, disable default bank event");
+		BaudBag_DebugMsg("Bank", "BaudBag enabled for Bank, disable default bank event");
         BankFrame:UnregisterEvent("BANKFRAME_OPENED"); 
     end 
   end,
 
   BANKFRAME_CLOSED = function(self, event, ...)
-	BaudBag_DebugMsg(5, "Event BANKFRAME_CLOSED fired");
+	BaudBag_DebugMsg("Bank", "Event BANKFRAME_CLOSED fired");
     BankOpen = false;
     BaudBagBankSlotPurchaseButton:Disable();
     if _G[Prefix.."Container2_1"].AutoOpened then
@@ -180,12 +182,12 @@ local EventFuncs =
   end,
 
   PLAYER_MONEY = function(self, event, ...)
-	BaudBag_DebugMsg(4, "Event PLAYER_MONEY fired");
+	BaudBag_DebugMsg("Bags", "Event PLAYER_MONEY fired");
     BaudBagBankBags_Update();
   end,
 
   ITEM_LOCK_CHANGED = function(self, event, ...)
-	BaudBag_DebugMsg(4, "Event ITEM_LOCK_CHANGED fired");
+	BaudBag_DebugMsg("Bags", "Event ITEM_LOCK_CHANGED fired");
     local Bag, Slot = ...;
     if (Bag == BANK_CONTAINER) then
       if (Slot <= NUM_BANKGENERIC_SLOTS) then
@@ -200,7 +202,7 @@ local EventFuncs =
 --[[ here come functions that will be hooked up to multiple events ]]--
 local Func = function(self, event, ...)
 	
-	BaudBag_DebugMsg(5, "Event "..event.." fired");
+	BaudBag_DebugMsg("Bank", "Event "..event.." fired");
 	
 	-- set bank open marker if it was opend
   if (event == "BANKFRAME_OPENED") then
@@ -216,15 +218,15 @@ local Func = function(self, event, ...)
     BankFrameItemButton_Update(_G["BaudBBankBag"..Index]);
   end
   BaudBagBankBags_Update();
-  BaudBag_DebugMsg(4, "Recording bank bag info.");
+  BaudBag_DebugMsg("Bank", "Recording bank bag info.");
   for Bag = 1, NUM_BANKBAGSLOTS do
-    BaudBag_Cache[Bag + 4].BagLink	= GetInventoryItemLink("player", 67 + Bag);
-    BaudBag_Cache[Bag + 4].BagCount = GetInventoryItemCount("player", 67 + Bag);
+    BaudBagGetBagCache(Bag + 4).BagLink	= GetInventoryItemLink("player", 67 + Bag);
+    BaudBagGetBagCache(Bag + 4).BagCount = GetInventoryItemCount("player", 67 + Bag);
   end
 
 	-- everything coming now is only needed if the bank is visible
   if (BBConfig[2].Enabled == false) or (event ~= "BANKFRAME_OPENED") then
-	BaudBag_DebugMsg(5, "Bankframe does not really seem to be open or event was not BANKFRAME_OPENED. Stepping over actually opening the Bankframes");
+	BaudBag_DebugMsg("Bank", "Bankframe does not really seem to be open or event was not BANKFRAME_OPENED. Stepping over actually opening the Bankframes");
     return;
   end
   
@@ -243,7 +245,7 @@ EventFuncs.BANKFRAME_OPENED = Func;
 EventFuncs.PLAYERBANKBAGSLOTS_CHANGED = Func;
 
 Func = function(self, event, ...)
-  BaudBag_DebugMsg(4, "Event "..event.." fired");
+  BaudBag_DebugMsg("Bags", "Event "..event.." fired");
   BaudBagAutoOpenSet(1, false);
 end
 EventFuncs.MERCHANT_SHOW = Func;
@@ -251,7 +253,7 @@ EventFuncs.MAIL_SHOW = Func;
 EventFuncs.AUCTION_HOUSE_SHOW = Func;
 
 Func = function(self, event, ...)
-  BaudBag_DebugMsg(4, "Event "..event.." fired");
+  BaudBag_DebugMsg("Bags", "Event "..event.." fired");
   BaudBagAutoOpenSet(1,true);
 end
 EventFuncs.MERCHANT_CLOSED = Func;
@@ -259,7 +261,7 @@ EventFuncs.MAIL_CLOSED = Func;
 EventFuncs.AUCTION_HOUSE_CLOSED = Func;
 
 Func = function(self, event, ...)
-  BaudBag_DebugMsg(4, "Event "..event.." fired for "..self:GetName());
+  BaudBag_DebugMsg("Bags", "Event "..event.." fired for "..self:GetName());
   local arg1 = ...;
   -- if there are new bank slots the whole view has to be updated
   if (event == "PLAYERBANKSLOTS_CHANGED") then
@@ -298,7 +300,7 @@ function BaudBag_OnLoad(self, event, ...)
 	BINDING_NAME_BaudBagToggleBank			= "Toggle Bank";
 	BINDING_NAME_BaudBagToggleVoidStorage	= "Show Void Storage";
 
-	BaudBag_DebugMsg(4, "OnLoad was called");
+	BaudBag_DebugMsg("Bags", "OnLoad was called");
 
 	-- register for global events (actually handled in OnEvent function)
   for Key, Value in pairs(EventFuncs)do
@@ -316,7 +318,7 @@ function BaudBag_OnLoad(self, event, ...)
   end
 
   --The first bag from the bank is unique and is created in the XML
-  BaudBag_DebugMsg(4, "Creating sub bags.");
+  BaudBag_DebugMsg("Bags", "Creating sub bags.");
   for Bag = -1, LastBagID do
     if(Bag == -1)then
       SubBag = _G[Prefix.."SubBag"..Bag];
@@ -336,7 +338,7 @@ end
 
 -- this just makes sure the bags will be visible at the correct layer position when opened
 -- function BaudBagBagsFrame_OnShow(self, event, ...)
-	-- BaudBag_DebugMsg(5, "BaudBagBagsFrame is shown, correcting frame layer lvls of childs");
+	-- BaudBag_DebugMsg("Bank", "BaudBagBagsFrame is shown, correcting frame layer lvls of childs");
   -- --Adjust frame level because of Blizzard's screw up
   -- local Level = self:GetFrameLevel() + 1;
   -- for Key, Value in pairs(self:GetChildren())do
@@ -353,35 +355,38 @@ function BaudBagContainer_OnLoad(self, event, ...)
 end
 
 function BaudBagContainer_OnUpdate(self, event, ...)
-  if (self.Refresh) then
-    BaudBagUpdateContainer(self);
-    BaudBagUpdateOpenBags();
-  end
-  if (self.UpdateSlots) then
-    BaudBagUpdateFreeSlots(self);
-  end
-  if (self.FadeStart) then
-    local Alpha = (GetTime() - self.FadeStart) / FadeTime;
-    if self.Closing then
-      Alpha = 1 - Alpha;
-      if(Alpha < 0)then
-        self.FadeStart = nil;
-        self:Hide();
-        self.Closing = nil;
-        return;
-      end
-    elseif(Alpha > 1)then
-      self:SetAlpha(1);
-      self.FadeStart = nil;
-      return;
-    end
-    self:SetAlpha(Alpha);
-  end
+
+	if (self.Refresh) then
+		BaudBagUpdateContainer(self);
+		BaudBagUpdateOpenBags();
+	end
+
+	if (self.UpdateSlots) then
+		BaudBagUpdateFreeSlots(self);
+	end
+
+	if (self.FadeStart) then
+		local Alpha = (GetTime() - self.FadeStart) / FadeTime;
+		if self.Closing then
+			Alpha = 1 - Alpha;
+			if (Alpha < 0) then
+				self.FadeStart = nil;
+				self:Hide();
+				self.Closing = nil;
+			return;
+			end
+		elseif (Alpha > 1)then
+			self:SetAlpha(1);
+			self.FadeStart = nil;
+			return;
+		end
+		self:SetAlpha(Alpha);
+	end
 end
 
 
 function BaudBagContainer_OnShow(self, event, ...)
-	BaudBag_DebugMsg(4, "BaudBagContainer_OnShow was called for "..self:GetName());
+	BaudBag_DebugMsg("Bags", "BaudBagContainer_OnShow was called for "..self:GetName());
 	
 	-- check if the container was open before and closing now
 	if self.FadeStart then
@@ -487,7 +492,7 @@ end
 
 
 local function ShowContainerOptions(self)
-  BaudBagOptionsSelectContainer(DropDownBagSet,DropDownContainer);
+  BaudBagOptionsSelectContainer(DropDownBagSet, DropDownContainer);
   InterfaceOptionsFrame_OpenToCategory("Baud Bag");
 end
 
@@ -525,7 +530,7 @@ end
 --This function updates misc. options for a bag
 function BaudUpdateContainerData(BagSet, ContNum)
   local Container = _G[Prefix.."Container"..BagSet.."_"..ContNum];
-  BaudBag_DebugMsg(4, "Updating container data: "..Container:GetName());
+  BaudBag_DebugMsg("Bags", "Updating container data: "..Container:GetName());
   _G[Container:GetName().."Name"]:SetText(BBConfig[BagSet][ContNum].Name or "");
   local Scale = BBConfig[BagSet][ContNum].Scale / 100;
   Container:SetScale(Scale);
@@ -713,8 +718,8 @@ function BaudBagUpdateBackground(Container)
 		HideObject(Parent.."Corner");
 		if (Blanks > 0) then
 			local Slot = BlankTop and (Cols + 1) or (Container.Slots - Cols);
-			BaudBag_DebugMsg(9, "There are blanks to show, this affects slot: "..Slot);
-			BaudBag_DebugMsg(9, "  slot is determined by: "..(BlankTop and "BlankTop with " or "!BlankTop with Slots "..Container.Slots.." and ").."Cols "..Cols);
+			BaudBag_DebugMsg("BagBackgrounds", "There are blanks to show, this affects slot: "..Slot);
+			BaudBag_DebugMsg("BagBackgrounds", "  slot is determined by: "..(BlankTop and "BlankTop with " or "!BlankTop with Slots "..Container.Slots.." and ").."Cols "..Cols);
 			if (Slot >= 1) or (Slot <= Container.Slots) then
 				if not BlankTop then
 					Texture = GetTexturePiece("Corner",154,164,248,258,"OVERLAY");
@@ -729,7 +734,7 @@ function BaudBagUpdateBackground(Container)
 		-- Adds the box for the money/slot indicators and if needed the token frame
 		if (Container:GetID() == 1) then
 			if (BackpackTokenFrame_IsShown() == 1 and Container:GetName() == "BaudBagContainer1_1") then
-				BaudBag_DebugMsg(3, "Showing Token Frame for Container '"..Container:GetName().."' ("..Container:GetID()..")");
+				BaudBag_DebugMsg("Token", "Showing Token Frame for Container '"..Container:GetName().."' ("..Container:GetID()..")");
 				-- make sure the window gets big enough and the correct texture is chosen
 				Bottom = Bottom + 39;
 				TextureFile = "Interface\\ContainerFrame\\UI-BackpackBackground.blp";
@@ -875,22 +880,22 @@ end
 
 --[[ This function updates the parent containers for each bag, according to the options setup ]]--
 function BaudUpdateJoinedBags()
-	BaudBag_DebugMsg(4, "Updating joined bags...");
+	BaudBag_DebugMsg("Bags", "Updating joined bags...");
 	local OpenBags = {};
 	for Bag = -1, LastBagID do
 		OpenBags[Bag] = _G[Prefix.."SubBag"..Bag]:GetParent():IsShown();
 		if OpenBags[Bag] then
-			BaudBag_DebugMsg(4, "Bag open: "..Bag);
+			BaudBag_DebugMsg("Bags", "Bag open: "..Bag);
 		end
 	end
 	
 	local SubBag, Container, IsOpen, ContNum, BagID;
 	local function FinishContainer()
 		if IsOpen then
-			BaudBag_DebugMsg(4, "Showing Container "..Container:GetName());
+			BaudBag_DebugMsg("Bags", "Showing Container "..Container:GetName());
 			Container:Show();
 		else
-			BaudBag_DebugMsg(4, "Hiding Container "..Container:GetName());
+			BaudBag_DebugMsg("Bags", "Hiding Container "..Container:GetName());
 			Container:Hide();
 		end
 		BaudBagUpdateContainer(Container);
@@ -935,7 +940,7 @@ end
 
 --[[ Sets the highlight texture of bag slots indicating wether the contained bag is opened or not ]]--
 function BaudBagUpdateOpenBags()
-    BaudBag_DebugMsg(4, "[BaudBagUpdateOpenBags]");
+    BaudBag_DebugMsg("Bags", "[BaudBagUpdateOpenBags]");
 	local Open, Frame, Highlight, Highlight2;
 	-- The bank bag(-1) has no open indicator
 	for Bag = -1, LastBagID do
@@ -968,7 +973,7 @@ end
 function BaudBagAutoOpenSet(BagSet, Close)
     -- debug messages:
     local closeState = Close and "true" or "false";
-    BaudBag_DebugMsg(8, "[AutoOpenSet Entry] BagSet: "..BagSet.."; Close: "..closeState);
+    BaudBag_DebugMsg("BagOpening", "[AutoOpenSet Entry] BagSet: "..BagSet.."; Close: "..closeState);
     
     --Set 2 doesn't need container 1 to be shown because that's a given
     local Container;
@@ -976,29 +981,29 @@ function BaudBagAutoOpenSet(BagSet, Close)
   
         --[[ DEBUG ]]--
         local autoOpenState = BBConfig[BagSet][ContNum].AutoOpen and "true" or "false";
-        BaudBag_DebugMsg(8, "[AutoOpenSet FOR] ContNum: "..ContNum.."; AutoOpen: "..autoOpenState);
+        BaudBag_DebugMsg("BagOpening", "[AutoOpenSet FOR] ContNum: "..ContNum.."; AutoOpen: "..autoOpenState);
   
         if BBConfig[BagSet][ContNum].AutoOpen then
             Container = _G[Prefix.."Container"..BagSet.."_"..ContNum];
             if not Close then
                 if not Container:IsShown() then
-                    BaudBag_DebugMsg(8, "[AutoOpenSet FOR (IsShown)] FALSE");
+                    BaudBag_DebugMsg("BagOpening", "[AutoOpenSet FOR (IsShown)] FALSE");
                     Container.AutoOpened = true;
                     Container:Show();
                 else
-                    BaudBag_DebugMsg(8, "[AutoOpenSet FOR (IsShown)] TRUE");
+                    BaudBag_DebugMsg("BagOpening", "[AutoOpenSet FOR (IsShown)] TRUE");
                 end
             elseif Container.AutoOpened then
-                BaudBag_DebugMsg(8, "[AutoOpenSet FOR (AutoOpened)] TRUE");
+                BaudBag_DebugMsg("BagOpening", "[AutoOpenSet FOR (AutoOpened)] TRUE");
 				Container.AutoOpened = false;
 				if BBConfig[BagSet][ContNum].AutoClose then
-					BaudBag_DebugMsg(8, "[AutoOpenSet FOR (AutoOpened)] AutoClose set, hiding!");
+					BaudBag_DebugMsg("BagOpening", "[AutoOpenSet FOR (AutoOpened)] AutoClose set, hiding!");
 					Container:Hide();
 				else
-					BaudBag_DebugMsg(8, "[AutoOpenSet FOR (AutoOpened)] AutoClose not set, ignoring hide!");
+					BaudBag_DebugMsg("BagOpening", "[AutoOpenSet FOR (AutoOpened)] AutoClose not set, ignoring hide!");
 				end
             else
-                BaudBag_DebugMsg(8, "[AutoOpenSet FOR (AutoOpened)] FALSE");
+                BaudBag_DebugMsg("BagOpening", "[AutoOpenSet FOR (AutoOpened)] FALSE");
             end
         end
     end
@@ -1013,9 +1018,9 @@ end
 --[[ backpack specific original functions ]]--
 local pre_OpenBackpack = OpenBackpack;
 OpenBackpack = function() 
-	BaudBag_DebugMsg(8, "[OpenBackpack] called!");
+	BaudBag_DebugMsg("BagOpening", "[OpenBackpack] called!");
 	if (not BBConfig or not BBConfig[1].Enabled) then
-        BaudBag_DebugMsg(8, "[OpenBackpack] somethings not right, sending to blizz-bags!");
+        BaudBag_DebugMsg("BagOpening", "[OpenBackpack] somethings not right, sending to blizz-bags!");
 		return pre_OpenBackpack();
 	end
 
@@ -1024,9 +1029,9 @@ end
 
 local pre_CloseBackpack = CloseBackpack;
 CloseBackpack = function()
-    BaudBag_DebugMsg(8, "[CloseBackpack] called!");
+    BaudBag_DebugMsg("BagOpening", "[CloseBackpack] called!");
 	if (not BBConfig or not BBConfig[1].Enabled) then
-        BaudBag_DebugMsg(8, "[CloseBackpack] somethings not right, sending to blizz-bags!");
+        BaudBag_DebugMsg("BagOpening", "[CloseBackpack] somethings not right, sending to blizz-bags!");
 		return pre_CloseBackpack();
 	end
 
@@ -1035,10 +1040,10 @@ end
 
 local pre_ToggleBackpack = ToggleBackpack;
 ToggleBackpack = function()
-    BaudBag_DebugMsg(8, "[ToggleBackpack] called");
+    BaudBag_DebugMsg("BagOpening", "[ToggleBackpack] called");
 	-- make sure original is called when BaudBag is disabled for the backpack
 	if (not BBConfig or not BBConfig[1].Enabled) then
-        BaudBag_DebugMsg(8, "[ToggleBackpack] BaudBag disabled for inventory calling original UI");
+        BaudBag_DebugMsg("BagOpening", "[ToggleBackpack] BaudBag disabled for inventory calling original UI");
 		return pre_ToggleBackpack();
 	end
 	
@@ -1070,10 +1075,10 @@ ToggleBag = function(id)
         return pre_ToggleBag(id);
     end
 
-    BaudBag_DebugMsg(8, "[ToggleBag] toggeling bag "..id.." ("..Prefix.."SubBag"..id..")");
+    BaudBag_DebugMsg("BagOpening", "[ToggleBag] toggeling bag "..id.." ("..Prefix.."SubBag"..id..")");
 	
     --Blizzard's stuff will automaticaly try open the bags at the mailbox and vendor.  Baud Bag will be in charge of that.
-    -- BaudBag_DebugMsg(4, "[ToggleBag] self: "..self:GetName());
+    -- BaudBag_DebugMsg("Bags", "[ToggleBag] self: "..self:GetName());
     -- if not BagsReady or (self == MailFrame) or (self == MerchantFrame) then
         -- return;
     -- end
@@ -1091,14 +1096,14 @@ ToggleBag = function(id)
   -- end
   
   if Container:IsShown() then
-    BaudBag_DebugMsg(8, "[ToggleBag] container "..Container:GetName().." open, closing");
+    BaudBag_DebugMsg("BagOpening", "[ToggleBag] container "..Container:GetName().." open, closing");
 	Container:Hide();
     -- Hide the token bar if closing the backpack
 		if ( id == 0 and BackpackTokenFrame ) then
 			BackpackTokenFrame:Hide();
 		end
   else
-        BaudBag_DebugMsg(8, "[ToggleBag] container "..Container:GetName().." closed, opening");
+        BaudBag_DebugMsg("BagOpening", "[ToggleBag] container "..Container:GetName().." closed, opening");
 	    Container:Show();
     -- If there are tokens watched then show the bar
 		if ( id == 0 and ManageBackpackTokenFrame ) then
@@ -1111,58 +1116,58 @@ end
 
 local pre_OpenAllBags = OpenAllBags;
 OpenAllBags = function(frame)
-    BaudBag_DebugMsg(8, "[OpenAllBags] called from "..((frame ~= nil) and frame:GetName() or "[none]"));
+    BaudBag_DebugMsg("BagOpening", "[OpenAllBags] called from "..((frame ~= nil) and frame:GetName() or "[none]"));
     
     -- call default bags if the addon is disabled for regular bags
     if (not BBConfig or not BBConfig[1].Enabled) then
-        BaudBag_DebugMsg(8, "[OpenAllBags] sent to original frames");
+        BaudBag_DebugMsg("BagOpening", "[OpenAllBags] sent to original frames");
         return pre_OpenAllBags(frame);
     end
   
     -- also cancel if bags can't be viewed at the moment (CAN this actually happen?)
     if not BagsReady then
-        BaudBag_DebugMsg(8, "[OpenAllBags] bags not ready");
+        BaudBag_DebugMsg("BagOpening", "[OpenAllBags] bags not ready");
         return;
     end
 
     -- failsafe check as opening mail or merchant seems to instantly call OpenAllBags instead of the bags registering for the events...
     if (frame ~= nil and (frame:GetName() == "MailFrame" or frame:GetName() == "MerchantFrame")) then
-        BaudBag_DebugMsg(8, "[OpenAllBags] found merchant or mail call, stopping now!");
+        BaudBag_DebugMsg("BagOpening", "[OpenAllBags] found merchant or mail call, stopping now!");
         return;
     end
   
     local Container, AnyShown;
     for Bag = 0, 4 do
-        BaudBag_DebugMsg(8, "[OpenAllBags] analyzing bag "..Bag);
+        BaudBag_DebugMsg("BagOpening", "[OpenAllBags] analyzing bag "..Bag);
         Container = _G[Prefix.."SubBag"..Bag]:GetParent();
         if (GetContainerNumSlots(Bag) > 0) and not Container:IsShown()then
-            BaudBag_DebugMsg(8, "[OpenAllBags] showing bag");
+            BaudBag_DebugMsg("BagOpening", "[OpenAllBags] showing bag");
             Container:Show();
 --            AnyShown = true;
         end
     end
 
     -- if not AnyShown then
-        -- BaudBag_DebugMsg(4, "[OpenAllBags] nothing opened => all opened, closing...");
+        -- BaudBag_DebugMsg("Bags", "[OpenAllBags] nothing opened => all opened, closing...");
         -- BaudBagCloseBagSet(1);
     -- end
 end
 
 local pre_CloseAllBags = CloseAllBags;
 CloseAllBags = function(frame)
-	BaudBag_DebugMsg(8, "[CloseAllBags] called from "..((frame ~= nil) and frame:GetName() or "[none]"));
+	BaudBag_DebugMsg("BagOpening", "[CloseAllBags] called from "..((frame ~= nil) and frame:GetName() or "[none]"));
 
 	-- failsafe check as opening mail or merchant seems to instantly call OpenAllBags instead of the bags registering for the events...
     if (frame ~= nil and (frame:GetName() == "MailFrame" or frame:GetName() == "MerchantFrame")) then
-        BaudBag_DebugMsg(8, "[CloseAllBags] found merchant or mail call, stopping now!");
+        BaudBag_DebugMsg("BagOpening", "[CloseAllBags] found merchant or mail call, stopping now!");
         return;
     end
 
 	for Bag = 0, 4 do
-        BaudBag_DebugMsg(8, "[CloseAllBags] analyzing bag "..Bag);
+        BaudBag_DebugMsg("BagOpening", "[CloseAllBags] analyzing bag "..Bag);
         local Container = _G[Prefix.."SubBag"..Bag]:GetParent();
         if (GetContainerNumSlots(Bag) > 0) and Container:IsShown()then
-            BaudBag_DebugMsg(8, "[CloseAllBags] hiding  bag");
+            BaudBag_DebugMsg("BagOpening", "[CloseAllBags] hiding  bag");
             Container:Hide();
         end
     end
@@ -1212,7 +1217,7 @@ function BaudBag_IsBagOpen(BagID)
 
     -- fallback
 	if (not BBConfig or not BaudBag_BagHandledByBaudBag(BagID)) then
-        BaudBag_DebugMsg(8, "BaudBag is not responsible for this bag, calling default ui");
+        BaudBag_DebugMsg("BagOpening", "BaudBag is not responsible for this bag, calling default ui");
         return pre_IsBagOpen(BagID);
     end
     
@@ -1220,10 +1225,10 @@ function BaudBag_IsBagOpen(BagID)
     local open = SubBag and SubBag:IsShown() and SubBag:GetParent():IsShown() and not SubBag:GetParent().Closing;
 
     if (bagContainer) then
-        BaudBag_DebugMsg(8, "[IsBagOpen] called on bag "..BagID.." with result "..tostring(open));
+        BaudBag_DebugMsg("BagOpening", "[IsBagOpen] called on bag "..BagID.." with result "..tostring(open));
     end
     if (bankContainer) then
-        BaudBag_DebugMsg(8, "[IsBagOpen] called on bank bag "..BagID.." with result "..tostring(open));
+        BaudBag_DebugMsg("BagOpening", "[IsBagOpen] called on bank bag "..BagID.." with result "..tostring(open));
     end
 
     return open;
@@ -1281,11 +1286,11 @@ local SubBagEvents = {
 
         -- BAG_UPDATE is the only event called when a bag is added, so if no bag existed before, refresh
 		if (self.size > 0) then
-            BaudBag_DebugMsg(4, "Event BAG_UPDATE fired on BagID "..arg1.." (calling ContainerFrame_Update)");
+            BaudBag_DebugMsg("Bags", "Event BAG_UPDATE fired on BagID "..arg1.." (calling ContainerFrame_Update)");
 			ContainerFrame_Update(self);
 			BaudBagUpdateSubBag(self);
 		else
-            BaudBag_DebugMsg(4, "Event BAG_UPDATE fired on BagID "..arg1.." (refreshing)");
+            BaudBag_DebugMsg("Bags", "Event BAG_UPDATE fired on BagID "..arg1.." (refreshing)");
 			self:GetParent().Refresh = true;
 		end
 	end,
@@ -1297,7 +1302,7 @@ local SubBagEvents = {
 		end
 		-- self event occurs when bags are swapped too, but updated information is not immediately
 		-- available to the addon, so the bag must be updated later.
-        BaudBag_DebugMsg(4, "Event BAG_CLOSED fired on BagID "..arg1.." (refreshing)");
+        BaudBag_DebugMsg("Bags", "Event BAG_CLOSED fired on BagID "..arg1.." (refreshing)");
 		self:GetParent().Refresh = true;
 	end
 };
@@ -1322,8 +1327,8 @@ function BaudBagUpdateSubBag(SubBag)
 	local ShowColor = BBConfig[SubBag.BagSet][SubBag:GetParent():GetID()].RarityColor;
 	--local ShowColorAltern = BBConfig[SubBag.BagSet][SubBag:GetParent():GetID()].RarityColorAltern;
 	SubBag.FreeSlots = 0;
-	BaudBag_DebugMsg(4, "Updating SubBag "..SubBag:GetID());
-	BaudBag_DebugMsg(4, (((SubBag.BagSet ~= 2) or BankOpen) and "- This is a bag container or the bank is open" or "- This is a bank container (reading from cache)"));
+	BaudBag_DebugMsg("Bags", "Updating SubBag "..SubBag:GetID());
+	BaudBag_DebugMsg("Bags", (((SubBag.BagSet ~= 2) or BankOpen) and "- This is a bag container or the bank is open" or "- This is a bank container (reading from cache)"));
   
 	for Slot = 1, SubBag.size do
 		Quality = nil;
@@ -1404,7 +1409,7 @@ end
 
 
 function BaudBagContainerSaveCoords(Frame)
-  BaudBag_DebugMsg(4, "Saving container coords: "..Frame:GetName());
+  BaudBag_DebugMsg("Bags", "Saving container coords: "..Frame:GetName());
   local Scale = Frame:GetScale();
   local X, Y = Frame:GetCenter();
   X = X * Scale;
@@ -1448,7 +1453,7 @@ end
 
 function BaudBagUpdateFreeSlots(Frame)
   Frame.UpdateSlots = nil;
-  BaudBag_DebugMsg(4, "Counting free slots for set "..Frame.BagSet);
+  BaudBag_DebugMsg("Bags", "Counting free slots for set "..Frame.BagSet);
   TotalFree, TotalSlots = 0, 0;
   if(Frame.BagSet==1)then
     for Bag = 0, 4 do
@@ -1471,7 +1476,7 @@ function BaudBagBankBags_Update()
 	local Slots, Full = GetNumBankSlots();
 	local BagSlot;
   
-	BaudBag_DebugMsg(5, "BankBags: updating");
+	BaudBag_DebugMsg("Bank", "BankBags: updating");
 
 	for Bag = 1, NUM_BANKBAGSLOTS do
 		BagSlot = _G["BaudBBankBag"..Bag];
@@ -1488,14 +1493,14 @@ function BaudBagBankBags_Update()
 	local BBContainer2 = _G[Prefix.."Container2_1BagsFrame"];
 
 	if Full then
-		BaudBag_DebugMsg(5, "BankBags: all bags bought hiding purchase button");
+		BaudBag_DebugMsg("Bank", "BankBags: all bags bought hiding purchase button");
 		Purchase:Hide();
 		BBContainer2:SetHeight(BBContainer2.Height);
 		return;
 	end
 
 	local Cost = GetBankSlotCost(Slots);
-	BaudBag_DebugMsg(5, "BankBags: buyable bag slots left, currentCost = "..Cost);
+	BaudBag_DebugMsg("Bank", "BankBags: buyable bag slots left, currentCost = "..Cost);
 
 	-- This line allows the confirmation box to show the cost
 	BankFrame.nextSlotCost = Cost;
@@ -1550,7 +1555,7 @@ end
 
 function BaudBagUpdateContainer(Container)
 
-  BaudBag_DebugMsg(4, "Updating Container: "..Container:GetName());
+  BaudBag_DebugMsg("Bags", "Updating Container: "..Container:GetName());
 
 	-- initialize bag update
 	Container.Refresh = false;
@@ -1616,12 +1621,12 @@ function BaudBagUpdateContainer(Container)
 		if (SubBag.size <= 0) then
 			SubBag:Hide();
 		else
-			BaudBag_DebugMsg(4, "Adding "..SubBag:GetName());
+			BaudBag_DebugMsg("Bags", "Adding "..SubBag:GetName());
 
 			-- Create extra slots if needed
 			if (SubBag.size > (SubBag.maxSlots or 0)) then
 				for Slot = (SubBag.maxSlots or 0) + 1, SubBag.size do
-					-- BaudBag_DebugMsg(4, "creating button slot of type "..((SubBag:GetID() ~= -1) and "ContainerFrameItemButtonTemplate" or "BankItemButtonGenericTemplate"));
+					-- BaudBag_DebugMsg("Bags", "creating button slot of type "..((SubBag:GetID() ~= -1) and "ContainerFrameItemButtonTemplate" or "BankItemButtonGenericTemplate"));
 					local Button = CreateFrame("Button", SubBag:GetName().."Item"..Slot, SubBag, (SubBag:GetID() ~= -1) and "ContainerFrameItemButtonTemplate" or "BankItemButtonGenericTemplate");
 					Button:SetID(Slot);
 					local Texture = Button:CreateTexture(Button:GetName().."Border","OVERLAY");
@@ -1680,7 +1685,7 @@ function BaudBagUpdateContainer(Container)
 	end
   
   BaudBagUpdateBackground(Container);
-  BaudBag_DebugMsg(4, "Finished Arranging Container.");
+  BaudBag_DebugMsg("Bags", "Finished Arranging Container.");
 end
 
 
@@ -1853,9 +1858,9 @@ function BaudBagSearchButton_Click(self, event, ...)
 end
 
 function BaudBagSearchFrame_CheckClose(caller)
-	BaudBag_DebugMsg(6, "Checking if searchframe needs to be closed:");
+	BaudBag_DebugMsg("Search", "Checking if searchframe needs to be closed:");
 	if (BaudBagSearchFrame:IsVisible()) then
-		BaudBag_DebugMsg(6, caller:GetName().." "..BaudBagSearchFrame.AttachedTo);
+		BaudBag_DebugMsg("Search", caller:GetName().." "..BaudBagSearchFrame.AttachedTo);
 		local isSelf		= (caller:GetName() == BaudBagSearchFrame:GetName());
 		local isAttached	= (caller:GetName() == BaudBagSearchFrame.AttachedTo);
 		local isClosed		= _G[BaudBagSearchFrame.AttachedTo].Closing or (not _G[BaudBagSearchFrame.AttachedTo]:IsVisible());
@@ -1863,7 +1868,7 @@ function BaudBagSearchFrame_CheckClose(caller)
 		local attachedString = isAttached and "true" or "false";
 		local closedString	 = isClosed and "true" or "false";
 		
-		BaudBag_DebugMsg(6, selfString.." "..attachedString.." "..closedString);
+		BaudBag_DebugMsg("Search", selfString.." "..attachedString.." "..closedString);
 		if (isSelf or (isAttached and isClosed)) then
 			BaudBagSearchFrame:Hide();
 		end
@@ -1880,7 +1885,7 @@ function BaudBagSearchFrame_OnHide(self, event, ...)
 end
 
 function BaudBagSearchFrameEditBox_OnTextChanged(self, isUserInput)
-	BaudBag_DebugMsg(6, "Changed search phrase, researching open bags");
+	BaudBag_DebugMsg("Search", "Changed search phrase, researching open bags");
 	local compareString = _G[Prefix.."SearchFrameEditBox"]:GetText();
 	
 	-- check search text for validity
@@ -1898,7 +1903,7 @@ function BaudBagSearchFrameEditBox_OnTextChanged(self, isUserInput)
 		
 		-- if the bag is open go through its items and compare the itemname
 		if (Open) then
-			BaudBag_DebugMsg(6, "Bag '"..Bag.."' is open, going through items");
+			BaudBag_DebugMsg("Search", "Bag '"..Bag.."' is open, going through items");
 			BagsSearched[Bag] = true;
 		
 			for Slot = 1, SubBag.size do
@@ -1915,7 +1920,7 @@ function BaudBagSearchFrameEditBox_OnTextChanged(self, isUserInput)
 				if Link then
 					-- debug message
 					printableLink = gsub(Link, "\124", "\124\124");
-					BaudBag_DebugMsg(6, "Found a link: '"..printableLink.."'");
+					BaudBag_DebugMsg("Search", "Found a link: '"..printableLink.."'");
 
 					-- we can have different types of links, usually it is an item...
 					if (strmatch(Link, "|Hitem:")) then
@@ -1935,7 +1940,7 @@ function BaudBagSearchFrameEditBox_OnTextChanged(self, isUserInput)
 				-- add transparency if search active but not a result
 				Texture = ItemButton;
 				if (Link and compareString ~= "") then
-					BaudBag_DebugMsg(6, "Searching for String: '"..compareString.."' in Item '"..Name.."'");
+					BaudBag_DebugMsg("Search", "Searching for String: '"..compareString.."' in Item '"..Name.."'");
 					
 					-- first run string search and go through results later (because of error handling)
 					Status, Result = pcall(string.find, string.lower(Name), string.lower(compareString));
@@ -1944,15 +1949,15 @@ function BaudBagSearchFrameEditBox_OnTextChanged(self, isUserInput)
 					if (Status) then
 						--if (string.find(string.lower(Name), string.lower(compareString)) == nil) then
 						if (Result == nil) then
-							BaudBag_DebugMsg(6, "Itemname does not match");
+							BaudBag_DebugMsg("Search", "Itemname does not match");
 							Texture:SetAlpha(0.2);
 						else
-							BaudBag_DebugMsg(6, "Item seems to match");
+							BaudBag_DebugMsg("Search", "Item seems to match");
 							Texture:SetAlpha(1);
 						end
 					-- find failed, create debug message
 					else
-						BaudBag_DebugMsg(6, "current search creates problem: ("..Result..")");
+						BaudBag_DebugMsg("Search", "current search creates problem: ("..Result..")");
 						return;
 					end
 				else
@@ -1979,7 +1984,7 @@ end
 
 --[[ if the mouse hovers over the bag slot item the slots belonging to this bag should be shown after a certain time (atm 350ms or 0.35s) ]]
 function BaudBag_BagSlot_OnEnter(self, event, ...)
-	BaudBag_DebugMsg(7, "Mouse is hovering above item");
+	BaudBag_DebugMsg("BagHover", "Mouse is hovering above item");
 	self.HighlightBag		= true;
 	self.HighlightBagOn		= false;
 	self.HighlightBagCount	= GetTime() + 0.35;
@@ -1988,7 +1993,7 @@ end
 --[[ determine if and how long the mouse was hovering and change bag according ]]
 function BaudBag_BagSlot_OnUpdate(self, event, ...)
 	if (self.HighlightBag and (not self.HighlightBagOn) and GetTime() >= self.HighlightBagCount) then
-		BaudBag_DebugMsg(7, "showing item '"..self:GetName().."'");
+		BaudBag_DebugMsg("BagHover", "showing item '"..self:GetName().."'");
 		self.HighlightBagOn	= true;
 		local SubBag		= _G[Prefix.."SubBag"..self.Bag];
 		SubBag.Highlight	= true;
@@ -1998,7 +2003,7 @@ end
 
 --[[ if the mouse was removed cancel all actions ]]
 function BaudBag_BagSlot_OnLeave(self, event, ...)
-	BaudBag_DebugMsg(7, "Mouse not hovering above item anymore");
+	BaudBag_DebugMsg("BagHover", "Mouse not hovering above item anymore");
 	self.HighlightBag		= false;
 	
 	if (self.HighlightBagOn) then
@@ -2015,14 +2020,14 @@ end
 --[[ this usually only applies to inventory bags ]]--
 local pre_ToggleAllBags = ToggleAllBags;
 ToggleAllBags = function()
-    BaudBag_DebugMsg(8, "[ToggleAllBags] called");
+    BaudBag_DebugMsg("BagOpening", "[ToggleAllBags] called");
 
     if (not BBConfig or not BBConfig[1].Enabled) then
-        BaudBag_DebugMsg(8, "[ToggleAllBags] no config found or addon deactivated for inventory, calling original");
+        BaudBag_DebugMsg("BagOpening", "[ToggleAllBags] no config found or addon deactivated for inventory, calling original");
         return pre_ToggleAllBags();
     end
 
-    BaudBag_DebugMsg(8, "[ToggleAllBags] BaudBag bags are active, close & open");
+    BaudBag_DebugMsg("BagOpening", "[ToggleAllBags] BaudBag bags are active, close & open");
         
     local bagsOpen = 0;
     local totalBags = 0;
@@ -2052,11 +2057,11 @@ end
 
 local pre_OpenBag = OpenBag;
 OpenBag = function(id)
-    BaudBag_DebugMsg(8, "[OpenBag] called on id: "..id);
+    BaudBag_DebugMsg("BagOpening", "[OpenBag] called on id: "..id);
 	
 	-- if there is no baud bag config we most likely do not work correctly => send to original bag frames
     if (not BBConfig or not BaudBag_BagHandledByBaudBag(id)) then
-		BaudBag_DebugMsg(8, "[OpenBag] no config or bag not handled by BaudBag, calling original");
+		BaudBag_DebugMsg("BagOpening", "[OpenBag] no config or bag not handled by BaudBag, calling original");
         return pre_OpenBag(id);
     end
 
@@ -2069,9 +2074,9 @@ end
 
 local pre_CloseBag = CloseBag;
 CloseBag = function(id)
-    BaudBag_DebugMsg(8, "[CloseBag] called on id: "..id);
+    BaudBag_DebugMsg("BagOpening", "[CloseBag] called on id: "..id);
     if (not BBConfig or not BaudBag_BagHandledByBaudBag(id)) then
-		BaudBag_DebugMsg(8, "[CloseBag] no config or bag not handled by BaudBag, calling original");
+		BaudBag_DebugMsg("BagOpening", "[CloseBag] no config or bag not handled by BaudBag, calling original");
         return pre_CloseBag(id);
     end
 
