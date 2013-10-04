@@ -4,19 +4,20 @@
 local _;
 
 local BaudBag_DebugCfg = {
-	{ Name = "Config", Active = false},
-	{ Name = "Options", Active = false},
-	{ Name = "Token", Active = false},
-	{ Name = "Bags", Active = false},
-	{ Name = "Bank", Active = false},
-	{ Name = "Search", Active = false},
-	{ Name = "Bag Hover", Active = false},
-	{ Name = "Bag Opening", Active = false},
-	{ Name = "Bag Backgrounds", Active = false},
+	--{ Name = "Config", Active = false},
+	--{ Name = "Options", Active = false},
+	--{ Name = "Token", Active = false},
+	--{ Name = "Bags", Active = false},
+	--{ Name = "Bank", Active = false},
+	--{ Name = "Search", Active = false},
+	--{ Name = "Bag Hover", Active = false},
+	--{ Name = "Bag Opening", Active = false},
+	--{ Name = "Bag Backgrounds", Active = false},
 	
 	-- everything that has to do with configuration or configuring
 	Config = { Name = "Config", Active = false},
 	Options = { Name = "Options", Active = false},
+	Functions = { Name = "Functions", Active = true},
 
 	-- bags including creation, rendering, opening and special functions
 	Bags           = { Name = "Bags", Active = false},
