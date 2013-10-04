@@ -355,12 +355,13 @@ function BaudBagOptionsUpdate()
 			end
 			
 			-- try to find out which bag texture to use
+			local bagCache = BaudBagGetBagCache(Bag);
 			if BaudBagIcons[Bag]then
 				Texture = BaudBagIcons[Bag];
 			elseif(SelectedBags == 1)then
-				Texture = GetInventoryItemTexture("player",ContainerIDToInventoryID(Bag));
-			elseif BaudBag_Cache[Bag] and BaudBag_Cache[Bag].BagLink then
-				Texture = GetItemIcon(BaudBag_Cache[Bag].BagLink);
+				Texture = GetInventoryItemTexture("player", ContainerIDToInventoryID(Bag));
+			elseif bagCache and bagCache.BagLink then
+				Texture = GetItemIcon(bagCache.BagLink);
 			else
 				Texture = nil;
 			end

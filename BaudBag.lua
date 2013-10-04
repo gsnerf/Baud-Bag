@@ -141,15 +141,12 @@ local EventFuncs =
 		BagSlot:HookScript("OnEnter", BaudBag_BagSlot_OnEnter);
 		BagSlot:HookScript("OnLeave", BaudBag_BagSlot_OnLeave);
       
-		-- init cache for the current bank bag
-		if (type(BaudBag_Cache[Bag + 4]) ~= "table") then
-			BaudBag_Cache[Bag + 4] = {Size = 0};
-		end
-      
+		-- get cache for the current bank bag
 		-- if there is a bag create icon with correct texture etc
-		if (BaudBag_Cache[Bag + 4].BagLink) then
-			Texture = GetItemIcon(BaudBag_Cache[Bag + 4].BagLink);
-			SetItemButtonCount(BagSlot, BaudBag_Cache[Bag + 4].BagCount or 0);
+		local bagCache = BaudBagGetBagCache(Bag + 4);
+		if (bagCache.BagLink) then
+			Texture = GetItemIcon(bagCache.BagLink);
+			SetItemButtonCount(BagSlot, bagCache.BagCount or 0);
 		else
 			Texture = select(2, GetInventorySlotInfo("Bag"..Bag));
 		end
@@ -1569,6 +1566,9 @@ function BaudBagUpdateContainer(Container)
 
 	-- calculate sizes in all subbags
 	for _, SubBag in ipairs(Container.Bags)do
+
+		-- prepare bag cache for use
+		local bagCache = BaudBagGetBagCache(SubBag:GetID());
   
 		-- process inventory, bank only if it is open
 		if (Container.BagSet ~= 2) or BankOpen then
@@ -1577,17 +1577,17 @@ function BaudBagUpdateContainer(Container)
 			-- process bank
 			if (Container.BagSet == 2) then
 				-- Clear out excess information if the size of a bag decreases
-				if (BaudBag_Cache[SubBag:GetID()].Size > Size)then
-					for Slot = Size, BaudBag_Cache[SubBag:GetID()].Size do
-					if BaudBag_Cache[SubBag:GetID()][Slot] then
-						BaudBag_Cache[SubBag:GetID()][Slot] = nil;
+				if (bagCache.Size > Size)then
+					for Slot = Size, bagCache.Size do
+					if bagCache[Slot] then
+						bagCache[Slot] = nil;
 					end
 					end
 				end
-				BaudBag_Cache[SubBag:GetID()].Size = Size;
+				bagCache.Size = Size;
 			end
 		else
-			Size = BaudBag_Cache[SubBag:GetID()] and BaudBag_Cache[SubBag:GetID()].Size or 0;
+			Size = bagCache and bagCache.Size or 0;
 		end
     
 		SubBag.size = Size;
@@ -1698,8 +1698,9 @@ function BaudBag_OnModifiedClick(self, button)
 		StackSplitFrame:Hide();
 	end
 
-	if BaudBag_Cache[self:GetParent():GetID()][self:GetID()] then
-		HandleModifiedItemClick(BaudBag_Cache[self:GetParent():GetID()][self:GetID()].Link);
+	local slotCache = BaudBagGetBagCache(self:GetParent():GetID())[self:GetID()];
+	if slotCache then
+		HandleModifiedItemClick(slotCache.Link);
 	end
 end
 
@@ -1897,9 +1898,11 @@ function BaudBagSearchFrameEditBox_OnTextChanged(self, isUserInput)
 	-- go through all bags to find the open ones
 	local SubBag, Frame, Open, ItemButton, Link, Name, Texture;
 	local Status, Result;
+	local bagCache, slotCache;
 	for Bag = -1, LastBagID do
 		SubBag = _G[Prefix.."SubBag"..Bag];
 		Open	= SubBag:IsShown()and SubBag:GetParent():IsShown() and not SubBag:GetParent().Closing;
+		bagCache = BaudBagGetBagCache(SubBag:GetID());
 		
 		-- if the bag is open go through its items and compare the itemname
 		if (Open) then
@@ -1908,12 +1911,13 @@ function BaudBagSearchFrameEditBox_OnTextChanged(self, isUserInput)
 		
 			for Slot = 1, SubBag.size do
 				ItemButton = _G[SubBag:GetName().."Item"..Slot];
+				slotCache = bagCache and bagCache[Slot] or nil;
 				
 				-- get item link according to the type of bag
 				if (SubBag.BagSet ~= 2) or BankOpen then
 					Link = GetContainerItemLink(SubBag:GetID(), Slot);
-				elseif BaudBag_Cache[SubBag:GetID()][Slot] then
-					Link = BaudBag_Cache[SubBag:GetID()][Slot].Link;
+				elseif slotCache then
+					Link = slotCache.Link;
 				end
 				
 				-- get the name for that link
