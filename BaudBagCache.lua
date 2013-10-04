@@ -42,10 +42,14 @@ function BaudBagUseCache(Bag)
 end
 
 --[[
-    Convencience method to access cached bags to be 
-    more flexible when messing with the cache system
+    Access to a (bank) bags cache content. It is expected that all calls are valid
+    so this method makes sure to return a valid cache object.
   ]]
 function BaudBagGetBagCache(Bag)
+	-- make sure the requested cache is initialized.
+	if (type(BaudBag_Cache[Bag]) ~= "table") then
+		BaudBag_Cache[Bag] = {Size = 0};
+	end
 	return BaudBag_Cache[Bag];
 end
 
@@ -76,10 +80,10 @@ function BaudBagShowCachedTooltip(self, event, ...)
 
 	-- show tooltip for an item inside a bag
 	Bag, Slot = self:GetParent():GetID(), self:GetID();
-	if not BaudBagUseCache(Bag) or GameTooltip:IsShown() or not BaudBag_Cache[Bag][Slot] then
+	if not BaudBagUseCache(Bag) or GameTooltip:IsShown() or not BaudBagGetBagCache(Bag)[Slot] then
 		return;
 	end
-	ShowHyperlink(self, BaudBag_Cache[Bag][Slot].Link);
+	ShowHyperlink(self, BaudBagGetBagCache(Bag)[Slot].Link);
 end
 
 --[[ hook cached tooltip to item enter events ]]
