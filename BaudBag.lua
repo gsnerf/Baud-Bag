@@ -22,28 +22,29 @@ local _;
 
 -- Adds container name when mousing over bags, aswell as simulating offline bank item mouse over
 hooksecurefunc(GameTooltip, "SetInventoryItem", function (Data, Unit, InvID)
-  if (Unit ~= "player") then
-    return;
-  end
+	if (Unit ~= "player") then
+		BaudBag_DebugMsg("Tooltip", "SetInventoryItem called with unit '"..Unit.."' which cannot be handled");
+		return;
+	end
   
-  if (InvID >= 20) and (InvID <= 23) then
-    if BBConfig and (BBConfig[1].Enabled==false) then
-      return;
-    end
-    BaudBagModifyBagTooltip(InvID - 19);
-  elseif (InvID >= 68) and (InvID < 68 + NUM_BANKBAGSLOTS) then
-    if BBConfig and (BBConfig[2].Enabled == false) then
-      return;
-    end
-    BaudBagModifyBagTooltip(4 + InvID - 67);
-  end
+	if (InvID >= 20) and (InvID <= 23) then
+		if BBConfig and (BBConfig[1].Enabled==false) then
+			return;
+		end
+		BaudBagModifyBagTooltip(InvID - 19);
+	elseif (InvID >= 68) and (InvID < 68 + NUM_BANKBAGSLOTS) then
+		if BBConfig and (BBConfig[2].Enabled == false) then
+			return;
+		end
+		BaudBagModifyBagTooltip(4 + InvID - 67);
+	end
 end);
 
 
 MainMenuBarBackpackButton:HookScript("OnEnter", function(...)
-  if BBConfig and (BBConfig[1].Enabled ~= false) then
-    BaudBagModifyBagTooltip(0);
-  end
+	if BBConfig and (BBConfig[1].Enabled ~= false) then
+		BaudBagModifyBagTooltip(0);
+	end
 end);
 
 function BaudBagModifyBagTooltip(BagID)
