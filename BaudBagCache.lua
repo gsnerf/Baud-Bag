@@ -3,13 +3,16 @@
 
 --[[
 
-	The cache can be accessed through BaudBag_Cache. It has the following structure:
-	BaudBag_Cache = {
-		"VoidStorage" = {}
-		"Bank" = {
-			-1 = { Size = NUM_BANKGENERIC_SLOTS }
+	The cache can be accessed through BaudBag_Cache.
+	It has the following structure (values are initial and may be overwritten):
+	
+		BaudBag_Cache = {
+			"Void" = {}
+			"Bank" = {
+				-1 = { Size = NUM_BANKGENERIC_SLOTS }
+				 5 = { Size  = 0 }
+			}
 		}
-	}
 ]]
 
 --[[ 
@@ -25,10 +28,23 @@ function BaudBagInitCache()
 		BaudBag_Cache = {};
 	end
 
-	-- init cache for bankbox (not the additional bags in the bank)
-	if (type(BaudBag_Cache[-1]) ~= "table") then
-		BaudBag_DebugMsg("Cache", "no bank cache found, creating new one");
-		BaudBag_Cache[-1] = {Size = NUM_BANKGENERIC_SLOTS};
+	---- init cache for bankbox (not the additional bags in the bank)
+	--if (type(BaudBag_Cache[-1]) ~= "table") then
+	--	BaudBag_DebugMsg("Cache", "no bank cache found, creating new one");
+	--	BaudBag_Cache[-1] = {Size = NUM_BANKGENERIC_SLOTS};
+	--end
+
+	-- init bank cache
+	if (type(BaudBag_Cache.Bank) ~= "table") then
+		-- wrapper for everything bank specific
+		BaudBag_Cache.Bank = {};
+		-- the bank box (not the additional bags in the bank)
+		BaudBag_Cache.Bank[-1] = {Size = NUM_BANKGENERIC_SLOTS};
+	end
+	
+	-- init void cache
+	if (type(BaudBag_Cache.Void) ~= "table") then
+		BaudBag_Cache.Void = {};
 	end
 end
 
@@ -47,12 +63,15 @@ end
   ]]
 function BaudBagGetBagCache(Bag)
 	-- make sure the requested cache is initialized.
-	if (type(BaudBag_Cache[Bag]) ~= "table") then
-		BaudBag_Cache[Bag] = {Size = 0};
+	if (BaudBagUseCache(Bag) and type(BaudBag_Cache.Bank[Bag]) ~= "table") then
+		BaudBag_Cache.Bank[Bag] = {Size = 0};
 	end
-	return BaudBag_Cache[Bag];
+	return BaudBag_Cache.Bank[Bag];
 end
 
+function BaudBagGetVoidCache()
+	return BaudBag_Cache.Void;
+end
 
 
 --[[ ####################################### ToolTip stuff ####################################### ]]
