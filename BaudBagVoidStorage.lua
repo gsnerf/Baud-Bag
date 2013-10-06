@@ -44,19 +44,47 @@ EventFuncs.VOID_STORAGE_CONTENTS_UPDATE = eventFunc;
 --EventFuncs.VOID_STORAGE_UPDATE = Func;
 --EventFuncs.VOID_STORAGE_CLOSE = Func;
 
+--[[       different local variables with various background        ]]
+--[[         (see specific variable comments for more info)         ]]
+--[[ -------------------------------------------------------------- ]]
+--[[ safe references to original VoidStorageItemButtons so we can alter the references ]]
+local origVoidItemButtons = {};
+local bbVoidItemButtons = {};
+--[[ this is just a copy from the original values found in Blizzard_VoidStorageUI.lua ]]
+local VOID_DEPOSIT_MAX = 9;
+local VOID_WITHDRAW_MAX = 9;
+local VOID_STORAGE_MAX = 80;
+
+function BaudBagGetVoidItemButtons()
+	return origVoidItemButtons;
+end
+
 
 --[[                  Frame script functions                        ]]
 --[[ -------------------------------------------------------------- ]]
 function BaudBagVoidStorage_OnLoad(self, event, ...)
+
 	-- make sure all needed events are registered to this frame
 	for Key, Value in pairs(EventFuncs) do
 		self:RegisterEvent(Key);
+	end
+
+	-- remember all original references to the storage item buttons
+	for i = 1, VOID_DEPOSIT_MAX do
+		origVoidItemButtons["VoidStorageDepositButton"..i] = _G["VoidStorageDepositButton"..i];
+	end
+	for i = 1, VOID_WITHDRAW_MAX do
+		origVoidItemButtons["VoidStorageWithdrawButton"..i] = _G["VoidStorageWithdrawButton"..i];
+	end
+	for i = 1, VOID_STORAGE_MAX do
+		origVoidItemButtons["VoidStorageStorageButton"..i] = _G["VoidStorageStorageButton"..i];
 	end
 end
 
 function BaudBagVoidStorage_OnEvent(self, event, ...)
 	EventFuncs[event](self, event, ...);
 end
+
 
 --[[               PreHooks for original void storage               ]]
 --[[ -------------------------------------------------------------- ]]
@@ -71,4 +99,11 @@ local origVoidStorageFrame_Hide = VoidStorageFrame_Hide;
 VoidStorageFrame_Hide = function(...)
 	BaudBag_DebugMsg("VoidStorage", "Tried to catch the Hide event");
 	return origVoidStorageFrame_Hide(...);
+end
+
+--[[     functions for activating/deactivating BB void storage      ]]
+--[[ -------------------------------------------------------------- ]]
+-- TODO: check if this actually works
+function BaudBagVoidStorage_ResetItemButtons()
+	table.foreach(origVoidItemButtons, function(k,v) _G[k] = origVoidItemButtons[k] end);
 end
