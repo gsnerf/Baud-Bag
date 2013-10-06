@@ -12,13 +12,6 @@ function BaudBagToggleVoidStorage(self)
 		-- else the void storage will show up empty
 		VoidStorageFrame_Update();
 		VoidStorageFrame_Show();
-
-		for i = 1, 80 do
-			local itemID, textureName, locked, recentDeposit, isFiltered = GetVoidItemInfo(i);
-			if (itemID) then
-				BaudBag_DebugMsg("VoidStorage", "found item with id: "..itemID);
-			end
-		end
 	else
 		BaudBag_DebugMsg("VoidStorage", "... already visible, hiding!");
 		VoidStorageFrame_Hide();
@@ -29,8 +22,16 @@ end
 local EventFuncs = {}
 
 
+--[[ This will be called when ever we are at an accessible void storage point ]]
 local eventFunc = function(self, event, ...)
-	BaudBag_DebugMsg("VoidStorage", "Handling event "..event);
+	BaudBag_DebugMsg("VoidStorage", "Updating cache content "..event);
+	local voidCache = BaudBagGetVoidCache();
+
+	-- go through all items in the storage and cache them (overriding all values in the process)
+	for i = 1, 80 do
+		local itemID, textureName, locked, recentDeposit, isFiltered = GetVoidItemInfo(i);
+		voidCache[i] = itemID and itemID or nil;
+	end
 end
 EventFuncs.VOID_STORAGE_OPEN = eventFunc;
 EventFuncs.VOID_STORAGE_CONTENTS_UPDATE = eventFunc;

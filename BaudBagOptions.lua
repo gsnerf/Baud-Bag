@@ -52,9 +52,13 @@ function BaudBagOptions_OnLoad(self, event, ...)
 end
 
 function BaudBagOptions_OnEvent(self, event, ...)
+
+	-- failsafe: we only want to handle the addon loaded event
 	local arg1 = ...;
 	if ((event ~= "ADDON_LOADED") or (arg1 ~= "BaudBag")) then return; end
-	-- make sure there is a BBConfig
+
+	-- make sure there is a BBConfig and a cache
+	BaudBagInitCache();
 	BaudBagRestoreCfg();
 	CfgBackup	= BaudBagCopyTable(BBConfig);
 	

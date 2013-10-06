@@ -47,25 +47,30 @@ MainMenuBarBackpackButton:HookScript("OnEnter", function(...)
 end);
 
 function BaudBagModifyBagTooltip(BagID)
-  if not GameTooltip:IsShown()then
-    return;
-  end
-  local Container = _G[Prefix.."SubBag"..BagID]:GetParent();
-  Container = BBConfig[Container.BagSet][Container:GetID()].Name;
-  if not Container or not strfind(Container, "%S") then
-    return;
-  end  
-  local Current, Next;
-  for Line = GameTooltip:NumLines(), 3, -1 do
-    Current, Next = _G["GameTooltipTextLeft"..Line], _G["GameTooltipTextLeft"..(Line - 1)];
-    Current:SetTextColor(Next:GetTextColor());     
-  end
-  if Next then
-    Next:SetText(Container);
-    Next:SetTextColor(1,0.82,0);
-  end
-  GameTooltip:Show();
-  GameTooltip:AppendText("");
+	if not GameTooltip:IsShown()then
+		return;
+	end
+
+	local Container = _G[Prefix.."SubBag"..BagID]:GetParent();
+	Container = BBConfig[Container.BagSet][Container:GetID()].Name;
+
+	if not Container or not strfind(Container, "%S") then
+		return;
+	end  
+
+	local Current, Next;
+	for Line = GameTooltip:NumLines(), 3, -1 do
+		Current, Next = _G["GameTooltipTextLeft"..Line], _G["GameTooltipTextLeft"..(Line - 1)];
+		Current:SetTextColor(Next:GetTextColor());     
+	end
+
+	if Next then
+		Next:SetText(Container);
+		Next:SetTextColor(1,0.82,0);
+	end
+
+	GameTooltip:Show();
+	GameTooltip:AppendText("");
 end
 
 --[[ NON XML EVENT HANDLERS ]]--
@@ -805,10 +810,11 @@ function BaudBagUpdateBackground(Container)
 		
 		local Icon;
 		local BagID = Container.Bags[1]:GetID();
+		local bagCache = BaudBagGetBagCache(BagID);
 		if (BagID <= 0) then
 			Icon = BaudBagIcons[BagID];
-		elseif (Container.BagSet == 2) and not BankOpen and BaudBag_Cache[BagID].BagLink then
-			Icon = GetItemIcon(BaudBag_Cache[BagID].BagLink);
+		elseif (Container.BagSet == 2) and not BankOpen and bagCache.BagLink then
+			Icon = GetItemIcon(bagCache.BagLink);
 		else
 			Icon = GetInventoryItemTexture("player", ContainerIDToInventoryID(BagID));
 		end
@@ -1324,6 +1330,7 @@ function BaudBagUpdateSubBag(SubBag)
 	local Name, Link, Quality, Type, Texture, ItemButton, ItemButtonNewItemTexture;
 	local ShowColor = BBConfig[SubBag.BagSet][SubBag:GetParent():GetID()].RarityColor;
 	--local ShowColorAltern = BBConfig[SubBag.BagSet][SubBag:GetParent():GetID()].RarityColorAltern;
+	local bagCache;
 	SubBag.FreeSlots = 0;
 	BaudBag_DebugMsg("Bags", "Updating SubBag "..SubBag:GetID());
 	BaudBag_DebugMsg("Bags", (((SubBag.BagSet ~= 2) or BankOpen) and "- This is a bag container or the bank is open" or "- This is a bank container (reading from cache)"));
@@ -1332,23 +1339,24 @@ function BaudBagUpdateSubBag(SubBag)
 		Quality = nil;
 		ItemButton = _G[SubBag:GetName().."Item"..Slot];
 		ItemButtonNewItemTexture = _G[SubBag:GetName().."Item"..Slot.."NewItemTexture"];
+		bagCache = BaudBagGetBagCache(SubBag:GetID());
 
 		if (SubBag.BagSet ~= 2) or BankOpen then
 			Link = GetContainerItemLink(SubBag:GetID(), Slot);
       
 			if (SubBag.BagSet == 2) then
 				if not Link then
-					BaudBag_Cache[SubBag:GetID()][Slot] = nil;
+					bagCache[Slot] = nil;
 				else
-					BaudBag_Cache[SubBag:GetID()][Slot] = {Link = Link, Count = select(2, GetContainerItemInfo(SubBag:GetID(), Slot))};
+					bagCache[Slot] = {Link = Link, Count = select(2, GetContainerItemInfo(SubBag:GetID(), Slot))};
 				end
 			end
       
 			if Link then
 				Name, _, Quality, _, _, Type, _, _, _, _ = GetItemInfo(Link);
 			end
-		elseif BaudBag_Cache[SubBag:GetID()][Slot] then
-			Link = BaudBag_Cache[SubBag:GetID()][Slot].Link;
+		elseif bagCache[Slot] then
+			Link = bagCache[Slot].Link;
 			if Link then
 				Name, _, Quality, _, _, Type, _, _, _, Texture, _ = GetItemInfo(Link);
 				ItemButton.hasItem = 1;
@@ -1357,7 +1365,7 @@ function BaudBagUpdateSubBag(SubBag)
 				ItemButton.hasItem = nil;
 			end
 			SetItemButtonTexture(ItemButton, Texture);
-			SetItemButtonCount(ItemButton, BaudBag_Cache[SubBag:GetID()][Slot].Count or 0);
+			SetItemButtonCount(ItemButton, bagCache[Slot].Count or 0);
 		end
 
 		-- TODO: temporary hot fix for changes in the ContainerItemTemplate.
@@ -1419,33 +1427,41 @@ end
 local TotalFree, TotalSlots;
 
 local function AddFreeSlots(Bag)
-  if (Bag<=-1) then
-    return;
-  end
-  local Cache = BaudBagUseCache(Bag);
-  local NumSlots;
-  if not Cache then
-    local Free, Family = GetContainerNumFreeSlots(Bag);
-    if (Family ~= 0) then
-      return;
-    end
-    TotalFree = TotalFree + Free;
-    NumSlots = GetContainerNumSlots(Bag);
-  else
-    if(Bag > 0)then
-      local Link = BaudBag_Cache[Bag].BagLink;
-      if not Link or(GetItemFamily(Link)~=0)then
-        return;
-      end
-    end
-    NumSlots = BaudBag_Cache[Bag].Size;
-    for Slot = 1, NumSlots do
-      if not BaudBag_Cache[Bag][Slot]then
-        TotalFree = TotalFree + 1;
-      end
-    end
-  end
-  TotalSlots = TotalSlots + NumSlots;
+
+	-- failsafe
+	if (Bag<=-1) then
+		return;
+	end
+
+	-- prepare
+	local Cache = BaudBagUseCache(Bag);
+	local bagCache = BaudBagGetBagCache(Bag);
+	local NumSlots;
+	
+	-- handle non cacheable bag
+	if not Cache then
+		local Free, Family = GetContainerNumFreeSlots(Bag);
+		if (Family ~= 0) then
+			return;
+		end
+		TotalFree = TotalFree + Free;
+		NumSlots = GetContainerNumSlots(Bag);
+	else
+		-- handle cachable bag
+		if (Bag > 0)then
+			local Link = bagCache.BagLink;
+			if not Link or (GetItemFamily(Link) ~= 0) then
+				return;
+			end
+		end
+		NumSlots = bagCache.Size;
+		for Slot = 1, NumSlots do
+			if not bagCache[Slot]then
+				TotalFree = TotalFree + 1;
+			end
+		end
+	end
+	TotalSlots = TotalSlots + NumSlots;
 end
 
 
