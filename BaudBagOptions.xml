@@ -62,6 +62,9 @@
 	</CheckButton>
 
 	<Slider name="BaudBagOptionsSliderTemplate" inherits="OptionsSliderTemplate" virtual="true">
+		<Size>
+			<AbsDimension x="200" y="18" />
+		</Size>
 		<Scripts>
 			<OnValueChanged function="BaudBagSlider_OnValueChanged" />
 		</Scripts>
@@ -150,7 +153,7 @@
 
 			<EditBox name="$parentNameEditBox" inherits="InputBoxTemplate" letters="40" autoFocus="false">
 				<Size>
-					<AbsDimension x="165" y="16" />
+					<AbsDimension x="200" y="16" />
 				</Size>
 				<Anchors>
 					<Anchor point="TOPLEFT">
@@ -250,7 +253,7 @@
 				<Anchors>
 					<Anchor point="TOPLEFT" relativeTo="$parentNameEditBox" relativePoint="BOTTOMLEFT">
 						<Offset>
-							<AbsDimension x="8" y="-22" />
+							<AbsDimension x="-2" y="-22" />
 						</Offset>
 					</Anchor>
 				</Anchors>
