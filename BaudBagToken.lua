@@ -23,19 +23,25 @@ BackpackTokenFrame_Update = function()
 		return pre_BackpackTokenFrame_Update();
 	end
 	
-	-- get the token frame
+	-- get the token frame and reset to default values (will be updated bellow)
 	local TokenFrame = _G["BaudBagContainer1_1TokenFrame"];
+	TokenFrame.shouldShow = 0;
+	TokenFrame.numWatchedTokens = 0;
 
 	-- do whatever the original does but for our own frame
 	MAX_WATCHED_TOKENS = MAX_WATCHED_TOKENS_BAUD_BAG;
 	local watchButton;
 	local name, count, icon;
+	local digits, countSize;
+	local usedWidth = 0;
+	local digitWidth = 8;
 	for i=1, MAX_WATCHED_TOKENS do
 		name, count, icon, itemID = GetBackpackCurrencyInfo(i);
+		watchButton = _G[TokenFrame:GetName().."Token"..i];
+
 		-- Update watched tokens
 		if ( name ) then
 			BaudBag_DebugMsg(3, "Update: Token "..i.." found");
-			watchButton = _G[TokenFrame:GetName().."Token"..i];
 			
 			-- set icon
 			watchButton.icon:SetTexture(icon);
@@ -46,20 +52,37 @@ BackpackTokenFrame_Update = function()
 			else
 				watchButton.count:SetText("*");
 			end
+			watchButton.count:SetText(5 * math.pow(10,i));
+
+			-- update width based on text to show
+			digits = string.len(tostring(count));
+			BaudBag_DebugMsg(3, "number of digits in currency '"..name.."': "..digits);
+			digits = i+1;
+			countSize = digits * digitWidth + 2;
+			watchButton.count:SetWidth(countSize);
+			-- 12 (icon width) + 1 (space between count & icon) + count width + 2 (space to the left)
+			watchButton:SetWidth(15 + countSize);
+
+			-- recalc used width now
+			usedWidth = usedWidth + watchButton:GetWidth();
+			BaudBag_DebugMsg(3, "used width after currency '"..name.."': "..usedWidth.."; space available: "..TokenFrame:GetWidth());
 			
-			-- make visible
-			watchButton:Show();
-			TokenFrame.shouldShow = 1;
-			TokenFrame.numWatchedTokens = i;
-			watchButton.itemID = itemID;
+			-- make only visible if there is enough space 
+			watchButton:Hide();
+			if (usedWidth < TokenFrame:GetWidth()) then
+				watchButton:Show();
+				watchButton.itemID = itemID;
+				TokenFrame.shouldShow = 1;
+				TokenFrame.numWatchedTokens = i;
+			end
 		else
 			BaudBag_DebugMsg(3, "Update: Token "..i.." NOT found");
-			_G[TokenFrame:GetName().."Token"..i]:Hide();
+			watchButton:Hide();
+			watchButton.itemID = nil;
 			if ( i == 1 ) then
 				BaudBag_DebugMsg(3, "Update: Token 1 => hiding backpack");
 				TokenFrame.shouldShow = 0;
 			end
-			_G[TokenFrame:GetName().."Token"..i].itemID = nil;
 		end
 	end
 end

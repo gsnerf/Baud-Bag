@@ -860,6 +860,7 @@ function BaudBagUpdateBackground(Container)
 			if (BackpackTokenFrame_IsShown() == 1 and Container:GetName() == "BaudBagContainer1_1") then
 				_G[Container:GetName().."Slots"]:SetPoint("BOTTOMLEFT",Backdrop,"BOTTOMLEFT",12,26);
 				_G[Container:GetName().."MoneyFrame"]:SetPoint("BOTTOMRIGHT",Backdrop,"BOTTOMRIGHT",0,26);
+				_G[Container:GetName().."TokenFrame"]:SetPoint("BOTTOMLEFT",Backdrop,"BOTTOMLEFT",0,4);
 				_G[Container:GetName().."TokenFrame"]:SetPoint("BOTTOMRIGHT",Backdrop,"BOTTOMRIGHT",0,4);
 			else
 				_G[Container:GetName().."Slots"]:SetPoint("BOTTOMLEFT",Backdrop,"BOTTOMLEFT",12,7);
@@ -875,6 +876,7 @@ function BaudBagUpdateBackground(Container)
 			if (BackpackTokenFrame_IsShown() == 1  and Container:GetName() == "BaudBagContainer1_1") then
 				_G[Container:GetName().."Slots"]:SetPoint("BOTTOMLEFT",2,-17);
 				_G[Container:GetName().."MoneyFrame"]:SetPoint("BOTTOMRIGHT",8,-18);
+				_G[Container:GetName().."TokenFrame"]:SetPoint("BOTTOMLEFT",8,-36);
 				_G[Container:GetName().."TokenFrame"]:SetPoint("BOTTOMRIGHT",8,-36);
 				Bottom = Bottom + 36;
 			else

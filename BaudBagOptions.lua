@@ -315,6 +315,7 @@ function BaudBagSlider_OnValueChanged(self)
 	elseif (SavedVar=="Columns") then
 		BaudBagUpdateContainer(_G["BaudBagContainer"..SelectedBags.."_"..SelectedContainer]);
 	end
+	BackpackTokenFrame_Update();
 end
 
 
