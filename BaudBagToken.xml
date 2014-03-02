@@ -7,24 +7,24 @@
 		</Size>
 		<Layers>
 			<Layer level="BACKGROUND">
-				<FontString name="$parentCount" inherits="NumberFontNormalRight" justifyH="RIGHT">
-					<Size x="38" y="10"/>
-					<Anchors>
-						<Anchor point="TOPLEFT">
-							<Offset x="0" y="0"/>
-						</Anchor>
-					</Anchors>
-				</FontString>
 				<Texture name="$parentIcon">
 					<Size>
 						<AbsDimension x="12" y="12"/>
 					</Size>
 					<Anchors>
-						<Anchor point="LEFT" relativeTo="$parentCount" relativePoint="RIGHT">
-							<Offset x="1" y="0"/>
+						<Anchor point="TOPRIGHT">
+							<Offset x="0" y="0"/>
 						</Anchor>
 					</Anchors>
 				</Texture>
+				<FontString name="$parentCount" inherits="NumberFontNormalRight" justifyH="RIGHT">
+					<Size x="38" y="10"/>
+					<Anchors>
+						<Anchor point="RIGHT" relativeTo="$parentIcon" relativePoint="LEFT">
+							<Offset x="-1" y="0"/>
+						</Anchor>
+					</Anchors>
+				</FontString>
 			</Layer>
 		</Layers>
 		<Scripts>
