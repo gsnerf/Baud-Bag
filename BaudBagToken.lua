@@ -58,8 +58,8 @@ BackpackTokenFrame_Update = function()
 			BaudBag_DebugMsg(3, "number of digits in currency '"..name.."': "..digits);
 			countSize = digits * digitWidth + math.floor(6 / digits);
 			watchButton.count:SetWidth(countSize);
-			-- 12 (icon width) + 1 (space between count & icon) + count width + 2 (space to the left)
-			watchButton:SetWidth(15 + countSize);
+			-- 12 (icon width) + 1 (space between count & icon) + count width + 5 (space to the left)
+			watchButton:SetWidth(18 + countSize);
 
 			-- recalc used width now
 			usedWidth = usedWidth + watchButton:GetWidth();
