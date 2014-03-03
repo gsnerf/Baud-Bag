@@ -41,7 +41,7 @@ BackpackTokenFrame_Update = function()
 
 		-- Update watched tokens
 		if ( name ) then
-			BaudBag_DebugMsg(3, "Update: Token "..i.." found");
+			BaudBag_DebugMsg(3, "Update: Token "..i.." found with name '"..name.."' and count '"..count.."'");
 			
 			-- set icon
 			watchButton.icon:SetTexture(icon);
@@ -52,13 +52,11 @@ BackpackTokenFrame_Update = function()
 			else
 				watchButton.count:SetText("*");
 			end
-			watchButton.count:SetText(5 * math.pow(10,i));
-
+			
 			-- update width based on text to show
 			digits = string.len(tostring(count));
 			BaudBag_DebugMsg(3, "number of digits in currency '"..name.."': "..digits);
-			digits = i+1;
-			countSize = digits * digitWidth + 2;
+			countSize = digits * digitWidth + math.floor(6 / digits);
 			watchButton.count:SetWidth(countSize);
 			-- 12 (icon width) + 1 (space between count & icon) + count width + 2 (space to the left)
 			watchButton:SetWidth(15 + countSize);
