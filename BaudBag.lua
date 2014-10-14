@@ -986,7 +986,7 @@ function BaudBagUpdateOpenBags()
 			MainMenuBarBackpackButton:SetChecked(Open);
 		elseif (Bag > 4)then
 			Highlight  = _G["BaudBBankBag"..(Bag-4).."HighlightFrameTexture"];
-			Highlight2 = _G["BankFrameBag"..(Bag-4).."HighlightFrameTexture"];
+			Highlight2 = _G["BankSlotsFrame"]["Bag"..(Bag-4)]["HighlightFrame"]["HighlightTexture"];
 			if Open then
 				Highlight:Show();
 				Highlight2:Show();

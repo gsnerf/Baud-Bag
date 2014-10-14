@@ -195,6 +195,23 @@
 		<Anchors>
 			<Anchor point="CENTER" />
 		</Anchors>
+		<Frames>
+			<Button parentKey="FilterIcon" hidden="true">
+				<Size x="0" y="0"/>
+				<Anchors>
+					<Anchor point="TOP" relativeKey="$parent" relativePoint="TOP" x="0" y="0"/>
+				</Anchors>
+				<Layers>
+					<Layer level="OVERLAY">
+						<Texture parentKey="Icon" atlas="bags-icon-consumables" useAtlasSize="true">
+							<Anchors>
+								<Anchor point="CENTER"/>
+							</Anchors>
+						</Texture>
+					</Layer>
+				</Layers>
+			</Button>
+		</Frames>
 		<Scripts>
 			<OnLoad function="BaudBagSubBag_OnLoad" />
 			<OnEvent function="BaudBagSubBag_OnEvent" />
