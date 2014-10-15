@@ -895,6 +895,13 @@ function BaudBagUpdateBackground(Container)
 			});
 			Left, Right, Top, Bottom = Left+8, Right+8, Top+8, Bottom+8;
 			Backdrop:SetBackdropColor(0.1,0.1,0.1,1);
+		elseif (Background == 6) then
+			Backdrop:SetBackdrop({
+				bgFile = "Interface\\Buttons\\WHITE8X8",
+				tile = true, tileSize = 14, edgeSize = 14,
+				insets = { left = 2, right = 2, top = 2, bottom = 2 }
+			});
+			Backdrop:SetBackdropColor(0.0, 0.0, 0.0, 0.6);
 		else
 			Backdrop:SetBackdrop({
 				bgFile = "Interface\\Tooltips\\UI-Tooltip-Background",
@@ -1854,6 +1861,14 @@ function BaudBagSearchButton_Click(self, event, ...)
 			Left, Right, Top, Bottom = Left+8, Right+8, Top+8, Bottom+8;
 			BagSearchHeightOffset = BagSearchHeightOffset + 8;
 			Backdrop:SetBackdropColor(0.1, 0.1, 0.1, 1);
+		-- "transparent2"
+		elseif (Background == 6) then
+			Backdrop:SetBackdrop({
+				bgFile = "Interface\\Buttons\\WHITE8X8",
+				tile = true, tileSize = 14, edgeSize = 14,
+				insets = { left = 2, right = 2, top = 2, bottom = 2 }
+			});
+			Backdrop:SetBackdropColor(0.0, 0.0, 0.0, 0.6);
 		-- "transparent"
 		else
 			Backdrop:SetBackdrop({
