@@ -775,17 +775,17 @@ function BaudBagUpdateBackground(Container)
 				TextureWidth, TextureHeight = 256, 256;
 				
 				-- left part of ONLY the yellow border
-				Texture = GetTexturePiece("BottomFillLeft",80,84,213,231,"BACKGROUND");
+				Texture = GetTexturePiece("BottomFillLeft",80,84,224,242,"BACKGROUND");
 				Texture:SetPoint("LEFT", Parent.."Left", "RIGHT");
 				Texture:SetPoint("BOTTOM", Parent.."Bottom", "TOP", 0, 17);
 
 				-- right part of ONLY the yellow border
-				Texture = GetTexturePiece("BottomFillRight",240,244,213,231,"BACKGROUND");
+				Texture = GetTexturePiece("BottomFillRight",240,244,224,242,"BACKGROUND");
 				Texture:SetPoint("RIGHT", Parent.."Right", "LEFT");
 				Texture:SetPoint("BOTTOM", Parent.."Bottom", "TOP", 0, 17);
 				
 				-- center part of ONLY the yellow border
-				Texture = GetTexturePiece("BottomFillCenter",85,239,213,231,"BACKGROUND");
+				Texture = GetTexturePiece("BottomFillCenter",85,239,224,242,"BACKGROUND");
 				Texture:SetPoint("LEFT", Parent.."BottomFillLeft", "RIGHT");
 				Texture:SetPoint("RIGHT", Parent.."BottomFillRight", "LEFT");
 				
@@ -812,17 +812,17 @@ function BaudBagUpdateBackground(Container)
 				TextureWidth, TextureHeight = 256, 256;
 				
 				-- left part of ONLY the yellow border
-				Texture = GetTexturePiece("BottomFillLeft",80,84,213,231,"BACKGROUND");
+				Texture = GetTexturePiece("BottomFillLeft",80,84,224,242,"BACKGROUND");
 				Texture:SetPoint("LEFT", Parent.."Left", "RIGHT");
 				Texture:SetPoint("BOTTOM", Parent.."Bottom", "TOP", 0, -2);
 
 				-- right part of ONLY the yellow border
-				Texture = GetTexturePiece("BottomFillRight",240,244,213,231,"BACKGROUND");
+				Texture = GetTexturePiece("BottomFillRight",240,244,224,242,"BACKGROUND");
 				Texture:SetPoint("RIGHT", Parent.."Right", "LEFT");
 				Texture:SetPoint("BOTTOM", Parent.."Bottom", "TOP", 0, -2);
 				
 				-- center part of ONLY the yellow border
-				Texture = GetTexturePiece("BottomFillCenter",85,239,213,231,"BACKGROUND");
+				Texture = GetTexturePiece("BottomFillCenter",85,239,224,242,"BACKGROUND");
 				Texture:SetPoint("LEFT", Parent.."BottomFillLeft", "RIGHT");
 				Texture:SetPoint("RIGHT", Parent.."BottomFillRight", "LEFT");
 			end
