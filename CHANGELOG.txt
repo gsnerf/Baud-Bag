@@ -1,4 +1,6 @@
 ﻿=== Changelog ===
+v6.0.0
+  - adapted to braking changes in API & base container addon
 v5.4.0
   - added workaround for slider value bug introduced in live 5.4.0 builds (see http://www.wowwiki.com/Patch_5.4.0/API_changes#Issues)
   - fixed blue borders in offline bank view when bank hasn't been visited in a session
