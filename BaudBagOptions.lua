@@ -169,27 +169,28 @@ end
 
 --[[ Enabled CheckBox functions ]]--
 function BaudBagEnabledCheck_OnClick(self, event, ...)
-	if(self:GetChecked())then
-    PlaySound("igMainMenuOptionCheckBoxOff");
-  else
-    PlaySound("igMainMenuOptionCheckBoxOn");
-    BaudBagCloseBagSet(SelectedBags); -- TODO: move to BaudBagConfig save?
-  end
-  BBConfig[SelectedBags].Enabled = (self:GetChecked() == 1);
-  if BBConfig and (BBConfig[2].Enabled == true) then BankFrame:UnregisterEvent("BANKFRAME_OPENED") end -- TODO: move to BaudBagBBConfig save?
-  if BBConfig and (BBConfig[2].Enabled == false) then BankFrame:RegisterEvent("BANKFRAME_OPENED") end -- TODO: move to BaudBagBBConfig save?
-  BackpackTokenFrame_Update();
+	if (self:GetChecked()) then
+		PlaySound("igMainMenuOptionCheckBoxOff");
+	else
+		PlaySound("igMainMenuOptionCheckBoxOn");
+		BaudBagCloseBagSet(SelectedBags); -- TODO: move to BaudBagConfig save?
+	end
+
+	BBConfig[SelectedBags].Enabled = (self:GetChecked());
+	if BBConfig and (BBConfig[2].Enabled == true) then BankFrame:UnregisterEvent("BANKFRAME_OPENED") end -- TODO: move to BaudBagBBConfig save?
+	if BBConfig and (BBConfig[2].Enabled == false) then BankFrame:RegisterEvent("BANKFRAME_OPENED") end -- TODO: move to BaudBagBBConfig save?
+	BackpackTokenFrame_Update();
 end
 
 
 --[[ CloseAll CheckBox functions ]]--
 function BaudBagCloseAllCheck_OnClick(self, event, ...)
-	if(self:GetChecked())then
+	if (self:GetChecked()) then
     PlaySound("igMainMenuOptionCheckBoxOff");
   else
     PlaySound("igMainMenuOptionCheckBoxOn");
   end
-  BBConfig[SelectedBags].CloseAll = (self:GetChecked() == 1);
+  BBConfig[SelectedBags].CloseAll = self:GetChecked();
 end
 
 
@@ -265,7 +266,7 @@ function BaudBagOptionsCheckButton_OnClick(self, event, ...)
     PlaySound("igMainMenuOptionCheckBoxOn");
   end
   local SavedVar = CheckButtons[self:GetID()].SavedVar;
-  BBConfig[SelectedBags][SelectedContainer][SavedVar] = (self:GetChecked() == 1);
+  BBConfig[SelectedBags][SelectedContainer][SavedVar] = self:GetChecked();
   if (SavedVar == "BlankTop") or (SavedVar == "RarityColor") then -- or (SavedVar == "RarityColorAltern") then
 		BaudBag_DebugMsg(2, "Want to update container: "..Prefix.."Container"..SelectedBags.."_"..SelectedContainer);
 		BaudBagUpdateContainer(_G["BaudBagContainer"..SelectedBags.."_"..SelectedContainer]); -- TODO: move to BaudBagBBConfig save?
