@@ -34,7 +34,8 @@ local TextureNames = {
 	Localized.BlizBank,
 	Localized.BlizKeyring,
 	Localized.Transparent,
-	Localized.Solid
+	Localized.Solid,
+	Localized.Transparent2
 };
 
 --[[
