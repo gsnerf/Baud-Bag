@@ -289,7 +289,7 @@
 	<Frame name="BaudBagFrame">
 		<Scripts>
 			<OnLoad function="BaudBag_OnLoad" />
-      <OnEvent function="BaudBag_OnEvent" />
+			<OnEvent function="BaudBag_OnEvent" />
 		</Scripts>
 	</Frame>
 

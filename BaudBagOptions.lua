@@ -106,7 +106,7 @@ function BaudBagOptions_OnEvent(self, event, ...)
 	local Button, Container, Check;
 	for Bag = 1, MaxBags do
 		Button		= CreateFrame("CheckButton",	Prefix.."Bag"..Bag, BaudBagOptions, Prefix.."BagTemplate");
-		Container	= CreateFrame("Frame", Prefix.."Container"..Bag, BaudBagOptions, Prefix.."ContainerTemplate");
+		Container	= CreateFrame("Frame",			Prefix.."Container"..Bag, BaudBagOptions, Prefix.."ContainerTemplate");
 		if(Bag == 1)then
 			-- first bag only has a container
 			Container:SetPoint("LEFT", _G[Prefix.."Bag1"], "LEFT", -6, 0);
@@ -177,8 +177,9 @@ function BaudBagEnabledCheck_OnClick(self, event, ...)
 	end
 
 	BBConfig[SelectedBags].Enabled = (self:GetChecked());
-	if BBConfig and (BBConfig[2].Enabled == true) then BankFrame:UnregisterEvent("BANKFRAME_OPENED") end -- TODO: move to BaudBagBBConfig save?
-	if BBConfig and (BBConfig[2].Enabled == false) then BankFrame:RegisterEvent("BANKFRAME_OPENED") end -- TODO: move to BaudBagBBConfig save?
+	-- TODO: move to BaudBagBBConfig save?
+	if BBConfig and (BBConfig[2].Enabled == true) then BankFrame:UnregisterEvent("BANKFRAME_OPENED"); end
+	if BBConfig and (BBConfig[2].Enabled == false) then BankFrame:RegisterEvent("BANKFRAME_OPENED"); end
 	BackpackTokenFrame_Update();
 end
 
@@ -201,36 +202,36 @@ function BaudBagOptionsBag_OnClick(self, event, ...)
 end
 
 function BaudBagOptionsJoinCheck_OnClick(self, event, ...)
-  if (self:GetChecked()) then
-    PlaySound("igMainMenuOptionCheckBoxOff");
-  else
-    PlaySound("igMainMenuOptionCheckBoxOn");
-  end
+	if (self:GetChecked()) then
+		PlaySound("igMainMenuOptionCheckBoxOff");
+	else
+		PlaySound("igMainMenuOptionCheckBoxOn");
+	end
   
-  BBConfig[SelectedBags].Joined[self:GetID()] = self:GetChecked() and true or false;
-  local ContNum = 2;
-  for Bag = 2,(self:GetID()-1)do
-    if (BBConfig[SelectedBags].Joined[Bag] == false) then
-      ContNum = ContNum + 1;
-    end
-  end
-  if self:GetChecked()then
-    tremove(BBConfig[SelectedBags],ContNum);
-  else
-    tinsert(BBConfig[SelectedBags], ContNum, BaudBagCopyTable(BBConfig[SelectedBags][ContNum-1]));
-  end
-  BaudBagOptionsUpdate();
-  BaudUpdateJoinedBags();
+	BBConfig[SelectedBags].Joined[self:GetID()] = self:GetChecked() and true or false;
+	local ContNum = 2;
+	for Bag = 2,(self:GetID()-1)do
+		if (BBConfig[SelectedBags].Joined[Bag] == false) then
+			ContNum = ContNum + 1;
+		end
+	end
+	if self:GetChecked()then
+		tremove(BBConfig[SelectedBags],ContNum);
+	else
+	    tinsert(BBConfig[SelectedBags], ContNum, BaudBagCopyTable(BBConfig[SelectedBags][ContNum-1]));
+	end
+	BaudBagOptionsUpdate();
+	BaudUpdateJoinedBags();
 end
 
 
 --[[ Name TextBox functions ]]--
 function BaudBagOptionsNameEditBox_OnTextChanged()
-  if Updating then
-    return;
-  end
-  BBConfig[SelectedBags][SelectedContainer].Name = _G[Prefix.."NameEditBox"]:GetText();
-  BaudBagUpdateName(_G["BaudBagContainer"..SelectedBags.."_"..SelectedContainer]);  -- TODO: move to BaudBagBBConfig save?
+	if Updating then
+		return;
+	end
+	BBConfig[SelectedBags][SelectedContainer].Name = _G[Prefix.."NameEditBox"]:GetText();
+	BaudBagUpdateName(_G["BaudBagContainer"..SelectedBags.."_"..SelectedContainer]);  -- TODO: move to BaudBagBBConfig save?
 end
 
 
@@ -238,39 +239,39 @@ end
 --[[ Background Dropdown functions ]]--
 -- init
 function BaudBagOptionsBackgroundDropDown_Initialize()
-  local info			= UIDropDownMenu_CreateInfo();
-  info.func				= BaudBagOptionsBackgroundDropDown_OnClick;
-  local Selected	= BBConfig[SelectedBags][SelectedContainer].Background;
-
-  for Key, Value in pairs(TextureNames)do
-    info.text			= Value;
-    info.value		= Key;
-    info.checked	= (Key == Selected) and 1 or nil;
-    UIDropDownMenu_AddButton(info);
-  end
+	local info			= UIDropDownMenu_CreateInfo();
+	info.func			= BaudBagOptionsBackgroundDropDown_OnClick;
+	local Selected		= BBConfig[SelectedBags][SelectedContainer].Background;
+	
+	for Key, Value in pairs(TextureNames)do
+		info.text		= Value;
+		info.value		= Key;
+		info.checked	= (Key == Selected) and 1 or nil;
+		UIDropDownMenu_AddButton(info);
+	end
 end
 
 -- onclick
 function BaudBagOptionsBackgroundDropDown_OnClick(self)
-  BBConfig[SelectedBags][SelectedContainer].Background = self.value;
-  UIDropDownMenu_SetSelectedValue(BaudBagOptionsBackgroundDropDown, self.value);
-  BaudBagUpdateContainer(_G["BaudBagContainer"..SelectedBags.."_"..SelectedContainer]); -- TODO: move to BaudBagBBConfig save?
+	BBConfig[SelectedBags][SelectedContainer].Background = self.value;
+	UIDropDownMenu_SetSelectedValue(BaudBagOptionsBackgroundDropDown, self.value);
+	BaudBagUpdateContainer(_G["BaudBagContainer"..SelectedBags.."_"..SelectedContainer]); -- TODO: move to BaudBagBBConfig save?
 end
 
 
 --[[ CheckBox (non "enabled") functions ]]--
 function BaudBagOptionsCheckButton_OnClick(self, event, ...)
-  if(self:GetChecked())then
-    PlaySound("igMainMenuOptionCheckBoxOff");
-  else
-    PlaySound("igMainMenuOptionCheckBoxOn");
-  end
-  local SavedVar = CheckButtons[self:GetID()].SavedVar;
-  BBConfig[SelectedBags][SelectedContainer][SavedVar] = self:GetChecked();
-  if (SavedVar == "BlankTop") or (SavedVar == "RarityColor") then -- or (SavedVar == "RarityColorAltern") then
+	if(self:GetChecked())then
+		PlaySound("igMainMenuOptionCheckBoxOff");
+	else
+		PlaySound("igMainMenuOptionCheckBoxOn");
+	end
+	local SavedVar = CheckButtons[self:GetID()].SavedVar;
+	BBConfig[SelectedBags][SelectedContainer][SavedVar] = self:GetChecked();
+	if (SavedVar == "BlankTop") or (SavedVar == "RarityColor") then -- or (SavedVar == "RarityColorAltern") then
 		BaudBag_DebugMsg(2, "Want to update container: "..Prefix.."Container"..SelectedBags.."_"..SelectedContainer);
 		BaudBagUpdateContainer(_G["BaudBagContainer"..SelectedBags.."_"..SelectedContainer]); -- TODO: move to BaudBagBBConfig save?
-  end
+	end
 	BaudBagOptionsUpdate();
 end
 
@@ -395,11 +396,11 @@ function BaudBagOptionsUpdate()
 		Button:SetChecked(Button:GetID()==SelectedContainer);
 		if(Bag <= ContNum)then
 			if(Bag==SelectedContainer)then
-			Container:SetBackdropColor(1,1,0);
-			Container:SetBackdropBorderColor(1,1,0);
+				Container:SetBackdropColor(1,1,0);
+				Container:SetBackdropBorderColor(1,1,0);
 			else
-			Container:SetBackdropColor(1,1,1);
-			Container:SetBackdropBorderColor(1,1,1);
+				Container:SetBackdropColor(1,1,1);
+				Container:SetBackdropBorderColor(1,1,1);
 			end
 			Container:Show();
 		else
