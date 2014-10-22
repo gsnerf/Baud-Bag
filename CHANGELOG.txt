@@ -1,4 +1,6 @@
 ﻿=== Changelog ===
+v6.0.1
+  - fixed locked bag selection
 v6.0.0
   - adapted to braking changes in API & base container addon
 v5.4.0
