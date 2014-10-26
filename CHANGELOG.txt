@@ -1,5 +1,8 @@
 ﻿=== Changelog ===
 v6.0.1
+  - added file based logging on a per session basis, to enable type the following into the chat:
+    /script BaudBag_DebugLog = true;
+	The resulting log will be in the SavedVariable file for BaudBag. Beware that the option will reset to false when relogging or reloading the ui! Entries of previous sessions will automatically be overriden!
   - fixed locked bag selection
 v6.0.0
   - adapted to braking changes in API & base container addon
