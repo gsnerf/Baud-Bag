@@ -372,9 +372,9 @@ end
 
 -- this just makes sure the bags will be visible at the correct layer position when opened
 function BaudBagBagsFrame_OnShow(self, event, ...)
-	BaudBag_DebugMsg(8, "BaudBagBagsFrame is shown, correcting frame layer lvls of childs for frame "..self:GetName());
 	local isBags = self:GetName() == "BaudBagContainer1_1BagsFrame";
 	local Level = self:GetFrameLevel() + 1;
+	BaudBag_DebugMsg(8, "BaudBagBagsFrame is shown, correcting frame layer lvls of childs for frame "..self:GetName().." to level "..Level);
 	-- Adjust frame level because of Blizzard's screw up
 	if (isBags) then
 		for Bag = 0, 3 do
@@ -1591,17 +1591,19 @@ end
 
 
 function BaudBagUpdateBagFrames()
-  local Shown, BagFrame;
-  for BagSet = 1, 2 do
-    Shown = (BBConfig[BagSet].ShowBags ~= false);
-    _G[Prefix.."Container"..BagSet.."_1BagsButton"]:SetChecked(Shown);
-    BagFrame = _G[Prefix.."Container"..BagSet.."_1BagsFrame"];
-    if Shown then
-      BagFrame:Show();
-    else
-      BagFrame:Hide();
-    end
-  end
+	BaudBag_DebugMsg(8, "Called BaudBagUpdateBagFrames()");
+	local Shown, BagFrame, FrameName;
+	for BagSet = 1, 2 do
+		Shown = (BBConfig[BagSet].ShowBags ~= false);
+		_G[Prefix.."Container"..BagSet.."_1BagsButton"]:SetChecked(Shown);
+		BagFrame = _G[Prefix.."Container"..BagSet.."_1BagsFrame"];
+		BaudBag_DebugMsg(8, "Updating "..BagFrame:GetName().." to be shown ("..(Shown and "true" or "false")..")");
+		if Shown then
+			BagFrame:Show();
+		else
+			BagFrame:Hide();
+		end
+	end
 end
 
 
