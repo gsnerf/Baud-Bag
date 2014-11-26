@@ -1,4 +1,7 @@
 ﻿=== Changelog ===
+v6.0.2
+  - propably found long time bug for overlayed bag icons
+  - added reagent bank
 v6.0.1
   - added file based logging on a per session basis, to enable type the following into the chat:
     /script BaudBag_DebugLog = true;
