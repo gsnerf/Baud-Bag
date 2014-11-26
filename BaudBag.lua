@@ -156,6 +156,7 @@ local EventFuncs =
         BagSlot	= CreateFrame("CheckButton", "BaudBInveBag"..(Bag - 1).."Slot", BBContainer1, "BagSlotButtonTemplate");
         -- BagSlot:SetPoint("TOPLEFT", 8, -8 - (Bag - 1) * 39);
         BagSlot:SetPoint("TOPLEFT", 8, -8 - (Bag - 1) * 30);
+		BagSlot:SetFrameStrata("HIGH");
         BagSlot.HighlightBag = false;
         BagSlot.Bag = Bag;
         BagSlot:HookScript("OnEnter",	BaudBag_BagSlot_OnEnter);
@@ -168,7 +169,7 @@ local EventFuncs =
     BBContainer1:SetWidth(15 + 30);
     BBContainer1:SetHeight(15 + 4 * 30);
 
-		-- create BagSlots for the bag oberview in the bank (frame that pops out and only shows the available bags)
+    -- create BagSlots for the bag oberview in the bank (frame that pops out and only shows the available bags)
     for Bag = 1, NUM_BANKBAGSLOTS do
 		-- the slot name before "BankBagX" has to be 10 chars long or else this will HARDCRASH
 		BagSlot = CreateFrame("Button", "BaudBBankBag"..Bag, BBContainer2, "BankItemButtonBagTemplate");
@@ -192,6 +193,10 @@ local EventFuncs =
 		end
 		SetItemButtonTexture(BagSlot, Texture);
     end
+    -- now add button for reagent bank!
+    BagSlot = CreateFrame("Button", "BBReagentsBag", BBContainer2, "ReagentBankSlotTemplate");
+    BagSlot:SetPoint("TOPLEFT", 8 + mod(NUM_BANKBAGSLOTS, 2) * 39, -8 - floor(NUM_BANKBAGSLOTS / 2) * 39);
+
     BBContainer2:SetWidth(91);
     --Height changes depending if there is a purchase button
     BBContainer2.Height = 13 + ceil(NUM_BANKBAGSLOTS / 2) * 39;
@@ -1530,56 +1535,6 @@ function BaudBagUpdateFreeSlots(Frame)
   end
   _G[Frame:GetName().."Slots"]:SetText(TotalFree.."/"..TotalSlots..Localized.Free);
 end
-
---[[ This analyses the bought bags and updates the bag slot view
-     (the little window that pops out the main bank container and shows the bought bags) 
-     alongside the "bag slot buy" button ]]--
-function BaudBagBankBags_Update()
-	local Purchase = BaudBagBankSlotPurchaseFrame;
-	local Slots, Full = GetNumBankSlots();
-	local BagSlot;
-  
-	BaudBag_DebugMsg(5, "BankBags: updating");
-
-	for Bag = 1, NUM_BANKBAGSLOTS do
-		BagSlot = _G["BaudBBankBag"..Bag];
-
-		if (Bag <= Slots) then
-			SetItemButtonTextureVertexColor(BagSlot, 1.0, 1.0, 1.0);
-			BagSlot.tooltipText = BANK_BAG;
-		else
-			SetItemButtonTextureVertexColor(BagSlot, 1.0, 0.1, 0.1);
-			BagSlot.tooltipText = BANK_BAG_PURCHASE;
-		end
-	end
-
-	local BBContainer2 = _G[Prefix.."Container2_1BagsFrame"];
-
-	if Full then
-		BaudBag_DebugMsg(5, "BankBags: all bags bought hiding purchase button");
-		Purchase:Hide();
-		BBContainer2:SetHeight(BBContainer2.Height);
-		return;
-	end
-
-	local Cost = GetBankSlotCost(Slots);
-	BaudBag_DebugMsg(5, "BankBags: buyable bag slots left, currentCost = "..Cost);
-
-	-- This line allows the confirmation box to show the cost
-	BankFrame.nextSlotCost = Cost;
-
-	if (GetMoney() >= Cost) then
-		-- SetMoneyFrameColor(Purchase:GetName().."MoneyFrame", 1.0, 1.0, 1.0);
-		SetMoneyFrameColor(Purchase:GetName().."MoneyFrame");
-	else
-		SetMoneyFrameColor(Purchase:GetName().."MoneyFrame", "red");
-	end
-	MoneyFrame_Update(Purchase:GetName().."MoneyFrame", Cost);
-
-	Purchase:Show();
-	BBContainer2:SetHeight(BBContainer2.Height + 40);
-end
-
 
 --This is for the button that toggles the bank bag display
 function BaudBagBagsButton_OnClick(self, event, ...)
