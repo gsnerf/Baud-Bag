@@ -1,4 +1,5 @@
-﻿local next = next;
+local next = next;
+local _;
 
 -- this method is called from a user defined shortcut (see bindings.xml)
 function BaudBagToggleVoidStorage(self)

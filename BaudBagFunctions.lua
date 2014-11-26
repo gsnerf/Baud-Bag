@@ -4,37 +4,38 @@
 local _;
 
 local BaudBag_DebugCfg = {
-	--{ Name = "Config", Active = false},
-	--{ Name = "Options", Active = false},
-	--{ Name = "Token", Active = false},
-	--{ Name = "Bags", Active = false},
-	--{ Name = "Bank", Active = false},
-	--{ Name = "Search", Active = false},
-	--{ Name = "Bag Hover", Active = false},
-	--{ Name = "Bag Opening", Active = false},
-	--{ Name = "Bag Backgrounds", Active = false},
+    --{ Name = "Config", Active = false},
+    --{ Name = "Options", Active = false},
+    --{ Name = "Token", Active = false},
+    --{ Name = "Bags", Active = false},
+    --{ Name = "Bank", Active = false},
+    --{ Name = "Search", Active = false},
+    --{ Name = "Bag Hover", Active = false},
+    --{ Name = "Bag Opening", Active = false},
+    --{ Name = "Bag Backgrounds", Active = false},
 	
-	-- everything that has to do with configuration or configuring
-	Config = { Name = "Config", Active = false },
-	Options = { Name = "Options", Active = false },
-	Functions = { Name = "Functions", Active = true },
+    -- everything that has to do with configuration or configuring
+    Config      = { Name = "Config", Active = false },
+    Options     = { Name = "Options", Active = false },
+    Functions   = { Name = "Functions", Active = true },
 
-	-- bags including creation, rendering, opening and special functions
-	Bags           = { Name = "Bags", Active = false },
-	BagCreation    = { Name = "Bag Creation", Active = false },
-	BagHover       = { Name = "Bag Hover", Active = false },
-	BagOpening     = { Name = "Bag Opening", Active = false },
-	BagBackgrounds = { Name = "Bag Backgrounds", Active = false },
+    -- bags including creation, rendering, opening and special functions
+    Bags           = { Name = "Bags", Active = false },
+    BagCreation    = { Name = "Bag Creation", Active = false },
+    BagHover       = { Name = "Bag Hover", Active = false },
+    BagOpening     = { Name = "Bag Opening", Active = false },
+    BagBackgrounds = { Name = "Bag Backgrounds", Active = false },
 	
-	-- everything that has to do with offline capabilities
-	Cache       = { Name = "Cache", Active = true },
-	Bank        = { Name = "Bank", Active = false },
-	VoidStorage = { Name = "Void Storage", Active = true },
+    -- everything that has to do with offline capabilities
+    Cache       = { Name = "Cache", Active = true },
+    Bank        = { Name = "Bank", Active = true },
+    BankReagent = { Name = "Reagent Bank", Active = true },
+    VoidStorage = { Name = "Void Storage", Active = false },
 
-	-- additional functionality
-	Token = { Name = "Token", Active = false },
-	Search = { Name = "Search", Active = false },
-	Tooltip = { Name = "Tooltip", Active = true }
+    -- additional functionality
+    Token       = { Name = "Token", Active = false },
+    Search      = { Name = "Search", Active = false },
+    Tooltip     = { Name = "Tooltip", Active = true }
 };
 
 -- make sure to delete log from last session!

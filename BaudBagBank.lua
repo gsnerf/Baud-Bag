@@ -58,16 +58,16 @@ end
 function ReagentBankSlotButton_OnLoad(self, event, ...)
     -- for the time beeing we use the texture of manastorms duplicator for the reagent bank button
     local _, _, _, _, _, _, _, _, _, texture, _ = GetItemInfo(118938);
-    BaudBag_DebugMsg("Bank", "[ReagentBankSlotButton_OnLoad] Updating texture of reagent bank slot");
+    BaudBag_DebugMsg("BankReagent", "[SlotButton_OnLoad] Updating texture of reagent bank slot");
     SetItemButtonTexture(self, texture);
 end
 
 function ReagentBankSlotButton_OnEvent(self, event, ...)
-    BaudBag_DebugMsg("Bank", "[ReagentBankSlotButton_OnEvent] TEST");
+    BaudBag_DebugMsg("BankReagent", "[SlotButton_OnEvent] TEST");
 end
 
 function ReagentBankSlotButton_OnEnter(self, event, ...)
-    BaudBag_DebugMsg("Bank", "[ReagentBankSlotButton_OnEnter] Hovering over bank slot, showing tooltip");
+    BaudBag_DebugMsg("BankReagent", "[SlotButton_OnEnter] Hovering over bank slot, showing tooltip");
     GameTooltip:SetOwner(self, "ANCHOR_RIGHT");
     GameTooltip:SetText("Reagent Bank");
 end
