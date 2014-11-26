@@ -12,7 +12,7 @@ local SelectedContainer	= 1;
 local SetSize			= {5, NUM_BANKBAGSLOTS + 1};
 
 local SliderBars = {
-	{Text=Localized.Columns,	Low="2",	High="20",		Step=1,		SavedVar="Columns",		Default={8,12},		TooltipText = Localized.ColumnsTooltip},
+	{Text=Localized.Columns,	Low="2",	High="40",		Step=1,		SavedVar="Columns",		Default={8,12},		TooltipText = Localized.ColumnsTooltip},
 	{Text=Localized.Scale,		Low="50%",	High="200%",	Step=1,		SavedVar="Scale",		Default={100,100},	TooltipText = Localized.ScaleTooltip}
 };
 
