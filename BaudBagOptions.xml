@@ -96,7 +96,7 @@
 		</Layers>
 
 		<Frames>
-			<Frame name="$parentSetDropDown" inherits="UIDropDownMenuTemplate" enableMouse="true">
+			<Frame name="$parentSetDropDown" parentKey="SetDropDown" inherits="UIDropDownMenuTemplate" enableMouse="true">
 				<Size>
 					<AbsDimension x="160" y="25" />
 				</Size>
@@ -109,7 +109,7 @@
 				</Anchors>
 				<Layers>
 					<Layer level="BACKGROUND">
-						<FontString name="$parentLabel" inherits="GameFontNormalSmall">
+						<FontString name="$parentLabel" parentKey="Label" inherits="GameFontNormalSmall">
 							<Anchors>
 								<Anchor point="BOTTOMLEFT" relativePoint="TOPLEFT">
 									<Offset>
