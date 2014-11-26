@@ -12,12 +12,20 @@ local BaudBag_DebugCfg = {
 	{ Name = "Search", Active = false},
 	{ Name = "Bag Hover", Active = false},
 	{ Name = "Bag Opening", Active = false},
-	{ Name = "Bag Backgrounds", Active = false}
+	{ Name = "Bag Backgrounds", Active = false},
+    { Name = "Reagent Bank", Active = true}
 };
+
+-- make sure to delete log from last session!
+BaudBag_DebugLog = false;
+BaudBag_Debug = {};
 
 function BaudBag_DebugMsg(type, msg)
 	if (BaudBag_DebugCfg[type].Active) then
 		DEFAULT_CHAT_FRAME:AddMessage(GetTime().." BaudBag ("..BaudBag_DebugCfg[type].Name.."): "..msg);
+	end
+	if (BaudBag_DebugLog) then
+		table.insert(BaudBag_Debug, GetTime().." BaudBag ("..BaudBag_DebugCfg[type].Name.."): "..msg);
 	end
 end
 

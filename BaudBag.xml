@@ -235,7 +235,7 @@
 	
 	<Frame name="BaudBagContainer2_1" inherits="BaudBagFirstContainerTemplate">
 		<Frames>
-			<Frame name="$parentBagsFrame" inherits="BaudBagBagsFrameTemplate">
+			<Frame name="$parentBagsFrame" inherits="BaudBagBagsFrameTemplate" frameStrata="MEDIUM">
 				<Frames>
 					<Frame name="BaudBagBankSlotPurchaseFrame" setAllPoints="true" parent="BaudBagContainer2_1BagsFrame">
 						<Layers>
