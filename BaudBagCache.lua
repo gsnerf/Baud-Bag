@@ -1,6 +1,4 @@
-﻿-- Author      : gsnerf
--- Create Date : 8/14/2013 12:20:35 PM
-
+local _;
 --[[
 
 	The cache can be accessed through BaudBag_Cache.
