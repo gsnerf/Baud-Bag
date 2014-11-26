@@ -173,10 +173,8 @@ end
 
 --[[ Enabled CheckBox functions ]]--
 function BaudBagEnabledCheck_OnClick(self, event, ...)
-    if (self:GetChecked()) then
-        PlaySound("igMainMenuOptionCheckBoxOff");
-    else
-        PlaySound("igMainMenuOptionCheckBoxOn");
+    PlayCheckBoxSound(self);
+    if (not self:GetChecked()) then
         BaudBagCloseBagSet(SelectedBags); -- TODO: move to BaudBagConfig save?
     end
 
@@ -190,11 +188,7 @@ end
 
 --[[ CloseAll CheckBox functions ]]--
 function BaudBagCloseAllCheck_OnClick(self, event, ...)
-    if (self:GetChecked()) then
-        PlaySound("igMainMenuOptionCheckBoxOff");
-    else
-        PlaySound("igMainMenuOptionCheckBoxOn");
-    end
+    PlayCheckBoxSound(self);
     BBConfig[SelectedBags].CloseAll = self:GetChecked();
 end
 
@@ -206,21 +200,17 @@ function BaudBagOptionsBag_OnClick(self, event, ...)
 end
 
 function BaudBagOptionsJoinCheck_OnClick(self, event, ...)
-    if (self:GetChecked()) then
-        PlaySound("igMainMenuOptionCheckBoxOff");
-    else
-        PlaySound("igMainMenuOptionCheckBoxOn");
-    end
+    PlayCheckBoxSound(self);
 
     BBConfig[SelectedBags].Joined[self:GetID()] = self:GetChecked() and true or false;
     local ContNum = 2;
-    for Bag = 2,(self:GetID()-1)do
+    for Bag = 2,(self:GetID()-1) do
         if (BBConfig[SelectedBags].Joined[Bag] == false) then
             ContNum = ContNum + 1;
         end
     end
-    if self:GetChecked()then
-        tremove(BBConfig[SelectedBags],ContNum);
+    if self:GetChecked() then
+        tremove(BBConfig[SelectedBags], ContNum);
     else
         tinsert(BBConfig[SelectedBags], ContNum, BaudBagCopyTable(BBConfig[SelectedBags][ContNum-1]));
     end
@@ -228,6 +218,13 @@ function BaudBagOptionsJoinCheck_OnClick(self, event, ...)
     BaudUpdateJoinedBags();
 end
 
+local function PlayCheckBoxSound(self)
+    if (self:GetChecked()) then
+        PlaySound("igMainMenuOptionCheckBoxOff");
+    else
+        PlaySound("igMainMenuOptionCheckBoxOn");
+    end
+end
 
 --[[ Name TextBox functions ]]--
 function BaudBagOptionsNameEditBox_OnTextChanged()
