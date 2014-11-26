@@ -4,28 +4,92 @@
 local _;
 
 local BaudBag_DebugCfg = {
-	{ Name = "Config", Active = false},
-	{ Name = "Options", Active = false},
-	{ Name = "Token", Active = false},
-	{ Name = "Bags", Active = false},
-	{ Name = "Bank", Active = false},
-	{ Name = "Search", Active = false},
-	{ Name = "Bag Hover", Active = false},
-	{ Name = "Bag Opening", Active = false},
-	{ Name = "Bag Backgrounds", Active = false},
-    { Name = "Reagent Bank", Active = true}
+	--{ Name = "Config", Active = false},
+	--{ Name = "Options", Active = false},
+	--{ Name = "Token", Active = false},
+	--{ Name = "Bags", Active = false},
+	--{ Name = "Bank", Active = false},
+	--{ Name = "Search", Active = false},
+	--{ Name = "Bag Hover", Active = false},
+	--{ Name = "Bag Opening", Active = false},
+	--{ Name = "Bag Backgrounds", Active = false},
+	
+	-- everything that has to do with configuration or configuring
+	Config = { Name = "Config", Active = false },
+	Options = { Name = "Options", Active = false },
+	Functions = { Name = "Functions", Active = true },
+
+	-- bags including creation, rendering, opening and special functions
+	Bags           = { Name = "Bags", Active = false },
+	BagCreation    = { Name = "Bag Creation", Active = false },
+	BagHover       = { Name = "Bag Hover", Active = false },
+	BagOpening     = { Name = "Bag Opening", Active = false },
+	BagBackgrounds = { Name = "Bag Backgrounds", Active = false },
+	
+	-- everything that has to do with offline capabilities
+	Cache       = { Name = "Cache", Active = true },
+	Bank        = { Name = "Bank", Active = false },
+	VoidStorage = { Name = "Void Storage", Active = true },
+
+	-- additional functionality
+	Token = { Name = "Token", Active = false },
+	Search = { Name = "Search", Active = false },
+	Tooltip = { Name = "Tooltip", Active = true }
 };
 
 -- make sure to delete log from last session!
 BaudBag_DebugLog = false;
 BaudBag_Debug = {};
 
-function BaudBag_DebugMsg(type, msg)
+
+function BaudBag_DebugMsg(type, msg, ...)
 	if (BaudBag_DebugCfg[type].Active) then
 		DEFAULT_CHAT_FRAME:AddMessage(GetTime().." BaudBag ("..BaudBag_DebugCfg[type].Name.."): "..msg);
+		if (... ~= nil) then
+			BaudBag_Vardump(...)
+		end
 	end
 	if (BaudBag_DebugLog) then
 		table.insert(BaudBag_Debug, GetTime().." BaudBag ("..BaudBag_DebugCfg[type].Name.."): "..msg);
+	end
+end
+
+function BaudBag_Vardump(value, depth, key)
+	local linePrefix = "";
+	local spaces = "";
+  
+	if key ~= nil then
+		linePrefix = "["..key.."] = ";
+	end
+  
+	if depth == nil then
+		depth = 0;
+	else
+		depth = depth + 1;
+		for i=1, depth do
+			spaces = spaces .. "  "; 
+		end
+	end
+  
+	if type(value) == 'table' then
+		mTable = getmetatable(value);
+		if mTable == nil then
+			DEFAULT_CHAT_FRAME:AddMessage(GetTime().." BaudBag (vardump): "..spaces..linePrefix.."(table) ");
+		else
+			DEFAULT_CHAT_FRAME:AddMessage(GetTime().." BaudBag (vardump): "..spaces.."(metatable) ");
+			value = mTable;
+		end
+		for tableKey, tableValue in pairs(value) do
+			vardump(tableValue, depth, tableKey);
+		end
+	elseif type(value)	== 'function' or 
+		type(value)	== 'thread' or 
+		type(value)	== 'userdata' or
+		value		== nil
+	then
+		DEFAULT_CHAT_FRAME:AddMessage(GetTime().." BaudBag (vardump): "..spaces..tostring(value));
+	else
+		DEFAULT_CHAT_FRAME:AddMessage(GetTime().." BaudBag (vardump): "..spaces..linePrefix.."("..type(value)..") "..tostring(value));
 	end
 end
 
