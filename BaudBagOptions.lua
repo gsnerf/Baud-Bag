@@ -48,10 +48,12 @@ Needed functions:
 
 --[[ BaudBagOptions frame related events and methods ]]--
 function BaudBagOptions_OnLoad(self, event, ...)
+    -- the config needs a reference to this
     BaudBagSetCfgPreReq(SliderBars, CheckButtons);
     self:RegisterEvent("ADDON_LOADED");
 end
 
+--[[ All actual processing needs to be done after we are sure we have a config to load from! ]]
 function BaudBagOptions_OnEvent(self, event, ...)
 
     -- failsafe: we only want to handle the addon loaded event
@@ -71,15 +73,15 @@ function BaudBagOptions_OnEvent(self, event, ...)
     InterfaceOptions_AddCategory(self);
 	
     -- set localized labels
-    BaudBagOptionsTitle:SetText("Baud Bag "..Localized.Options);
-    BaudBagOptionsVersionText:SetText("(v"..GetAddOnMetadata("BaudBag","Version")..")");
-    BaudBagOptionsSetDropDownLabel:SetText(Localized.BagSet);
-    BaudBagOptionsNameEditBoxText:SetText(Localized.ContainerName);
-    BaudBagOptionsBackgroundDropDownLabel:SetText(Localized.Background);
+    self.Title:SetText("Baud Bag "..Localized.Options);
+    self.Version:SetText("(v"..GetAddOnMetadata("BaudBag","Version")..")");
+    self.SetSelection.Label:SetText(Localized.BagSet);
+    self.NameInput.Text:SetText(Localized.ContainerName);
+    self.BackgroundSelection.Label:SetText(Localized.Background);
     BaudBagOptionsEnabledCheckText:SetText(Localized.Enabled);
-    BaudBagOptionsEnabledCheck.tooltipText  = Localized.EnabledTooltip;
+    self.EnabledCheck.tooltipText  = Localized.EnabledTooltip;
     BaudBagOptionsCloseAllCheckText:SetText(Localized.CloseAll);
-    BaudBagOptionsCloseAllCheck.tooltipText = Localized.CloseAllTooltip;
+    self.CloseAllCheck.tooltipText = Localized.CloseAllTooltip;
 	
     -- localized checkbox labels
     for Key, Value in ipairs(CheckButtons) do
@@ -102,16 +104,16 @@ function BaudBagOptions_OnEvent(self, event, ...)
     DEFAULT_CHAT_FRAME:AddMessage(Localized.AddMessage);
 
     --[[
-    create stubs for all possibly needed bag buttons:
-    1. create bag button
-    2. create container frame
-    3. create join checkbox if bag > 1
+        create stubs for all possibly needed bag buttons:
+        1. create bag button
+        2. create container frame
+        3. create join checkbox if bag > 1
     ]]--
     local Button, Container, Check;
     for Bag = 1, MaxBags do
-        Button		= CreateFrame("CheckButton",	Prefix.."Bag"..Bag, BaudBagOptions, Prefix.."BagTemplate");
-        Container	= CreateFrame("Frame",			Prefix.."Container"..Bag, BaudBagOptions, Prefix.."ContainerTemplate");
-        if(Bag == 1)then
+        Button		= CreateFrame("CheckButton",    Prefix.."Bag"..Bag,         BaudBagOptions, Prefix.."BagTemplate");
+        Container	= CreateFrame("Frame",          Prefix.."Container"..Bag,   BaudBagOptions, Prefix.."ContainerTemplate");
+        if (Bag == 1) then
             -- first bag only has a container
             Container:SetPoint("LEFT", _G[Prefix.."Bag1"], "LEFT", -6, 0);
         else
