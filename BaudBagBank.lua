@@ -11,7 +11,7 @@ function BaudBagBankBags_Update()
     local ReagentsBought = IsReagentBankUnlocked();
     local BagSlot;
   
-    BaudBag_DebugMsg(5, "BankBags: updating");
+    BaudBag_DebugMsg("Bank", "BankBags: updating");
     
     for Bag = 1, NUM_BANKBAGSLOTS do
         BagSlot = _G["BaudBBankBag"..Bag];
@@ -28,14 +28,14 @@ function BaudBagBankBags_Update()
     local BBContainer2 = _G[Prefix.."Container2_1BagsFrame"];
     
     if Full then
-        BaudBag_DebugMsg(5, "BankBags: all bags bought hiding purchase button");
+        BaudBag_DebugMsg("Bank", "BankBags: all bags bought hiding purchase button");
         Purchase:Hide();
         BBContainer2:SetHeight(BBContainer2.Height);
         return;
     end
     
     local Cost = GetBankSlotCost(Slots);
-    BaudBag_DebugMsg(5, "BankBags: buyable bag slots left, currentCost = "..Cost);
+    BaudBag_DebugMsg("Bank", "BankBags: buyable bag slots left, currentCost = "..Cost);
     
     -- This line allows the confirmation box to show the cost
     BankFrame.nextSlotCost = Cost;
@@ -58,16 +58,16 @@ end
 function ReagentBankSlotButton_OnLoad(self, event, ...)
     -- for the time beeing we use the texture of manastorms duplicator for the reagent bank button
     local _, _, _, _, _, _, _, _, _, texture, _ = GetItemInfo(118938);
-    BaudBag_DebugMsg(9, "[OnLoad] Updating texture of reagent bank slot");
+    BaudBag_DebugMsg("Bank", "[ReagentBankSlotButton_OnLoad] Updating texture of reagent bank slot");
     SetItemButtonTexture(self, texture);
 end
 
 function ReagentBankSlotButton_OnEvent(self, event, ...)
-    BaudBag_DebugMsg(9, "[OnEvent] TEST");
+    BaudBag_DebugMsg("Bank", "[ReagentBankSlotButton_OnEvent] TEST");
 end
 
 function ReagentBankSlotButton_OnEnter(self, event, ...)
-    BaudBag_DebugMsg(9, "[OnEnter] Hovering over bank slot, showing tooltip");
+    BaudBag_DebugMsg("Bank", "[ReagentBankSlotButton_OnEnter] Hovering over bank slot, showing tooltip");
     GameTooltip:SetOwner(self, "ANCHOR_RIGHT");
     GameTooltip:SetText("Reagent Bank");
 end

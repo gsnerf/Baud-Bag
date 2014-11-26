@@ -53,9 +53,13 @@ function BaudBagOptions_OnLoad(self, event, ...)
 end
 
 function BaudBagOptions_OnEvent(self, event, ...)
+
+	-- failsafe: we only want to handle the addon loaded event
 	local arg1 = ...;
 	if ((event ~= "ADDON_LOADED") or (arg1 ~= "BaudBag")) then return; end
-	-- make sure there is a BBConfig
+
+	-- make sure there is a BBConfig and a cache
+	BaudBagInitCache();
 	BaudBagRestoreCfg();
 	CfgBackup	= BaudBagCopyTable(BBConfig);
 	
@@ -125,18 +129,18 @@ function BaudBagOptions_OnEvent(self, event, ...)
 end
 
 function BaudBagOptions_OnRefresh(self, event, ...)
-	BaudBag_DebugMsg(2, "OnRefresh was called!");
+	BaudBag_DebugMsg("Options", "OnRefresh was called!");
 	BaudBagOptionsUpdate();
 end
 
 function BaudBagOptions_OnOkay(self, event, ...)
-	BaudBag_DebugMsg(2, "'Okay' pressed, saving BBConfig.");
+	BaudBag_DebugMsg("Options", "'Okay' pressed, saving BBConfig.");
 	CfgBackup = BBConfig;
 	BaudBagSaveCfg(BBConfig);
 end
 
 function BaudBagOptions_OnCancel(self, event, ...)
-	BaudBag_DebugMsg(2, "'Cancel' pressed, reset to last BBConfig.");
+	BaudBag_DebugMsg("Options", "'Cancel' pressed, reset to last BBConfig.");
 	BBConfig = CfgBackup;
 	ReloadConfigDependant();
 end
@@ -269,7 +273,7 @@ function BaudBagOptionsCheckButton_OnClick(self, event, ...)
 	local SavedVar = CheckButtons[self:GetID()].SavedVar;
 	BBConfig[SelectedBags][SelectedContainer][SavedVar] = self:GetChecked();
 	if (SavedVar == "BlankTop") or (SavedVar == "RarityColor") then -- or (SavedVar == "RarityColorAltern") then
-		BaudBag_DebugMsg(2, "Want to update container: "..Prefix.."Container"..SelectedBags.."_"..SelectedContainer);
+		BaudBag_DebugMsg("Options", "Want to update container: "..Prefix.."Container"..SelectedBags.."_"..SelectedContainer);
 		BaudBagUpdateContainer(_G["BaudBagContainer"..SelectedBags.."_"..SelectedContainer]); -- TODO: move to BaudBagBBConfig save?
 	end
 	BaudBagOptionsUpdate();
@@ -296,20 +300,20 @@ function BaudBagSlider_OnValueChanged(self)
    --[[ END !!!TEMPORARY!!! ]]--
 
 
-	BaudBag_DebugMsg(2, "Updating value of slider with id "..self:GetID().." to "..self:GetValue());
+	BaudBag_DebugMsg("Options", "Updating value of slider with id "..self:GetID().." to "..self:GetValue());
 
 	-- change appearance
 	_G[self:GetName().."Text"]:SetText(format(SliderBars[self:GetID()].Text,self:GetValue()));
   
 	-- TODO: find out why this check is necessary
 	if Updating then
-		BaudBag_DebugMsg(2, "It seems we are already updating, skipping further update...");
+		BaudBag_DebugMsg("Options", "It seems we are already updating, skipping further update...");
 		return;
 	end
   
 	-- save BBConfig entry
 	local SavedVar = SliderBars[self:GetID()].SavedVar;
-	BaudBag_DebugMsg(2, "The variable associated with this value is "..SavedVar);
+	BaudBag_DebugMsg("Options", "The variable associated with this value is "..SavedVar);
 	BBConfig[SelectedBags][SelectedContainer][SavedVar] = self:GetValue();
   
 	-- cause the appropriate update  -- TODO: move to BaudBagBBConfig save?
@@ -359,12 +363,13 @@ function BaudBagOptionsUpdate()
 			end
 			
 			-- try to find out which bag texture to use
+			local bagCache = BaudBagGetBagCache(Bag);
 			if BaudBagIcons[Bag]then
 				Texture = BaudBagIcons[Bag];
 			elseif(SelectedBags == 1)then
-				Texture = GetInventoryItemTexture("player",ContainerIDToInventoryID(Bag));
-			elseif BaudBag_Cache[Bag] and BaudBag_Cache[Bag].BagLink then
-				Texture = GetItemIcon(BaudBag_Cache[Bag].BagLink);
+				Texture = GetInventoryItemTexture("player", ContainerIDToInventoryID(Bag));
+			elseif bagCache and bagCache.BagLink then
+				Texture = GetItemIcon(bagCache.BagLink);
 			else
 				Texture = nil;
 			end
