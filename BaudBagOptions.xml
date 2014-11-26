@@ -74,7 +74,7 @@
 	<Frame name="BaudBagOptions">
 		<Layers>
 			<Layer level="ARTWORK">
-				<FontString name="$parentTitle" inherits="GameFontNormalLarge">
+				<FontString name="$parentTitle" parentKey="Title" inherits="GameFontNormalLarge">
 					<Anchors>
 						<Anchor point="TOPLEFT">
 							<Offset>
@@ -83,7 +83,7 @@
 						</Anchor>
 					</Anchors>
 				</FontString>
-				<FontString name="$parentVersionText" inherits="GameFontNormalSmall">
+				<FontString name="$parentVersionText" parentKey="Version" inherits="GameFontNormalSmall">
 					<Anchors>
 						<Anchor point="BOTTOMLEFT" relativeTo="$parentTitle" relativePoint="BOTTOMRIGHT">
 							<Offset>
@@ -96,7 +96,7 @@
 		</Layers>
 
 		<Frames>
-			<Frame name="$parentSetDropDown" parentKey="SetDropDown" inherits="UIDropDownMenuTemplate" enableMouse="true">
+			<Frame name="$parentSetDropDown" parentKey="SetSelection" inherits="UIDropDownMenuTemplate" enableMouse="true">
 				<Size>
 					<AbsDimension x="160" y="25" />
 				</Size>
@@ -122,7 +122,7 @@
 				</Layers>
 			</Frame>
 
-			<CheckButton name="$parentEnabledCheck" inherits="OptionsCheckButtonTemplate">
+			<CheckButton name="$parentEnabledCheck" parentKey="EnabledCheck" inherits="OptionsCheckButtonTemplate">
 				<HitRectInsets>
 					<AbsInset left="0" right="-70" top="0" bottom="0"/>
 				</HitRectInsets>
@@ -138,7 +138,7 @@
 				</Scripts>
 			</CheckButton>
 
-			<CheckButton name="$parentCloseAllCheck" inherits="OptionsCheckButtonTemplate">
+			<CheckButton name="$parentCloseAllCheck" parentKey="CloseAllCheck" inherits="OptionsCheckButtonTemplate">
 				<Anchors>
 					<Anchor point="TOPLEFT" relativeTo="$parentEnabledCheck" relativePoint="TOPRIGHT">
 						<Offset>
@@ -151,7 +151,7 @@
 				</Scripts>
 			</CheckButton>
 
-			<EditBox name="$parentNameEditBox" inherits="InputBoxTemplate" letters="40" autoFocus="false">
+			<EditBox name="$parentNameEditBox" inherits="InputBoxTemplate" parentKey="NameInput" letters="40" autoFocus="false">
 				<Size>
 					<AbsDimension x="200" y="16" />
 				</Size>
@@ -164,7 +164,7 @@
 				</Anchors>
 				<Layers>
 					<Layer level="ARTWORK">
-						<FontString name="$parentText" inherits="GameFontNormalSmall">
+						<FontString name="$parentText" parentKey="Text" inherits="GameFontNormalSmall">
 							<Anchors>
 								<Anchor point="BOTTOMLEFT" relativeTo="$parent" relativePoint="TOPLEFT">
 									<Offset>
@@ -183,7 +183,7 @@
 				</Scripts>
 			</EditBox>
 
-			<Frame name="$parentBackgroundDropDown" inherits="UIDropDownMenuTemplate" enableMouse="true">
+			<Frame name="$parentBackgroundDropDown" inherits="UIDropDownMenuTemplate" parentKey="BackgroundSelection" enableMouse="true">
 				<Size>
 					<AbsDimension x="160" y="25" />
 				</Size>
@@ -196,7 +196,7 @@
 				</Anchors>
 				<Layers>
 					<Layer level="BACKGROUND">
-						<FontString name="$parentLabel" inherits="GameFontNormalSmall">
+						<FontString name="$parentLabel" parentKey="Label" inherits="GameFontNormalSmall">
 							<Anchors>
 								<Anchor point="BOTTOMLEFT" relativePoint="TOPLEFT">
 									<Offset>
