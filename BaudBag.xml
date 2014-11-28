@@ -44,7 +44,7 @@
 				</Anchors>
 				<Scripts>
 					<OnClick>
-						BaudBag_DebugMsg(8, "["..self:GetParent():GetName().."] Close Button pressed");
+						BaudBag_DebugMsg("BagOpening", "["..self:GetParent():GetName().."] Close Button pressed");
 						self:GetParent():Hide();
 					</OnClick>
 				</Scripts>
@@ -285,6 +285,14 @@
 			<Frame name="BaudBagSubBag-1" />
 		</Frames>
 	</Frame>
+
+
+	<!--Frame name="BaudBagReagentBank" inherits="BaudBagContainerTemplate">
+		<KeyValues>
+			<KeyValue key="BagSet" value="2"/>
+			<KeyValue key="BagId" value="ReagentBank" />
+		</KeyValues>
+	</Frame-->
 	
 	<Frame name="BaudBagFrame">
 		<Scripts>

@@ -3,13 +3,15 @@
 local _;
 
 local Localized	= BaudBagLocalized;
-local MaxBags		= NUM_BANKBAGSLOTS + 1;
-local Prefix		= "BaudBagOptions";
+--local MaxBags   = NUM_BANKBAGSLOTS + 1;
+local MaxBags   = NUM_BANKBAGSLOTS + 2;
+local Prefix    = "BaudBagOptions";
 local Updating, CfgBackup;
 
-local SelectedBags		= 1;
-local SelectedContainer	= 1;
-local SetSize			= {5, NUM_BANKBAGSLOTS + 1};
+local SelectedBags      = 1;
+local SelectedContainer = 1;
+--local SetSize           = {5, NUM_BANKBAGSLOTS + 1};
+local SetSize           = {5, NUM_BANKBAGSLOTS + 2};
 
 local SliderBars = {
     {Text=Localized.Columns,	Low="2",	High="40",		Step=1,		SavedVar="Columns",		Default={8,12},		TooltipText = Localized.ColumnsTooltip},
@@ -26,7 +28,8 @@ local CheckButtons = {
 BaudBagIcons = {
     [0]	= "Interface\\Buttons\\Button-Backpack-Up",
     [-1]	= "Interface\\Icons\\INV_Box_02",
-    [-2]	= "Interface\\ContainerFrame\\KeyRing-Bag-Icon"
+    --[-2]	= "Interface\\ContainerFrame\\KeyRing-Bag-Icon",
+    [-2]	= "Interface\\Icons\\INV_MISC_CAT_TRINKET05"
 };
 
 local TextureNames = {
@@ -119,10 +122,12 @@ function BaudBagOptions_OnEvent(self, event, ...)
         else
             -- all other bags also have a button to mark joins with the previous bags
             Button:SetPoint("LEFT", Prefix.."Bag"..(Bag-1), "RIGHT", 8, 0);
-            Check = CreateFrame("CheckButton", Prefix.."JoinCheck"..Bag, Button, Prefix.."JoinCheckTemplate");
-            Check:SetPoint("BOTTOM", Button, "TOPLEFT", -4, 4);
-            Check:SetID(Bag);
-            Check.tooltipText = Localized.CheckTooltip;
+            if (Bag < MaxBags) then
+                Check = CreateFrame("CheckButton", Prefix.."JoinCheck"..Bag, Button, Prefix.."JoinCheckTemplate");
+                Check:SetPoint("BOTTOM", Button, "TOPLEFT", -4, 4);
+                Check:SetID(Bag);
+                Check.tooltipText = Localized.CheckTooltip;
+            end
         end
     end
 	
@@ -220,7 +225,7 @@ function BaudBagOptionsJoinCheck_OnClick(self, event, ...)
     BaudUpdateJoinedBags();
 end
 
-local function PlayCheckBoxSound(self)
+function PlayCheckBoxSound(self)
     if (self:GetChecked()) then
         PlaySound("igMainMenuOptionCheckBoxOff");
     else
@@ -343,17 +348,22 @@ function BaudBagOptionsUpdate()
     -- load bag specific options (position and show each button that belongs to the current set,
     --		check joined box and create container frames)
     BaudBagForEachBag(SelectedBags,
-        function(Bag,Index)
+        function(Bag, Index)
             Button	= _G[Prefix.."Bag"..Index];
             Check	= _G[Prefix.."JoinCheck"..Index];
 
             if (Index == 1) then
                 -- only the first bag needs its position set, since the others are anchored to it
-                Button:SetPoint("LEFT", BaudBagOptions, "TOP", (Bags / 2) * -44,-140);
+                Button:SetPoint("LEFT", BaudBagOptions, "TOP", (Bags / 2) * -44, -140);
+            elseif (Index == NUM_BANKBAGSLOTS + 2) then
+                -- the reagent bank might not be joined with anything else (for the moment?)
+                _G[Prefix.."Container"..ContNum]:SetPoint("RIGHT", Prefix.."Bag"..(Index - 1), "RIGHT", 6,0);
+                ContNum = ContNum + 1;
+                _G[Prefix.."Container"..ContNum]:SetPoint("LEFT", Prefix.."Bag"..Index, "LEFT", -6,0);
             else
-                -- all bags after the first may have a joined state
+                -- all other bags may have a joined state
                 Check:SetChecked(BBConfig[SelectedBags].Joined[Index]~=false);
-                if not Check:GetChecked()then
+                if not Check:GetChecked() then
                     -- if not joined the last container needs to be aligned to the last bag and the current container needs to start here
                     _G[Prefix.."Container"..ContNum]:SetPoint("RIGHT", Prefix.."Bag"..(Index - 1), "RIGHT", 6,0);
                     ContNum = ContNum + 1;

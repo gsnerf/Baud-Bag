@@ -15,7 +15,7 @@ local BaudBag_DebugCfg = {
     --{ Name = "Bag Backgrounds", Active = false},
 	
     -- everything that has to do with configuration or configuring
-    Config      = { Name = "Config", Active = false },
+    Config      = { Name = "Config", Active = true },
     Options     = { Name = "Options", Active = false },
     Functions   = { Name = "Functions", Active = true },
 
@@ -27,7 +27,7 @@ local BaudBag_DebugCfg = {
     BagBackgrounds = { Name = "Bag Backgrounds", Active = false },
 	
     -- everything that has to do with offline capabilities
-    Cache       = { Name = "Cache", Active = true },
+    Cache       = { Name = "Cache", Active = false },
     Bank        = { Name = "Bank", Active = true },
     BankReagent = { Name = "Reagent Bank", Active = true },
     VoidStorage = { Name = "Void Storage", Active = false },
@@ -101,29 +101,31 @@ end
 ]]--
 function BaudBagForEachBag(BagSet, Func)
 --[[
-	BagsSet Indices:
-		 1 == inventory;   2 == bank
-	Bag Indices:
-		-4 == tokens bag; -2 == keyring;          -1 == bank
-		 0 == backpack;  1-4 == inventory bags; 5-11 == bank bags
+    BagsSet Indices:
+        1 == inventory
+        2 == bank
+    Bag Indices:
+       -2 == reagent bank
+       -1 == bank
+        0 == backpack
+        1-4 == inventory bags
+        5-11 == bank bags
 ]]--
-  if (BagSet==1) then
-		-- regular bags
-    for Bag = 1, 5 do
-      Func(Bag - 1, Bag);
+    if (BagSet == 1) then
+        -- regular bags
+        for Bag = 1, 5 do
+            Func(Bag - 1, Bag);
+        end
+    else
+        -- bank
+        Func(-1, 1);
+        -- bank bags
+        for Bag = 1, NUM_BANKBAGSLOTS do
+            Func(Bag + 4, Bag + 1);
+        end
+        -- reagent bank
+        Func(-2, NUM_BANKBAGSLOTS + 2);
     end
-    
-    -- Keyring was REMOVED as of WoW 4.2
-	-- -- keyring
-    -- Func(-2, 6);
-  else
-		-- bank
-    Func(-1, 1);
-    -- bank bags
-    for Bag = 1, NUM_BANKBAGSLOTS do
-      Func(Bag + 4, Bag + 1);
-    end
-  end
 end
 
 

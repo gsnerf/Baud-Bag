@@ -171,7 +171,7 @@ local EventFuncs =
     if BBConfig and (BBConfig[2].Enabled == true) then 
 		BaudBag_DebugMsg("Bank", "BaudBag enabled for Bank, disable default bank event");
         BankFrame:UnregisterEvent("BANKFRAME_OPENED");
-    end 
+    end
   end,
 
   BANKFRAME_CLOSED = function(self, event, ...)
@@ -326,14 +326,14 @@ function BaudBag_OnLoad(self, event, ...)
 
   --The first bag from the bank is unique and is created in the XML
   BaudBag_DebugMsg("Bags", "Creating sub bags.");
-  for Bag = -1, LastBagID do
+  for Bag = -2, LastBagID do
     if(Bag == -1)then
       SubBag = _G[Prefix.."SubBag"..Bag];
     else
       SubBag = CreateFrame("Frame", Prefix.."SubBag"..Bag, nil, "BaudBagSubBagTemplate");
     end
     SubBag:SetID(Bag);
-    SubBag.BagSet = (Bag ~= -1) and (Bag < 5) and 1 or 2;
+    SubBag.BagSet = (Bag >= 0) and (Bag < 5) and 1 or 2;
     SubBag:SetParent(Prefix.."Container"..SubBag.BagSet.."_1");
   end
 end
@@ -358,6 +358,7 @@ function BaudBagBagsFrame_OnShow(self, event, ...)
         for Bag = 1, NUM_BANKBAGSLOTS do
             _G["BaudBBankBag"..Bag]:SetFrameLevel(Level);
         end
+        _G["BBReagentsBag"]:SetFrameLevel(Level);
     end
 end
 
@@ -927,7 +928,7 @@ function BaudUpdateJoinedBags()
 	for BagSet = 1, 2 do
 	ContNum = 0;
 	BaudBagForEachBag(BagSet, function(Bag, Index)
-		if (ContNum==0) or (BBConfig[BagSet].Joined[Index] == false) then
+		if (ContNum == 0) or (BBConfig[BagSet].Joined[Index] == false) then
 			if (ContNum ~= 0) then
 				FinishContainer();
 			end
