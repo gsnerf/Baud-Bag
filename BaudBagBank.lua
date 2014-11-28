@@ -24,6 +24,7 @@ function BaudBagBankBags_Update()
             BagSlot.tooltipText = BANK_BAG_PURCHASE;
         end
     end
+    -- TODO similarily check if reagent bank is already bought and change vertex color accordingly!
     
     local BBContainer2 = _G[Prefix.."Container2_1BagsFrame"];
     
@@ -73,4 +74,6 @@ function ReagentBankSlotButton_OnEnter(self, event, ...)
 end
 
 function ReagentBankSlotButton_OnClick(self, event, ...)
+    BaudBag_DebugMsg("BankReagent", "[SlotButton_OnClick] trying to show reagent bank");
+    -- BaudBagReagentBank:Show();
 end
