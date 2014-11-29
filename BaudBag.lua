@@ -1,9 +1,9 @@
 ﻿--[[To do list:
-Slash commands
-Multi character viewing
-Option for disabling fading
-Update offline bank even when it's disabled
-Vertex color for backgrounds
+    Slash commands
+    Multi character viewing
+    Option for disabling fading
+    Update offline bank even when it's disabled
+    Vertex color for backgrounds
 ]]
 
 --[[ defining variables for the events ]]--
@@ -295,18 +295,20 @@ function BaudBag_OnLoad(self, event, ...)
 		Container:SetID(1);
 	end
 
-  --The first bag from the bank is unique and is created in the XML
-  BaudBag_DebugMsg("Bags", "Creating sub bags.");
-  for Bag = -2, LastBagID do
-    if(Bag == -1)then
-      SubBag = _G[Prefix.."SubBag"..Bag];
-    else
-      SubBag = CreateFrame("Frame", Prefix.."SubBag"..Bag, nil, "BaudBagSubBagTemplate");
+    --The first bag from the bank is unique and is created in the XML
+    BaudBag_DebugMsg("Bags", "Creating sub bags.");
+    for Bag = -3, LastBagID do
+        if not (Bag == -2) then
+            if (Bag == -1) then
+                SubBag = _G[Prefix.."SubBag"..Bag];
+            else
+                SubBag = CreateFrame("Frame", Prefix.."SubBag"..Bag, nil, "BaudBagSubBagTemplate");
+            end
+            SubBag:SetID(Bag);
+            SubBag.BagSet = (Bag >= 0) and (Bag < 5) and 1 or 2;
+            SubBag:SetParent(Prefix.."Container"..SubBag.BagSet.."_1");
+        end
     end
-    SubBag:SetID(Bag);
-    SubBag.BagSet = (Bag >= 0) and (Bag < 5) and 1 or 2;
-    SubBag:SetParent(Prefix.."Container"..SubBag.BagSet.."_1");
-  end
 end
 
 
@@ -877,11 +879,13 @@ end
 function BaudUpdateJoinedBags()
 	BaudBag_DebugMsg("Bags", "Updating joined bags...");
 	local OpenBags = {};
-	for Bag = -1, LastBagID do
-		OpenBags[Bag] = _G[Prefix.."SubBag"..Bag]:GetParent():IsShown();
-		if OpenBags[Bag] then
-			BaudBag_DebugMsg("Bags", "Bag open: "..Bag);
-		end
+	for Bag = -3, LastBagID do
+        if not (Bag == -2) then
+		    OpenBags[Bag] = _G[Prefix.."SubBag"..Bag]:GetParent():IsShown();
+		    if OpenBags[Bag] then
+			    BaudBag_DebugMsg("Bags", "Bag open: "..Bag);
+		    end
+        end
 	end
 	
 	local SubBag, Container, IsOpen, ContNum, BagID;
@@ -906,7 +910,7 @@ function BaudUpdateJoinedBags()
 			IsOpen = false;
 			ContNum = ContNum + 1;
 			if (MaxCont[BagSet] < ContNum) then
-				Container = CreateFrame("Frame",Prefix.."Container"..BagSet.."_"..ContNum, UIParent, "BaudBagContainerTemplate");
+				Container = CreateFrame("Frame", Prefix.."Container"..BagSet.."_"..ContNum, UIParent, "BaudBagContainerTemplate");
 				Container:SetID(ContNum);
 				Container.BagSet = BagSet;
 				MaxCont[BagSet] = ContNum;
@@ -936,28 +940,30 @@ end
 --[[ Sets the highlight texture of bag slots indicating wether the contained bag is opened or not ]]--
 function BaudBagUpdateOpenBags()
     BaudBag_DebugMsg("Bags", "[BaudBagUpdateOpenBags]");
-	local Open, Frame, Highlight, Highlight2;
-	-- The bank bag(-1) has no open indicator
-	for Bag = -1, LastBagID do
-		Frame = _G[Prefix.."SubBag"..Bag];
-		Open	= Frame:IsShown() and Frame:GetParent():IsShown() and not Frame:GetParent().Closing;
-        if (Bag == 0) then
-			MainMenuBarBackpackButton:SetChecked(Open);
-		elseif (Bag > 4)then
-			Highlight  = _G["BaudBBankBag"..(Bag-4).."HighlightFrameTexture"];
-			Highlight2 = _G["BankSlotsFrame"]["Bag"..(Bag-4)]["HighlightFrame"]["HighlightTexture"];
-			if Open then
-				Highlight:Show();
-				Highlight2:Show();
-			else
-				Highlight:Hide();
-				Highlight2:Hide();
-			end
-		elseif(Bag > 0)then
-			_G["CharacterBag"..(Bag-1).."Slot"]:SetChecked(Open);
-			_G["BaudBInveBag"..(Bag-1).."Slot"]:SetChecked(Open);
-		end
-	end
+    local Open, Frame, Highlight, Highlight2;
+    -- The bank bag(-1) has no open indicator
+    for Bag = -3, LastBagID do
+        if not (Bag == -2) then
+            Frame   = _G[Prefix.."SubBag"..Bag];
+            Open	= Frame:IsShown() and Frame:GetParent():IsShown() and not Frame:GetParent().Closing;
+            if (Bag == 0) then
+                MainMenuBarBackpackButton:SetChecked(Open);
+            elseif (Bag > 4)then
+                Highlight  = _G["BaudBBankBag"..(Bag-4).."HighlightFrameTexture"];
+                Highlight2 = _G["BankSlotsFrame"]["Bag"..(Bag-4)]["HighlightFrame"]["HighlightTexture"];
+                if Open then
+                    Highlight:Show();
+                    Highlight2:Show();
+                else
+                    Highlight:Hide();
+                    Highlight2:Hide();
+                end
+            elseif(Bag > 0)then
+                _G["CharacterBag"..(Bag-1).."Slot"]:SetChecked(Open);
+                _G["BaudBInveBag"..(Bag-1).."Slot"]:SetChecked(Open);
+            end
+        end
+    end
 end
 
 --[[
@@ -1528,141 +1534,137 @@ function BaudBagUpdateName(Container)
 end
 
 function BaudBagUpdateContainer(Container)
-
-  BaudBag_DebugMsg("Bags", "Updating Container: "..Container:GetName());
-
-	-- initialize bag update
-	Container.Refresh = false;
-	BaudBagUpdateName(Container);
-	local SlotLevel = Container:GetFrameLevel() + 1;
-	local ContCfg = BBConfig[Container.BagSet][Container:GetID()];
-	local Background = ContCfg.Background;
-	local MaxCols = ContCfg.Columns;
-	local Size, KeyRing;
-	Container.Slots = 0;
-
-	-- calculate sizes in all subbags
-	for _, SubBag in ipairs(Container.Bags)do
-
-		-- prepare bag cache for use
-		local bagCache = BaudBagGetBagCache(SubBag:GetID());
-  
-		-- process inventory, bank only if it is open
-		if (Container.BagSet ~= 2) or BankOpen then
-			Size = GetContainerNumSlots(SubBag:GetID());
-      
-			-- process bank
-			if (Container.BagSet == 2) then
-				-- Clear out excess information if the size of a bag decreases
-				if (bagCache.Size > Size)then
-					for Slot = Size, bagCache.Size do
-					if bagCache[Slot] then
-						bagCache[Slot] = nil;
-					end
-					end
-				end
-				bagCache.Size = Size;
-			end
-		else
-			Size = bagCache and bagCache.Size or 0;
-		end
+    BaudBag_DebugMsg("Bags", "Updating Container: "..Container:GetName());
     
-		SubBag.size = Size;
-		Container.Slots = Container.Slots + Size;
-	end
+    -- initialize bag update
+    Container.Refresh   = false;
+    BaudBagUpdateName(Container);
+    local SlotLevel     = Container:GetFrameLevel() + 1;
+    local ContCfg       = BBConfig[Container.BagSet][Container:GetID()];
+    local Background    = ContCfg.Background;
+    local MaxCols       = ContCfg.Columns;
+    local Size, KeyRing;
+    Container.Slots     = 0;
+
+    -- calculate sizes in all subbags
+    for _, SubBag in ipairs(Container.Bags) do
+
+        -- prepare bag cache for use
+        local bagCache = BaudBagGetBagCache(SubBag:GetID());
   
-  -- how can this happen?
-	if (Container.Slots <= 0) then
-		if Container:IsShown() then
-			DEFAULT_CHAT_FRAME:AddMessage("Container \""..ContCfg.Name.."\" has no contents.",1,1,0);
-			Container:Hide();
-		end
-		return;
-	end
-  
-	-- fix container slot size when only one item row exists
-	if (Container.Slots < MaxCols) then
-		MaxCols = Container.Slots;
-	end
-
-	local Col, Row = 0, 1;
-	--The textured background puts its empty space on the upper left
-	if ContCfg.BlankTop then
-		Col = MaxCols - mod(Container.Slots - 1,MaxCols) - 1;
-	end
-
-	-- now go through all sub bags
-	local Slots, SubBag, ItemButton;
-	for _, SubBag in pairs(Container.Bags)do
-		-- not existing subbags (bags with no itemslots) are hidden
-		if (SubBag.size <= 0) then
-			SubBag:Hide();
-		else
-			BaudBag_DebugMsg("Bags", "Adding "..SubBag:GetName());
-
-			-- Create extra slots if needed
-			if (SubBag.size > (SubBag.maxSlots or 0)) then
-				for Slot = (SubBag.maxSlots or 0) + 1, SubBag.size do
-					-- BaudBag_DebugMsg("Bags", "creating button slot of type "..((SubBag:GetID() ~= -1) and "ContainerFrameItemButtonTemplate" or "BankItemButtonGenericTemplate"));
-					local Button = CreateFrame("Button", SubBag:GetName().."Item"..Slot, SubBag, (SubBag:GetID() ~= -1) and "ContainerFrameItemButtonTemplate" or "BankItemButtonGenericTemplate");
-					Button:SetID(Slot);
-					local Texture = Button:CreateTexture(Button:GetName().."Border","OVERLAY");
-					Texture:SetTexture("Interface\\Buttons\\UI-ActionButton-Border");
-					Texture:SetPoint("CENTER");
-					Texture:SetBlendMode("ADD");
-					Texture:SetAlpha(0.8);
-					Texture:SetHeight(70);
-					Texture:SetWidth(70);
-					Texture:Hide();
-				end
-				SubBag.maxSlots = SubBag.size;
-			end
-			
-			-- update container contents
-			if (SubBag:GetID() ~= -1) and (BankOpen or (SubBag:GetID() < 5)) then
-				ContainerFrame_Update(SubBag);
-			else
-
-			end
-			
+        -- process inventory, bank only if it is open
+        if (Container.BagSet ~= 2) or BankOpen then
+            Size = GetContainerNumSlots(SubBag:GetID());
       
-			-- position item slots
-			BaudBagUpdateSubBag(SubBag);
-			for Slot = 1, SubBag.maxSlots do
-				ItemButton = _G[SubBag:GetName().."Item"..Slot];
-				if (Slot <= SubBag.size) then
-					Col = Col + 1;
-					if (Col > MaxCols) then
-						Col = 1;
-						Row = Row + 1;
-					end
-					ItemButton:ClearAllPoints();
-					-- Slot spacing is different for the blizzard textured background
-					if (Background <= 3) then
-						ItemButton:SetPoint("TOPLEFT", Container, "TOPLEFT", (Col-1)*42, (Row-1)*-41);
-					else
-						ItemButton:SetPoint("TOPLEFT", Container, "TOPLEFT", (Col-1)*39, (Row-1)*-39);
-					end
-					ItemButton:SetFrameLevel(SlotLevel);
-					ItemButton:Show();
-				else
-					ItemButton:Hide();
-				end
-			end
-			SubBag:Show();
-		end
-	end
+            -- process bank
+            if (Container.BagSet == 2) then
+                -- Clear out excess information if the size of a bag decreases
+                if (bagCache.Size > Size)then
+                    for Slot = Size, bagCache.Size do
+                        if bagCache[Slot] then
+                            bagCache[Slot] = nil;
+                        end
+                    end
+                end
+                bagCache.Size = Size;
+            end
+        else
+            Size = bagCache and bagCache.Size or 0;
+        end
+    
+        SubBag.size = Size;
+        Container.Slots = Container.Slots + Size;
+    end
   
-	if (Background <= 3) then
-		Container:SetWidth(MaxCols * 42 - 5);
-		Container:SetHeight(Row * 41 - 4);
-	else
-		Container:SetWidth(MaxCols * 39 - 2);
-		Container:SetHeight(Row * 39 - 2);
-	end
+    -- this should only happen when the dev coded some bullshit!
+    if (Container.Slots <= 0) then
+        if Container:IsShown() then
+            DEFAULT_CHAT_FRAME:AddMessage("Container \""..ContCfg.Name.."\" has no contents.",1,1,0);
+            Container:Hide();
+        end
+        return;
+    end
   
-  BaudBagUpdateBackground(Container);
-  BaudBag_DebugMsg("Bags", "Finished Arranging Container.");
+    -- fix container slot size when only one item row exists
+    if (Container.Slots < MaxCols) then
+        MaxCols = Container.Slots;
+    end
+
+    local Col, Row = 0, 1;
+    --The textured background puts its empty space on the upper left
+    if ContCfg.BlankTop then
+        Col = MaxCols - mod(Container.Slots - 1,MaxCols) - 1;
+    end
+
+    -- now go through all sub bags
+    local Slots, SubBag, ItemButton;
+    for _, SubBag in pairs(Container.Bags) do
+        -- not existing subbags (bags with no itemslots) are hidden
+    if (SubBag.size <= 0) then
+        SubBag:Hide();
+    else
+        BaudBag_DebugMsg("Bags", "Adding "..SubBag:GetName());
+
+        -- Create extra slots if needed
+        if (SubBag.size > (SubBag.maxSlots or 0)) then
+            for Slot = (SubBag.maxSlots or 0) + 1, SubBag.size do
+                -- BaudBag_DebugMsg("Bags", "creating button slot of type "..((SubBag:GetID() ~= -1) and "ContainerFrameItemButtonTemplate" or "BankItemButtonGenericTemplate"));
+                local Button = CreateFrame("Button", SubBag:GetName().."Item"..Slot, SubBag, (SubBag:GetID() ~= -1) and "ContainerFrameItemButtonTemplate" or "BankItemButtonGenericTemplate");
+                Button:SetID(Slot);
+                local Texture = Button:CreateTexture(Button:GetName().."Border","OVERLAY");
+                Texture:SetTexture("Interface\\Buttons\\UI-ActionButton-Border");
+                Texture:SetPoint("CENTER");
+                Texture:SetBlendMode("ADD");
+                Texture:SetAlpha(0.8);
+                Texture:SetHeight(70);
+                Texture:SetWidth(70);
+                Texture:Hide();
+            end
+            SubBag.maxSlots = SubBag.size;
+        end
+			
+        -- update container contents
+        if (SubBag:GetID() ~= -1) and (SubBag:GetID() ~= -3) and (BankOpen or (SubBag:GetID() < 5)) then
+            ContainerFrame_Update(SubBag);
+        end
+    
+        -- position item slots
+        BaudBagUpdateSubBag(SubBag);
+        for Slot = 1, SubBag.maxSlots do
+            ItemButton = _G[SubBag:GetName().."Item"..Slot];
+            if (Slot <= SubBag.size) then
+                Col = Col + 1;
+                if (Col > MaxCols) then
+                    Col = 1;
+                    Row = Row + 1;
+                end
+                ItemButton:ClearAllPoints();
+                -- Slot spacing is different for the blizzard textured background
+                if (Background <= 3) then
+                    ItemButton:SetPoint("TOPLEFT", Container, "TOPLEFT", (Col-1)*42, (Row-1)*-41);
+                else
+                    ItemButton:SetPoint("TOPLEFT", Container, "TOPLEFT", (Col-1)*39, (Row-1)*-39);
+                end
+                ItemButton:SetFrameLevel(SlotLevel);
+                ItemButton:Show();
+            else
+                ItemButton:Hide();
+            end
+        end
+        SubBag:Show();
+        end
+    end
+  
+    if (Background <= 3) then
+        Container:SetWidth(MaxCols * 42 - 5);
+        Container:SetHeight(Row * 41 - 4);
+    else
+        Container:SetWidth(MaxCols * 39 - 2);
+        Container:SetHeight(Row * 39 - 2);
+    end
+  
+    BaudBagUpdateBackground(Container);
+    BaudBag_DebugMsg("Bags", "Finished Arranging Container.");
 end
 
 

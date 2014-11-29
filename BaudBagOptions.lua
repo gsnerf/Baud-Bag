@@ -1,5 +1,3 @@
-﻿-- Author      : gsnerf
--- Create Date : 10/30/2010 10:13:36 PM
 local _;
 
 local Localized	= BaudBagLocalized;
@@ -26,10 +24,10 @@ local CheckButtons = {
 };
 
 BaudBagIcons = {
-    [0]	= "Interface\\Buttons\\Button-Backpack-Up",
+    [0]	    = "Interface\\Buttons\\Button-Backpack-Up",
     [-1]	= "Interface\\Icons\\INV_Box_02",
-    --[-2]	= "Interface\\ContainerFrame\\KeyRing-Bag-Icon",
-    [-2]	= "Interface\\Icons\\INV_MISC_CAT_TRINKET05"
+    [-2]	= "Interface\\ContainerFrame\\KeyRing-Bag-Icon",
+    [-3]	= "Interface\\Icons\\INV_MISC_CAT_TRINKET05"
 };
 
 local TextureNames = {
