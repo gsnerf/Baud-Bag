@@ -105,7 +105,8 @@ function BaudBagForEachBag(BagSet, Func)
         1 == inventory
         2 == bank
     Bag Indices:
-       -2 == reagent bank
+       -3 == reagent bank
+       -2 == keyring & currency
        -1 == bank
         0 == backpack
         1-4 == inventory bags
@@ -124,7 +125,7 @@ function BaudBagForEachBag(BagSet, Func)
             Func(Bag + 4, Bag + 1);
         end
         -- reagent bank
-        Func(-2, NUM_BANKBAGSLOTS + 2);
+        Func(-3, NUM_BANKBAGSLOTS + 2);
     end
 end
 
@@ -170,19 +171,24 @@ end
 --[[ this function determines if the given bag is currently handled by baudbag or not ]]--
 function BaudBag_BagHandledByBaudBag(id)
 	--[[
-	BagsSet Indices:
-		 1 == inventory;   2 == bank
-	Bag Indices:
-		-4 == tokens bag; -2 == keyring;          -1 == bank
-		 0 == backpack;  1-4 == inventory bags; 5-11 == bank bags
+        BagsSet Indices:
+            1 == inventory
+            2 == bank
+        Bag Indices:
+            -3 == reagent bank
+            -2 == keyring & currency
+            -1 == bank
+            0 == backpack
+            1-4 == inventory bags
+            5-11 == bank bags
 
-	As the given indices > 0 may vary in the future use these constants instead:
-	  NUM_BAG_FRAMES (for max inventory bags)
-	  ITEM_INVENTORY_BANK_BAG_OFFSET (first bank bag)
-	  NUM_BANKBAGSLOTS (number of bank bags)
+	    As the given indices > 0 may vary in the future use these constants instead:
+	      NUM_BAG_FRAMES (for max inventory bags)
+	      ITEM_INVENTORY_BANK_BAG_OFFSET (first bank bag)
+	      NUM_BANKBAGSLOTS (number of bank bags)
 
 	]]--
-	local isBank = (id == -1) or (id > ITEM_INVENTORY_BANK_BAG_OFFSET and id <= ITEM_INVENTORY_BANK_BAG_OFFSET + NUM_BANKBAGSLOTS);
+	local isBank = (id == -1) or (id == -3) or (id > ITEM_INVENTORY_BANK_BAG_OFFSET and id <= ITEM_INVENTORY_BANK_BAG_OFFSET + NUM_BANKBAGSLOTS);
 	local isInventory = (id >= 0 and id <= NUM_BAG_FRAMES);
 
 	return (isBank and BBConfig[2].Enabled) or (isInventory and BBConfig[1].Enabled);
