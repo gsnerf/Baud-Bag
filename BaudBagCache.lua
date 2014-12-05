@@ -1,4 +1,5 @@
 ﻿local _;
+local Prefix = "BaudBag";
 --[[
 
     The cache can be accessed through BaudBag_Cache.
