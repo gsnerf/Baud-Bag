@@ -1310,7 +1310,7 @@ local SubBagEvents = {
 };
 
 local Func = function(self, event, ...)
-  ContainerFrame_Update(self, event, ...);
+    ContainerFrame_Update(self, event, ...);
 end
 SubBagEvents.ITEM_LOCK_CHANGED = Func;
 SubBagEvents.BAG_UPDATE_COOLDOWN = Func;
@@ -1421,20 +1421,20 @@ end
 
 
 function BaudBagSubBag_OnEvent(self, event, ...)
-  if not self:GetParent():IsShown() or (self:GetID() >= 5) and not BankOpen then
-    return;
-  end
-  SubBagEvents[event](self, event, ...);
+    if not self:GetParent():IsShown() or (self:GetID() >= 5) and not BankOpen then
+        return;
+    end
+    SubBagEvents[event](self, event, ...);
 end
 
 
 function BaudBagContainerSaveCoords(Frame)
-  BaudBag_DebugMsg("Bags", "Saving container coords: "..Frame:GetName());
-  local Scale = Frame:GetScale();
-  local X, Y = Frame:GetCenter();
-  X = X * Scale;
-  Y = Y * Scale;
-  BBConfig[Frame.BagSet][Frame:GetID()].Coords = {X, Y};
+    BaudBag_DebugMsg("Bags", "Saving container coords: "..Frame:GetName());
+    local Scale = Frame:GetScale();
+    local X, Y = Frame:GetCenter();
+    X = X * Scale;
+    Y = Y * Scale;
+    BBConfig[Frame.BagSet][Frame:GetID()].Coords = {X, Y};
 end
 
 

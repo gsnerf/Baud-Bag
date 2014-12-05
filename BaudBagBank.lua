@@ -33,8 +33,8 @@ function BaudBagBankBags_Initialize()
 
     -- create BagSlot for reagent bank!
     BagSlot = CreateFrame("Button", "BBReagentsBag", BBContainer2, "ReagentBankSlotTemplate");
-    BagSlot:SetID(-2);
-    BagSlot.Bag = -2;
+    BagSlot:SetID(-3);
+    BagSlot.Bag = -3;
     BagSlot:SetPoint("TOPLEFT", 8 + mod(NUM_BANKBAGSLOTS, 2) * 39, -8 - floor(NUM_BANKBAGSLOTS / 2) * 39);
     BagSlot:HookScript("OnEnter",	BaudBag_BagSlot_OnEnter);
     BagSlot:HookScript("OnUpdate",	BaudBag_BagSlot_OnUpdate);
@@ -110,7 +110,7 @@ function ReagentBankSlotButton_OnLoad(self, event, ...)
 end
 
 function ReagentBankSlotButton_OnEvent(self, event, ...)
-    BaudBag_DebugMsg("BankReagent", "[SlotButton_OnEvent] TEST");
+    BaudBag_DebugMsg("BankReagent", "[SlotButton_OnEvent] called event "..event);
 end
 
 function ReagentBankSlotButton_OnEnter(self, event, ...)
@@ -121,5 +121,7 @@ end
 
 function ReagentBankSlotButton_OnClick(self, event, ...)
     BaudBag_DebugMsg("BankReagent", "[SlotButton_OnClick] trying to show reagent bank");
-    -- BaudBagReagentBank:Show();
+    -- trying to determine container for reagent bank
+    local RBankContainer = _G[Prefix.."SubBag-3"]:GetParent();
+    RBankContainer:Show();
 end
