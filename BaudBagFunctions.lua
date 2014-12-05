@@ -35,11 +35,14 @@ local BaudBag_DebugCfg = {
     -- additional functionality
     Token       = { Name = "Token", Active = false },
     Search      = { Name = "Search", Active = false },
-    Tooltip     = { Name = "Tooltip", Active = true }
+    Tooltip     = { Name = "Tooltip", Active = true },
+
+    -- this is for everything else that is supposed to be a temporary debug message
+    Temp        = { Name = "Temp", Active = true }
 };
 
 -- make sure to delete log from last session!
-BaudBag_DebugLog = false;
+BaudBag_DebugLog = true;
 BaudBag_Debug = {};
 
 
@@ -188,7 +191,7 @@ function BaudBag_BagHandledByBaudBag(id)
 	      NUM_BANKBAGSLOTS (number of bank bags)
 
 	]]--
-	return (BaudBag_IsBankBag(id) and BBConfig[2].Enabled) or (BaudBag_IsInventory(id) and BBConfig[1].Enabled);
+	return (BaudBag_IsBankContainer(id) and BBConfig[2].Enabled) or (BaudBag_IsInventory(id) and BBConfig[1].Enabled);
 end
 
 --[[
@@ -200,8 +203,8 @@ end
         1. the special bank containers to stand on their own
         2. the rest bank
   ]]--
-function BaudBag_IsBankBag(bagId)
-    return BaudBag_IsBankDefaultContainer(id) or (id > ITEM_INVENTORY_BANK_BAG_OFFSET and id <= ITEM_INVENTORY_BANK_BAG_OFFSET + NUM_BANKBAGSLOTS);
+function BaudBag_IsBankContainer(bagId)
+    return BaudBag_IsBankDefaultContainer(bagId) or (bagId > ITEM_INVENTORY_BANK_BAG_OFFSET and bagId <= ITEM_INVENTORY_BANK_BAG_OFFSET + NUM_BANKBAGSLOTS);
 end
 
 --[[
@@ -210,7 +213,7 @@ end
         -1    == BANK_CONTAINER
   ]]--
 function BaudBag_IsBankDefaultContainer(bagId)
-    return (id == BANK_CONTAINER) or (id == REAGENTBANK_CONTAINER);
+    return (bagId == BANK_CONTAINER or bagId == REAGENTBANK_CONTAINER);
 end
 
 --[[
@@ -219,5 +222,5 @@ end
         1-5 == regularbags defined by NUM_BAG_SLOTS
   ]]--
 function BaudBag_IsInventory(bagId)
-    return (id >= BACKPACK_CONTAINER and id <= BACKPACK_CONTAINER + NUM_BAG_FRAMES)
+    return (bagId >= BACKPACK_CONTAINER and bagId <= BACKPACK_CONTAINER + NUM_BAG_SLOTS);
 end
