@@ -286,14 +286,6 @@
 		</Frames>
 	</Frame>
 
-
-	<!--Frame name="BaudBagReagentBank" inherits="BaudBagContainerTemplate">
-		<KeyValues>
-			<KeyValue key="BagSet" value="2"/>
-			<KeyValue key="BagId" value="ReagentBank" />
-		</KeyValues>
-	</Frame-->
-	
 	<Frame name="BaudBagFrame">
 		<Scripts>
 			<OnLoad function="BaudBag_OnLoad" />

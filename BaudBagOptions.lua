@@ -12,7 +12,7 @@ local SelectedContainer = 1;
 local SetSize           = {5, NUM_BANKBAGSLOTS + 2};
 
 local SliderBars = {
-    {Text=Localized.Columns,	Low="2",	High="40",		Step=1,		SavedVar="Columns",		Default={8,12},		TooltipText = Localized.ColumnsTooltip},
+    {Text=Localized.Columns,	Low="2",	High="40",		Step=1,		SavedVar="Columns",		Default={8,14},		TooltipText = Localized.ColumnsTooltip},
     {Text=Localized.Scale,		Low="50%",	High="200%",	Step=1,		SavedVar="Scale",		Default={100,100},	TooltipText = Localized.ScaleTooltip}
 };
 
@@ -120,11 +120,15 @@ function BaudBagOptions_OnEvent(self, event, ...)
         else
             -- all other bags also have a button to mark joins with the previous bags
             Button:SetPoint("LEFT", Prefix.."Bag"..(Bag-1), "RIGHT", 8, 0);
-            if (Bag < MaxBags) then
-                Check = CreateFrame("CheckButton", Prefix.."JoinCheck"..Bag, Button, Prefix.."JoinCheckTemplate");
-                Check:SetPoint("BOTTOM", Button, "TOPLEFT", -4, 4);
-                Check:SetID(Bag);
-                Check.tooltipText = Localized.CheckTooltip;
+            Check = CreateFrame("CheckButton", Prefix.."JoinCheck"..Bag, Button, Prefix.."JoinCheckTemplate");
+            Check:SetPoint("BOTTOM", Button, "TOPLEFT", -4, 4);
+            Check:SetID(Bag);
+            Check.tooltipText = Localized.CheckTooltip;
+
+            if (Bag == MaxBags) then
+                Check:SetChecked(false);
+                Check:Disable();
+                Check:Hide();
             end
         end
     end

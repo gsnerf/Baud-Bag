@@ -43,6 +43,11 @@ function BaudBagRestoreCfg()
             BBConfig[BagSet].Joined = {};
         end
 
+        if (BagSet == 2 and BBConfig[2].Joined[9] == nil) then
+            BaudBag_DebugMsg("Config", "- reagent bank join for BagSet "..BagSet.." damaged or missing, creating now");
+            BBConfig[BagSet].Joined[9] = false;
+        end
+
         if (type(BBConfig[BagSet].ShowBags) ~= "boolean") then
             BaudBag_DebugMsg("Config", "- show information for BagSet "..BagSet.." damaged or missing, creating now");
             BBConfig[BagSet].ShowBags = ((BagSet == 2) and true or false);
@@ -52,17 +57,17 @@ function BaudBagRestoreCfg()
         BaudBagForEachBag(BagSet, function(Bag, Index)
 
             -- keyring cache, not needed anymore???
-            if (Bag == -2) and (BBConfig[BagSet].Joined[Index] == nil) then
-                BaudBag_DebugMsg("Config", "- BagSet["..BagSet.."], Bag["..Bag.."] joined status damaged or missing, creating now");
-                BBConfig[BagSet].Joined[Index] = false;
-            end
+            --if (Bag == -2) and (BBConfig[BagSet].Joined[Index] == nil) then
+            --    BaudBag_DebugMsg("Config", "- BagSet["..BagSet.."], Bag["..Bag.."] joined status damaged or missing, creating now");
+            --    BBConfig[BagSet].Joined[Index] = false;
+            --end
 
             if (Container == 0) or (BBConfig[BagSet].Joined[Index] == false) then
                 Container = Container + 1;
 
                 if (type(BBConfig[BagSet][Container]) ~= "table") then
                     BaudBag_DebugMsg("Config", "- BagSet["..BagSet.."], Bag["..Bag.."], Container["..Container.."] container data damaged or missing, creating now");
-                    if (Container == 1) or (Bag==-2) then
+                    if (Container == 1) or (Bag==-3) then
                         BBConfig[BagSet][Container] = {};
                     else
                         BBConfig[BagSet][Container] = BaudBagCopyTable(BBConfig[BagSet][Container-1]);
@@ -86,10 +91,10 @@ function BaudBagRestoreCfg()
                     end
                 end
 
-                for Key, Value in ipairs(SliderBars)do
+                for Key, Value in ipairs(SliderBars) do
                     if (type(BBConfig[BagSet][Container][Value.SavedVar]) ~= "number") then
                         BaudBag_DebugMsg("Config", "- BagSet["..BagSet.."], Bag["..Bag.."], Container["..Container.."] Slider["..Value.SavedVar.."] data damaged or missing, creating now");
-                        BBConfig[BagSet][Container][Value.SavedVar] = (Bag==-2) and (Value.SavedVar=="Columns") and 4 or Value.Default[BagSet];
+                        BBConfig[BagSet][Container][Value.SavedVar] = (Bag == -2) and (Value.SavedVar=="Columns") and 4 or Value.Default[BagSet];
                     end
                 end
 
