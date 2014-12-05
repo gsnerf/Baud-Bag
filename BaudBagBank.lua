@@ -123,5 +123,9 @@ function ReagentBankSlotButton_OnClick(self, event, ...)
     BaudBag_DebugMsg("BankReagent", "[SlotButton_OnClick] trying to show reagent bank");
     -- trying to determine container for reagent bank
     local RBankContainer = _G[Prefix.."SubBag-3"]:GetParent();
-    RBankContainer:Show();
+    if (RBankContainer:IsShown()) then
+        RBankContainer:Hide();
+    else
+        RBankContainer:Show();
+    end
 end

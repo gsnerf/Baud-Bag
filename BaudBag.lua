@@ -181,44 +181,47 @@ local EventFuncs =
 --[[ here come functions that will be hooked up to multiple events ]]--
 local Func = function(self, event, ...)
 	
-	BaudBag_DebugMsg("Bank", "Event "..event.." fired");
+    BaudBag_DebugMsg("Bank", "Event "..event.." fired");
 	
-	-- set bank open marker if it was opend
-  if (event == "BANKFRAME_OPENED") then
-    BankOpen = true;
-  end
+    -- set bank open marker if it was opend
+    if (event == "BANKFRAME_OPENED") then
+        BankOpen = true;
+    end
   
-  -- make sure the player can buy new bankslots
-  BaudBagBankSlotPurchaseButton:Enable();
-  for Index = 1, NUM_BANKGENERIC_SLOTS do
-    BankFrameItemButton_Update(_G[Prefix.."SubBag-1Item"..Index]);
-  end
-  for Index = 1, NUM_BANKBAGSLOTS do
-    BankFrameItemButton_Update(_G["BaudBBankBag"..Index]);
-  end
-  BaudBagBankBags_Update();
-  BaudBag_DebugMsg("Bank", "Recording bank bag info.");
-  for Bag = 1, NUM_BANKBAGSLOTS do
-    BaudBagGetBagCache(Bag + 4).BagLink	= GetInventoryItemLink("player", 67 + Bag);
-    BaudBagGetBagCache(Bag + 4).BagCount = GetInventoryItemCount("player", 67 + Bag);
-  end
+    -- make sure the player can buy new bankslots
+    BaudBagBankSlotPurchaseButton:Enable();
+    for Index = 1, NUM_BANKGENERIC_SLOTS do
+        BankFrameItemButton_Update(_G[Prefix.."SubBag-1Item"..Index]);
+    end
+    for Index = 1, NUM_BANKBAGSLOTS do
+        BankFrameItemButton_Update(_G["BaudBBankBag"..Index]);
+    end
+    --for Index = 1, 98 do
+    --    BankFrameItemButton_Update(_G[Prefix.."SubBag-3Item"..Index]);
+    --end
+    BaudBagBankBags_Update();
+    BaudBag_DebugMsg("Bank", "Recording bank bag info.");
+    for Bag = 1, NUM_BANKBAGSLOTS do
+        BaudBagGetBagCache(Bag + 4).BagLink	    = GetInventoryItemLink("player", 67 + Bag);
+        BaudBagGetBagCache(Bag + 4).BagCount    = GetInventoryItemCount("player", 67 + Bag);
+    end
 
-	-- everything coming now is only needed if the bank is visible
-  if (BBConfig[2].Enabled == false) or (event ~= "BANKFRAME_OPENED") then
-	BaudBag_DebugMsg("Bank", "Bankframe does not really seem to be open or event was not BANKFRAME_OPENED. Stepping over actually opening the Bankframes");
-    return;
-  end
+    -- everything coming now is only needed if the bank is visible
+    if (BBConfig[2].Enabled == false) or (event ~= "BANKFRAME_OPENED") then
+        BaudBag_DebugMsg("Bank", "Bankframe does not really seem to be open or event was not BANKFRAME_OPENED. Stepping over actually opening the Bankframes");
+        return;
+    end
   
-  local BBContainer2_1 = _G[Prefix.."Container2_1"];
-  if BBContainer2_1:IsShown()then
-    BaudBagUpdateContainer(BBContainer2_1);
-    BaudBagUpdateFreeSlots(BBContainer2_1);
-  else
-    BBContainer2_1.AutoOpened = true;
-    BBContainer2_1:Show();
-  end
-  BaudBagAutoOpenSet(1);
-  BaudBagAutoOpenSet(2);
+    local BBContainer2_1 = _G[Prefix.."Container2_1"];
+    if BBContainer2_1:IsShown()then
+        BaudBagUpdateContainer(BBContainer2_1);
+        BaudBagUpdateFreeSlots(BBContainer2_1);
+    else
+        BBContainer2_1.AutoOpened = true;
+        BBContainer2_1:Show();
+    end
+    BaudBagAutoOpenSet(1);
+    BaudBagAutoOpenSet(2);
 end
 EventFuncs.BANKFRAME_OPENED = Func;
 EventFuncs.PLAYERBANKBAGSLOTS_CHANGED = Func;
@@ -299,13 +302,13 @@ function BaudBag_OnLoad(self, event, ...)
     BaudBag_DebugMsg("Bags", "Creating sub bags.");
     for Bag = -3, LastBagID do
         if not (Bag == -2) then
-            if (Bag == -1) then
+            if BaudBag_IsBankDefaultContainer(Bag) then
                 SubBag = _G[Prefix.."SubBag"..Bag];
             else
                 SubBag = CreateFrame("Frame", Prefix.."SubBag"..Bag, nil, "BaudBagSubBagTemplate");
             end
             SubBag:SetID(Bag);
-            SubBag.BagSet = (Bag >= 0) and (Bag < 5) and 1 or 2;
+            SubBag.BagSet = BaudBag_IsInventory(Bag) and 1 or 2;
             SubBag:SetParent(Prefix.."Container"..SubBag.BagSet.."_1");
         end
     end
@@ -314,7 +317,7 @@ end
 
 --[[ this will call the correct event handler]]--
 function BaudBag_OnEvent(self, event, ...)
-  EventFuncs[event](self, event, ...);
+    EventFuncs[event](self, event, ...);
 end
 
 -- this just makes sure the bags will be visible at the correct layer position when opened
@@ -1247,14 +1250,14 @@ local function UpdateThisHighlight(self)
 end
 
 --These function hooks override the bag button highlight changes that Blizzard does
-hooksecurefunc("BagSlotButton_OnClick",UpdateThisHighlight);
-hooksecurefunc("BagSlotButton_OnDrag",UpdateThisHighlight);
-hooksecurefunc("BagSlotButton_OnModifiedClick",UpdateThisHighlight);
-hooksecurefunc("BackpackButton_OnClick",function(self)
-  if BBConfig and(BBConfig[1].Enabled == false)then
-    return;
-  end
-  self:SetChecked(IsBagShown(0));
+hooksecurefunc("BagSlotButton_OnClick", UpdateThisHighlight);
+hooksecurefunc("BagSlotButton_OnDrag", UpdateThisHighlight);
+hooksecurefunc("BagSlotButton_OnModifiedClick", UpdateThisHighlight);
+hooksecurefunc("BackpackButton_OnClick", function(self)
+    if BBConfig and(BBConfig[1].Enabled == false)then
+        return;
+    end
+    self:SetChecked(IsBagShown(0));
 end);
 
 -- hooksecurefunc("UpdateMicroButtons",function()
@@ -1310,6 +1313,10 @@ local SubBagEvents = {
 };
 
 local Func = function(self, event, ...)
+ --   local arg1 = ...;
+	--if (self:GetID() ~= arg1) then
+	--	return;
+	--end
     ContainerFrame_Update(self, event, ...);
 end
 SubBagEvents.ITEM_LOCK_CHANGED = Func;
@@ -1609,7 +1616,8 @@ function BaudBagUpdateContainer(Container)
         if (SubBag.size > (SubBag.maxSlots or 0)) then
             for Slot = (SubBag.maxSlots or 0) + 1, SubBag.size do
                 -- BaudBag_DebugMsg("Bags", "creating button slot of type "..((SubBag:GetID() ~= -1) and "ContainerFrameItemButtonTemplate" or "BankItemButtonGenericTemplate"));
-                local Button = CreateFrame("Button", SubBag:GetName().."Item"..Slot, SubBag, (SubBag:GetID() ~= -1) and "ContainerFrameItemButtonTemplate" or "BankItemButtonGenericTemplate");
+                local template = BaudBag_IsInventory(SubBag:GetID()) and "ContainerFrameItemButtonTemplate" or "BankItemButtonGenericTemplate";
+                local Button = CreateFrame("Button", SubBag:GetName().."Item"..Slot, SubBag, template);
                 Button:SetID(Slot);
                 local Texture = Button:CreateTexture(Button:GetName().."Border","OVERLAY");
                 Texture:SetTexture("Interface\\Buttons\\UI-ActionButton-Border");

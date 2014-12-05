@@ -151,7 +151,7 @@ function ShowHyperlink(Owner, Link)
   if(Owner:GetRight() >= (GetScreenWidth() / 2))then
     GameTooltip:SetOwner(Owner, "ANCHOR_LEFT");
   else
-    GameTooltip:SetOwner(Owner, "ANCHOR_RIGHT");
+     GameTooltip:SetOwner(Owner, "ANCHOR_RIGHT");
   end
   GameTooltip:SetHyperlink(ItemString);
   return true;
@@ -188,8 +188,36 @@ function BaudBag_BagHandledByBaudBag(id)
 	      NUM_BANKBAGSLOTS (number of bank bags)
 
 	]]--
-	local isBank = (id == -1) or (id == -3) or (id > ITEM_INVENTORY_BANK_BAG_OFFSET and id <= ITEM_INVENTORY_BANK_BAG_OFFSET + NUM_BANKBAGSLOTS);
-	local isInventory = (id >= 0 and id <= NUM_BAG_FRAMES);
+	return (BaudBag_IsBankBag(id) and BBConfig[2].Enabled) or (BaudBag_IsInventory(id) and BBConfig[1].Enabled);
+end
 
-	return (isBank and BBConfig[2].Enabled) or (isInventory and BBConfig[1].Enabled);
+--[[
+    These Bag IDs belong to the bank container:
+        -3    == REAGENTBANK_CONTAINER
+        -1    == BANK_CONTAINER
+         5-11 == bank bags
+    As the IDs might change we use blizzards own constants instead. Nevertheless we expect:
+        1. the special bank containers to stand on their own
+        2. the rest bank
+  ]]--
+function BaudBag_IsBankBag(bagId)
+    return BaudBag_IsBankDefaultContainer(id) or (id > ITEM_INVENTORY_BANK_BAG_OFFSET and id <= ITEM_INVENTORY_BANK_BAG_OFFSET + NUM_BANKBAGSLOTS);
+end
+
+--[[
+    These are the bank containers that need a special treatment in contrast to "regular" bags:
+        -3    == REAGENTBANK_CONTAINER
+        -1    == BANK_CONTAINER
+  ]]--
+function BaudBag_IsBankDefaultContainer(bagId)
+    return (id == BANK_CONTAINER) or (id == REAGENTBANK_CONTAINER);
+end
+
+--[[
+    These IDs belong to the inventory containers:
+        0 == BACKPACK_CONTAINER
+        1-5 == regularbags defined by NUM_BAG_SLOTS
+  ]]--
+function BaudBag_IsInventory(bagId)
+    return (id >= BACKPACK_CONTAINER and id <= BACKPACK_CONTAINER + NUM_BAG_FRAMES)
 end
