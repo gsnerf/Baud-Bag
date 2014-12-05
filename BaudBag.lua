@@ -165,17 +165,17 @@ local EventFuncs =
     BaudBagBankBags_Update();
   end,
 
-  ITEM_LOCK_CHANGED = function(self, event, ...)
-	BaudBag_DebugMsg("Bags", "Event ITEM_LOCK_CHANGED fired");
-    local Bag, Slot = ...;
-    if (Bag == BANK_CONTAINER) then
-      if (Slot <= NUM_BANKGENERIC_SLOTS) then
-        BankFrameItemButton_UpdateLocked(_G[Prefix.."SubBag-1Item"..Slot]);
-      else
-        BankFrameItemButton_UpdateLocked(_G["BaudBBankBag"..(Slot-NUM_BANKGENERIC_SLOTS)]);
-      end
+    ITEM_LOCK_CHANGED = function(self, event, ...)
+        BaudBag_DebugMsg("Bags", "Event ITEM_LOCK_CHANGED fired");
+        local Bag, Slot = ...;
+        if (Bag == BANK_CONTAINER) then
+            if (Slot <= NUM_BANKGENERIC_SLOTS) then
+                BankFrameItemButton_UpdateLocked(_G[Prefix.."SubBag-1Item"..Slot]);
+            else
+                BankFrameItemButton_UpdateLocked(_G["BaudBBankBag"..(Slot-NUM_BANKGENERIC_SLOTS)]);
+            end
+        end
     end
-  end
 };
 
 --[[ here come functions that will be hooked up to multiple events ]]--
@@ -190,20 +190,24 @@ local Func = function(self, event, ...)
   
     -- make sure the player can buy new bankslots
     BaudBagBankSlotPurchaseButton:Enable();
+
+    local BankItemButtonPrefix = Prefix.."SubBag"..BANK_CONTAINER.."Item";
+    local ReagentBankItemButtonPrefix = Prefix.."SubBag"..REAGENTBANK_CONTAINER.."Item";
+
     for Index = 1, NUM_BANKGENERIC_SLOTS do
-        BankFrameItemButton_Update(_G[Prefix.."SubBag-1Item"..Index]);
+        BankFrameItemButton_Update(_G[BankItemButtonPrefix..Index]);
     end
     for Index = 1, NUM_BANKBAGSLOTS do
         BankFrameItemButton_Update(_G["BaudBBankBag"..Index]);
     end
-    --for Index = 1, 98 do
-    --    BankFrameItemButton_Update(_G[Prefix.."SubBag-3Item"..Index]);
-    --end
+    for Index = 1, GetContainerNumSlots(REAGENTBANK_CONTAINER) do
+        BankFrameItemButton_Update(_G[ReagentBankItemButtonPrefix..Index]);
+    end
     BaudBagBankBags_Update();
     BaudBag_DebugMsg("Bank", "Recording bank bag info.");
     for Bag = 1, NUM_BANKBAGSLOTS do
-        BaudBagGetBagCache(Bag + 4).BagLink	    = GetInventoryItemLink("player", 67 + Bag);
-        BaudBagGetBagCache(Bag + 4).BagCount    = GetInventoryItemCount("player", 67 + Bag);
+        BaudBagGetBagCache(Bag + 4).BagLink  = GetInventoryItemLink("player", 67 + Bag);
+        BaudBagGetBagCache(Bag + 4).BagCount = GetInventoryItemCount("player", 67 + Bag);
     end
 
     -- everything coming now is only needed if the bank is visible
@@ -243,30 +247,31 @@ EventFuncs.MAIL_CLOSED = Func;
 EventFuncs.AUCTION_HOUSE_CLOSED = Func;
 
 Func = function(self, event, ...)
-  BaudBag_DebugMsg("Bags", "Event "..event.." fired for "..self:GetName());
-  local arg1 = ...;
-  -- if there are new bank slots the whole view has to be updated
-  if (event == "PLAYERBANKSLOTS_CHANGED") then
-    if (arg1 > NUM_BANKGENERIC_SLOTS) then
-      BankFrameItemButton_Update(_G["BaudBBankBag"..(arg1-NUM_BANKGENERIC_SLOTS)]);
-      return;
-    end
+    BaudBag_DebugMsg("Bags", "Event "..event.." fired for "..self:GetName());
+    local arg1 = ...;
+    -- if there are new bank slots the whole view has to be updated
+    if (event == "PLAYERBANKSLOTS_CHANGED") then
+        -- bank bag slot
+        if (arg1 > NUM_BANKGENERIC_SLOTS) then
+            BankFrameItemButton_Update(_G["BaudBBankBag"..(arg1-NUM_BANKGENERIC_SLOTS)]);
+            return;
+        end
   
-		-- if the main bag is visible make sure the content of the sub-bags is also shown  
-		local BankBag = _G[Prefix.."SubBag-1"];
-		if BankBag:GetParent():IsShown()then
-			BaudBagUpdateSubBag(BankBag);
-		end
-		BankFrameItemButton_Update(_G[BankBag:GetName().."Item"..arg1]);
-		BagSet = 2;
-	else
-		BagSet = (arg1 ~= -1) and (arg1 <= 4) and 1 or 2;
-	end
-	local Container = _G[Prefix.."Container"..BagSet.."_1"];
-	if not Container:IsShown() then
-		return;
-	end
-	Container.UpdateSlots = true;
+        -- if the main bank bag is visible make sure the content of the sub-bags is also shown  
+        local BankBag = _G[Prefix.."SubBag-1"];
+        if BankBag:GetParent():IsShown() then
+            BaudBagUpdateSubBag(BankBag);
+        end
+        BankFrameItemButton_Update(_G[BankBag:GetName().."Item"..arg1]);
+        BagSet = 2;
+    else
+        BagSet = BaudBag_IsInventory(arg1) and 1 or 2;
+    end
+    local Container = _G[Prefix.."Container"..BagSet.."_1"];
+    if not Container:IsShown() then
+        return;
+    end
+    Container.UpdateSlots = true;
 end
 EventFuncs.BAG_OPEN = Func;
 EventFuncs.BAG_UPDATE = Func;
@@ -882,6 +887,7 @@ end
 --[[ This function updates the parent containers for each bag, according to the options setup ]]--
 function BaudUpdateJoinedBags()
 	BaudBag_DebugMsg("Bags", "Updating joined bags...");
+    -- first update the status of currently open bags
 	local OpenBags = {};
 	for Bag = -3, LastBagID do
         if not (Bag == -2) then
@@ -892,6 +898,7 @@ function BaudUpdateJoinedBags()
         end
 	end
 	
+    -- now make sure that containers that have been "finished" will be updated correctly
 	local SubBag, Container, IsOpen, ContNum, BagID;
 	local function FinishContainer()
 		if IsOpen then
@@ -904,39 +911,46 @@ function BaudUpdateJoinedBags()
 		BaudBagUpdateContainer(Container);
 	end
 
+    -- now go through all bags in all bagsets and determine which containers they need to be in
 	for BagSet = 1, 2 do
-	ContNum = 0;
-	BaudBagForEachBag(BagSet, function(Bag, Index)
-		if (ContNum == 0) or (BBConfig[BagSet].Joined[Index] == false) then
-			if (ContNum ~= 0) then
-				FinishContainer();
-			end
-			IsOpen = false;
-			ContNum = ContNum + 1;
-			if (MaxCont[BagSet] < ContNum) then
-				Container = CreateFrame("Frame", Prefix.."Container"..BagSet.."_"..ContNum, UIParent, "BaudBagContainerTemplate");
-				Container:SetID(ContNum);
-				Container.BagSet = BagSet;
-				MaxCont[BagSet] = ContNum;
-			end
-			Container = _G[Prefix.."Container"..BagSet.."_"..ContNum];
-			Container.Bags = {};
-			BaudUpdateContainerData(BagSet,ContNum);
-		end
-		SubBag = _G[Prefix.."SubBag"..Bag];
-		tinsert(Container.Bags, SubBag);
-		SubBag:SetParent(Container);
-		if OpenBags[Bag]then
-			IsOpen = true;
-		end
-	end);
-	FinishContainer();
+	    ContNum = 0;
+	    BaudBagForEachBag(BagSet, function(Bag, Index)
+            -- a new container needs to be opened whenever there is no information about a joined state and of course for the first subbag
+		    if (ContNum == 0) or (BBConfig[BagSet].Joined[Index] == false) then
+                -- if we aren't opening the first container, make sure the previous one is correctly closed and updated
+			    if (ContNum ~= 0) then
+				    FinishContainer();
+			    end
 
-	NumCont[BagSet] = ContNum;
-	--Hide extra containers that were created before
-	for ContNum = (ContNum + 1), MaxCont[BagSet]do
-		_G[Prefix.."Container"..BagSet.."_"..ContNum]:Hide();
-	end
+                -- now create new container and update with basic data
+			    IsOpen = false;
+			    ContNum = ContNum + 1;
+			    if (MaxCont[BagSet] < ContNum) then
+				    Container = CreateFrame("Frame", Prefix.."Container"..BagSet.."_"..ContNum, UIParent, "BaudBagContainerTemplate");
+				    Container:SetID(ContNum);
+				    Container.BagSet = BagSet;
+				    MaxCont[BagSet] = ContNum;
+			    end
+			    Container = _G[Prefix.."Container"..BagSet.."_"..ContNum];
+			    Container.Bags = {};
+			    BaudUpdateContainerData(BagSet,ContNum);
+		    end
+
+            -- make sure the current SubBag is added to the currently open container
+		    SubBag = _G[Prefix.."SubBag"..Bag];
+		    tinsert(Container.Bags, SubBag);
+		    SubBag:SetParent(Container);
+		    if (OpenBags[Bag]) then
+			    IsOpen = true;
+		    end
+	    end);
+	    FinishContainer();
+
+	    NumCont[BagSet] = ContNum;
+	    --Hide extra containers that were created before
+	    for ContNum = (ContNum + 1), MaxCont[BagSet] do
+		    _G[Prefix.."Container"..BagSet.."_"..ContNum]:Hide();
+	    end
 	end
 	BagsReady = true;
 end
@@ -952,7 +966,7 @@ function BaudBagUpdateOpenBags()
             Open	= Frame:IsShown() and Frame:GetParent():IsShown() and not Frame:GetParent().Closing;
             if (Bag == 0) then
                 MainMenuBarBackpackButton:SetChecked(Open);
-            elseif (Bag > 4)then
+            elseif (Bag > 4) then
                 Highlight  = _G["BaudBBankBag"..(Bag-4).."HighlightFrameTexture"];
                 Highlight2 = _G["BankSlotsFrame"]["Bag"..(Bag-4)]["HighlightFrame"]["HighlightTexture"];
                 if Open then
@@ -962,7 +976,7 @@ function BaudBagUpdateOpenBags()
                     Highlight:Hide();
                     Highlight2:Hide();
                 end
-            elseif(Bag > 0)then
+            elseif (Bag > 0) then
                 _G["CharacterBag"..(Bag-1).."Slot"]:SetChecked(Open);
                 _G["BaudBInveBag"..(Bag-1).."Slot"]:SetChecked(Open);
             end
@@ -1567,7 +1581,7 @@ function BaudBagUpdateContainer(Container)
             -- process bank
             if (Container.BagSet == 2) then
                 -- Clear out excess information if the size of a bag decreases
-                if (bagCache.Size > Size)then
+                if (bagCache.Size > Size) then
                     for Slot = Size, bagCache.Size do
                         if bagCache[Slot] then
                             bagCache[Slot] = nil;
@@ -1578,6 +1592,11 @@ function BaudBagUpdateContainer(Container)
             end
         else
             Size = bagCache and bagCache.Size or 0;
+        end
+
+        -- special treatment for default bank containers, as their data can ALWAYS be retrieved
+        if (BaudBag_IsBankDefaultContainer(SubBag:GetID())) then
+            Size = GetContainerNumSlots(SubBag:GetID());
         end
     
         SubBag.size = Size;
@@ -1616,8 +1635,17 @@ function BaudBagUpdateContainer(Container)
             -- Create extra slots if needed
             if (SubBag.size > (SubBag.maxSlots or 0)) then
                 for Slot = (SubBag.maxSlots or 0) + 1, SubBag.size do
-                    -- BaudBag_DebugMsg("Bags", "creating button slot of type "..((SubBag:GetID() ~= -1) and "ContainerFrameItemButtonTemplate" or "BankItemButtonGenericTemplate"));
-                    local template = (not BaudBag_IsBankDefaultContainer(SubBag:GetID())) and "ContainerFrameItemButtonTemplate" or "BankItemButtonGenericTemplate";
+                    -- determine type of template for item button
+                    local template;
+                    if (SubBag:GetID() == BANK_CONTAINER) then
+                        template = "BankItemButtonGenericTemplate";
+                    elseif (SubBag:GetID() == REAGENTBANK_CONTAINER) then
+                        template = "ReagentBankItemButtonGenericTemplate";
+                    else
+                        template = "ContainerFrameItemButtonTemplate";
+                    end
+
+                    -- create item button
                     local Button = CreateFrame("Button", SubBag:GetName().."Item"..Slot, SubBag, template);
                     Button:SetID(Slot);
                     local Texture = Button:CreateTexture(Button:GetName().."Border","OVERLAY");
@@ -1632,8 +1660,8 @@ function BaudBagUpdateContainer(Container)
                 SubBag.maxSlots = SubBag.size;
             end
 			
-            -- update container contents
-            if (SubBag:GetID() ~= -1) and (SubBag:GetID() ~= -3) and (BankOpen or (SubBag:GetID() < 5)) then
+            -- update container contents (special bank containers don't need this, regular bank only when open)
+            if (not BaudBag_IsBankDefaultContainer(SubBag:GetID())) and (BankOpen or (SubBag:GetID() < 5)) then
                 ContainerFrame_Update(SubBag);
             end
     
@@ -1895,90 +1923,94 @@ function BaudBagSearchFrameEditBox_OnTextChanged(self, isUserInput)
 	local SubBag, Frame, Open, ItemButton, Link, Name, Texture;
 	local Status, Result;
 	local bagCache, slotCache;
-	for Bag = -1, LastBagID do
-		SubBag = _G[Prefix.."SubBag"..Bag];
-		Open	= SubBag:IsShown()and SubBag:GetParent():IsShown() and not SubBag:GetParent().Closing;
-		bagCache = BaudBagGetBagCache(SubBag:GetID());
+	for Bag = -3, LastBagID do
+        if not (Bag == -2) then
+		    SubBag = _G[Prefix.."SubBag"..Bag];
+		    Open	= SubBag:IsShown()and SubBag:GetParent():IsShown() and not SubBag:GetParent().Closing;
+		    bagCache = BaudBagGetBagCache(SubBag:GetID());
 		
-		-- if the bag is open go through its items and compare the itemname
-		if (Open) then
-			BaudBag_DebugMsg("Search", "Bag '"..Bag.."' is open, going through items");
-			BagsSearched[Bag] = true;
+		    -- if the bag is open go through its items and compare the itemname
+		    if (Open) then
+			    BaudBag_DebugMsg("Search", "Bag '"..Bag.."' is open, going through items");
+			    BagsSearched[Bag] = true;
 		
-			for Slot = 1, SubBag.size do
-				ItemButton = _G[SubBag:GetName().."Item"..Slot];
-				slotCache = bagCache and bagCache[Slot] or nil;
+			    for Slot = 1, SubBag.size do
+				    ItemButton = _G[SubBag:GetName().."Item"..Slot];
+				    slotCache = bagCache and bagCache[Slot] or nil;
 				
-				-- get item link according to the type of bag
-				if (SubBag.BagSet ~= 2) or BankOpen then
-					Link = GetContainerItemLink(SubBag:GetID(), Slot);
-				elseif slotCache then
-					Link = slotCache.Link;
-				end
+				    -- get item link according to the type of bag
+				    if (SubBag.BagSet ~= 2) or BankOpen then
+					    Link = GetContainerItemLink(SubBag:GetID(), Slot);
+				    elseif slotCache then
+					    Link = slotCache.Link;
+				    end
 				
-				-- get the name for that link
-				if Link then
-					-- debug message
-					printableLink = gsub(Link, "\124", "\124\124");
-					BaudBag_DebugMsg("Search", "Found a link: '"..printableLink.."'");
+				    -- get the name for that link
+				    if Link then
+					    -- debug message
+					    printableLink = gsub(Link, "\124", "\124\124");
+					    BaudBag_DebugMsg("Search", "Found a link: '"..printableLink.."'");
 
-					-- we can have different types of links, usually it is an item...
-					if (strmatch(Link, "|Hitem:")) then
-						Name, _, _, _, _, _, _, _, _, _ = GetItemInfo(Link);
+					    -- we can have different types of links, usually it is an item...
+					    if (strmatch(Link, "|Hitem:")) then
+						    Name, _, _, _, _, _, _, _, _, _ = GetItemInfo(Link);
 
-					-- ... or a cages battle pet ...
-					elseif (strmatch(Link, "|Hbattlepet:")) then
-						local _, speciesID, _, _, _, _, _, battlePetID = strsplit(":", Link)
-						Name, _, _, _, _, _, _, _, _, _= C_PetJournal.GetPetInfoBySpeciesID(speciesID);
+					    -- ... or a cages battle pet ...
+					    elseif (strmatch(Link, "|Hbattlepet:")) then
+						    local _, speciesID, _, _, _, _, _, battlePetID = strsplit(":", Link)
+						    Name, _, _, _, _, _, _, _, _, _= C_PetJournal.GetPetInfoBySpeciesID(speciesID);
 
-					-- ... we don't know about everything else
-					else
-						Name = "Unknown";
-					end
-				end
+					    -- ... we don't know about everything else
+					    else
+						    Name = "Unknown";
+					    end
+				    end
 				
-				-- add transparency if search active but not a result
-				Texture = ItemButton;
-				if (Link and compareString ~= "") then
-					BaudBag_DebugMsg("Search", "Searching for String: '"..compareString.."' in Item '"..Name.."'");
+				    -- add transparency if search active but not a result
+				    Texture = ItemButton;
+				    if (Link and compareString ~= "") then
+					    BaudBag_DebugMsg("Search", "Searching for String: '"..compareString.."' in Item '"..Name.."'");
 					
-					-- first run string search and go through results later (because of error handling)
-					Status, Result = pcall(string.find, string.lower(Name), string.lower(compareString));
+					    -- first run string search and go through results later (because of error handling)
+					    Status, Result = pcall(string.find, string.lower(Name), string.lower(compareString));
 					
-					-- find was run successfull: act depending on result
-					if (Status) then
-						--if (string.find(string.lower(Name), string.lower(compareString)) == nil) then
-						if (Result == nil) then
-							BaudBag_DebugMsg("Search", "Itemname does not match");
-							Texture:SetAlpha(0.2);
-						else
-							BaudBag_DebugMsg("Search", "Item seems to match");
-							Texture:SetAlpha(1);
-						end
-					-- find failed, create debug message
-					else
-						BaudBag_DebugMsg("Search", "current search creates problem: ("..Result..")");
-						return;
-					end
-				else
-					Texture:SetAlpha(1);
-				end
-			end
-		end
+					    -- find was run successfull: act depending on result
+					    if (Status) then
+						    --if (string.find(string.lower(Name), string.lower(compareString)) == nil) then
+						    if (Result == nil) then
+							    BaudBag_DebugMsg("Search", "Itemname does not match");
+							    Texture:SetAlpha(0.2);
+						    else
+							    BaudBag_DebugMsg("Search", "Item seems to match");
+							    Texture:SetAlpha(1);
+						    end
+					    -- find failed, create debug message
+					    else
+						    BaudBag_DebugMsg("Search", "current search creates problem: ("..Result..")");
+						    return;
+					    end
+				    else
+					    Texture:SetAlpha(1);
+				    end
+			    end
+		    end
+        end
 	end
 end
 
 function BaudBagSearchFrameEditBox_RemoveHighlights()
 	local SubBag, Frame, Open, ItemButton, Link, Name, Texture;
-	for Bag = -1, LastBagID do
-		if (BagsSearched[Bag]) then
-			SubBag = _G[Prefix.."SubBag"..Bag];
-			for Slot = 1, SubBag.size do
-				ItemButton = _G[SubBag:GetName().."Item"..Slot];
-				ItemButton:SetAlpha(1);
-			end
-			BagsSearched[Bag] = false;
-		end
+	for Bag = -3, LastBagID do
+        if not (Bag == -2) then
+		    if (BagsSearched[Bag]) then
+			    SubBag = _G[Prefix.."SubBag"..Bag];
+			    for Slot = 1, SubBag.size do
+				    ItemButton = _G[SubBag:GetName().."Item"..Slot];
+				    ItemButton:SetAlpha(1);
+			    end
+			    BagsSearched[Bag] = false;
+		    end
+        end
 	end
 end
 
