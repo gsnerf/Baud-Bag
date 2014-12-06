@@ -999,16 +999,16 @@ function BaudBagUpdateOpenBags()
 end
 
 --[[
-this function opens or closes a bag set (main bag with sub bags)
-BagSet (int): BagSet to open or close (1 - default bags, 2 - bank bags)
-Close (bool): should the set be closed instead of opened?
+    this function opens or closes a bag set (main bag with sub bags)
+    BagSet (int): BagSet to open or close (1 - default bags, 2 - bank bags)
+    Close (bool): should the set be closed instead of opened?
 ]]--
 function BaudBagAutoOpenSet(BagSet, Close)
     -- debug messages:
     local closeState = Close and "true" or "false";
     BaudBag_DebugMsg("BagOpening", "[AutoOpenSet Entry] BagSet: "..BagSet.."; Close: "..closeState);
     
-    --Set 2 doesn't need container 1 to be shown because that's a given
+    -- Set 2 doesn't need container 1 to be shown because that's a given
     local Container;
     for ContNum = BagSet, NumCont[BagSet] do
 
@@ -1026,6 +1026,7 @@ function BaudBagAutoOpenSet(BagSet, Close)
                     BaudBagUpdateContainer(Container);
                 else
                     BaudBag_DebugMsg("BagOpening", "[AutoOpenSet FOR (IsShown)] TRUE");
+                    BaudBagUpdateContainer(Container);
                 end
             elseif Container.AutoOpened then
                 BaudBag_DebugMsg("BagOpening", "[AutoOpenSet FOR (AutoOpened)] TRUE");
@@ -1038,6 +1039,7 @@ function BaudBagAutoOpenSet(BagSet, Close)
                 end
             else
                 BaudBag_DebugMsg("BagOpening", "[AutoOpenSet FOR (AutoOpened)] FALSE");
+                BaudBagUpdateContainer(Container);
             end
         end
     end
