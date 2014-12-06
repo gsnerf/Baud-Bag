@@ -172,6 +172,8 @@ local EventFuncs =
                 else
                     BankFrameItemButton_UpdateLocked(_G["BaudBBankBag"..(Slot-NUM_BANKGENERIC_SLOTS)]);
                 end
+            elseif (Bag == REAGENTBANK_CONTAINER) then
+                BankFrameItemButton_UpdateLocked(_G[Prefix.."SubBag-3Item"..Slot]);
             end
         end
     };
@@ -275,6 +277,13 @@ EventFuncs.BAG_OPEN = Func;
 EventFuncs.BAG_UPDATE = Func;
 EventFuncs.BAG_CLOSED = Func;
 EventFuncs.PLAYERBANKSLOTS_CHANGED = Func;
+
+
+Func = function(self, event, ...)
+    local slot = ...;
+    BankFrameItemButton_Update(_G["BaudBagSubBag-3Item"..(slot)]);
+end
+EventFuncs.PLAYERREAGENTBANKSLOTS_CHANGED = Func;
 --[[ END OF NON XML EVENT HANDLERS ]]--
 
 
