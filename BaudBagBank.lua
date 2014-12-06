@@ -10,25 +10,25 @@ function BaudBagBankBags_Initialize()
 
     -- create BagSlots for regular bags
     for Bag = 1, NUM_BANKBAGSLOTS do
-		-- the slot name before "BankBagX" has to be 10 chars long or else this will HARDCRASH
-		BagSlot = CreateFrame("Button", "BaudBBankBag"..Bag, BBContainer2, "BankItemButtonBagTemplate");
-		BagSlot:SetID(Bag);
-		BagSlot.Bag = Bag + 4;
-		BagSlot:SetPoint("TOPLEFT",		8 + mod(Bag - 1, 2) * 39, -8 - floor((Bag - 1) / 2) * 39);
-		BagSlot:HookScript("OnEnter",	BaudBag_BagSlot_OnEnter);
+        -- the slot name before "BankBagX" has to be 10 chars long or else this will HARDCRASH
+        BagSlot = CreateFrame("Button", "BaudBBankBag"..Bag, BBContainer2, "BankItemButtonBagTemplate");
+        BagSlot:SetID(Bag);
+        BagSlot.Bag = Bag + 4;
+        BagSlot:SetPoint("TOPLEFT",		8 + mod(Bag - 1, 2) * 39, -8 - floor((Bag - 1) / 2) * 39);
+        BagSlot:HookScript("OnEnter",	BaudBag_BagSlot_OnEnter);
         BagSlot:HookScript("OnUpdate",	BaudBag_BagSlot_OnUpdate);
-		BagSlot:HookScript("OnLeave",	BaudBag_BagSlot_OnLeave);
-      
-		-- get cache for the current bank bag
-		-- if there is a bag create icon with correct texture etc
-		local bagCache = BaudBagGetBagCache(Bag + 4);
-		if (bagCache.BagLink) then
-			Texture = GetItemIcon(bagCache.BagLink);
-			SetItemButtonCount(BagSlot, bagCache.BagCount or 0);
-		else
-			Texture = select(2, GetInventorySlotInfo("Bag"..Bag));
-		end
-		SetItemButtonTexture(BagSlot, Texture);
+        BagSlot:HookScript("OnLeave",	BaudBag_BagSlot_OnLeave);
+
+        -- get cache for the current bank bag
+        -- if there is a bag create icon with correct texture etc
+        local bagCache = BaudBagGetBagCache(Bag + 4);
+        if (bagCache.BagLink) then
+            Texture = GetItemIcon(bagCache.BagLink);
+            SetItemButtonCount(BagSlot, bagCache.BagCount or 0);
+        else
+            Texture = select(2, GetInventorySlotInfo("Bag"..Bag));
+        end
+        SetItemButtonTexture(BagSlot, Texture);
     end
 
     -- create BagSlot for reagent bank!
@@ -38,7 +38,7 @@ function BaudBagBankBags_Initialize()
     BagSlot:SetPoint("TOPLEFT", 8 + mod(NUM_BANKBAGSLOTS, 2) * 39, -8 - floor(NUM_BANKBAGSLOTS / 2) * 39);
     BagSlot:HookScript("OnEnter",	BaudBag_BagSlot_OnEnter);
     BagSlot:HookScript("OnUpdate",	BaudBag_BagSlot_OnUpdate);
-	BagSlot:HookScript("OnLeave",	BaudBag_BagSlot_OnLeave);
+    BagSlot:HookScript("OnLeave",	BaudBag_BagSlot_OnLeave);
 
     BBContainer2:SetWidth(91);
     --Height changes depending if there is a purchase button
@@ -48,15 +48,17 @@ function BaudBagBankBags_Initialize()
 end
 
 
---[[ This analyses the bought bags and updates the bag slot view
-     (the little window that pops out the main bank container and shows the bought bags) 
-     alongside the "bag slot buy" button ]]--
+--[[
+    This analyses the bought bags and updates the bag slot view
+    (the little window that pops out the main bank container and shows the bought bags) 
+    alongside the "bag slot buy" button 
+  ]]
 function BaudBagBankBags_Update()
     local Purchase = BaudBagBankSlotPurchaseFrame;
     local Slots, Full = GetNumBankSlots();
     local ReagentsBought = IsReagentBankUnlocked();
     local BagSlot;
-  
+
     BaudBag_DebugMsg("Bank", "BankBags: updating");
     
     for Bag = 1, NUM_BANKBAGSLOTS do
@@ -91,7 +93,7 @@ function BaudBagBankBags_Update()
         -- SetMoneyFrameColor(Purchase:GetName().."MoneyFrame", 1.0, 1.0, 1.0);
         SetMoneyFrameColor(Purchase:GetName().."MoneyFrame");
     else
-	    SetMoneyFrameColor(Purchase:GetName().."MoneyFrame", "red");
+        SetMoneyFrameColor(Purchase:GetName().."MoneyFrame", "red");
     end
     MoneyFrame_Update(Purchase:GetName().."MoneyFrame", Cost);
     

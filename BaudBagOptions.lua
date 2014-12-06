@@ -40,14 +40,14 @@ local TextureNames = {
 };
 
 --[[
-Needed functions:
-- option window loaded => set all basic control settings and add dynamic components
-- bagset changed (dropdown event) => load bags, choose first container (see next point)
-- selected container changed => load container specific data
-		(name, background, columns, scaling, autoopen, empty spaces on top, rarity coloring)
-]]--
+    Needed functions:
+    - option window loaded => set all basic control settings and add dynamic components
+    - bagset changed (dropdown event) => load bags, choose first container (see next point)
+    - selected container changed => load container specific data
+    (name, background, columns, scaling, autoopen, empty spaces on top, rarity coloring)
+  ]]
 
---[[ BaudBagOptions frame related events and methods ]]--
+--[[ BaudBagOptions frame related events and methods ]]
 function BaudBagOptions_OnLoad(self, event, ...)
     -- the config needs a reference to this
     BaudBagSetCfgPreReq(SliderBars, CheckButtons);
@@ -109,7 +109,7 @@ function BaudBagOptions_OnEvent(self, event, ...)
         1. create bag button
         2. create container frame
         3. create join checkbox if bag > 1
-    ]]--
+      ]]
     local Button, Container, Check;
     for Bag = 1, MaxBags do
         Button		= CreateFrame("CheckButton",    Prefix.."Bag"..Bag,         BaudBagOptions, Prefix.."BagTemplate");
@@ -155,7 +155,7 @@ function BaudBagOptions_OnCancel(self, event, ...)
 end
 
 
---[[ SetBags DropDown functions ]]--
+--[[ SetBags DropDown functions ]]
 function BaudBagOptionsSetDropDown_Initialize()
     -- prepare dropdown entries
     local info		= UIDropDownMenu_CreateInfo();
@@ -180,7 +180,7 @@ function BaudBagOptionsSetDropDown_OnClick(self)
 end
 
 
---[[ Enabled CheckBox functions ]]--
+--[[ Enabled CheckBox functions ]]
 function BaudBagEnabledCheck_OnClick(self, event, ...)
     PlayCheckBoxSound(self);
     if (not self:GetChecked()) then
@@ -195,14 +195,14 @@ function BaudBagEnabledCheck_OnClick(self, event, ...)
 end
 
 
---[[ CloseAll CheckBox functions ]]--
+--[[ CloseAll CheckBox functions ]]
 function BaudBagCloseAllCheck_OnClick(self, event, ...)
     PlayCheckBoxSound(self);
     BBConfig[SelectedBags].CloseAll = self:GetChecked();
 end
 
 
---[[ Dynamic Bags/Container Clicks ]]--
+--[[ Dynamic Bags/Container Clicks ]]
 function BaudBagOptionsBag_OnClick(self, event, ...)
     SelectedContainer = self:GetID();
     BaudBagOptionsUpdate();
@@ -235,7 +235,7 @@ function PlayCheckBoxSound(self)
     end
 end
 
---[[ Name TextBox functions ]]--
+--[[ Name TextBox functions ]]
 function BaudBagOptionsNameEditBox_OnTextChanged()
     if Updating then
         return;
@@ -246,7 +246,7 @@ end
 
 
 
---[[ Background Dropdown functions ]]--
+--[[ Background Dropdown functions ]]
 -- init
 function BaudBagOptionsBackgroundDropDown_Initialize()
     local info			= UIDropDownMenu_CreateInfo();
@@ -269,7 +269,7 @@ function BaudBagOptionsBackgroundDropDown_OnClick(self)
 end
 
 
---[[ CheckBox (non "enabled") functions ]]--
+--[[ CheckBox (non "enabled") functions ]]
 function BaudBagOptionsCheckButton_OnClick(self, event, ...)
     if(self:GetChecked())then
         PlaySound("igMainMenuOptionCheckBoxOff");
@@ -289,10 +289,10 @@ end
 --[[ slider functions ]]--
 function BaudBagSlider_OnValueChanged(self)
     --[[
-    This is called when the value of a slider is changed.
-    First the new value directly shown in the title.
-    Next the new value is saved in the correct BBConfig entry.
-    ]]--
+        This is called when the value of a slider is changed.
+        First the new value directly shown in the title.
+        Next the new value is saved in the correct BBConfig entry.
+      ]]
 
     --[[ !!!TEMPORARY!!! This is a workaround for a possible bug in the sliders behavior ignoring the set step size when dragging the slider]]--
     if not self._onsetting then   -- is single threaded 
