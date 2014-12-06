@@ -43,6 +43,7 @@ function BaudBagRestoreCfg()
             BBConfig[BagSet].Joined = {};
         end
 
+        -- make sure the reagent bank is NOT joined by default!
         if (BagSet == 2 and BBConfig[2].Joined[9] == nil) then
             BaudBag_DebugMsg("Config", "- reagent bank join for BagSet "..BagSet.." damaged or missing, creating now");
             BBConfig[BagSet].Joined[9] = false;
@@ -77,24 +78,27 @@ function BaudBagRestoreCfg()
                 if not BBConfig[BagSet][Container].Name then
                     BaudBag_DebugMsg("Config", "- BagSet["..BagSet.."], Bag["..Bag.."], Container["..Container.."] container name missing, creating now");
                     --With the key ring, there isn't enough room for the player name aswell
-                    BBConfig[BagSet][Container].Name = (Bag==-2) and Localized.KeyRing or UnitName("player")..Localized.Of..((BagSet==1)and Localized.Inventory or Localized.BankBox);
+                    BBConfig[BagSet][Container].Name = UnitName("player")..Localized.Of..((BagSet==1)and Localized.Inventory or Localized.BankBox);
+                    if (Bag == REAGENTBANK_CONTAINER) then
+                        BBConfig[BagSet][Container].Name = UnitName("player")..Localized.Of..Localized.ReagentBankBox;
+                    end
                 end
 
                 if (type(BBConfig[BagSet][Container].Background) ~= "number") then
                     BaudBag_DebugMsg("Config", "- BagSet["..BagSet.."], Bag["..Bag.."], Container["..Container.."] container background damaged or missing, creating now");
                     if (BagSet == 2) then
                         -- bank containers have "blizz bank" default
-                        BBConfig[BagSet][Container].Background = 2
+                        BBConfig[BagSet][Container].Background = 2;
                     else
-                        -- default containers only separate for default bag and keyring (-2 == keyring)
-                        BBConfig[BagSet][Container].Background = (Bag == -2) and 3 or 1;
+                        -- default contains have "blizz inventory" default
+                        BBConfig[BagSet][Container].Background = 1;
                     end
                 end
 
                 for Key, Value in ipairs(SliderBars) do
                     if (type(BBConfig[BagSet][Container][Value.SavedVar]) ~= "number") then
                         BaudBag_DebugMsg("Config", "- BagSet["..BagSet.."], Bag["..Bag.."], Container["..Container.."] Slider["..Value.SavedVar.."] data damaged or missing, creating now");
-                        BBConfig[BagSet][Container][Value.SavedVar] = (Bag == -2) and (Value.SavedVar=="Columns") and 4 or Value.Default[BagSet];
+                        BBConfig[BagSet][Container][Value.SavedVar] = Value.Default[BagSet];
                     end
                 end
 
