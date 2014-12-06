@@ -6,9 +6,9 @@ local _;
 local BaudBag_DebugCfg = {
     
     -- everything that has to do with configuration or configuring
-    Config      = { Name = "Config", Active = true },
+    Config      = { Name = "Config", Active = false },
     Options     = { Name = "Options", Active = false },
-    Functions   = { Name = "Functions", Active = true },
+    Functions   = { Name = "Functions", Active = false },
 
     -- bags including creation, rendering, opening and special functions
     Bags           = { Name = "Bags", Active = false },
@@ -19,17 +19,17 @@ local BaudBag_DebugCfg = {
 	
     -- everything that has to do with offline capabilities
     Cache       = { Name = "Cache", Active = false },
-    Bank        = { Name = "Bank", Active = true },
-    BankReagent = { Name = "Reagent Bank", Active = true },
+    Bank        = { Name = "Bank", Active = false },
+    BankReagent = { Name = "Reagent Bank", Active = false },
     VoidStorage = { Name = "Void Storage", Active = false },
 
     -- additional functionality
     Token       = { Name = "Token", Active = false },
     Search      = { Name = "Search", Active = false },
-    Tooltip     = { Name = "Tooltip", Active = true },
+    Tooltip     = { Name = "Tooltip", Active = false },
 
     -- this is for everything else that is supposed to be a temporary debug message
-    Temp        = { Name = "Temp", Active = true }
+    Temp        = { Name = "Temp", Active = false }
 };
 
 -- make sure to delete log from last session!
