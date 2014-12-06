@@ -84,30 +84,30 @@ end
 --[[ -------------------------------------------------------------- ]]
 function BaudBagVoidStorage_OnLoad(self, event, ...)
 
---    -- make sure all needed events are registered to this frame
---    for Key, Value in pairs(EventFuncs) do
---        self:RegisterEvent(Key);
---    end
+    --    -- make sure all needed events are registered to this frame
+    --    for Key, Value in pairs(EventFuncs) do
+    --        self:RegisterEvent(Key);
+    --    end
 
---    -- remember original frame
---    origVoidFrames["VoidStorageFrame"]			= _G["VoidStorageFrame"];
---    origVoidFrames["VoidStorageBorderFrame"]	= _G["VoidStorageBorderFrame"];
---    origVoidFrames["VoidStorageDepositFrame"]	= _G["VoidStorageDepositFrame"];
---    origVoidFrames["VoidStorageWithdrawFrame"]	= _G["VoidStorageWithdrawFrame"];
---    origVoidFrames["VoidStorageStorageFrame"]	= _G["VoidStorageStorageFrame"];
+    --    -- remember original frame
+    --    origVoidFrames["VoidStorageFrame"]			= _G["VoidStorageFrame"];
+    --    origVoidFrames["VoidStorageBorderFrame"]	= _G["VoidStorageBorderFrame"];
+    --    origVoidFrames["VoidStorageDepositFrame"]	= _G["VoidStorageDepositFrame"];
+    --    origVoidFrames["VoidStorageWithdrawFrame"]	= _G["VoidStorageWithdrawFrame"];
+    --    origVoidFrames["VoidStorageStorageFrame"]	= _G["VoidStorageStorageFrame"];
 	
---    -- remember all original references to the storage item buttons
---    for i = 1, VOID_DEPOSIT_MAX do
---        origVoidItemButtons["VoidStorageDepositButton"..i] = _G["VoidStorageDepositButton"..i];
---    end
---    for i = 1, VOID_WITHDRAW_MAX do
---        origVoidItemButtons["VoidStorageWithdrawButton"..i] = _G["VoidStorageWithdrawButton"..i];
---    end
---    for i = 1, VOID_STORAGE_MAX do
---        origVoidItemButtons["VoidStorageStorageButton"..i] = _G["VoidStorageStorageButton"..i];
---    end
+    --    -- remember all original references to the storage item buttons
+    --    for i = 1, VOID_DEPOSIT_MAX do
+    --        origVoidItemButtons["VoidStorageDepositButton"..i] = _G["VoidStorageDepositButton"..i];
+    --    end
+    --    for i = 1, VOID_WITHDRAW_MAX do
+    --        origVoidItemButtons["VoidStorageWithdrawButton"..i] = _G["VoidStorageWithdrawButton"..i];
+    --    end
+    --    for i = 1, VOID_STORAGE_MAX do
+    --        origVoidItemButtons["VoidStorageStorageButton"..i] = _G["VoidStorageStorageButton"..i];
+    --    end
 	
---    BaudBagVoidStorage_TakeOverStorage();
+    --    BaudBagVoidStorage_TakeOverStorage();
 end
 
 function BaudBagVoidStorage_OnEvent(self, event, ...)
