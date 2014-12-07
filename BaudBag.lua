@@ -1390,6 +1390,7 @@ end
 function BaudBagUpdateSubBag(SubBag)
     local Name, Link, Quality, Type, Texture, ItemButton, isNewItem, isBattlePayItem;
     local ShowColor     = BBConfig[SubBag.BagSet][SubBag:GetParent():GetID()].RarityColor;
+    local ShowNewItems  = BBConfig[SubBag.BagSet][SubBag:GetParent():GetID()].ShowNewItems;
     --local ShowColorAltern = BBConfig[SubBag.BagSet][SubBag:GetParent():GetID()].RarityColorAltern;
     local bagCache;
     SubBag.FreeSlots = 0;
@@ -1436,7 +1437,7 @@ function BaudBagUpdateSubBag(SubBag)
 
         -- TODO: temporary hot fix for changes in the ContainerItemTemplate.
         if (ItemButton.NewItemTexture) then
-            if (isNewItem) then
+            if (isNewItem and ShowNewItems) then
                 ItemButton.NewItemTexture:Show();
             else
                 ItemButton.NewItemTexture:Hide();
@@ -1465,6 +1466,7 @@ function BaudBagUpdateSubBag(SubBag)
     end
 end
 
+--[[ Updates the rarity for the given button on basis of the given quality and configuration options ]]
 function BaudBagItemButton_UpdateRarity(button, quality, showColor)
     -- add rarity coloring
     local Texture = _G[button:GetName().."Border"];

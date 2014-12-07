@@ -249,6 +249,16 @@
 				</Anchors>
 			</CheckButton>
 
+			<CheckButton name="$parentCheckButton5" inherits="BaudBagOptionsCheckButtonTemplate" id="5">
+				<Anchors>
+					<Anchor point="TOPLEFT" relativeTo="$parentCheckButton4" relativePoint="BOTTOMLEFT">
+						<Offset>
+							<AbsDimension x="0" y="8" />
+						</Offset>
+					</Anchor>
+				</Anchors>
+			</CheckButton>
+
 			<Slider name="$parentSlider1" minValue="2" maxValue="20" valueStep="1" inherits="BaudBagOptionsSliderTemplate" id="1">
 				<Anchors>
 					<Anchor point="TOPLEFT" relativeTo="$parentNameEditBox" relativePoint="BOTTOMLEFT">
