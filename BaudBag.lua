@@ -278,10 +278,35 @@ EventFuncs.BAG_UPDATE = Func;
 EventFuncs.BAG_CLOSED = Func;
 EventFuncs.PLAYERBANKSLOTS_CHANGED = Func;
 
-
+--[[ This updates the visual of the given reagent bank item ]]
 Func = function(self, event, ...)
     local slot = ...;
-    BankFrameItemButton_Update(_G["BaudBagSubBag-3Item"..(slot)]);
+    BaudBag_DebugMsg("BankReagent", "Updating Slot "..slot);
+
+    -- first basic update
+    local Button = _G["BaudBagSubBag-3Item"..(slot)];
+    BankFrameItemButton_Update(Button);
+
+    ---- now update custom rarity colloring
+    local bagCache = BaudBagGetBagCache(REAGENTBANK_CONTAINER);
+    local Link = GetContainerItemLink(REAGENTBANK_CONTAINER, slot);
+    local Quality = nil;
+
+    -- even though we are in "online" there might be no item on this slot!
+    if Link then
+        _, _, Quality, _, _, _, _, _, _, _ = GetItemInfo(Link);
+        --isNewItem       = C_NewItems.IsNewItem(REAGENTBANK_CONTAINER, slot);
+        --isBattlePayItem = IsBattlePayItem(REAGENTBANK_CONTAINER, slot);
+        bagCache[slot]  = {Link = Link, Count = select(2, GetContainerItemInfo(REAGENTBANK_CONTAINER, slot))};
+    else
+        bagCache[slot] = nil;
+    end
+    
+    BaudBagItemButton_UpdateRarity(
+        Button, 
+        Quality, 
+        BBConfig[2][_G["BaudBagSubBag-3"]:GetParent():GetID()].RarityColor
+    );
 end
 EventFuncs.PLAYERREAGENTBANKSLOTS_CHANGED = Func;
 --[[ END OF NON XML EVENT HANDLERS ]]--
@@ -1364,7 +1389,7 @@ end
 
 function BaudBagUpdateSubBag(SubBag)
     local Name, Link, Quality, Type, Texture, ItemButton, isNewItem, isBattlePayItem;
-    local ShowColor = BBConfig[SubBag.BagSet][SubBag:GetParent():GetID()].RarityColor;
+    local ShowColor     = BBConfig[SubBag.BagSet][SubBag:GetParent():GetID()].RarityColor;
     --local ShowColorAltern = BBConfig[SubBag.BagSet][SubBag:GetParent():GetID()].RarityColorAltern;
     local bagCache;
     SubBag.FreeSlots = 0;
@@ -1430,24 +1455,7 @@ function BaudBagUpdateSubBag(SubBag)
         end
 
         -- add rarity coloring
-        Texture = _G[ItemButton:GetName().."Border"];
-        if Quality and (Quality > 1) and ShowColor then
-            -- default with set option
-            -- Texture:SetVertexColor(GetItemQualityColor(Quality));
-            -- alternative rarity coloring
-            if(Quality ~=2)and(Quality ~= 3)and(Quality ~= 4)then
-                Texture:SetVertexColor(GetItemQualityColor(Quality));
-            elseif(Quality == 2)then        --uncommon
-                Texture:SetVertexColor(0.1,   1,   0, 0.5);
-            elseif(Quality == 3)then        --rare
-                Texture:SetVertexColor(  0, 0.4, 0.8, 0.8);
-            elseif(Quality == 4)then        --epic
-                Texture:SetVertexColor(0.6, 0.2, 0.9, 0.5);
-            end
-            Texture:Show();
-        else
-            Texture:Hide();
-        end
+        BaudBagItemButton_UpdateRarity(ItemButton, Quality, ShowColor);
 
         -- highlight the slots to show the connection to the bag
         if (SubBag.Highlight) then
@@ -1455,6 +1463,28 @@ function BaudBagUpdateSubBag(SubBag)
             Texture:Show();
         end
     end
+end
+
+function BaudBagItemButton_UpdateRarity(button, quality, showColor)
+    -- add rarity coloring
+    local Texture = _G[button:GetName().."Border"];
+    if quality and (quality > 1) and showColor then
+        -- default with set option
+        -- Texture:SetVertexColor(GetItemQualityColor(Quality));
+        -- alternative rarity coloring
+        if (quality ~=2) and (quality ~= 3) and (quality ~= 4) then
+            Texture:SetVertexColor(GetItemQualityColor(quality));
+        elseif (quality == 2) then        --uncommon
+            Texture:SetVertexColor(0.1,   1,   0, 0.5);
+        elseif (quality == 3) then        --rare
+            Texture:SetVertexColor(  0, 0.4, 0.8, 0.8);
+        elseif (quality == 4) then        --epic
+            Texture:SetVertexColor(0.6, 0.2, 0.9, 0.5);
+        end
+        Texture:Show();
+    else
+        Texture:Hide();
+    end    
 end
 
 
