@@ -17,10 +17,11 @@ local SliderBars = {
 };
 
 local CheckButtons = {
-    {Text=Localized.AutoOpen,		SavedVar="AutoOpen",	Default=false,	TooltipText=Localized.AutoOpenTooltip,			DependsOn=nil},
-    {Text=Localized.AutoClose,		SavedVar="AutoClose",	Default=true,	TooltipText=Localized.AutoCloseTooltip,			DependsOn="AutoOpen"},
-    {Text=Localized.BlankOnTop,		SavedVar="BlankTop",	Default=false,	TooltipText=Localized.BlankOnTopTooltip,		DependsOn=nil},
-    {Text=Localized.RarityColoring,	SavedVar="RarityColor",	Default=true,	TooltipText=Localized.RarityColoringTooltip,	DependsOn=nil}
+    {Text=Localized.AutoOpen,       SavedVar="AutoOpen",     Default=false, TooltipText=Localized.AutoOpenTooltip,          DependsOn=nil},
+    {Text=Localized.AutoClose,      SavedVar="AutoClose",    Default=true,  TooltipText=Localized.AutoCloseTooltip,         DependsOn="AutoOpen"},
+    {Text=Localized.BlankOnTop,     SavedVar="BlankTop",     Default=false, TooltipText=Localized.BlankOnTopTooltip,        DependsOn=nil},
+    {Text=Localized.RarityColoring, SavedVar="RarityColor",  Default=true,  TooltipText=Localized.RarityColoringTooltip,    DependsOn=nil},
+    {Text=Localized.ShowNewItems,   SavedVar="ShowNewItems", Default=true,  TooltipText=Localized.ShowNewItemsTooltip,      DependsOn=nil}
 };
 
 BaudBagIcons = {
