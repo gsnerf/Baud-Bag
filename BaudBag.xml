@@ -50,9 +50,7 @@
 				</Scripts>
 			</Button>
 			<Button name="$parentMenuButton">
-				<Size>
-					<AbsDimension x="16" y="16" />
-				</Size>
+				<Size x="16" y="16" />
 				<Anchors>
 					<Anchor point="TOPRIGHT" relativeTo="$parentCloseButton" relativePoint="TOPLEFT" x="0" y="-8" />
 				</Anchors>
@@ -64,15 +62,49 @@
 				<HighlightTexture file="Interface\Buttons\UI-PlusButton-Hilight" alphaMode="ADD" />
 			</Button>
 			<Button name="$parentSearchButton">
-				<Size>
-					<AbsDimension x="16" y="16" />
-				</Size>
+				<Size x="16" y="16" />
 				<Anchors>
 					<Anchor point="TOPRIGHT" relativeTo="$parentMenuButton" relativePoint="TOPLEFT" x="0" y="0" />
 				</Anchors>
 				<NormalTexture file="Interface\Minimap\TRACKING\None" />
 				<Scripts>
 					<OnClick function="BaudBagSearchButton_Click" />
+				</Scripts>
+			</Button>
+			<Button name="$parentAutoSortButton" parentKey="AutoSortButton">
+				<Size x="16" y="16" />
+				<Anchors>
+					<Anchor point="TOPRIGHT" relativeTo="$parentSearchButton" relativePoint="TOPLEFT" x="0" y="0"/>
+				</Anchors>
+				<NormalTexture atlas="bags-button-autosort-up"/>
+				<PushedTexture atlas="bags-button-autosort-down"/>
+				<HighlightTexture file="Interface\Buttons\ButtonHilight-Square" alphaMode="ADD">
+					<Size x="12" y="13"/>
+					<Anchors>
+						<Anchor point="CENTER" x="0" y="0"/>
+					</Anchors>
+				</HighlightTexture>
+				<Scripts>
+					<OnClick function="BaudBagAutoSortButton_Click"/>
+					<OnEnter>
+						-- determine which tooltip to show
+						local Container = self:GetParent();
+						local TooltipText;
+						if (Container.BagSet == 1) then
+							TooltipText = BAG_CLEANUP_BAGS;
+						else
+							if (Container:GetID() == 1) then
+								TooltipText = BAG_CLEANUP_BANK;
+							else
+								TooltipText = BAG_CLEANUP_REAGENT_BANK;
+							end
+						end
+						-- actually set tooltip
+						GameTooltip:SetOwner(self);
+						GameTooltip:SetText(TooltipText);
+						GameTooltip:Show();
+					</OnEnter>
+					<OnLeave function="GameTooltip_Hide"/>
 				</Scripts>
 			</Button>
 		</Frames>
