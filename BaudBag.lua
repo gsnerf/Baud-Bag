@@ -1461,6 +1461,7 @@ function BaudBagUpdateSubBag(SubBag)
 
         -- highlight the slots to show the connection to the bag
         if (SubBag.Highlight) then
+            Texture = _G[ItemButton:GetName().."Border"];
             Texture:SetVertexColor(0.5, 0.5, 0, 1);
             Texture:Show();
         end
