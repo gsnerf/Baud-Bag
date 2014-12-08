@@ -67,8 +67,20 @@
 					<Anchor point="TOPRIGHT" relativeTo="$parentMenuButton" relativePoint="TOPLEFT" x="0" y="0" />
 				</Anchors>
 				<NormalTexture file="Interface\Minimap\TRACKING\None" />
+				<HighlightTexture file="Interface\Buttons\ButtonHilight-Square" alphaMode="ADD">
+					<Size x="12" y="13"/>
+					<Anchors>
+						<Anchor point="CENTER" x="0" y="0"/>
+					</Anchors>
+				</HighlightTexture>
 				<Scripts>
 					<OnClick function="BaudBagSearchButton_Click" />
+					<OnEnter>
+						GameTooltip:SetOwner(self);
+						GameTooltip:SetText(BaudBagLocalized.SearchBagTooltip);
+						GameTooltip:Show();
+					</OnEnter>
+					<OnLeave function="GameTooltip_Hide"/>
 				</Scripts>
 			</Button>
 			<Button name="$parentAutoSortButton" parentKey="AutoSortButton">
