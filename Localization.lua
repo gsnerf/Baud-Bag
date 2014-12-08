@@ -45,6 +45,7 @@ if (Locale=="zhTW") then -- Translator: Isler
     Background = "風格設定",
     FeatureFrameName = "背包設定",
     FeatureFrameTooltip = "設定背包整合的各種參數",
+    SearchBagTooltip = "Search Item In Bag",
   };
 elseif (Locale=="zhCN") then  -- Translator: Isler
   BaudBagLocalized = {
@@ -91,6 +92,7 @@ elseif (Locale=="zhCN") then  -- Translator: Isler
     Background = "风格设定",
     FeatureFrameName = "背包设定",
     FeatureFrameTooltip = "设定背包整合的各种参数",
+    SearchBagTooltip = "Search Item In Bag",
   };
 elseif (Locale=="frFR") then  -- Translator: Isler
   BaudBagLocalized = {
@@ -136,6 +138,7 @@ elseif (Locale=="frFR") then  -- Translator: Isler
     Background = "Skin de votre sac",
     FeatureFrameName = "BaudBag Options",
     FeatureFrameTooltip = "BaudBag Options",
+    SearchBagTooltip = "Search Item In Bag",
   };
 elseif (Locale == "deDE") then -- Translator: Thurmal
   BaudBagLocalized = {
@@ -181,6 +184,7 @@ elseif (Locale == "deDE") then -- Translator: Thurmal
     Background = "Hintergrund",
     FeatureFrameName = "BaudBag Optionen",
     FeatureFrameTooltip = "BaudBag Optionen",
+    SearchBagTooltip = "Taschen durchsuchen",
   };
 elseif (Locale == "koKR") then -- Translator: talkswind
   BaudBagLocalized = {
@@ -225,7 +229,8 @@ elseif (Locale == "koKR") then -- Translator: talkswind
 	ContainerName = "보관함 이름:",
 	Background = "배경",
 	FeatureFrameName = "BaudBag 옵션",
-	FeatureFrameTooltip = "BaudBag 옵션입니다."
+	FeatureFrameTooltip = "BaudBag 옵션입니다.",
+    SearchBagTooltip = "Search Item In Bag",
   };
 elseif (Locale == "ruRU") then -- Translator: StingerSoft
   BaudBagLocalized = {
@@ -270,7 +275,8 @@ elseif (Locale == "ruRU") then -- Translator: StingerSoft
     ContainerName = "Название:",
     Background = "Фон",
     FeatureFrameName = "BaudBag настройки",
-    FeatureFrameTooltip = "BaudBag настройки"
+    FeatureFrameTooltip = "BaudBag настройки",
+    SearchBagTooltip = "Search Item In Bag",
   };
 else --enUS (default)
   BaudBagLocalized = {
@@ -316,5 +322,6 @@ else --enUS (default)
     Background = "Background",
     FeatureFrameName = "BaudBag Options",
     FeatureFrameTooltip = "BaudBag Options",
+    SearchBagTooltip = "Search Items",
   };
 end
