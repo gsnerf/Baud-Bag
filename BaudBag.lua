@@ -961,7 +961,6 @@ function BaudUpdateJoinedBags()
                     Container = CreateFrame("Frame", Prefix.."Container"..BagSet.."_"..ContNum, UIParent, "BaudBagContainerTemplate");
                     Container:SetID(ContNum);
                     Container.BagSet = BagSet;
-                    Container.AutoSortButton:Hide();
                     MaxCont[BagSet] = ContNum;
                 end
                 Container = _G[Prefix.."Container"..BagSet.."_"..ContNum];
@@ -1652,11 +1651,18 @@ function BaudBagUpdateContainer(Container)
         SubBag.size = Size;
         Container.Slots = Container.Slots + Size;
 
-        -- last but not least update visibility for auto sort button (only in containers containing the backpack, bank or reagent bank)
+        -- last but not least update visibility for auto sort and deposit buttons
+        -- (sort only in containers containing the backpack, bank or reagent bank)
+        -- (deposit only for reagent bank)
         if (BaudBag_IsBankDefaultContainer(SubBag:GetID()) or SubBag:GetID() == 0) then
             Container.AutoSortButton:Show();
+            if (SubBag:GetID() == REAGENTBANK_CONTAINER) then
+                Container.DepositButton:Show();
+            end
+            -- sort and deposit for bank only if bank is open!
             if (BaudBag_IsBankDefaultContainer(SubBag:GetID()) and not BankOpen) then
                 Container.AutoSortButton:Hide();
+                Container.DepositButton:Hide();
             end
         end
     end

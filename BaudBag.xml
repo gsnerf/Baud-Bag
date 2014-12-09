@@ -83,7 +83,7 @@
 					<OnLeave function="GameTooltip_Hide"/>
 				</Scripts>
 			</Button>
-			<Button name="$parentAutoSortButton" parentKey="AutoSortButton">
+			<Button name="$parentAutoSortButton" parentKey="AutoSortButton" hidden="true">
 				<Size x="16" y="16" />
 				<Anchors>
 					<Anchor point="TOPRIGHT" relativeTo="$parentSearchButton" relativePoint="TOPLEFT" x="0" y="0"/>
@@ -114,6 +114,36 @@
 						-- actually set tooltip
 						GameTooltip:SetOwner(self);
 						GameTooltip:SetText(TooltipText);
+						GameTooltip:Show();
+					</OnEnter>
+					<OnLeave function="GameTooltip_Hide"/>
+				</Scripts>
+			</Button>
+			<Button name="$parentDepositButton" parentKey="DepositButton" hidden="true">
+				<Size x="16" y="16" />
+				<Anchors>
+					<Anchor point="TOPRIGHT" relativeTo="$parentAutoSortButton" relativePoint="TOPLEFT" x="0" y="0"/>
+				</Anchors>
+				<NormalTexture file="Interface\EncounterJournal\UI-EncounterJournalTextures">
+					<TexCoords left="0.73046875" right="0.82421875" top="0.61816406" bottom="0.66015625"/>
+				</NormalTexture>
+				<PushedTexture file="Interface\EncounterJournal\UI-EncounterJournalTextures">
+					<TexCoords left="0.63281250" right="0.72656250" top="0.61816406" bottom="0.66015625"/>
+				</PushedTexture>
+				<HighlightTexture file="Interface\Buttons\ButtonHilight-Square" alphaMode="ADD">
+					<Size x="12" y="13"/>
+					<Anchors>
+						<Anchor point="CENTER" x="0" y="0"/>
+					</Anchors>
+				</HighlightTexture>
+				<Scripts>
+					<OnClick>
+						PlaySound("igMainMenuOption");
+						DepositReagentBank();
+					</OnClick>
+					<OnEnter>
+						GameTooltip:SetOwner(self);
+						GameTooltip:SetText(REAGENTBANK_DEPOSIT);
 						GameTooltip:Show();
 					</OnEnter>
 					<OnLeave function="GameTooltip_Hide"/>
