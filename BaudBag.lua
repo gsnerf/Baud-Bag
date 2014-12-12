@@ -535,20 +535,53 @@ function BaudBagToggleBank(self)
     end
 end
 
+--[[ 
+    This initializes the drop down menus for each container.
+    Beware that the bank box won't exist yet when this is initialized at first.
+  ]]
 function BaudBagContainerDropDown_Initialize()
-    local info = UIDropDownMenu_CreateInfo();
+    local header = { isTitle = true, notCheckable = true };
+    local info = {  };
+    
+    -- category bag specifics
+    header.text = Localized.MenuCatSpecific;
+    UIDropDownMenu_AddButton(header);
 
+    -- bag locking/unlocking
     info.text = not (DropDownBagSet and BBConfig[DropDownBagSet][DropDownContainer].Locked) and Localized.LockPosition or Localized.UnlockPosition;
     info.func = ToggleContainerLock;
     UIDropDownMenu_AddButton(info);
 
-    --The bank box won't exist yet when this is initialized at first
+    -- cleanup button first regular
+    if (DropDownBagSet == 1) then
+        info.text = BAG_CLEANUP_BAGS;
+        info.func = SortBags;
+        UIDropDownMenu_AddButton(info);
+    elseif (DropDownContainer and BankOpen) then
+        if(_G["BaudBagContainer"..DropDownBagSet.."_"..DropDownContainer].Bags[1]:GetID() == -3) then
+            info.text = BAG_CLEANUP_REAGENT_BANK;
+            info.func = SortReagentBankBags;
+        else
+            info.text = BAG_CLEANUP_BANK;
+            info.func = SortBankBags;
+        end
+        UIDropDownMenu_AddButton(info);
+    end
+
+
+    -- category general
+    header.text = Localized.MenuCatGeneral;
+    UIDropDownMenu_AddButton(header);
+
+    -- 'show bank' option
+    -- we only want to show this option on the backpack when the bank is not currently shown
     if (DropDownBagSet ~= 2) and _G[Prefix.."Container2_1"] and not _G[Prefix.."Container2_1"]:IsShown()then
         info.text = Localized.ShowBank;
         info.func = BaudBagToggleBank;
         UIDropDownMenu_AddButton(info);
     end
 
+    -- open the options
     info.text = Localized.Options;
     info.func = ShowContainerOptions;
     UIDropDownMenu_AddButton(info);
@@ -1651,20 +1684,13 @@ function BaudBagUpdateContainer(Container)
         SubBag.size = Size;
         Container.Slots = Container.Slots + Size;
 
-        -- last but not least update visibility for auto sort and deposit buttons
-        -- (sort only in containers containing the backpack, bank or reagent bank)
-        -- (deposit only for reagent bank)
-        if (BaudBag_IsBankDefaultContainer(SubBag:GetID()) or SubBag:GetID() == 0) then
-            Container.AutoSortButton:Show();
-            if (SubBag:GetID() == REAGENTBANK_CONTAINER) then
-                Container.DepositButton:Show();
-            end
-            -- sort and deposit for bank only if bank is open!
-            if (BaudBag_IsBankDefaultContainer(SubBag:GetID()) and not BankOpen) then
-                Container.AutoSortButton:Hide();
-                Container.DepositButton:Hide();
-            end
+        -- last but not least update visibility for deposit button of reagent bank
+        if (SubBag:GetID() == REAGENTBANK_CONTAINER and BankOpen) then
+            Container.DepositButton:Show();
+        else
+            Container.DepositButton:Hide();
         end
+
     end
 
     -- this should only happen when the dev coded some bullshit!
@@ -2180,20 +2206,5 @@ CloseBag = function(id)
     if (BaudBag_IsBagOpen(id)) then
         local Container = _G[Prefix.."SubBag"..id]:GetParent();
         Container:Hide();
-    end
-end
-
---[[ It is assumed, that the button is only visible on the bank, backpack and reagent bank containers! ]]
-function BaudBagAutoSortButton_Click(self, event, ...)
-    local Container = self:GetParent();
-    PlaySound("UI_BagSorting_01");
-    for _, SubBag in ipairs(Container.Bags) do
-        if (SubBag:GetID() == -3) then
-            SortReagentBankBags();
-        elseif (SubBag:GetID() == -1) then
-            SortBankBags();
-        elseif (SubBag:GetID() == 0) then
-            SortBags();
-        end
     end
 end

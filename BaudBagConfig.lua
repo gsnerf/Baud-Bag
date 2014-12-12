@@ -21,7 +21,7 @@ function BaudBagRestoreCfg()
         BaudBag_Cfg = {};
     end
     BBConfig = BaudBag_Cfg;
-	
+
     for BagSet = 1, 2 do
         if (type(BBConfig[BagSet]) ~= "table") then
             BaudBag_DebugMsg("Config", "- BBConfig for BagSet "..BagSet.." damaged or missing, creating now");

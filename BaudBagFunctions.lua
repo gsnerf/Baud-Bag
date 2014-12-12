@@ -20,7 +20,7 @@ local BaudBag_DebugCfg = {
     -- everything that has to do with offline capabilities
     Cache       = { Name = "Cache", Active = false },
     Bank        = { Name = "Bank", Active = false },
-    BankReagent = { Name = "Reagent Bank", Active = false },
+    BankReagent = { Name = "Reagent Bank", Active = true },
     VoidStorage = { Name = "Void Storage", Active = false },
 
     -- additional functionality
