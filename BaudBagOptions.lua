@@ -84,7 +84,7 @@ function BaudBagOptions_OnEvent(self, event, ...)
     self.EnabledCheck.tooltipText  = Localized.EnabledTooltip;
     BaudBagOptionsCloseAllCheckText:SetText(Localized.CloseAll);
     self.CloseAllCheck.tooltipText = Localized.CloseAllTooltip;
-	
+    
     -- localized checkbox labels
     for Key, Value in ipairs(CheckButtons) do
         _G[Prefix.."CheckButton"..Key.."Text"]:SetText(Value.Text);
@@ -347,7 +347,7 @@ function BaudBagOptionsUpdate()
     -- is the box enabled
     _G[Prefix.."EnabledCheck"]:SetChecked(BBConfig[SelectedBags].Enabled~=false);
     _G[Prefix.."CloseAllCheck"]:SetChecked(BBConfig[SelectedBags].CloseAll~=false);
-
+    
     -- load bag specific options (position and show each button that belongs to the current set,
     --		check joined box and create container frames)
     BaudBagForEachBag(SelectedBags,

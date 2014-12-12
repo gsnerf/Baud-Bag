@@ -46,6 +46,8 @@ if (Locale=="zhTW") then -- Translator: Isler
     FeatureFrameName = "背包設定",
     FeatureFrameTooltip = "設定背包整合的各種參數",
     SearchBagTooltip = "Search Item In Bag",
+    MenuCatSpecific = "Container Specifics",
+    MenuCatGeneral = "General",
   };
 elseif (Locale=="zhCN") then  -- Translator: Isler
   BaudBagLocalized = {
@@ -93,6 +95,8 @@ elseif (Locale=="zhCN") then  -- Translator: Isler
     FeatureFrameName = "背包设定",
     FeatureFrameTooltip = "设定背包整合的各种参数",
     SearchBagTooltip = "Search Item In Bag",
+    MenuCatSpecific = "Container Specifics",
+    MenuCatGeneral = "General",
   };
 elseif (Locale=="frFR") then  -- Translator: Isler
   BaudBagLocalized = {
@@ -139,6 +143,8 @@ elseif (Locale=="frFR") then  -- Translator: Isler
     FeatureFrameName = "BaudBag Options",
     FeatureFrameTooltip = "BaudBag Options",
     SearchBagTooltip = "Search Item In Bag",
+    MenuCatSpecific = "Container Specifics",
+    MenuCatGeneral = "General",
   };
 elseif (Locale == "deDE") then -- Translator: Thurmal
   BaudBagLocalized = {
@@ -185,6 +191,8 @@ elseif (Locale == "deDE") then -- Translator: Thurmal
     FeatureFrameName = "BaudBag Optionen",
     FeatureFrameTooltip = "BaudBag Optionen",
     SearchBagTooltip = "Taschen durchsuchen",
+    MenuCatSpecific = "Taschenspezifisches",
+    MenuCatGeneral = "Allgemeines",
   };
 elseif (Locale == "koKR") then -- Translator: talkswind
   BaudBagLocalized = {
@@ -214,7 +222,7 @@ elseif (Locale == "koKR") then -- Translator: talkswind
 	EnabledTooltip = "이 가방 세트에 대해 BaudBag을 활성화 혹은 비활성화합니다.",
     CloseAll = "Close all",
     CloseAllTooltip = "Close all bags of this set when the first container (bank or backpack) is closed.",
-	KeyRing = "열쇠 고리",
+    KeyRing = "열쇠 고리",
 	Of = "'의 ",
 	Inventory = "소지품",
 	BankBox = "은행 박스",
@@ -231,6 +239,8 @@ elseif (Locale == "koKR") then -- Translator: talkswind
 	FeatureFrameName = "BaudBag 옵션",
 	FeatureFrameTooltip = "BaudBag 옵션입니다.",
     SearchBagTooltip = "Search Item In Bag",
+    MenuCatSpecific = "Container Specifics",
+    MenuCatGeneral = "General",
   };
 elseif (Locale == "ruRU") then -- Translator: StingerSoft
   BaudBagLocalized = {
@@ -277,6 +287,8 @@ elseif (Locale == "ruRU") then -- Translator: StingerSoft
     FeatureFrameName = "BaudBag настройки",
     FeatureFrameTooltip = "BaudBag настройки",
     SearchBagTooltip = "Search Item In Bag",
+    MenuCatSpecific = "Container Specifics",
+    MenuCatGeneral = "General",
   };
 else --enUS (default)
   BaudBagLocalized = {
@@ -323,5 +335,7 @@ else --enUS (default)
     FeatureFrameName = "BaudBag Options",
     FeatureFrameTooltip = "BaudBag Options",
     SearchBagTooltip = "Search Items",
+    MenuCatSpecific = "Container Specifics",
+    MenuCatGeneral = "General",
   };
 end
