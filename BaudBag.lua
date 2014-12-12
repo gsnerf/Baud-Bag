@@ -18,6 +18,8 @@ local FadeTime = 0.2;
 local BagsReady;
 local BagsSearched = {};
 local _;
+-- the following bag masks in order: Leatherworking, Inscription, Herb, Enchanting, Engineering, Jewelcrafting, Mining, Tackle(fishing), Cooking
+local reagentMask = bit.bor(0x0008,0x0010,0x0020,0x0040,0x0080,0x0200,0x0400,0x8000,0x10000);
 
 
 -- Adds container name when mousing over bags, aswell as simulating offline bank item mouse over
@@ -2207,4 +2209,66 @@ CloseBag = function(id)
         local Container = _G[Prefix.."SubBag"..id]:GetParent();
         Container:Hide();
     end
+end
+
+local pre_ContainerFrameItemButton_OnClick = ContainerFrameItemButton_OnClick;
+ContainerFrameItemButton_OnClick = function (self, button)
+	MerchantFrame_ResetRefundItem();
+
+	if ( button == "LeftButton" ) then
+		local type, money = GetCursorInfo();
+		if ( SpellCanTargetItem() ) then
+			-- Target the spell with the selected item
+			UseContainerItem(self:GetParent():GetID(), self:GetID());
+		elseif ( type == "guildbankmoney" ) then
+			WithdrawGuildBankMoney(money);
+			ClearCursor();
+		elseif ( type == "money" ) then
+			DropCursorMoney();
+			ClearCursor();
+		elseif ( type == "merchant" ) then
+			if ( MerchantFrame.extendedCost ) then
+				MerchantFrame_ConfirmExtendedItemCost(MerchantFrame.extendedCost);
+			elseif ( MerchantFrame.highPrice ) then
+				MerchantFrame_ConfirmHighCostItem(MerchantFrame.highPrice);
+			else
+				PickupContainerItem(self:GetParent():GetID(), self:GetID());
+			end
+		else
+			PickupContainerItem(self:GetParent():GetID(), self:GetID());
+			if ( CursorHasItem() ) then
+				MerchantFrame_SetRefundItem(self);
+			end
+		end
+		StackSplitFrame:Hide();
+	else
+		if ( MerchantFrame:IsShown() ) then
+			if ( MerchantFrame.selectedTab == 2 ) then
+				-- Don't sell the item if the buyback tab is selected
+				return;
+			end
+			if ( ContainerFrame_GetExtendedPriceString(self)) then
+				-- a confirmation dialog has been shown
+				return;
+			end
+		end
+        -- determine if the item is a reagent
+        local itemId = GetContainerItemID(self:GetParent():GetID(), self:GetID());
+        local isReagent = false;
+        BaudBag_DebugMsg("Temp", "trying to determine if there's an item ('"..(itemId and itemId or "no").."')");
+        if (itemId) then
+            BaudBag_DebugMsg("Temp", "trying to determine item type");
+            --local _, bagFamily = GetContainerNumFreeSlots(REAGENTBANK_CONTAINER);
+            local itemFamily = GetItemFamily(itemId);
+            BaudBag_DebugMsg("Temp", "retrieved reagentMask: '"..reagentMask.."' and itemFamily: '"..itemFamily.."'");
+            -- isReagent = (bit.band(itemFamily, bagFamily) > 0);
+            isReagent = (bit.band(itemFamily, reagentMask) > 0);
+            BaudBag_DebugMsg("Temp", "isReagent is : '"..(isReagent and "true" or "false").."'");
+        end
+        -- put into bank or reagent bank respectively
+        local targetReagentBank = BankOpen and IsReagentBankUnlocked() and isReagent;
+        BaudBag_DebugMsg("Temp", "targetReagentBank: '"..(targetReagentBank and "true" or "false").."'");
+		UseContainerItem(self:GetParent():GetID(), self:GetID(), nil, targetReagentBank);
+		StackSplitFrame:Hide();
+	end
 end
