@@ -53,7 +53,7 @@ This returns a boolean value wether the data of the chosen bag is cached or not.
 At the moment only: bag == bankbag
 ]]
 function BaudBagUseCache(Bag)
-    return (((Bag < 0) or (Bag >= 5)) and not BankOpen);
+    return (BBConfig[2].Enabled and ((Bag < 0) or (Bag >= 5)) and (not BaudBagFrame.BankOpen));
 end
 
 --[[
