@@ -326,6 +326,9 @@
 	</Frame>
 
 	<Frame name="BaudBagFrame">
+		<KeyValues>
+			<KeyValue key="BankOpen" value="false" type="boolean"/>
+		</KeyValues>
 		<Scripts>
 			<OnLoad function="BaudBag_OnLoad" />
 			<OnEvent function="BaudBag_OnEvent" />

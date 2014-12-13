@@ -13,7 +13,6 @@ local Prefix = "BaudBag";
 local LastBagID = NUM_BANKBAGSLOTS + 4;
 local MaxCont = {1,1};
 local NumCont = {};
-local BankOpen = false;
 local FadeTime = 0.2;
 local BagsReady;
 local BagsSearched = {};
@@ -147,7 +146,7 @@ local EventFuncs =
 
         BANKFRAME_CLOSED = function(self, event, ...)
             BaudBag_DebugMsg("Bank", "Event BANKFRAME_CLOSED fired");
-            BankOpen = false;
+            BaudBagFrame.BankOpen = false;
             BaudBagBankSlotPurchaseButton:Disable();
             if _G[Prefix.."Container2_1"].AutoOpened then
                 _G[Prefix.."Container2_1"]:Hide();
@@ -187,7 +186,7 @@ local Func = function(self, event, ...)
 	
     -- set bank open marker if it was opend
     if (event == "BANKFRAME_OPENED") then
-        BankOpen = true;
+        BaudBagFrame.BankOpen = true;
     end
 
     -- make sure the player can buy new bankslots
@@ -461,7 +460,7 @@ function BaudBagContainer_OnHide(self, event, ...)
     (first the bag set so the "offline" title doesn't show up before closing and then the bank to disconnect)
     ]]--
     if (self:GetID() == 1) and (BBConfig[self.BagSet].Enabled) and (BBConfig[self.BagSet].CloseAll) then
-        if (self.BagSet == 2) and BankOpen then
+        if (self.BagSet == 2) and BaudBagFrame.BankOpen then
             CloseBankFrame();
         end
         BaudBagCloseBagSet(self.BagSet);
@@ -474,7 +473,7 @@ function BaudBagContainer_OnHide(self, event, ...)
     -- 
     -- -- if first bank container close whole bank set
     -- if (self.BagSet == 2) and (self:GetID() == 1) then
-    -- if BankOpen and (BBConfig[2].Enabled == true) then
+    -- if BaudBagFrame.BankOpen and (BBConfig[2].Enabled == true) then
     -- CloseBankFrame();
     -- end
     -- BaudBagCloseBagSet(2);
@@ -559,7 +558,7 @@ function BaudBagContainerDropDown_Initialize()
         info.text = BAG_CLEANUP_BAGS;
         info.func = SortBags;
         UIDropDownMenu_AddButton(info);
-    elseif (DropDownContainer and BankOpen) then
+    elseif (DropDownContainer and BaudBagFrame.BankOpen) then
         if(_G["BaudBagContainer"..DropDownBagSet.."_"..DropDownContainer].Bags[1]:GetID() == -3) then
             info.text = BAG_CLEANUP_REAGENT_BANK;
             info.func = SortReagentBankBags;
@@ -873,7 +872,7 @@ function BaudBagUpdateBackground(Container)
         local bagCache = BaudBagGetBagCache(BagID);
         if (BagID <= 0) then
             Icon = BaudBagIcons[BagID];
-        elseif (Container.BagSet == 2) and not BankOpen and bagCache.BagLink then
+        elseif (Container.BagSet == 2) and not BaudBagFrame.BankOpen and bagCache.BagLink then
             Icon = GetItemIcon(bagCache.BagLink);
         else
             Icon = GetInventoryItemTexture("player", ContainerIDToInventoryID(BagID));
@@ -1430,7 +1429,7 @@ function BaudBagUpdateSubBag(SubBag)
     local bagCache;
     SubBag.FreeSlots = 0;
     BaudBag_DebugMsg("Bags", "Updating SubBag "..SubBag:GetID());
-    BaudBag_DebugMsg("Bags", (((SubBag.BagSet ~= 2) or BankOpen) and "- This is a bag container or the bank is open" or "- This is a bank container (reading from cache)"));
+    BaudBag_DebugMsg("Bags", (((SubBag.BagSet ~= 2) or BaudBagFrame.BankOpen) and "- This is a bag container or the bank is open" or "- This is a bank container (reading from cache)"));
 
     for Slot = 1, SubBag.size do
         Quality = nil;
@@ -1439,7 +1438,7 @@ function BaudBagUpdateSubBag(SubBag)
         isBattlePayItem = false;
         bagCache = BaudBagGetBagCache(SubBag:GetID());
 
-        if (SubBag.BagSet ~= 2) or BankOpen then
+        if (SubBag.BagSet ~= 2) or BaudBagFrame.BankOpen then
             Link = GetContainerItemLink(SubBag:GetID(), Slot);
 
             if (SubBag.BagSet == 2) then
@@ -1527,7 +1526,7 @@ end
 
 
 function BaudBagSubBag_OnEvent(self, event, ...)
-    if not self:GetParent():IsShown() or (self:GetID() >= 5) and not BankOpen then
+    if not self:GetParent():IsShown() or (self:GetID() >= 5) and not BaudBagFrame.BankOpen then
         return;
     end
     SubBagEvents[event](self, event, ...);
@@ -1630,7 +1629,7 @@ end
 
 function BaudBagUpdateName(Container)
     local Name = _G[Container:GetName().."Name"];
-    if (Container.BagSet ~= 2) or BankOpen then
+    if (Container.BagSet ~= 2) or BaudBagFrame.BankOpen then
         Name:SetText(BBConfig[Container.BagSet][Container:GetID()].Name or "");
         Name:SetTextColor(NORMAL_FONT_COLOR.r,NORMAL_FONT_COLOR.g,NORMAL_FONT_COLOR.b);
     else
@@ -1659,7 +1658,7 @@ function BaudBagUpdateContainer(Container)
         local bagCache = BaudBagGetBagCache(SubBag:GetID());
 
         -- process inventory, bank only if it is open
-        if (Container.BagSet ~= 2) or BankOpen then
+        if (Container.BagSet ~= 2) or BaudBagFrame.BankOpen then
             Size = GetContainerNumSlots(SubBag:GetID());
 
             -- process bank
@@ -1687,7 +1686,7 @@ function BaudBagUpdateContainer(Container)
         Container.Slots = Container.Slots + Size;
 
         -- last but not least update visibility for deposit button of reagent bank
-        if (SubBag:GetID() == REAGENTBANK_CONTAINER and BankOpen) then
+        if (SubBag:GetID() == REAGENTBANK_CONTAINER and BaudBagFrame.BankOpen) then
             Container.DepositButton:Show();
         else
             Container.DepositButton:Hide();
@@ -1753,7 +1752,7 @@ function BaudBagUpdateContainer(Container)
             end
 			
             -- update container contents (special bank containers don't need this, regular bank only when open)
-            if (not BaudBag_IsBankDefaultContainer(SubBag:GetID())) and (BankOpen or (SubBag:GetID() < 5)) then
+            if (not BaudBag_IsBankDefaultContainer(SubBag:GetID())) and (BaudBagFrame.BankOpen or (SubBag:GetID() < 5)) then
                 ContainerFrame_Update(SubBag);
             end
 
@@ -1796,9 +1795,24 @@ function BaudBagUpdateContainer(Container)
     BaudBag_DebugMsg("Bags", "Finished Arranging Container.");
 end
 
+local orig_ContainerFrameItemButton_OnModifiedClick = ContainerFrameItemButton_OnModifiedClick;
+local orig_BankFrameItemButtonGeneric_OnModifiedClick = BankFrameItemButtonGeneric_OnModifiedClick;
+function BaudBag_OnModifiedContainerClick(self, button)
+    BaudBag_OnModifiedClick(self, button, "Container");
+end
+function BaudBag_OnModifiedBankClick(self, button)
+    BaudBag_OnModifiedClick(self, button, "Bank");
+end
 
-function BaudBag_OnModifiedClick(self, button)
-    if not BaudBagUseCache(self:GetParent():GetID()) then
+function BaudBag_OnModifiedClick(self, button, type)
+    BaudBag_DebugMsg("Temp", "called modified click with "..self:GetID()..":"..self:GetParent():GetID()..":"..button..":"..type);
+    if (not BaudBagUseCache(self:GetParent():GetID())) then
+        BaudBag_DebugMsg("Temp", "test");
+        if (type == "Container") then
+            orig_ContainerFrameItemButton_OnModifiedClick(self, button);
+        elseif (type == "Bank") then
+            orig_BankFrameItemButtonGeneric_OnModifiedClick(self, button);
+        end
         return;
     end
 
@@ -1813,8 +1827,8 @@ function BaudBag_OnModifiedClick(self, button)
 end
 
 
-hooksecurefunc("ContainerFrameItemButton_OnModifiedClick", BaudBag_OnModifiedClick);
-hooksecurefunc("BankFrameItemButtonGeneric_OnModifiedClick", BaudBag_OnModifiedClick);
+hooksecurefunc("ContainerFrameItemButton_OnModifiedClick", BaudBag_OnModifiedContainerClick);
+hooksecurefunc("BankFrameItemButtonGeneric_OnModifiedClick", BaudBag_OnModifiedBankClick);
 
 -- Keyring was REMOVED as of WoW 4.2
 -- function BaudBagKeyRing_OnLoad(self, event, ...)
@@ -2031,7 +2045,7 @@ function BaudBagSearchFrameEditBox_OnTextChanged(self, isUserInput)
                     slotCache = bagCache and bagCache[Slot] or nil;
 
                     -- get item link according to the type of bag
-                    if (SubBag.BagSet ~= 2) or BankOpen then
+                    if (SubBag.BagSet ~= 2) or BaudBagFrame.BankOpen then
                         Link = GetContainerItemLink(SubBag:GetID(), Slot);
                     elseif slotCache then
                         Link = slotCache.Link;
@@ -2213,6 +2227,12 @@ end
 
 local pre_ContainerFrameItemButton_OnClick = ContainerFrameItemButton_OnClick;
 ContainerFrameItemButton_OnClick = function (self, button)
+    -- fallback if we don't handle the bank as this is the only thing we touch!
+    if (not BBConfig[2].Enabled) then
+        pre_ContainerFrameItemButton_OnClick(self, button);
+        return;
+    end
+
 	MerchantFrame_ResetRefundItem();
 
 	if ( button == "LeftButton" ) then
@@ -2257,16 +2277,18 @@ ContainerFrameItemButton_OnClick = function (self, button)
         local isReagent = false;
         BaudBag_DebugMsg("Temp", "trying to determine if there's an item ('"..(itemId and itemId or "no").."')");
         if (itemId) then
-            BaudBag_DebugMsg("Temp", "trying to determine item type");
             --local _, bagFamily = GetContainerNumFreeSlots(REAGENTBANK_CONTAINER);
             local itemFamily = GetItemFamily(itemId);
             BaudBag_DebugMsg("Temp", "retrieved reagentMask: '"..reagentMask.."' and itemFamily: '"..itemFamily.."'");
+            --local _, _, _, _, _, class, subclass = GetItemInfo(itemId);
+            --BaudBag_DebugMsg("Temp", "trying to determine item type, class: '"..class.."', subclass: '"..subclass.."'");
             -- isReagent = (bit.band(itemFamily, bagFamily) > 0);
             isReagent = (bit.band(itemFamily, reagentMask) > 0);
+            --isReagent = (class == Localized.ItemTypeMisc) and (subclass == Localized.ItemTypeReagent);
             BaudBag_DebugMsg("Temp", "isReagent is : '"..(isReagent and "true" or "false").."'");
         end
         -- put into bank or reagent bank respectively
-        local targetReagentBank = BankOpen and IsReagentBankUnlocked() and isReagent;
+        local targetReagentBank = BaudBagFrame.BankOpen and IsReagentBankUnlocked() and isReagent;
         BaudBag_DebugMsg("Temp", "targetReagentBank: '"..(targetReagentBank and "true" or "false").."'");
 		UseContainerItem(self:GetParent():GetID(), self:GetID(), nil, targetReagentBank);
 		StackSplitFrame:Hide();
