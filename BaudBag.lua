@@ -17,8 +17,21 @@ local FadeTime = 0.2;
 local BagsReady;
 local BagsSearched = {};
 local _;
--- the following bag masks in order: Leatherworking, Inscription, Herb, Enchanting, Engineering, Jewelcrafting, Mining, Tackle(fishing), Cooking
-local reagentMask = bit.bor(0x0008,0x0010,0x0020,0x0040,0x0080,0x0200,0x0400,0x8000,0x10000);
+local ItemToolTip;
+
+local BBFrameFuncs = {
+    IsCraftingReagent = function (itemId)
+        ItemToolTip:SetItemByID(itemId);
+        local isReagent = false;
+        for i = 1, ItemToolTip:NumLines() do
+            local text = _G["BaudBagScanningTooltipTextLeft"..i]:GetText();
+            if (string.find(text, "Crafting Reagent")) then
+                isReagent = true;
+            end
+        end
+        return isReagent;
+    end
+};
 
 
 -- Adds container name when mousing over bags, aswell as simulating offline bank item mouse over
@@ -331,15 +344,16 @@ function BaudBag_OnLoad(self, event, ...)
     for BagSet = 1, 2 do
         Container = _G[Prefix.."Container"..BagSet.."_1"];
         _G[Container:GetName().."Slots"]:SetPoint("RIGHT",Container:GetName().."MoneyFrame","LEFT");
-        -- what is that for?
         Container.BagSet = BagSet;
         Container:SetID(1);
     end
 
-    --The first bag from the bank is unique and is created in the XML
+    -- create all necessary SubBags now with basic initialization, correct referencing later when config is available
     BaudBag_DebugMsg("Bags", "Creating sub bags.");
     for Bag = -3, LastBagID do
+        -- need to skip the now defunc keyring
         if not (Bag == -2) then
+            -- create SubBag or use predefined XML frame when available
             if (BaudBag_IsBankDefaultContainer(Bag)) then
                 BaudBag_DebugMsg("Bank", "Getting existing bank bag "..Bag);
                 SubBag = _G[Prefix.."SubBag"..Bag];
@@ -350,6 +364,15 @@ function BaudBag_OnLoad(self, event, ...)
             SubBag.BagSet = BaudBag_IsInventory(Bag) and 1 or 2;
             SubBag:SetParent(Prefix.."Container"..SubBag.BagSet.."_1");
         end
+    end
+
+    -- create tooltip for parsing exactly once!
+    ItemToolTip = CreateFrame("GameTooltip", "BaudBagScanningTooltip", nil, "GameTooltipTemplate");
+    ItemToolTip:SetOwner( WorldFrame, "ANCHOR_NONE" );
+
+    -- now make sure all functions that are supposed to be part of the frame are hooked to the frame, now we know that it is there!
+    for Key, Value in pairs(BBFrameFuncs) do
+        BaudBagFrame[Key] = Value;
     end
 end
 
@@ -1795,24 +1818,8 @@ function BaudBagUpdateContainer(Container)
     BaudBag_DebugMsg("Bags", "Finished Arranging Container.");
 end
 
-local orig_ContainerFrameItemButton_OnModifiedClick = ContainerFrameItemButton_OnModifiedClick;
-local orig_BankFrameItemButtonGeneric_OnModifiedClick = BankFrameItemButtonGeneric_OnModifiedClick;
-function BaudBag_OnModifiedContainerClick(self, button)
-    BaudBag_OnModifiedClick(self, button, "Container");
-end
-function BaudBag_OnModifiedBankClick(self, button)
-    BaudBag_OnModifiedClick(self, button, "Bank");
-end
-
-function BaudBag_OnModifiedClick(self, button, type)
-    BaudBag_DebugMsg("Temp", "called modified click with "..self:GetID()..":"..self:GetParent():GetID()..":"..button..":"..type);
+function BaudBag_OnModifiedClick(self, button)
     if (not BaudBagUseCache(self:GetParent():GetID())) then
-        BaudBag_DebugMsg("Temp", "test");
-        if (type == "Container") then
-            orig_ContainerFrameItemButton_OnModifiedClick(self, button);
-        elseif (type == "Bank") then
-            orig_BankFrameItemButtonGeneric_OnModifiedClick(self, button);
-        end
         return;
     end
 
@@ -1827,8 +1834,8 @@ function BaudBag_OnModifiedClick(self, button, type)
 end
 
 
-hooksecurefunc("ContainerFrameItemButton_OnModifiedClick", BaudBag_OnModifiedContainerClick);
-hooksecurefunc("BankFrameItemButtonGeneric_OnModifiedClick", BaudBag_OnModifiedBankClick);
+hooksecurefunc("ContainerFrameItemButton_OnModifiedClick", BaudBag_OnModifiedClick);
+hooksecurefunc("BankFrameItemButtonGeneric_OnModifiedClick", BaudBag_OnModifiedClick);
 
 -- Keyring was REMOVED as of WoW 4.2
 -- function BaudBagKeyRing_OnLoad(self, event, ...)
@@ -2225,72 +2232,18 @@ CloseBag = function(id)
     end
 end
 
-local pre_ContainerFrameItemButton_OnClick = ContainerFrameItemButton_OnClick;
-ContainerFrameItemButton_OnClick = function (self, button)
+hooksecurefunc("ContainerFrameItemButton_OnClick", function (self, button)
     -- fallback if we don't handle the bank as this is the only thing we touch!
-    if (not BBConfig[2].Enabled) then
-        pre_ContainerFrameItemButton_OnClick(self, button);
+    if (not BBConfig[2].Enabled) or (not BaudBagFrame.BankOpen) or (button == "LeftButton") then
         return;
     end
 
-	MerchantFrame_ResetRefundItem();
+	-- determine if the item is a reagent
+    local itemId = GetContainerItemID(self:GetParent():GetID(), self:GetID());
+    local isReagent = (itemId and BaudBagFrame.IsCraftingReagent(itemId));
 
-	if ( button == "LeftButton" ) then
-		local type, money = GetCursorInfo();
-		if ( SpellCanTargetItem() ) then
-			-- Target the spell with the selected item
-			UseContainerItem(self:GetParent():GetID(), self:GetID());
-		elseif ( type == "guildbankmoney" ) then
-			WithdrawGuildBankMoney(money);
-			ClearCursor();
-		elseif ( type == "money" ) then
-			DropCursorMoney();
-			ClearCursor();
-		elseif ( type == "merchant" ) then
-			if ( MerchantFrame.extendedCost ) then
-				MerchantFrame_ConfirmExtendedItemCost(MerchantFrame.extendedCost);
-			elseif ( MerchantFrame.highPrice ) then
-				MerchantFrame_ConfirmHighCostItem(MerchantFrame.highPrice);
-			else
-				PickupContainerItem(self:GetParent():GetID(), self:GetID());
-			end
-		else
-			PickupContainerItem(self:GetParent():GetID(), self:GetID());
-			if ( CursorHasItem() ) then
-				MerchantFrame_SetRefundItem(self);
-			end
-		end
-		StackSplitFrame:Hide();
-	else
-		if ( MerchantFrame:IsShown() ) then
-			if ( MerchantFrame.selectedTab == 2 ) then
-				-- Don't sell the item if the buyback tab is selected
-				return;
-			end
-			if ( ContainerFrame_GetExtendedPriceString(self)) then
-				-- a confirmation dialog has been shown
-				return;
-			end
-		end
-        -- determine if the item is a reagent
-        local itemId = GetContainerItemID(self:GetParent():GetID(), self:GetID());
-        local isReagent = false;
-        BaudBag_DebugMsg("Temp", "trying to determine if there's an item ('"..(itemId and itemId or "no").."')");
-        if (itemId) then
-            --local _, bagFamily = GetContainerNumFreeSlots(REAGENTBANK_CONTAINER);
-            local itemFamily = GetItemFamily(itemId);
-            BaudBag_DebugMsg("Temp", "retrieved reagentMask: '"..reagentMask.."' and itemFamily: '"..itemFamily.."'");
-            --local _, _, _, _, _, class, subclass = GetItemInfo(itemId);
-            --BaudBag_DebugMsg("Temp", "trying to determine item type, class: '"..class.."', subclass: '"..subclass.."'");
-            -- isReagent = (bit.band(itemFamily, bagFamily) > 0);
-            isReagent = (bit.band(itemFamily, reagentMask) > 0);
-            --isReagent = (class == Localized.ItemTypeMisc) and (subclass == Localized.ItemTypeReagent);
-            BaudBag_DebugMsg("Temp", "isReagent is : '"..(isReagent and "true" or "false").."'");
-        end
-        -- put into bank or reagent bank respectively
-        local targetReagentBank = BaudBagFrame.BankOpen and IsReagentBankUnlocked() and isReagent;
-        BaudBag_DebugMsg("Temp", "targetReagentBank: '"..(targetReagentBank and "true" or "false").."'");
-		UseContainerItem(self:GetParent():GetID(), self:GetID(), nil, targetReagentBank);
-		StackSplitFrame:Hide();
-	end
-end
+    -- put into bank or reagent bank respectively
+    local targetReagentBank = BaudBagFrame.BankOpen and IsReagentBankUnlocked() and isReagent;
+    UseContainerItem(self:GetParent():GetID(), self:GetID(), nil, targetReagentBank);
+	StackSplitFrame:Hide();
+end);
