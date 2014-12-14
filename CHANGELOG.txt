@@ -5,6 +5,7 @@ v6.0.2
   - reworked caching mechanism for more general use
   - added reagent bank
   - added blizzards bag sorting feature
+  - added option to automatically sell junk when visiting a merchand
   - fixed bag updating when visiting a vendor
   - extended maximum possible columns for bags to 40 to accomodate for bigger sizes, default for bank is increased to 14
 v6.0.1
