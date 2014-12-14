@@ -48,6 +48,7 @@ if (Locale=="zhTW") then -- Translator: Isler
     SearchBagTooltip = "Search Item In Bag",
     MenuCatSpecific = "Container Specifics",
     MenuCatGeneral = "General",
+    TooltipScanReagent = "Crafting Reagent",
   };
 elseif (Locale=="zhCN") then  -- Translator: Isler
   BaudBagLocalized = {
@@ -97,6 +98,7 @@ elseif (Locale=="zhCN") then  -- Translator: Isler
     SearchBagTooltip = "Search Item In Bag",
     MenuCatSpecific = "Container Specifics",
     MenuCatGeneral = "General",
+    TooltipScanReagent = "Crafting Reagent",
   };
 elseif (Locale=="frFR") then  -- Translator: Isler
   BaudBagLocalized = {
@@ -145,6 +147,7 @@ elseif (Locale=="frFR") then  -- Translator: Isler
     SearchBagTooltip = "Search Item In Bag",
     MenuCatSpecific = "Container Specifics",
     MenuCatGeneral = "General",
+    TooltipScanReagent = "Crafting Reagent",
   };
 elseif (Locale == "deDE") then -- Translator: Thurmal
   BaudBagLocalized = {
@@ -193,6 +196,7 @@ elseif (Locale == "deDE") then -- Translator: Thurmal
     SearchBagTooltip = "Taschen durchsuchen",
     MenuCatSpecific = "Taschenspezifisches",
     MenuCatGeneral = "Allgemeines",
+    TooltipScanReagent = "Crafting Reagent",
   };
 elseif (Locale == "koKR") then -- Translator: talkswind
   BaudBagLocalized = {
@@ -241,6 +245,7 @@ elseif (Locale == "koKR") then -- Translator: talkswind
     SearchBagTooltip = "Search Item In Bag",
     MenuCatSpecific = "Container Specifics",
     MenuCatGeneral = "General",
+    TooltipScanReagent = "Crafting Reagent",
   };
 elseif (Locale == "ruRU") then -- Translator: StingerSoft
   BaudBagLocalized = {
@@ -289,8 +294,9 @@ elseif (Locale == "ruRU") then -- Translator: StingerSoft
     SearchBagTooltip = "Search Item In Bag",
     MenuCatSpecific = "Container Specifics",
     MenuCatGeneral = "General",
+    TooltipScanReagent = "Crafting Reagent",
   };
-else --enUS (default)
+else --enUS or enUK (default)
   BaudBagLocalized = {
     LockPosition = "Lock Position",
     UnlockPosition = "Unlock Position",
@@ -337,5 +343,16 @@ else --enUS (default)
     SearchBagTooltip = "Search Items",
     MenuCatSpecific = "Container Specifics",
     MenuCatGeneral = "General",
+    TooltipScanReagent = "Crafting Reagent",
   };
+    -- we now overwrite item values for not translated other languages so it at least works!
+    if (Locale == "esES") then
+        BaudBagLocalized.TooltipScanReagent = "Crafting Reagent";
+    elseif (Locale == "esMX") then
+        BaudBagLocalized.TooltipScanReagent = "Crafting Reagent";
+    elseif (Locale == "ptBR") then
+        BaudBagLocalized.TooltipScanReagent = "Crafting Reagent";
+    elseif (Locale == "itIT") then
+        BaudBagLocalized.TooltipScanReagent = "Crafting Reagent";
+    end
 end

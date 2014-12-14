@@ -25,7 +25,7 @@ local BBFrameFuncs = {
         local isReagent = false;
         for i = 1, ItemToolTip:NumLines() do
             local text = _G["BaudBagScanningTooltipTextLeft"..i]:GetText();
-            if (string.find(text, "Crafting Reagent")) then
+            if (string.find(text, Localized.TooltipScanReagent)) then
                 isReagent = true;
             end
         end
@@ -1751,17 +1751,23 @@ function BaudBagUpdateContainer(Container)
                 for Slot = (SubBag.maxSlots or 0) + 1, SubBag.size do
                     -- determine type of template for item button
                     local template;
+                    local onClickFunction = nil;
                     if (SubBag:GetID() == BANK_CONTAINER) then
                         template = "BankItemButtonGenericTemplate";
                     elseif (SubBag:GetID() == REAGENTBANK_CONTAINER) then
                         template = "ReagentBankItemButtonGenericTemplate";
                     else
                         template = "ContainerFrameItemButtonTemplate";
+                        onClickFunction = BaudBag_ContainerFrameItemButton_OnClick;
                     end
 
                     -- create item button
                     local Button = CreateFrame("Button", SubBag:GetName().."Item"..Slot, SubBag, template);
                     Button:SetID(Slot);
+                    --if (onClickFunction ~= nil) then
+                    --    Button:SetScript("OnClick", onClickFunction);
+                    --end
+
                     local Texture = Button:CreateTexture(Button:GetName().."Border","OVERLAY");
                     Texture:SetTexture("Interface\\Buttons\\UI-ActionButton-Border");
                     Texture:SetPoint("CENTER");
@@ -2232,18 +2238,41 @@ CloseBag = function(id)
     end
 end
 
-hooksecurefunc("ContainerFrameItemButton_OnClick", function (self, button)
-    -- fallback if we don't handle the bank as this is the only thing we touch!
-    if (not BBConfig[2].Enabled) or (not BaudBagFrame.BankOpen) or (button == "LeftButton") then
+function BaudBag_ContainerFrameItemButton_OnClick(self, button)
+    local modifiedClick = IsModifiedClick();
+	-- If we can loot the item and autoloot toggle is active, then do a normal click
+	if ( button ~= "LeftButton" and modifiedClick and IsModifiedClick("AUTOLOOTTOGGLE") ) then
+		local _, _, _, _, _, lootable = GetContainerItemInfo(self:GetParent():GetID(), self:GetID());
+		if ( lootable ) then
+			modifiedClick = false;
+		end
+	end
+	if ( modifiedClick ) then
+		ContainerFrameItemButton_OnModifiedClick(self, button);
+	else
+		BaudBag_ContainerFrameItemButton_OnUnmodifiedClick(self, button);
+	end
+end
+
+function BaudBag_ContainerFrameItemButton_OnUnmodifiedClick(self, button)
+    -- the left button doesn't do anything secure so we can call the original function for it
+    if (button == "LeftButton") then
+        ContainerFrameItemButton_OnClick(self, button);
         return;
     end
 
-	-- determine if the item is a reagent
-    local itemId = GetContainerItemID(self:GetParent():GetID(), self:GetID());
-    local isReagent = (itemId and BaudBagFrame.IsCraftingReagent(itemId));
+    if (BaudBagFrame.BankOpen) then
+        -- determine if the item is a reagent
+        local itemId = GetContainerItemID(self:GetParent():GetID(), self:GetID());
+        local isReagent = (itemId and BaudBagFrame.IsCraftingReagent(itemId));
+        local targetReagentBank = IsReagentBankUnlocked() and isReagent;
+    
+        BaudBag_DebugMsg("Temp", "handling itemId "..itemId.." with result "..(isReagent and "is reagent" or "not a reagent")..", "..(targetReagentBank and "targeting reagent bank" or "not targeting reagent bank"));
 
-    -- put into bank or reagent bank respectively
-    local targetReagentBank = BaudBagFrame.BankOpen and IsReagentBankUnlocked() and isReagent;
-    UseContainerItem(self:GetParent():GetID(), self:GetID(), nil, targetReagentBank);
-	StackSplitFrame:Hide();
-end);
+        -- put into bank or reagent bank respectively
+        UseContainerItem(self:GetParent():GetID(), self:GetID(), nil, targetReagentBank);
+	    StackSplitFrame:Hide();
+    else
+        
+    end 
+end
