@@ -247,6 +247,20 @@ EventFuncs.PLAYERBANKBAGSLOTS_CHANGED = Func;
 Func = function(self, event, ...)
     BaudBag_DebugMsg("Bags", "Event "..event.." fired");
     BaudBagAutoOpenSet(1, false);
+
+    if (BBConfig[1].SellJunk) then
+        BaudBagForEachBag(1,
+            function(Bag, Index)
+                for Slot = 1, GetContainerNumSlots(Bag) do
+                    local quality = select(4, GetContainerItemInfo(Bag, Slot));
+                    if (quality and quality <= 0) then
+                        BaudBag_DebugMsg("Junk", "Found junk in Container "..Bag..", Slot "..Slot);
+                        UseContainerItem(Bag, Slot);
+                    end
+                end
+            end
+        );
+    end
 end
 EventFuncs.MERCHANT_SHOW = Func;
 EventFuncs.MAIL_SHOW = Func;
