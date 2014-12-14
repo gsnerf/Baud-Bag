@@ -118,7 +118,7 @@ end
 function ReagentBankSlotButton_OnEnter(self, event, ...)
     BaudBag_DebugMsg("BankReagent", "[SlotButton_OnEnter] Hovering over bank slot, showing tooltip");
     GameTooltip:SetOwner(self, "ANCHOR_RIGHT");
-    GameTooltip:SetText("Reagent Bank");
+    GameTooltip:SetText(REAGENT_BANK);
 end
 
 function ReagentBankSlotButton_OnClick(self, event, ...)
