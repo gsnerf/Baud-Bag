@@ -139,6 +139,9 @@
 			</CheckButton>
 
 			<CheckButton name="$parentCloseAllCheck" parentKey="CloseAllCheck" inherits="OptionsCheckButtonTemplate">
+				<HitRectInsets>
+					<AbsInset left="0" right="-70" top="0" bottom="0"/>
+				</HitRectInsets>
 				<Anchors>
 					<Anchor point="TOPLEFT" relativeTo="$parentEnabledCheck" relativePoint="TOPRIGHT">
 						<Offset>
@@ -148,6 +151,22 @@
 				</Anchors>
 				<Scripts>
 					<OnClick function="BaudBagCloseAllCheck_OnClick" />
+				</Scripts>
+			</CheckButton>
+
+			<CheckButton name="$parentSellJunkCheck" parentKey="SellJunkCheck" inherits="OptionsCheckButtonTemplate">
+				<HitRectInsets>
+					<AbsInset left="0" right="-70" top="0" bottom="0"/>
+				</HitRectInsets>
+				<Anchors>
+					<Anchor point="TOPLEFT" relativeTo="$parentCloseAllCheck" relativePoint="TOPRIGHT">
+						<Offset>
+							<AbsDimension x="70" y="0" />
+						</Offset>
+					</Anchor>
+				</Anchors>
+				<Scripts>
+					<OnClick function="BaudBagSellJunkCheck_OnClick" />
 				</Scripts>
 			</CheckButton>
 

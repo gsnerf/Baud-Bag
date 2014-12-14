@@ -84,6 +84,8 @@ function BaudBagOptions_OnEvent(self, event, ...)
     self.EnabledCheck.tooltipText  = Localized.EnabledTooltip;
     BaudBagOptionsCloseAllCheckText:SetText(Localized.CloseAll);
     self.CloseAllCheck.tooltipText = Localized.CloseAllTooltip;
+    BaudBagOptionsSellJunkCheckText:SetText(Localized.SellJunk);
+    self.SellJunkCheck.tooltipText = Localized.SellJunkTooltip;
     
     -- localized checkbox labels
     for Key, Value in ipairs(CheckButtons) do
@@ -181,7 +183,8 @@ function BaudBagOptionsSetDropDown_OnClick(self)
 end
 
 
---[[ Enabled CheckBox functions ]]
+--[[ BagSet specific CheckBox functions ]]
+
 function BaudBagEnabledCheck_OnClick(self, event, ...)
     PlayCheckBoxSound(self);
     if (not self:GetChecked()) then
@@ -195,11 +198,16 @@ function BaudBagEnabledCheck_OnClick(self, event, ...)
     BackpackTokenFrame_Update();
 end
 
-
---[[ CloseAll CheckBox functions ]]
 function BaudBagCloseAllCheck_OnClick(self, event, ...)
     PlayCheckBoxSound(self);
     BBConfig[SelectedBags].CloseAll = self:GetChecked();
+end
+
+function BaudBagSellJunkCheck_OnClick(self, event, ...)
+    if (SelectedBags == 1) then
+        PlayCheckBoxSound(self);
+        BBConfig[SelectedBags].SellJunk = self:GetChecked();
+    end
 end
 
 
@@ -347,6 +355,12 @@ function BaudBagOptionsUpdate()
     -- is the box enabled
     _G[Prefix.."EnabledCheck"]:SetChecked(BBConfig[SelectedBags].Enabled~=false);
     _G[Prefix.."CloseAllCheck"]:SetChecked(BBConfig[SelectedBags].CloseAll~=false);
+    _G[Prefix.."SellJunkCheck"]:SetChecked(BBConfig[SelectedBags].SellJunk==true);
+    if (SelectedBags == 1) then
+        _G[Prefix.."SellJunkCheck"]:Show();
+    else
+        _G[Prefix.."SellJunkCheck"]:Hide();
+    end
     
     -- load bag specific options (position and show each button that belongs to the current set,
     --		check joined box and create container frames)

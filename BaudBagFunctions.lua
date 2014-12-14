@@ -20,16 +20,17 @@ local BaudBag_DebugCfg = {
     -- everything that has to do with offline capabilities
     Cache       = { Name = "Cache", Active = false },
     Bank        = { Name = "Bank", Active = false },
-    BankReagent = { Name = "Reagent Bank", Active = true },
+    BankReagent = { Name = "Reagent Bank", Active = false },
     VoidStorage = { Name = "Void Storage", Active = false },
 
     -- additional functionality
-    Token       = { Name = "Token", Active = false },
-    Search      = { Name = "Search", Active = false },
-    Tooltip     = { Name = "Tooltip", Active = false },
+    Token       = { Name = "Token",     Active = false },
+    Search      = { Name = "Search",    Active = false },
+    Tooltip     = { Name = "Tooltip",   Active = false },
+    Junk        = { Name = "Junk",      Active = false },
 
     -- this is for everything else that is supposed to be a temporary debug message
-    Temp        = { Name = "Temp", Active = false }
+    Temp        = { Name = "Temp",      Active = false }
 };
 
 -- make sure to delete log from last session!
