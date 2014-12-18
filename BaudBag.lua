@@ -337,6 +337,12 @@ Func = function(self, event, ...)
     );
 end
 EventFuncs.PLAYERREAGENTBANKSLOTS_CHANGED = Func;
+
+Func = function(self, event, ...)
+    _G["BaudBagSubBag-3"]:GetParent().UnlockInfo:Hide();
+	_G["BaudBagSubBag-3"]:GetParent().DepositButton:Enable();
+end
+EventFuncs.REAGENTBANK_PURCHASED = Func;
 --[[ END OF NON XML EVENT HANDLERS ]]--
 
 
@@ -803,7 +809,7 @@ function BaudBagUpdateBackground(Container)
             Texture:SetPoint("TOPLEFT", Container, "TOPLEFT", (Col - 1) * 42 + OffsetX - 3, (Row - 1) * -41 + 2 - OffsetY);
         end
 		
-        -- TODO: don't know what this is for where do "to much" slots come from?
+        -- adapt to increased container size
         if (Container.Slots > (TextureParent.Slots or -1)) then
             TextureParent.Slots = Container.Slots;
         else
@@ -983,7 +989,8 @@ function BaudBagUpdateBackground(Container)
     Backdrop:ClearAllPoints();
     Backdrop:SetPoint("TOPLEFT",-Left,Top);
     Backdrop:SetPoint("BOTTOMRIGHT",Right,-Bottom);
-    Container:SetHitRectInsets(-Left,-Right,-Top,-Bottom);
+    Container.UnlockInfo:SetPoint("TOPLEFT", -10, 3);
+    Container.UnlockInfo:SetPoint("BOTTOMRIGHT", 10, -3);
 end
 
 
@@ -1066,6 +1073,7 @@ function BaudBagUpdateOpenBags()
     for Bag = -3, LastBagID do
         if not (Bag == -2) then
             Frame   = _G[Prefix.."SubBag"..Bag];
+            Parent  = Frame:GetParent();
             Open	= Frame:IsShown() and Frame:GetParent():IsShown() and not Frame:GetParent().Closing;
             if (Bag == 0) then
                 MainMenuBarBackpackButton:SetChecked(Open);
@@ -1089,6 +1097,14 @@ function BaudBagUpdateOpenBags()
                 else
                     Highlight:Hide();
                 end
+                if (not IsReagentBankUnlocked()) then		
+		            Parent.UnlockInfo:Show();
+		            MoneyFrame_Update( Parent.UnlockInfo.CostMoneyFrame, GetReagentBankCost());
+		            Parent.DepositButton:Disable();
+	            else
+		            Parent.UnlockInfo:Hide();
+		            Parent.DepositButton:Enable();
+	            end
             end
         end
     end
@@ -1585,7 +1601,7 @@ local TotalFree, TotalSlots;
 local function AddFreeSlots(Bag)
 
     -- failsafe
-    if (Bag<=-1) then
+    if (Bag <= -3 or Bag == -2) then
         return;
     end
 
