@@ -6,22 +6,22 @@ local _;
 local BaudBag_DebugCfg = {
     
     -- everything that has to do with configuration or configuring
-    Config      = { Name = "Config", Active = false },
-    Options     = { Name = "Options", Active = false },
+    Config      = { Name = "Config",    Active = false },
+    Options     = { Name = "Options",   Active = false },
     Functions   = { Name = "Functions", Active = false },
 
     -- bags including creation, rendering, opening and special functions
-    Bags           = { Name = "Bags", Active = false },
-    BagCreation    = { Name = "Bag Creation", Active = false },
-    BagHover       = { Name = "Bag Hover", Active = false },
-    BagOpening     = { Name = "Bag Opening", Active = false },
-    BagBackgrounds = { Name = "Bag Backgrounds", Active = false },
+    Bags           = { Name = "Bags",               Active = false },
+    BagCreation    = { Name = "Bag Creation",       Active = false },
+    BagHover       = { Name = "Bag Hover",          Active = false },
+    BagOpening     = { Name = "Bag Opening",        Active = false },
+    BagBackgrounds = { Name = "Bag Backgrounds",    Active = false },
 	
     -- everything that has to do with offline capabilities
-    Cache       = { Name = "Cache", Active = false },
-    Bank        = { Name = "Bank", Active = false },
-    BankReagent = { Name = "Reagent Bank", Active = false },
-    VoidStorage = { Name = "Void Storage", Active = false },
+    Cache       = { Name = "Cache",         Active = false },
+    Bank        = { Name = "Bank",          Active = false },
+    BankReagent = { Name = "Reagent Bank",  Active = false },
+    VoidStorage = { Name = "Void Storage",  Active = false },
 
     -- additional functionality
     Token       = { Name = "Token",     Active = false },
