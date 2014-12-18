@@ -53,6 +53,7 @@ This returns a boolean value wether the data of the chosen bag is cached or not.
 At the moment only: bag == bankbag
 ]]
 function BaudBagUseCache(Bag)
+    BaudBag_DebugMsg("Cache", "[UseCache] Bag: "..Bag..", Enabled: "..(BBConfig[2].Enabled and "true" or "false")..", bank open: "..(BaudBagFrame.BankOpen and "true" or "false"));
     return (BBConfig[2].Enabled and ((Bag < 0) or (Bag >= 5)) and (not BaudBagFrame.BankOpen));
 end
 
@@ -62,7 +63,9 @@ so this method makes sure to return a valid cache object.
 ]]
 function BaudBagGetBagCache(Bag)
     -- make sure the requested cache is initialized.
-    if (BaudBagUseCache(Bag) and type(BaudBag_Cache.Bank[Bag]) ~= "table") then
+    --if (BaudBagUseCache(Bag) and type(BaudBag_Cache.Bank[Bag]) ~= "table") then
+    if (type(BaudBag_Cache.Bank[Bag]) ~= "table") then
+        BaudBag_DebugMsg("Cache", "[GetBagCache] Bag: "..Bag..", cache entry type: "..type(BaudBag_Cache.Bank[Bag]), BaudBag_Cache.Bank);
         BaudBag_Cache.Bank[Bag] = {Size = 0};
     end
     return BaudBag_Cache.Bank[Bag];
