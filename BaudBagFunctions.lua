@@ -76,7 +76,7 @@ function BaudBag_Vardump(value, depth, key)
             value = mTable;
         end
         for tableKey, tableValue in pairs(value) do
-            vardump(tableValue, depth, tableKey);
+            BaudBag_Vardump(tableValue, depth, tableKey);
         end
     elseif (type(value) == 'function' or type(value) == 'thread' or type(value) == 'userdata' or value == nil) then
         DEFAULT_CHAT_FRAME:AddMessage(GetTime().." BaudBag (vardump): "..spaces..tostring(value));
