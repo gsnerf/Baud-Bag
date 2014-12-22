@@ -989,6 +989,8 @@ function BaudBagUpdateBackground(Container)
     Backdrop:ClearAllPoints();
     Backdrop:SetPoint("TOPLEFT",-Left,Top);
     Backdrop:SetPoint("BOTTOMRIGHT",Right,-Bottom);
+    Container:SetHitRectInsets(-Left,-Right,-Top,-Bottom);
+    Container.UnlockInfo:ClearAllPoints();
     Container.UnlockInfo:SetPoint("TOPLEFT", -10, 3);
     Container.UnlockInfo:SetPoint("BOTTOMRIGHT", 10, -3);
 end
