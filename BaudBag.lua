@@ -1077,6 +1077,8 @@ function BaudBagUpdateOpenBags()
             Frame   = _G[Prefix.."SubBag"..Bag];
             Parent  = Frame:GetParent();
             Open	= Frame:IsShown() and Frame:GetParent():IsShown() and not Frame:GetParent().Closing;
+            -- init default
+            Parent.UnlockInfo:Hide();
             if (Bag == 0) then
                 MainMenuBarBackpackButton:SetChecked(Open);
             elseif (Bag > 4) then
