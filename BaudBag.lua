@@ -2350,7 +2350,7 @@ function BaudBag_ContainerFrameItemButton_OnClick(self, button)
     end
 end
 
-hooksecurefunc("ContainerFrameItemButton_OnClick", BaudBag_ContainerFrameItemButton_OnClick);
+--hooksecurefunc("ContainerFrameItemButton_OnClick", BaudBag_ContainerFrameItemButton_OnClick);
 
 function BaudBag_FixContainerClickForReagent(Bag, Slot)
     -- determine if there is another item with the same item in the reagent bank
