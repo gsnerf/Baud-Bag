@@ -123,7 +123,11 @@ local EventFuncs =
         end,
 
         PLAYER_LOGIN = function(self, event, ...)
+            if (not BaudBag_DebugLog) then
+                BaudBag_Debug = {};
+            end
             BaudBag_DebugMsg("Bags", "Event PLAYER_LOGIN fired");
+            
 
             -- prepare BagSlot creation
             local BagSlot, Texture;
@@ -178,8 +182,8 @@ local EventFuncs =
         end,
 
         ITEM_LOCK_CHANGED = function(self, event, ...)
-            BaudBag_DebugMsg("Bags", "Event ITEM_LOCK_CHANGED fired");
             local Bag, Slot = ...;
+            BaudBag_DebugMsg("ItemHandle", "Event ITEM_LOCK_CHANGED fired for bag "..Bag.." and slot "..Slot);
             if (Bag == BANK_CONTAINER) then
                 if (Slot <= NUM_BANKGENERIC_SLOTS) then
                     BankFrameItemButton_UpdateLocked(_G[Prefix.."SubBag-1Item"..Slot]);
@@ -189,6 +193,16 @@ local EventFuncs =
             elseif (Bag == REAGENTBANK_CONTAINER) then
                 BankFrameItemButton_UpdateLocked(_G[Prefix.."SubBag-3Item"..Slot]);
             end
+
+            local _, _, locked = GetContainerItemInfo(Bag, Slot);
+            if ((not locked) and BaudBagFrame.ItemLock.Move) then
+                if (BaudBagFrame.ItemLock.IsReagent and (BaudBag_IsBankContainer(Bag)) and (Bag ~= REAGENTBANK_CONTAINER)) then
+                    BaudBag_FixContainerClickForReagent(Bag, Slot);
+                end
+                BaudBagFrame.ItemLock.Move      = false;
+                BaudBagFrame.ItemLock.IsReagent = false;
+            end
+            BaudBag_DebugMsg("ItemHandle", "Updating ItemLock Info", BaudBagFrame.ItemLock);
         end
     };
 
@@ -353,6 +367,11 @@ function BaudBag_OnLoad(self, event, ...)
     BINDING_NAME_BaudBagToggleVoidStorage	= "Show Void Storage";
 
     BaudBag_DebugMsg("Bags", "OnLoad was called");
+
+    -- init item lock info
+    BaudBagFrame.ItemLock           = {};
+    BaudBagFrame.ItemLock.Move      = false;
+    BaudBagFrame.ItemLock.IsReagent = false;
 
     -- register for global events (actually handled in OnEvent function)
     for Key, Value in pairs(EventFuncs)do
@@ -1460,10 +1479,12 @@ local SubBagEvents = {
 };
 
 local Func = function(self, event, ...)
-    --   local arg1 = ...;
-    --if (self:GetID() ~= arg1) then
-    --	return;
-    --end
+    -- only update if the lock is for this bag!
+    local Bag = ...;
+    if (self:GetID() ~= Bag) then
+        return;
+    end
+    BaudBag_DebugMsg("ItemHandle", "Event ITEM_LOCK_CHANGED fired for subbag "..self:GetID());
     ContainerFrame_Update(self, event, ...);
 end
 SubBagEvents.ITEM_LOCK_CHANGED = Func;
@@ -2272,7 +2293,7 @@ CloseBag = function(id)
     end
 end
 
-function BaudBag_ContainerFrameItemButton_OnClick(self, button)
+--[[ function BaudBag_ContainerFrameItemButton_OnClick(self, button)
     local modifiedClick = IsModifiedClick();
 	-- If we can loot the item and autoloot toggle is active, then do a normal click
 	if ( button ~= "LeftButton" and modifiedClick and IsModifiedClick("AUTOLOOTTOGGLE") ) then
@@ -2309,4 +2330,81 @@ function BaudBag_ContainerFrameItemButton_OnUnmodifiedClick(self, button)
     else
         
     end 
+end]]
+
+function BaudBag_ContainerFrameItemButton_OnClick(self, button)
+    BaudBag_DebugMsg("ItemHandle", "OnClick called for "..button.." from bag "..self:GetParent():GetID());
+    if (button ~= "LeftButton" and BaudBagFrame.BankOpen) then
+        local itemId = GetContainerItemID(self:GetParent():GetID(), self:GetID());
+        local isReagent = (itemId and BaudBagFrame.IsCraftingReagent(itemId));
+        local sourceIsBank = BaudBag_IsBankContainer(self:GetParent():GetID());
+        local targetReagentBank = IsReagentBankUnlocked() and isReagent;
+        
+        BaudBag_DebugMsg("ItemHandle", "handling itemId "..itemId.." with result "..(isReagent and "is reagent" or "not a reagent")..", "..(targetReagentBank and "targeting reagent bank" or "not targeting reagent bank"));
+
+        -- remember to start a move operation when item was placed in bank by wow!
+        if (targetReagentBank) then
+            BaudBagFrame.ItemLock.Move      = true;
+            BaudBagFrame.ItemLock.IsReagent = true;
+        end
+    end
+end
+
+hooksecurefunc("ContainerFrameItemButton_OnClick", BaudBag_ContainerFrameItemButton_OnClick);
+
+function BaudBag_FixContainerClickForReagent(Bag, Slot)
+    -- determine if there is another item with the same item in the reagent bank
+    local _, count, _, _, _, _, link = GetContainerItemInfo(Bag, Slot);
+    local maxSize = select(8, GetItemInfo(link));
+    local targetSlots = {};
+    local emptySlots = GetContainerFreeSlots(REAGENTBANK_CONTAINER);
+    for i = 1, GetContainerNumSlots(REAGENTBANK_CONTAINER) do
+        local _, targetCount, _, _, _, _, targetLink = GetContainerItemInfo(REAGENTBANK_CONTAINER, i);
+        if (link == targetLink) then
+            local target    = {};
+            target.count    = targetCount;
+            target.slot     = i;
+            table.insert(targetSlots, target);
+        end
+    end
+
+    BaudBag_DebugMsg("ItemHandle", "fixing reagent bank entry for bag "..Bag..", slot "..Slot, targetSlots);
+    BaudBag_DebugMsg("ItemHandle", "empty slots in reagent bank", emptySlots);
+
+    -- if there already is a stack of the same item try to join the stacks
+    for Key, Value in pairs(targetSlots) do
+        BaudBag_DebugMsg("ItemHandle", "there already seem to be items of the same type in the reagent bank", Value);
+        
+        -- only do something if there are still items to put somewhere (split)
+        if (count > 0) then
+            -- determine if there is enough space to put everything inside
+            local space = maxSize - Value.count;
+            BaudBag_DebugMsg("ItemHandle", "The current stack has this amount of space: "..space);
+            if (space > 0) then
+                if (space < count) then
+                    -- doesn't seem so, split and go on
+                    SplitContainerItem(Bag, Slot, space);
+                    PickupContainerItem(REAGENTBANK_CONTAINER, Value.slot);
+                    count = count - space;
+                else
+                    -- seems so: put everything there
+                    PickupContainerItem(Bag, Slot);
+                    PickupContainerItem(REAGENTBANK_CONTAINER, Value.slot);
+                    count = 0;
+                end
+            end
+        end
+    end
+
+    BaudBag_DebugMsg("ItemHandle", "after joining there are "..count.." items left in the stack");
+    
+    -- either join didn't work or there's just something left over, we now put the rest in the first empty slot
+    if (count > 0) then
+        for Key, Value in pairs(emptySlots) do
+            BaudBag_DebugMsg("ItemHandle", "putting rest stack into reagent bank slot "..Value);
+            PickupContainerItem(Bag, Slot);
+            PickupContainerItem(REAGENTBANK_CONTAINER, Value);
+            return;
+        end
+    end
 end

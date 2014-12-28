@@ -28,13 +28,14 @@ local BaudBag_DebugCfg = {
     Search      = { Name = "Search",    Active = false },
     Tooltip     = { Name = "Tooltip",   Active = false },
     Junk        = { Name = "Junk",      Active = false },
+    ItemHandle  = { Name = "Item",      Active = false },
 
     -- this is for everything else that is supposed to be a temporary debug message
     Temp        = { Name = "Temp",      Active = false }
 };
 
 -- make sure to delete log from last session!
-BaudBag_DebugLog = true;
+BaudBag_DebugLog = false;
 BaudBag_Debug = {};
 
 

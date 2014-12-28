@@ -204,7 +204,7 @@ elseif (Locale == "deDE") then -- Translator: Thurmal
     SearchBagTooltip = "Taschen durchsuchen",
     MenuCatSpecific = "Taschenspezifisches",
     MenuCatGeneral = "Allgemeines",
-    TooltipScanReagent = "Crafting Reagent",
+    TooltipScanReagent = "Handwerksmaterial",
   };
 elseif (Locale == "koKR") then -- Translator: talkswind
   BaudBagLocalized = {
