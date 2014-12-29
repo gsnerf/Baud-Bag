@@ -183,7 +183,7 @@ local EventFuncs =
 
         ITEM_LOCK_CHANGED = function(self, event, ...)
             local Bag, Slot = ...;
-            BaudBag_DebugMsg("ItemHandle", "Event ITEM_LOCK_CHANGED fired for bag "..Bag.." and slot "..Slot);
+            BaudBag_DebugMsg("ItemHandle", "Event ITEM_LOCK_CHANGED fired for bag "..Bag..(Slot ~= nil and " and slot "..Slot or ""));
             if (Bag == BANK_CONTAINER) then
                 if (Slot <= NUM_BANKGENERIC_SLOTS) then
                     BankFrameItemButton_UpdateLocked(_G[Prefix.."SubBag-1Item"..Slot]);
@@ -194,15 +194,17 @@ local EventFuncs =
                 BankFrameItemButton_UpdateLocked(_G[Prefix.."SubBag-3Item"..Slot]);
             end
 
-            local _, _, locked = GetContainerItemInfo(Bag, Slot);
-            if ((not locked) and BaudBagFrame.ItemLock.Move) then
-                if (BaudBagFrame.ItemLock.IsReagent and (BaudBag_IsBankContainer(Bag)) and (Bag ~= REAGENTBANK_CONTAINER)) then
-                    BaudBag_FixContainerClickForReagent(Bag, Slot);
+            if (Slot ~= nil) then
+                local _, _, locked = GetContainerItemInfo(Bag, Slot);
+                if ((not locked) and BaudBagFrame.ItemLock.Move) then
+                    if (BaudBagFrame.ItemLock.IsReagent and (BaudBag_IsBankContainer(Bag)) and (Bag ~= REAGENTBANK_CONTAINER)) then
+                        BaudBag_FixContainerClickForReagent(Bag, Slot);
+                    end
+                    BaudBagFrame.ItemLock.Move      = false;
+                    BaudBagFrame.ItemLock.IsReagent = false;
                 end
-                BaudBagFrame.ItemLock.Move      = false;
-                BaudBagFrame.ItemLock.IsReagent = false;
+                BaudBag_DebugMsg("ItemHandle", "Updating ItemLock Info", BaudBagFrame.ItemLock);
             end
-            BaudBag_DebugMsg("ItemHandle", "Updating ItemLock Info", BaudBagFrame.ItemLock);
         end
     };
 
@@ -2359,7 +2361,7 @@ function BaudBag_FixContainerClickForReagent(Bag, Slot)
     local targetSlots = {};
     local emptySlots = GetContainerFreeSlots(REAGENTBANK_CONTAINER);
     for i = 1, GetContainerNumSlots(REAGENTBANK_CONTAINER) do
-        local _, targetCount, _, _, _, _, targetLink = GetContainerItemInfo(REAGENTBANK_CONTAINER, i);
+        local _, targetCount, _, _, _, _, targbcetLink = GetContainerItemInfo(REAGENTBANK_CONTAINER, i);
         if (link == targetLink) then
             local target    = {};
             target.count    = targetCount;
