@@ -80,12 +80,15 @@ function BaudBagOptions_OnEvent(self, event, ...)
     self.SetSelection.Label:SetText(Localized.BagSet);
     self.NameInput.Text:SetText(Localized.ContainerName);
     self.BackgroundSelection.Label:SetText(Localized.Background);
-    BaudBagOptionsEnabledCheckText:SetText(Localized.Enabled);
     self.EnabledCheck.tooltipText  = Localized.EnabledTooltip;
-    BaudBagOptionsCloseAllCheckText:SetText(Localized.CloseAll);
     self.CloseAllCheck.tooltipText = Localized.CloseAllTooltip;
-    BaudBagOptionsSellJunkCheckText:SetText(Localized.SellJunk);
     self.SellJunkCheck.tooltipText = Localized.SellJunkTooltip;
+    BaudBagOptionsEnabledCheckText:SetText(Localized.Enabled);
+    BaudBagOptionsCloseAllCheckText:SetText(Localized.CloseAll);
+    BaudBagOptionsSellJunkCheckText:SetText(Localized.SellJunk);
+    self.EnabledCheck:SetHitRectInsets(0, -BaudBagOptionsEnabledCheckText:GetWidth()-10, 0, 0);
+    self.CloseAllCheck:SetHitRectInsets(0, -BaudBagOptionsCloseAllCheckText:GetWidth()-10, 0, 0);
+    self.SellJunkCheck:SetHitRectInsets(0, -BaudBagOptionsSellJunkCheckText:GetWidth()-10, 0, 0);
     
     -- localized checkbox labels
     for Key, Value in ipairs(CheckButtons) do

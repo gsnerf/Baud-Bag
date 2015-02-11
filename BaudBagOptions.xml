@@ -123,9 +123,6 @@
 			</Frame>
 
 			<CheckButton name="$parentEnabledCheck" parentKey="EnabledCheck" inherits="OptionsCheckButtonTemplate">
-				<HitRectInsets>
-					<AbsInset left="0" right="-70" top="0" bottom="0"/>
-				</HitRectInsets>
 				<Anchors>
 					<Anchor point="TOPLEFT" relativeTo="$parentSetDropDown" relativePoint="TOPRIGHT">
 						<Offset>
@@ -139,13 +136,10 @@
 			</CheckButton>
 
 			<CheckButton name="$parentCloseAllCheck" parentKey="CloseAllCheck" inherits="OptionsCheckButtonTemplate">
-				<HitRectInsets>
-					<AbsInset left="0" right="-70" top="0" bottom="0"/>
-				</HitRectInsets>
 				<Anchors>
-					<Anchor point="TOPLEFT" relativeTo="$parentEnabledCheck" relativePoint="TOPRIGHT">
+					<Anchor point="TOPLEFT" relativeTo="$parentEnabledCheckText" relativePoint="TOPRIGHT">
 						<Offset>
-							<AbsDimension x="70" y="0" />
+							<AbsDimension x="10" y="6" />
 						</Offset>
 					</Anchor>
 				</Anchors>
@@ -155,13 +149,10 @@
 			</CheckButton>
 
 			<CheckButton name="$parentSellJunkCheck" parentKey="SellJunkCheck" inherits="OptionsCheckButtonTemplate">
-				<HitRectInsets>
-					<AbsInset left="0" right="-70" top="0" bottom="0"/>
-				</HitRectInsets>
 				<Anchors>
-					<Anchor point="TOPLEFT" relativeTo="$parentCloseAllCheck" relativePoint="TOPRIGHT">
+					<Anchor point="TOPLEFT" relativeTo="$parentCloseAllCheckText" relativePoint="TOPRIGHT">
 						<Offset>
-							<AbsDimension x="70" y="0" />
+							<AbsDimension x="10" y="6" />
 						</Offset>
 					</Anchor>
 				</Anchors>
