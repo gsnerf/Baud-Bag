@@ -205,6 +205,13 @@ local EventFuncs =
                 end
                 BaudBag_DebugMsg("ItemHandle", "Updating ItemLock Info", BaudBagFrame.ItemLock);
             end
+        end,
+
+        QUEST_ACCEPTED = function(self, event, ...)
+            BaudUpdateJoinedBags();
+        end,
+        QUEST_REMOVED = function(self, event, ...)
+            BaudUpdateJoinedBags();
         end
     };
 
