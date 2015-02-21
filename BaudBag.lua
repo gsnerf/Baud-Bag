@@ -207,6 +207,15 @@ local EventFuncs =
             end
         end,
 
+        ITEM_PUSH = function(self, event, ...)
+            local BagID, Icon = ...;
+            BaudBag_DebugMsg("ItemHandle", "Received new item", BagID);
+            -- TODO: remove the nil check when the checked global setting is actually added in a future release!
+            if (BBConfig.ShowNewItems ~= nil and (not BBConfig.ShowNewItems)) then
+                C_NewItems.ClearAll();
+            end
+        end,
+
         QUEST_ACCEPTED = function(self, event, ...)
             BaudUpdateJoinedBags();
         end,
@@ -1556,12 +1565,11 @@ function BaudBagUpdateSubBag(SubBag)
             SetItemButtonCount(ItemButton, bagCache[Slot].Count or 0);
         end
 
-        -- TODO: temporary hot fix for changes in the ContainerItemTemplate.
+        -- TODO: temporary hot fix for changes in the ContainerItemTemplate. REMOVE this when global settings are reworked!
         if (ItemButton.NewItemTexture) then
-            if (isNewItem and ShowNewItems) then
-                ItemButton.NewItemTexture:Show();
-            else
+            if (isNewItem and (not ShowNewItems)) then
                 ItemButton.NewItemTexture:Hide();
+                C_NewItems.RemoveNewItem(SubBag:GetID(), Slot);
             end
         end
         if (ItemButton.BattlepayItemTexture) then
