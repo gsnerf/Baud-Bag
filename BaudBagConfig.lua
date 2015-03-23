@@ -5,22 +5,32 @@ local _;
 
 -- some locally needed variables
 local Localized	= BaudBagLocalized;
-local SliderBars, CheckButtons;
+local SliderBars, GlobalCheckButtons, ContainerCheckButtons;
 BBConfig = {};
 
-function BaudBagSetCfgPreReq(Bars, Buttons)
-    SliderBars		= Bars;
-    CheckButtons	= Buttons;
+function BaudBagSetCfgPreReq(Bars, GlobalButtons, ContainerButtons)
+    SliderBars            = Bars;
+    GlobalCheckButtons    = GlobalButtons;
+    ContainerCheckButtons = ContainerButtons;
 end
 
 function BaudBagRestoreCfg()
     BaudBag_DebugMsg("Config", "Restoring BBConfig structure:");
 	
+    -- cofig base
     if (type(BaudBag_Cfg) ~= "table") then
         BaudBag_DebugMsg("Config", "- basic BBConfig damaged or missing, creating now");
         BaudBag_Cfg = {};
     end
     BBConfig = BaudBag_Cfg;
+
+    -- global options first
+    for Key, Value in ipairs(GlobalCheckButtons) do
+        if (type(BBConfig[Value.SavedVar]) ~= "boolean") then
+            BaudBag_DebugMsg("Config", "- Global CheckBox["..Value.SavedVar.."] data damaged or missing, creating now");
+            BBConfig[Value.SavedVar] = Value.Default;
+        end
+    end
 
     for BagSet = 1, 2 do
         if (type(BBConfig[BagSet]) ~= "table") then
@@ -36,11 +46,6 @@ function BaudBagRestoreCfg()
         if (type(BBConfig[BagSet].CloseAll) ~= "boolean") then
             BaudBag_DebugMsg("Config", "- close all state for BagSet "..BagSet.." damaged or missing, creating now");
             BBConfig[BagSet].CloseAll = true;
-        end
-
-        if (BagSet == 1 and type(BBConfig[BagSet].SellJunk) ~= "boolean") then
-            BaudBag_DebugMsg("Config", "- sell junk state for BagSet "..BagSet.." damaged or missing, creating now");
-            BBConfig[BagSet].SellJunk = false;
         end
 
         if (type(BBConfig[BagSet].Joined) ~= "table") then
@@ -107,7 +112,7 @@ function BaudBagRestoreCfg()
                     end
                 end
 
-                for Key, Value in ipairs(CheckButtons)do
+                for Key, Value in ipairs(ContainerCheckButtons)do
                     if (type(BBConfig[BagSet][Container][Value.SavedVar]) ~= "boolean") then
                         BaudBag_DebugMsg("Config", "- BagSet["..BagSet.."], Bag["..Bag.."], Container["..Container.."] CheckBox["..Value.SavedVar.."] data damaged or missing, creating now");
                         BBConfig[BagSet][Container][Value.SavedVar] = Value.Default;
@@ -115,6 +120,33 @@ function BaudBagRestoreCfg()
                 end
             end
         end);
+    end
+end
+
+function ConvertOldConfig()
+    -- take over old sell junk data
+    if (type(BBConfig[1]) == "table" and type(BBConfig[1].SellJunk) == "boolean") then
+        BaudBag_DebugMsg("Config", "- sell junk state is now global, converting old value from bag set 1");
+        BBConfig.SellJunk = BBConfig[1].SellJunk;
+        BBConfig[1].SellJunk = nil;
+        BBConfig[2].SellJunk = nil;
+    end
+
+    -- take over old new items highlight data
+    if (type(BBConfig[1]) == "table" and type(BBConfig[1][1]) == "table" and type(BBConfig[1][1].ShowNewItems) == "boolean") then
+        BaudBag_DebugMsg("Config", "- show new items state is now global, converting old value from first bagpack container");
+        BBConfig.ShowNewItems = BBConfig[1][1].ShowNewItems;
+        for BagSet = 1, 2 do
+            local Container = 0;
+            BaudBagForEachBag(BagSet, function(Bag, Index)
+                if (Container == 0) or (BBConfig[BagSet].Joined[Index] == false) then
+                    Container = Container + 1;
+                    if (type(BBConfig[BagSet][Container].ShowNewItems) == "boolean") then
+                        BBConfig[BagSet][Container].ShowNewItems = nil;
+                    end
+                end
+            end);
+        end
     end
 end
 

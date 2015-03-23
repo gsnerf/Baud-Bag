@@ -280,7 +280,7 @@ Func = function(self, event, ...)
     BaudBag_DebugMsg("Bags", "Event "..event.." fired");
     BaudBagAutoOpenSet(1, false);
 
-    if (BBConfig[1].SellJunk) then
+    if (BBConfig.SellJunk) then
         BaudBagForEachBag(1,
             function(Bag, Index)
                 for Slot = 1, GetContainerNumSlots(Bag) do
@@ -1520,7 +1520,7 @@ end
 function BaudBagUpdateSubBag(SubBag)
     local Name, Link, Quality, Type, Texture, ItemButton, isNewItem, isBattlePayItem;
     local ShowColor     = BBConfig[SubBag.BagSet][SubBag:GetParent():GetID()].RarityColor;
-    local ShowNewItems  = BBConfig[SubBag.BagSet][SubBag:GetParent():GetID()].ShowNewItems;
+
     --local ShowColorAltern = BBConfig[SubBag.BagSet][SubBag:GetParent():GetID()].RarityColorAltern;
     local bagCache;
     SubBag.FreeSlots = 0;
@@ -1565,13 +1565,6 @@ function BaudBagUpdateSubBag(SubBag)
             SetItemButtonCount(ItemButton, bagCache[Slot].Count or 0);
         end
 
-        -- TODO: temporary hot fix for changes in the ContainerItemTemplate. REMOVE this when global settings are reworked!
-        if (ItemButton.NewItemTexture) then
-            if (isNewItem and (not ShowNewItems)) then
-                ItemButton.NewItemTexture:Hide();
-                C_NewItems.RemoveNewItem(SubBag:GetID(), Slot);
-            end
-        end
         if (ItemButton.BattlepayItemTexture) then
             if (isBattlePayItem) then
                 ItemButton.BattlepayItemTexture:Show();
