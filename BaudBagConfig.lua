@@ -14,44 +14,36 @@ function BaudBagSetCfgPreReq(Bars, GlobalButtons, ContainerButtons)
     ContainerCheckButtons = ContainerButtons;
 end
 
+--[[ helper method to minify the code, checks the given variable and possibly returns a default value ]]
+local function checkValue(toCheck, compareWith, default, log)
+    -- default check if applied, return default value
+    if (type(toCheck) ~= compareWith) then
+        BaudBag_DebugMsg("Config", log);
+        return default;
+    end
+
+    -- check did not match, return original value
+    return toCheck;
+end
+
 function BaudBagRestoreCfg()
     BaudBag_DebugMsg("Config", "Restoring BBConfig structure:");
 	
     -- cofig base
-    if (type(BaudBag_Cfg) ~= "table") then
-        BaudBag_DebugMsg("Config", "- basic BBConfig damaged or missing, creating now");
-        BaudBag_Cfg = {};
-    end
+    BaudBag_Cfg = checkValue(BaudBag_Cfg, "table", {}, "- basic BBConfig damaged or missing, creating now");
     BBConfig = BaudBag_Cfg;
 
     -- global options first
     for Key, Value in ipairs(GlobalCheckButtons) do
-        if (type(BBConfig[Value.SavedVar]) ~= "boolean") then
-            BaudBag_DebugMsg("Config", "- Global CheckBox["..Value.SavedVar.."] data damaged or missing, creating now");
-            BBConfig[Value.SavedVar] = Value.Default;
-        end
+        BBConfig[Value.SavedVar] = checkValue(BBConfig[Value.SavedVar], "boolean", Value.Default, "- Global CheckBox["..Value.SavedVar.."] data damaged or missing, creating now");
     end
 
     for BagSet = 1, 2 do
-        if (type(BBConfig[BagSet]) ~= "table") then
-            BaudBag_DebugMsg("Config", "- BBConfig for BagSet "..BagSet.." damaged or missing, creating now");
-            BBConfig[BagSet] = {};
-        end
-		
-        if (type(BBConfig[BagSet].Enabled) ~= "boolean") then
-            BaudBag_DebugMsg("Config", "- enabled state for BagSet "..BagSet.." damaged or missing, creating now");
-            BBConfig[BagSet].Enabled = true;
-        end
-
-        if (type(BBConfig[BagSet].CloseAll) ~= "boolean") then
-            BaudBag_DebugMsg("Config", "- close all state for BagSet "..BagSet.." damaged or missing, creating now");
-            BBConfig[BagSet].CloseAll = true;
-        end
-
-        if (type(BBConfig[BagSet].Joined) ~= "table") then
-            BaudBag_DebugMsg("Config", "- joins for BagSet "..BagSet.." damaged or missing, creating now");
-            BBConfig[BagSet].Joined = {};
-        end
+        BBConfig[BagSet]          = checkValue(BBConfig[BagSet],          "table",   {},   "- BBConfig for BagSet "..BagSet.." damaged or missing, creating now");
+		BBConfig[BagSet].Enabled  = checkValue(BBConfig[BagSet].Enabled,  "boolean", true, "- enabled state for BagSet "..BagSet.." damaged or missing, creating now");
+        BBConfig[BagSet].CloseAll = checkValue(BBConfig[BagSet].CloseAll, "boolean", true, "- close all state for BagSet "..BagSet.." damaged or missing, creating now");
+        BBConfig[BagSet].Joined   = checkValue(BBConfig[BagSet].Joined,   "table",   {},   "- joins for BagSet "..BagSet.." damaged or missing, creating now");
+        BBConfig[BagSet].ShowBags = checkValue(BBConfig[BagSet].ShowBags, "boolean", (BagSet == 2), "- show information for BagSet "..BagSet.." damaged or missing, creating now");
 
         -- make sure the reagent bank is NOT joined by default!
         if (BagSet == 2 and BBConfig[2].Joined[9] == nil) then
@@ -59,19 +51,8 @@ function BaudBagRestoreCfg()
             BBConfig[BagSet].Joined[9] = false;
         end
 
-        if (type(BBConfig[BagSet].ShowBags) ~= "boolean") then
-            BaudBag_DebugMsg("Config", "- show information for BagSet "..BagSet.." damaged or missing, creating now");
-            BBConfig[BagSet].ShowBags = ((BagSet == 2) and true or false);
-        end
-
         local Container = 0;
         BaudBagForEachBag(BagSet, function(Bag, Index)
-
-            -- keyring cache, not needed anymore???
-            --if (Bag == -2) and (BBConfig[BagSet].Joined[Index] == nil) then
-            --    BaudBag_DebugMsg("Config", "- BagSet["..BagSet.."], Bag["..Bag.."] joined status damaged or missing, creating now");
-            --    BBConfig[BagSet].Joined[Index] = false;
-            --end
 
             if (Container == 0) or (BBConfig[BagSet].Joined[Index] == false) then
                 Container = Container + 1;
@@ -87,8 +68,7 @@ function BaudBagRestoreCfg()
 
                 if not BBConfig[BagSet][Container].Name then
                     BaudBag_DebugMsg("Config", "- BagSet["..BagSet.."], Bag["..Bag.."], Container["..Container.."] container name missing, creating now");
-                    --With the key ring, there isn't enough room for the player name aswell
-                    BBConfig[BagSet][Container].Name = UnitName("player")..Localized.Of..((BagSet==1)and Localized.Inventory or Localized.BankBox);
+                    BBConfig[BagSet][Container].Name = UnitName("player")..Localized.Of..((BagSet==1) and Localized.Inventory or Localized.BankBox);
                     if (Bag == REAGENTBANK_CONTAINER) then
                         BBConfig[BagSet][Container].Name = UnitName("player")..Localized.Of..Localized.ReagentBankBox;
                     end
@@ -106,17 +86,11 @@ function BaudBagRestoreCfg()
                 end
 
                 for Key, Value in ipairs(SliderBars) do
-                    if (type(BBConfig[BagSet][Container][Value.SavedVar]) ~= "number") then
-                        BaudBag_DebugMsg("Config", "- BagSet["..BagSet.."], Bag["..Bag.."], Container["..Container.."] Slider["..Value.SavedVar.."] data damaged or missing, creating now");
-                        BBConfig[BagSet][Container][Value.SavedVar] = Value.Default[BagSet];
-                    end
+                    BBConfig[BagSet][Container][Value.SavedVar] = checkValue(BBConfig[BagSet][Container][Value.SavedVar], "number", Value.Default[BagSet], "- BagSet["..BagSet.."], Bag["..Bag.."], Container["..Container.."] Slider["..Value.SavedVar.."] data damaged or missing, creating now");
                 end
 
-                for Key, Value in ipairs(ContainerCheckButtons)do
-                    if (type(BBConfig[BagSet][Container][Value.SavedVar]) ~= "boolean") then
-                        BaudBag_DebugMsg("Config", "- BagSet["..BagSet.."], Bag["..Bag.."], Container["..Container.."] CheckBox["..Value.SavedVar.."] data damaged or missing, creating now");
-                        BBConfig[BagSet][Container][Value.SavedVar] = Value.Default;
-                    end
+                for Key, Value in ipairs(ContainerCheckButtons) do
+                    BBConfig[BagSet][Container][Value.SavedVar] = checkValue(BBConfig[BagSet][Container][Value.SavedVar], "boolean", Value.Default, "- BagSet["..BagSet.."], Bag["..Bag.."], Container["..Container.."] CheckBox["..Value.SavedVar.."] data damaged or missing, creating now");
                 end
             end
         end);
