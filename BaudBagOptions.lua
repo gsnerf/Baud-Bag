@@ -1,14 +1,12 @@
 local _;
 
 local Localized	= BaudBagLocalized;
---local MaxBags   = NUM_BANKBAGSLOTS + 1;
 local MaxBags   = NUM_BANKBAGSLOTS + 2;
 local Prefix    = "BaudBagOptions";
 local Updating, CfgBackup;
 
 local SelectedBags      = 1;
 local SelectedContainer = 1;
---local SetSize           = {5, NUM_BANKBAGSLOTS + 1};
 local SetSize           = {5, NUM_BANKBAGSLOTS + 2};
 
 local SliderBars = {
@@ -16,12 +14,16 @@ local SliderBars = {
     {Text=Localized.Scale,		Low="50%",	High="200%",	Step=1,		SavedVar="Scale",		Default={100,100},	TooltipText = Localized.ScaleTooltip}
 };
 
-local CheckButtons = {
+local GlobalCheckButtons = {
+    {Text=Localized.ShowNewItems,   SavedVar="ShowNewItems", Default=true,  TooltipText=Localized.ShowNewItemsTooltip,      DependsOn=nil},
+    {Text=Localized.SellJunk,       SavedVar="SellJunk",     Default=false, TooltipText=Localized.SellJunkTooltip,          DependsOn=nil}
+}
+
+local ContainerCheckButtons = {
     {Text=Localized.AutoOpen,       SavedVar="AutoOpen",     Default=false, TooltipText=Localized.AutoOpenTooltip,          DependsOn=nil},
     {Text=Localized.AutoClose,      SavedVar="AutoClose",    Default=true,  TooltipText=Localized.AutoCloseTooltip,         DependsOn="AutoOpen"},
     {Text=Localized.BlankOnTop,     SavedVar="BlankTop",     Default=false, TooltipText=Localized.BlankOnTopTooltip,        DependsOn=nil},
-    {Text=Localized.RarityColoring, SavedVar="RarityColor",  Default=true,  TooltipText=Localized.RarityColoringTooltip,    DependsOn=nil},
-    {Text=Localized.ShowNewItems,   SavedVar="ShowNewItems", Default=true,  TooltipText=Localized.ShowNewItemsTooltip,      DependsOn=nil}
+    {Text=Localized.RarityColoring, SavedVar="RarityColor",  Default=true,  TooltipText=Localized.RarityColoringTooltip,    DependsOn=nil}
 };
 
 BaudBagIcons = {
@@ -51,7 +53,7 @@ local TextureNames = {
 --[[ BaudBagOptions frame related events and methods ]]
 function BaudBagOptions_OnLoad(self, event, ...)
     -- the config needs a reference to this
-    BaudBagSetCfgPreReq(SliderBars, CheckButtons);
+    BaudBagSetCfgPreReq(SliderBars, GlobalCheckButtons, ContainerCheckButtons);
     self:RegisterEvent("ADDON_LOADED");
 end
 
@@ -65,6 +67,7 @@ function BaudBagOptions_OnEvent(self, event, ...)
     -- make sure there is a BBConfig and a cache
     BaudBagInitCache();
     BaudBagRestoreCfg();
+    ConvertOldConfig();
     CfgBackup	= BaudBagCopyTable(BBConfig);
 	
     -- add to options windows
@@ -77,31 +80,40 @@ function BaudBagOptions_OnEvent(self, event, ...)
     -- set localized labels
     self.Title:SetText("Baud Bag "..Localized.Options);
     self.Version:SetText("(v"..GetAddOnMetadata("BaudBag","Version")..")");
-    self.SetSelection.Label:SetText(Localized.BagSet);
-    self.NameInput.Text:SetText(Localized.ContainerName);
-    self.BackgroundSelection.Label:SetText(Localized.Background);
-    self.EnabledCheck.tooltipText  = Localized.EnabledTooltip;
-    self.CloseAllCheck.tooltipText = Localized.CloseAllTooltip;
-    self.SellJunkCheck.tooltipText = Localized.SellJunkTooltip;
-    BaudBagOptionsEnabledCheckText:SetText(Localized.Enabled);
-    BaudBagOptionsCloseAllCheckText:SetText(Localized.CloseAll);
-    BaudBagOptionsSellJunkCheckText:SetText(Localized.SellJunk);
-    self.EnabledCheck:SetHitRectInsets(0, -BaudBagOptionsEnabledCheckText:GetWidth()-10, 0, 0);
-    self.CloseAllCheck:SetHitRectInsets(0, -BaudBagOptionsCloseAllCheckText:GetWidth()-10, 0, 0);
-    self.SellJunkCheck:SetHitRectInsets(0, -BaudBagOptionsSellJunkCheckText:GetWidth()-10, 0, 0);
+
+    --self.GroupGlobal.SellJunkCheck.tooltipText = Localized.SellJunkTooltip;
+    --self.GroupGlobal.SellJunkCheck:SetHitRectInsets(0, -BaudBagOptionsGroupGlobalSellJunkCheckText:GetWidth()-10, 0, 0);
+    --BaudBagOptionsGroupGlobalSellJunkCheckText:SetText(Localized.SellJunk);
+
+    self.GroupContainer.SetSelection.Label:SetText(Localized.BagSet);
+    self.GroupContainer.NameInput.Text:SetText(Localized.ContainerName);
+    self.GroupContainer.BackgroundSelection.Label:SetText(Localized.Background);
+    self.GroupContainer.EnabledCheck.tooltipText  = Localized.EnabledTooltip;
+    self.GroupContainer.CloseAllCheck.tooltipText = Localized.CloseAllTooltip;
+    BaudBagOptionsGroupContainerEnabledCheckText:SetText(Localized.Enabled);
+    BaudBagOptionsGroupContainerCloseAllCheckText:SetText(Localized.CloseAll);
+    self.GroupContainer.EnabledCheck:SetHitRectInsets(0, -BaudBagOptionsGroupContainerEnabledCheckText:GetWidth()-10, 0, 0);
+    self.GroupContainer.CloseAllCheck:SetHitRectInsets(0, -BaudBagOptionsGroupContainerCloseAllCheckText:GetWidth()-10, 0, 0);
+
+    -- localized global checkbox labels
+    local GroupGlobal = self.GroupGlobal;
+    for Key, Value in ipairs(GlobalCheckButtons) do
+        _G[Prefix.."GroupGlobalCheckButton"..Key.."Text"]:SetText(Value.Text);
+        GroupGlobal["CheckButton"..Key].tooltipText = Value.TooltipText;
+    end
     
     -- localized checkbox labels
-    for Key, Value in ipairs(CheckButtons) do
-        _G[Prefix.."CheckButton"..Key.."Text"]:SetText(Value.Text);
-        _G[Prefix.."CheckButton"..Key].tooltipText = Value.TooltipText;
+    for Key, Value in ipairs(ContainerCheckButtons) do
+        _G[Prefix.."GroupContainerCheckButton"..Key.."Text"]:SetText(Value.Text);
+        _G[Prefix.."GroupContainerCheckButton"..Key].tooltipText = Value.TooltipText;
     end
 
     -- set slider bounds
     for Key, Value in ipairs(SliderBars) do
-        _G[Prefix.."Slider"..Key.."Low"]:SetText(Value.Low);
-        _G[Prefix.."Slider"..Key.."High"]:SetText(Value.High);
-        _G[Prefix.."Slider"..Key].tooltipText = Value.TooltipText;
-        _G[Prefix.."Slider"..Key].valueStep = Value.Step;
+        _G[Prefix.."GroupContainerSlider"..Key.."Low"]:SetText(Value.Low);
+        _G[Prefix.."GroupContainerSlider"..Key.."High"]:SetText(Value.High);
+        _G[Prefix.."GroupContainerSlider"..Key].tooltipText = Value.TooltipText;
+        _G[Prefix.."GroupContainerSlider"..Key].valueStep = Value.Step;
     end
 	
     -- some slash command settings
@@ -118,8 +130,8 @@ function BaudBagOptions_OnEvent(self, event, ...)
       ]]
     local Button, Container, Check;
     for Bag = 1, MaxBags do
-        Button		= CreateFrame("CheckButton",    Prefix.."Bag"..Bag,         BaudBagOptions, Prefix.."BagTemplate");
-        Container	= CreateFrame("Frame",          Prefix.."Container"..Bag,   BaudBagOptions, Prefix.."ContainerTemplate");
+        Button		= CreateFrame("CheckButton",    Prefix.."Bag"..Bag,         BaudBagOptions.GroupContainer.BagFrame, Prefix.."BagTemplate");
+        Container	= CreateFrame("Frame",          Prefix.."Container"..Bag,   BaudBagOptions.GroupContainer.BagFrame, Prefix.."ContainerTemplate");
         if (Bag == 1) then
             -- first bag only has a container
             Container:SetPoint("LEFT", _G[Prefix.."Bag1"], "LEFT", -6, 0);
@@ -252,7 +264,8 @@ function BaudBagOptionsNameEditBox_OnTextChanged()
     if Updating then
         return;
     end
-    BBConfig[SelectedBags][SelectedContainer].Name = _G[Prefix.."NameEditBox"]:GetText();
+    -- BBConfig[SelectedBags][SelectedContainer].Name = _G[Prefix.."NameEditBox"]:GetText();
+    BBConfig[SelectedBags][SelectedContainer].Name = BaudBagOptions.GroupContainer.NameInput:GetText();
     BaudBagUpdateName(_G["BaudBagContainer"..SelectedBags.."_"..SelectedContainer]);  -- TODO: move to BaudBagBBConfig save?
 end
 
@@ -283,16 +296,25 @@ end
 
 --[[ CheckBox (non "enabled") functions ]]
 function BaudBagOptionsCheckButton_OnClick(self, event, ...)
-    if(self:GetChecked())then
-        PlaySound("igMainMenuOptionCheckBoxOff");
+    -- make the apropriate sound
+    PlaySound(self:GetChecked() and "igMainMenuOptionCheckBoxOff" or "igMainMenuOptionCheckBoxOn");
+    
+    -- apply change based on group
+    local SavedVar;
+    if (self:GetParent() == BaudBagOptions.GroupGlobal) then
+        SavedVar = GlobalCheckButtons[self:GetID()].SavedVar;
+        BaudBag_DebugMsg("Options", "Update global variable: "..SavedVar);
+        BBConfig[SavedVar] = self:GetChecked();
     else
-        PlaySound("igMainMenuOptionCheckBoxOn");
-    end
-    local SavedVar = CheckButtons[self:GetID()].SavedVar;
-    BBConfig[SelectedBags][SelectedContainer][SavedVar] = self:GetChecked();
-    if (SavedVar == "BlankTop") or (SavedVar == "RarityColor") then -- or (SavedVar == "RarityColorAltern") then
-        BaudBag_DebugMsg("Options", "Want to update container: "..Prefix.."Container"..SelectedBags.."_"..SelectedContainer);
-        BaudBagUpdateContainer(_G["BaudBagContainer"..SelectedBags.."_"..SelectedContainer]); -- TODO: move to BaudBagBBConfig save?
+        SavedVar = ContainerCheckButtons[self:GetID()].SavedVar;
+        BaudBag_DebugMsg("Options", "Update container variable: "..SavedVar);
+        BBConfig[SelectedBags][SelectedContainer][SavedVar] = self:GetChecked();
+
+        -- make sure options who need it (visible things) update the affected container
+        if (SavedVar == "BlankTop") or (SavedVar == "RarityColor") then -- or (SavedVar == "RarityColorAltern") then
+            BaudBag_DebugMsg("Options", "Want to update container: "..Prefix.."Container"..SelectedBags.."_"..SelectedContainer);
+            BaudBagUpdateContainer(_G["BaudBagContainer"..SelectedBags.."_"..SelectedContainer]); -- TODO: move to BaudBagBBConfig save?
+        end
     end
     BaudBagOptionsUpdate();
 end
@@ -352,21 +374,24 @@ function BaudBagOptionsUpdate()
     Updating = true;
 
     -- first reload the drop down (weird problems if not done)
-    UIDropDownMenu_Initialize(_G[Prefix.."SetDropDown"], BaudBagOptionsSetDropDown_Initialize);
-    UIDropDownMenu_SetSelectedValue(_G[Prefix.."SetDropDown"], SelectedBags);
+    local containerDropDown = BaudBagOptions.GroupContainer.SetSelection;
+    UIDropDownMenu_Initialize(containerDropDown, BaudBagOptionsSetDropDown_Initialize);
+    UIDropDownMenu_SetSelectedValue(containerDropDown, SelectedBags);
 
     -- is the box enabled
-    _G[Prefix.."EnabledCheck"]:SetChecked(BBConfig[SelectedBags].Enabled~=false);
-    _G[Prefix.."CloseAllCheck"]:SetChecked(BBConfig[SelectedBags].CloseAll~=false);
-    _G[Prefix.."SellJunkCheck"]:SetChecked(BBConfig[SelectedBags].SellJunk==true);
-    if (SelectedBags == 1) then
-        _G[Prefix.."SellJunkCheck"]:Show();
-    else
-        _G[Prefix.."SellJunkCheck"]:Hide();
+    --_G[Prefix.."GroupGlobalSellJunkCheck"]:SetChecked(BBConfig.SellJunk == true);
+    _G[Prefix.."GroupContainerEnabledCheck"]:SetChecked(BBConfig[SelectedBags].Enabled~=false);
+    _G[Prefix.."GroupContainerCloseAllCheck"]:SetChecked(BBConfig[SelectedBags].CloseAll~=false);
+
+    -- load global checkbox values
+    for Key, Value in ipairs(GlobalCheckButtons)do
+        local Button = _G[Prefix.."GroupGlobalCheckButton"..Key];
+        Button:SetChecked(BBConfig[Value.SavedVar]);
     end
     
     -- load bag specific options (position and show each button that belongs to the current set,
     --		check joined box and create container frames)
+    local bagParent = BaudBagOptions.GroupContainer.BagFrame;
     BaudBagForEachBag(SelectedBags,
         function(Bag, Index)
             Button	= _G[Prefix.."Bag"..Index];
@@ -374,7 +399,7 @@ function BaudBagOptionsUpdate()
 
             if (Index == 1) then
                 -- only the first bag needs its position set, since the others are anchored to it
-                Button:SetPoint("LEFT", BaudBagOptions, "TOP", (Bags / 2) * -44, -140);
+                Button:SetPoint("LEFT", bagParent, "CENTER", ((Bags / 2) * -44), 0);
             elseif (Index == NUM_BANKBAGSLOTS + 2) then
                 -- the reagent bank might not be joined with anything else (for the moment?)
                 _G[Prefix.."Container"..ContNum]:SetPoint("RIGHT", Prefix.."Bag"..(Index - 1), "RIGHT", 6,0);
@@ -443,29 +468,31 @@ function BaudBagOptionsUpdate()
     end
 
     -- load container name into the textbox
-    _G[Prefix.."NameEditBox"]:SetText(BBConfig[SelectedBags][SelectedContainer].Name or "test");
-    _G[Prefix.."NameEditBox"]:SetCursorPosition(0);
+    local nameInput = BaudBagOptions.GroupContainer.NameInput;
+    nameInput:SetText(BBConfig[SelectedBags][SelectedContainer].Name or "test");
+    nameInput:SetCursorPosition(0);
 
     -- load background state (initialized here to work around some strange behavior)
-    UIDropDownMenu_Initialize(_G[Prefix.."BackgroundDropDown"], BaudBagOptionsBackgroundDropDown_Initialize);
-    UIDropDownMenu_SetSelectedValue(_G[Prefix.."BackgroundDropDown"], BBConfig[SelectedBags][SelectedContainer].Background);
+    local backgroundDropDown = BaudBagOptions.GroupContainer.BackgroundSelection;
+    UIDropDownMenu_Initialize(backgroundDropDown, BaudBagOptionsBackgroundDropDown_Initialize);
+    UIDropDownMenu_SetSelectedValue(backgroundDropDown, BBConfig[SelectedBags][SelectedContainer].Background);
 
     -- load slider values
     for Key, Value in ipairs(SliderBars)do
-        local Slider = _G[Prefix.."Slider"..Key];
+        local Slider = _G[Prefix.."GroupContainerSlider"..Key];
         Slider:SetValue(BBConfig[SelectedBags][SelectedContainer][Value.SavedVar]);
     end
 
     -- load checkbox values
-    for Key, Value in ipairs(CheckButtons)do
-        local Button = _G[Prefix.."CheckButton"..Key];
+    for Key, Value in ipairs(ContainerCheckButtons)do
+        local Button = _G[Prefix.."GroupContainerCheckButton"..Key];
         Button:SetChecked(BBConfig[SelectedBags][SelectedContainer][Value.SavedVar]);
     end
 	
     -- load checkbox enabled
-    for Key, Value in ipairs(CheckButtons) do
-        local Button = _G[Prefix.."CheckButton"..Key];
-        local ButtonText = _G[Prefix.."CheckButton"..Key.."Text"];
+    for Key, Value in ipairs(ContainerCheckButtons) do
+        local Button = _G[Prefix.."GroupContainerCheckButton"..Key];
+        local ButtonText = _G[Prefix.."GroupContainerCheckButton"..Key.."Text"];
         if (Value.DependsOn ~= nil and not BBConfig[SelectedBags][SelectedContainer][Value.DependsOn]) then
             Button:Disable();
             ButtonText:SetFontObject("GameFontDisable");

@@ -2,13 +2,42 @@
 
 	<Script file="BaudBagOptions.lua" />
 
+	<!-- templates for visual elements -->
+	<Frame name="BaudBagGroupHeaderTemplate" virtual="true">
+		<Size y="18" />
+		<Layers>
+			<Layer level="BACKGROUND">
+				<FontString name="$parentTitle" parentKey="Label" inherits="GameFontNormal" justifyH="LEFT">
+					<Anchors>
+						<Anchor point="TOPLEFT" x="10" />
+						<Anchor point="BOTTOM" />
+					</Anchors>
+				</FontString>
+				<!--Texture name="$parentLeft" parentKey="Left" file="Interface\Tooltips\UI-Tooltip-Border">
+					<Size y="8" />
+					<Anchors>
+						<Anchor point="LEFT" x="10" y="0" />
+						<Anchor point="RIGHT" relativeKey="$parent.Label" relativePoint="LEFT" x="-5" y="0" />
+					</Anchors>
+					<TexCoords left="0.81" right="0.94" top="0.5" bottom="1"/>
+				</Texture-->
+				<Texture name="$parentRight" parentKey="Right" file="Interface\Tooltips\UI-Tooltip-Border">
+					<Size y="8" />
+					<Anchors>
+						<Anchor point="LEFT" relativeKey="$parent.Label" relativePoint="RIGHT" x="5" y="0" />
+						<Anchor point="RIGHT" x="-10" y="0" />
+					</Anchors>
+					<TexCoords left="0.81" right="0.94" top="0.5" bottom="1"/>
+				</Texture>
+			</Layer>
+		</Layers>
+	</Frame>
+
 	<!-- TEMPLATES FOR DYNAMICALLY GENERATED VISUAL ELEMENTS (see lua file) -->
 
 	<!-- This represents a clickable (check) Bag Button which will select the current container for options -->
 	<CheckButton name="BaudBagOptionsBagTemplate" inherits="ItemButtonTemplate" virtual="true">
-		<Size>
-			<AbsDimension x="37" y="37" />
-		</Size>
+		<Size x="37" y="37" />
 		<CheckedTexture alphaMode="ADD" file="Interface\Buttons\CheckButtonHilight" />
 		<Scripts>
 			<OnClick function="BaudBagOptionsBag_OnClick" />
@@ -17,9 +46,7 @@
 
 	<!-- this is the visual representation of a container in which bags are joined (border around the joined bags) -->
 	<Frame name="BaudBagOptionsContainerTemplate" virtual="true">
-		<Size>
-			<AbsDimension x="1" y="50" />
-		</Size>
+		<Size x="1" y="50" />
 		<Backdrop bgFile="Interface\DialogFrame\UI-DialogBox-Background" edgeFile="Interface\Tooltips\UI-Tooltip-Border" tile="true">
 			<BackgroundInsets>
 				<AbsInset left="5" right="5" top="5" bottom="5" />
@@ -35,9 +62,7 @@
 
 	<!-- This is the checkbox between two bags that marks if the box is joined or not -->
 	<CheckButton name="BaudBagOptionsJoinCheckTemplate" inherits="OptionsCheckButtonTemplate" virtual="true">
-		<Size>
-			<AbsDimension x="26" y="26" />
-		</Size>
+		<Size x="26" y="26" />
 		<HitRectInsets>
 			<AbsInset left="0" right="0" top="0" bottom="0" />
 		</HitRectInsets>
@@ -50,9 +75,7 @@
 	<!-- TEMPLATES USED IN THE XML DECLARATION OF THE FRAME-->
 
 	<CheckButton name="BaudBagOptionsCheckButtonTemplate" inherits="OptionsCheckButtonTemplate" virtual="true">
-		<Size>
-			<AbsDimension x="26" y="26" />
-		</Size>
+		<Size x="26" y="26" />
 		<HitRectInsets>
 			<AbsInset left="0" right="0" top="0" bottom="0" />
 		</HitRectInsets>
@@ -62,9 +85,7 @@
 	</CheckButton>
 
 	<Slider name="BaudBagOptionsSliderTemplate" inherits="OptionsSliderTemplate" virtual="true">
-		<Size>
-			<AbsDimension x="200" y="18" />
-		</Size>
+		<Size x="200" y="18" />
 		<Scripts>
 			<OnValueChanged function="BaudBagSlider_OnValueChanged" />
 		</Scripts>
@@ -76,217 +97,204 @@
 			<Layer level="ARTWORK">
 				<FontString name="$parentTitle" parentKey="Title" inherits="GameFontNormalLarge">
 					<Anchors>
-						<Anchor point="TOPLEFT">
-							<Offset>
-								<AbsDimension x="10" y="-15" />
-							</Offset>
-						</Anchor>
+						<Anchor point="TOPLEFT" x="10" y="-10" />
 					</Anchors>
 				</FontString>
 				<FontString name="$parentVersionText" parentKey="Version" inherits="GameFontNormalSmall">
 					<Anchors>
-						<Anchor point="BOTTOMLEFT" relativeTo="$parentTitle" relativePoint="BOTTOMRIGHT">
-							<Offset>
-								<AbsDimension x="0" y="1" />
-							</Offset>
-						</Anchor>
+						<Anchor point="BOTTOMLEFT" relativeTo="$parentTitle" relativePoint="BOTTOMRIGHT" x="5" y="1" />
 					</Anchors>
 				</FontString>
 			</Layer>
 		</Layers>
 
 		<Frames>
-			<Frame name="$parentSetDropDown" parentKey="SetSelection" inherits="UIDropDownMenuTemplate" enableMouse="true">
-				<Size>
-					<AbsDimension x="160" y="25" />
-				</Size>
+			<Frame name="$parentGroupGlobal" parentKey="GroupGlobal">
 				<Anchors>
-					<Anchor point="TOPLEFT">
-						<Offset>
-							<AbsDimension x="0" y="-60" />
-						</Offset>
-					</Anchor>
+					<Anchor point="TOPLEFT" relativeKey="$parent.Title" relativePoint="BOTTOMLEFT" y="-10" />
+					<Anchor point="RIGHT" x="-10" />
 				</Anchors>
-				<Layers>
-					<Layer level="BACKGROUND">
-						<FontString name="$parentLabel" parentKey="Label" inherits="GameFontNormalSmall">
-							<Anchors>
-								<Anchor point="BOTTOMLEFT" relativePoint="TOPLEFT">
-									<Offset>
-										<AbsDimension x="16" y="3" />
-									</Offset>
-								</Anchor>
-							</Anchors>
-						</FontString>
-					</Layer>
-				</Layers>
+				<Size y="100" />
+
+				<Frames>
+					<Frame name="$parentHeader" parentKey="Header" inherits="BaudBagGroupHeaderTemplate">
+						<Anchors>
+							<Anchor point="TOPLEFT" />
+							<Anchor point="RIGHT" />
+						</Anchors>
+						<Scripts>
+							<OnLoad>
+								-- TODO: replace with Localized!
+								self.Label:SetText("Basic Settings");
+							</OnLoad>
+						</Scripts>
+					</Frame>
+
+
+					<CheckButton name="$parentCheckButton1" parentKey="CheckButton1" inherits="BaudBagOptionsCheckButtonTemplate" id="1">
+						<Anchors>
+							<Anchor point="TOPLEFT" relativeKey="$parent.Header" relativePoint="BOTTOMLEFT" x="20" y="-7" />
+						</Anchors>
+					</CheckButton>
+
+					<CheckButton name="$parentCheckButton2" parentKey="CheckButton2" inherits="BaudBagOptionsCheckButtonTemplate" id="2">
+						<Anchors>
+							<Anchor point="TOPLEFT" relativeKey="$parent.CheckButton1" relativePoint="BOTTOMLEFT" y="-5" />
+						</Anchors>
+					</CheckButton>
+
+					<!--CheckButton name="$parentSellJunkCheck" parentKey="SellJunkCheck" inherits="OptionsCheckButtonTemplate">
+						<Anchors>
+							<Anchor point="TOPLEFT" relativeKey="$parent.Header" relativePoint="BOTTOMLEFT" x="10" y="-10" />
+						</Anchors>
+						<Scripts>
+							<OnClick function="BaudBagSellJunkCheck_OnClick" />
+						</Scripts>
+					</CheckButton-->
+
+
+				</Frames>
 			</Frame>
 
-			<CheckButton name="$parentEnabledCheck" parentKey="EnabledCheck" inherits="OptionsCheckButtonTemplate">
+			<Frame name="$parentGroupContainer" parentKey="GroupContainer">
 				<Anchors>
-					<Anchor point="TOPLEFT" relativeTo="$parentSetDropDown" relativePoint="TOPRIGHT">
-						<Offset>
-							<AbsDimension x="5" y="-2" />
-						</Offset>
-					</Anchor>
+					<Anchor point="TOPLEFT" relativeKey="$parent.GroupGlobal" relativePoint="BOTTOMLEFT" y="-10" />
+					<Anchor point="BOTTOMRIGHT" x="-10" y="10" />
 				</Anchors>
-				<Scripts>
-					<OnClick function="BaudBagEnabledCheck_OnClick" />
-				</Scripts>
-			</CheckButton>
+				<Size y="200" />
 
-			<CheckButton name="$parentCloseAllCheck" parentKey="CloseAllCheck" inherits="OptionsCheckButtonTemplate">
-				<Anchors>
-					<Anchor point="TOPLEFT" relativeTo="$parentEnabledCheckText" relativePoint="TOPRIGHT">
-						<Offset>
-							<AbsDimension x="10" y="6" />
-						</Offset>
-					</Anchor>
-				</Anchors>
-				<Scripts>
-					<OnClick function="BaudBagCloseAllCheck_OnClick" />
-				</Scripts>
-			</CheckButton>
+				<Frames>
+					<Frame name="$parentHeader" parentKey="Header" inherits="BaudBagGroupHeaderTemplate">
+						<Anchors>
+							<Anchor point="TOPLEFT" />
+							<Anchor point="RIGHT" />
+						</Anchors>
+						<Scripts>
+							<OnLoad>
+								self.Label:SetText("Container Settings");
+							</OnLoad>
+						</Scripts>
+					</Frame>
 
-			<CheckButton name="$parentSellJunkCheck" parentKey="SellJunkCheck" inherits="OptionsCheckButtonTemplate">
-				<Anchors>
-					<Anchor point="TOPLEFT" relativeTo="$parentCloseAllCheckText" relativePoint="TOPRIGHT">
-						<Offset>
-							<AbsDimension x="10" y="6" />
-						</Offset>
-					</Anchor>
-				</Anchors>
-				<Scripts>
-					<OnClick function="BaudBagSellJunkCheck_OnClick" />
-				</Scripts>
-			</CheckButton>
+					<Frame name="$parentSetDropDown" parentKey="SetSelection" inherits="UIDropDownMenuTemplate" enableMouse="true">
+						<Anchors>
+							<Anchor point="TOPLEFT" relativeKey="$parent.Header" relativePoint="BOTTOMLEFT" y="-25" />
+						</Anchors>
+						<Size x="160" y="25" />
+						<Layers>
+							<Layer level="BACKGROUND">
+								<FontString name="$parentLabel" parentKey="Label" inherits="GameFontNormalSmall">
+									<Anchors>
+										<Anchor point="BOTTOMLEFT" relativePoint="TOPLEFT" x="16" y="3" />
+									</Anchors>
+								</FontString>
+							</Layer>
+						</Layers>
+					</Frame>
 
-			<EditBox name="$parentNameEditBox" inherits="InputBoxTemplate" parentKey="NameInput" letters="40" autoFocus="false">
-				<Size>
-					<AbsDimension x="200" y="16" />
-				</Size>
-				<Anchors>
-					<Anchor point="TOPLEFT">
-						<Offset>
-							<AbsDimension x="40" y="-190" />
-						</Offset>
-					</Anchor>
-				</Anchors>
-				<Layers>
-					<Layer level="ARTWORK">
-						<FontString name="$parentText" parentKey="Text" inherits="GameFontNormalSmall">
-							<Anchors>
-								<Anchor point="BOTTOMLEFT" relativeTo="$parent" relativePoint="TOPLEFT">
-									<Offset>
-										<AbsDimension x="-5" y="5" />
-									</Offset>
-								</Anchor>
-							</Anchors>
-						</FontString>
-					</Layer>
-				</Layers>
-				<Scripts>
-					<OnEscapePressed>
-						self:ClearFocus();
-					</OnEscapePressed>
-					 <OnTextChanged function="BaudBagOptionsNameEditBox_OnTextChanged" /> 
-				</Scripts>
-			</EditBox>
+					<CheckButton name="$parentEnabledCheck" parentKey="EnabledCheck" inherits="OptionsCheckButtonTemplate">
+						<Anchors>
+							<Anchor point="TOPLEFT" relativeTo="$parentSetDropDown" relativePoint="TOPRIGHT" x="5" y="-2" />
+						</Anchors>
+						<Scripts>
+							<OnClick function="BaudBagEnabledCheck_OnClick" />
+						</Scripts>
+					</CheckButton>
 
-			<Frame name="$parentBackgroundDropDown" inherits="UIDropDownMenuTemplate" parentKey="BackgroundSelection" enableMouse="true">
-				<Size>
-					<AbsDimension x="160" y="25" />
-				</Size>
-				<Anchors>
-					<Anchor point="LEFT" relativeTo="$parentNameEditBox" relativePoint="RIGHT">
-						<Offset>
-							<AbsDimension x="5" y="-2" />
-						</Offset>
-					</Anchor>
-				</Anchors>
-				<Layers>
-					<Layer level="BACKGROUND">
-						<FontString name="$parentLabel" parentKey="Label" inherits="GameFontNormalSmall">
-							<Anchors>
-								<Anchor point="BOTTOMLEFT" relativePoint="TOPLEFT">
-									<Offset>
-										<AbsDimension x="16" y="1" />
-									</Offset>
-								</Anchor>
-							</Anchors>
-						</FontString>
-					</Layer>
-				</Layers>
-			</Frame>
+					<CheckButton name="$parentCloseAllCheck" parentKey="CloseAllCheck" inherits="OptionsCheckButtonTemplate">
+						<Anchors>
+							<Anchor point="TOPLEFT" relativeTo="$parentEnabledCheckText" relativePoint="TOPRIGHT" x="10" y="6" />
+						</Anchors>
+						<Scripts>
+							<OnClick function="BaudBagCloseAllCheck_OnClick" />
+						</Scripts>
+					</CheckButton>
 
-			<CheckButton name="$parentCheckButton1" inherits="BaudBagOptionsCheckButtonTemplate" id="1">
-				<Anchors>
-					<Anchor point="TOPLEFT" relativeTo="$parentBackgroundDropDown" relativePoint="BOTTOMLEFT">
-						<Offset>
-							<AbsDimension x="20" y="-7" />
-						</Offset>
-					</Anchor>
-				</Anchors>
-			</CheckButton>
+					<!-- THIS is where the bag icons are getting auto-generated on init! -->
+					<Frame name="$parentBagFrame" parentKey="BagFrame">
+						<Anchors>
+							<Anchor point="TOP" relativeKey="$parent.SetSelection" relativePoint="BOTTOM" y="-10" />
+							<Anchor point="LEFT" />
+							<Anchor point="RIGHT" />
+						</Anchors>
+						<Size y="80" />
+					</Frame>
 
-			<CheckButton name="$parentCheckButton2" inherits="BaudBagOptionsCheckButtonTemplate" id="2">
-				<Anchors>
-					<Anchor point="TOPLEFT" relativeTo="$parentCheckButton1" relativePoint="BOTTOMLEFT">
-						<Offset>
-							<AbsDimension x="0" y="8" />
-						</Offset>
-					</Anchor>
-				</Anchors>
-			</CheckButton>
+					<EditBox name="$parentNameEditBox" inherits="InputBoxTemplate" parentKey="NameInput" letters="40" autoFocus="false">
+						<Size x="200" y="16" />
+						<Anchors>
+							<Anchor point="TOPLEFT" relativeKey="$parent.BagFrame" relativePoint="BOTTOMLEFT" x="40" y="-20" />
+						</Anchors>
+						<Layers>
+							<Layer level="ARTWORK">
+								<FontString name="$parentText" parentKey="Text" inherits="GameFontNormalSmall">
+									<Anchors>
+										<Anchor point="BOTTOMLEFT" relativeTo="$parent" relativePoint="TOPLEFT" x="-5" y="5" />
+									</Anchors>
+								</FontString>
+							</Layer>
+						</Layers>
+						<Scripts>
+							<OnEscapePressed>
+								self:ClearFocus();
+							</OnEscapePressed>
+							<OnTextChanged function="BaudBagOptionsNameEditBox_OnTextChanged" /> 
+						</Scripts>
+					</EditBox>
 
-			<CheckButton name="$parentCheckButton3" inherits="BaudBagOptionsCheckButtonTemplate" id="3">
-				<Anchors>
-					<Anchor point="TOPLEFT" relativeTo="$parentCheckButton2" relativePoint="BOTTOMLEFT">
-						<Offset>
-							<AbsDimension x="0" y="8" />
-						</Offset>
-					</Anchor>
-				</Anchors>
-			</CheckButton>
+					<Frame name="$parentBackgroundDropDown" inherits="UIDropDownMenuTemplate" parentKey="BackgroundSelection" enableMouse="true">
+						<Size x="160" y="25" />
+						<Anchors>
+							<Anchor point="LEFT" relativeTo="$parentNameEditBox" relativePoint="RIGHT" x="5" y="-2" />
+						</Anchors>
+						<Layers>
+							<Layer level="BACKGROUND">
+								<FontString name="$parentLabel" parentKey="Label" inherits="GameFontNormalSmall">
+									<Anchors>
+										<Anchor point="BOTTOMLEFT" relativePoint="TOPLEFT" x="16" y="1" />
+									</Anchors>
+								</FontString>
+							</Layer>
+						</Layers>
+					</Frame>
+
+					<CheckButton name="$parentCheckButton1" inherits="BaudBagOptionsCheckButtonTemplate" id="1">
+						<Anchors>
+							<Anchor point="TOPLEFT" relativeTo="$parentBackgroundDropDown" relativePoint="BOTTOMLEFT" x="20" y="-7" />
+						</Anchors>
+					</CheckButton>
+
+					<CheckButton name="$parentCheckButton2" inherits="BaudBagOptionsCheckButtonTemplate" id="2">
+						<Anchors>
+							<Anchor point="TOPLEFT" relativeTo="$parentCheckButton1" relativePoint="BOTTOMLEFT" x="0" y="8" />
+						</Anchors>
+					</CheckButton>
+
+					<CheckButton name="$parentCheckButton3" inherits="BaudBagOptionsCheckButtonTemplate" id="3">
+						<Anchors>
+							<Anchor point="TOPLEFT" relativeTo="$parentCheckButton2" relativePoint="BOTTOMLEFT" x="0" y="8" />
+						</Anchors>
+					</CheckButton>
 			
-			<CheckButton name="$parentCheckButton4" inherits="BaudBagOptionsCheckButtonTemplate" id="4">
-				<Anchors>
-					<Anchor point="TOPLEFT" relativeTo="$parentCheckButton3" relativePoint="BOTTOMLEFT">
-						<Offset>
-							<AbsDimension x="0" y="8" />
-						</Offset>
-					</Anchor>
-				</Anchors>
-			</CheckButton>
+					<CheckButton name="$parentCheckButton4" inherits="BaudBagOptionsCheckButtonTemplate" id="4">
+						<Anchors>
+							<Anchor point="TOPLEFT" relativeTo="$parentCheckButton3" relativePoint="BOTTOMLEFT" x="0" y="8" />
+						</Anchors>
+					</CheckButton>
 
-			<CheckButton name="$parentCheckButton5" inherits="BaudBagOptionsCheckButtonTemplate" id="5">
-				<Anchors>
-					<Anchor point="TOPLEFT" relativeTo="$parentCheckButton4" relativePoint="BOTTOMLEFT">
-						<Offset>
-							<AbsDimension x="0" y="8" />
-						</Offset>
-					</Anchor>
-				</Anchors>
-			</CheckButton>
+					<Slider name="$parentSlider1" minValue="2" maxValue="20" valueStep="1" inherits="BaudBagOptionsSliderTemplate" id="1">
+						<Anchors>
+							<Anchor point="TOPLEFT" relativeTo="$parentNameEditBox" relativePoint="BOTTOMLEFT" x="-2" y="-22" />
+						</Anchors>
+					</Slider>
+					<Slider name="$parentSlider2" minValue="50" maxValue="200" valueStep="1" inherits="BaudBagOptionsSliderTemplate" id="2">
+						<Anchors>
+							<Anchor point="TOP" relativeTo="$parentSlider1" relativePoint="BOTTOM" y="-15" />
+						</Anchors>
+					</Slider>
+				</Frames>
+			</Frame>
 
-			<Slider name="$parentSlider1" minValue="2" maxValue="20" valueStep="1" inherits="BaudBagOptionsSliderTemplate" id="1">
-				<Anchors>
-					<Anchor point="TOPLEFT" relativeTo="$parentNameEditBox" relativePoint="BOTTOMLEFT">
-						<Offset>
-							<AbsDimension x="-2" y="-22" />
-						</Offset>
-					</Anchor>
-				</Anchors>
-			</Slider>
-			<Slider name="$parentSlider2" minValue="50" maxValue="200" valueStep="1" inherits="BaudBagOptionsSliderTemplate" id="2">
-				<Anchors>
-					<Anchor point="TOP" relativeTo="$parentSlider1" relativePoint="BOTTOM">
-						<Offset>
-							<AbsDimension y="-15" />
-						</Offset>
-					</Anchor>
-				</Anchors>
-			</Slider>
 		</Frames>
 		<Scripts>
 			<OnLoad		function="BaudBagOptions_OnLoad" />
