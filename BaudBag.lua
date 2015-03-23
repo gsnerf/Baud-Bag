@@ -210,8 +210,7 @@ local EventFuncs =
         ITEM_PUSH = function(self, event, ...)
             local BagID, Icon = ...;
             BaudBag_DebugMsg("ItemHandle", "Received new item", BagID);
-            -- TODO: remove the nil check when the checked global setting is actually added in a future release!
-            if (BBConfig.ShowNewItems ~= nil and (not BBConfig.ShowNewItems)) then
+            if (not BBConfig.ShowNewItems) then
                 C_NewItems.ClearAll();
             end
         end,
