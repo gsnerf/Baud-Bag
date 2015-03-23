@@ -215,6 +215,12 @@ local EventFuncs =
             end
         end,
 
+        BAG_UPDATE_COOLDOWN = function(self, event, ...)
+            local BagID = ...;
+            BaudBag_DebugMsg("ItemHandle", "Item is on Cooldown after usage", BagID);
+            BaudUpdateJoinedBags();
+        end,
+
         QUEST_ACCEPTED = function(self, event, ...)
             BaudUpdateJoinedBags();
         end,
