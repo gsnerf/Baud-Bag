@@ -1,4 +1,10 @@
 ﻿=== Changelog ===
+v6.0.3
+  - reworked options panel
+  - reworked some optios to be global for all containers:
+    + rarity coloring
+    + new item highlight
+    + junk selling
 v6.0.2
   - propably found long time bug for overlayed bag icons
   - reworked interal (debug) logging system
