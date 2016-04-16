@@ -42,14 +42,18 @@ hooksecurefunc(GameTooltip, "SetInventoryItem", function (Data, Unit, InvID)
     end
 
     if (InvID >= 20) and (InvID <= 23) then
+        BaudBag_DebugMsg("Tooltip", "Showing tooltip for bags in overview...");
         if BBConfig and (BBConfig[1].Enabled==false) then
             return;
         end
+        BaudBag_DebugMsg("Tooltip", "... success!")
         BaudBagModifyBagTooltip(InvID - 19);
     elseif (InvID >= 68) and (InvID < 68 + NUM_BANKBAGSLOTS) then
+        BaudBag_DebugMsg("Tooltip", "Showing tooltip for bank bags in overview...");
         if BBConfig and (BBConfig[2].Enabled == false) then
             return;
         end
+        BaudBag_DebugMsg("Tooltip", "... success");
         BaudBagModifyBagTooltip(4 + InvID - 67);
     end
 end);
@@ -62,6 +66,7 @@ MainMenuBarBackpackButton:HookScript("OnEnter", function(...)
 end);
 
 function BaudBagModifyBagTooltip(BagID)
+    BaudBag_DebugMsg("Tooltip", "ModifyTooltip called for BagID"..BagID);
     if not GameTooltip:IsShown()then
         return;
     end
