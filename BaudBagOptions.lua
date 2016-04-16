@@ -81,10 +81,6 @@ function BaudBagOptions_OnEvent(self, event, ...)
     self.Title:SetText("Baud Bag "..Localized.Options);
     self.Version:SetText("(v"..GetAddOnMetadata("BaudBag","Version")..")");
 
-    --self.GroupGlobal.SellJunkCheck.tooltipText = Localized.SellJunkTooltip;
-    --self.GroupGlobal.SellJunkCheck:SetHitRectInsets(0, -BaudBagOptionsGroupGlobalSellJunkCheckText:GetWidth()-10, 0, 0);
-    --BaudBagOptionsGroupGlobalSellJunkCheckText:SetText(Localized.SellJunk);
-
     self.GroupContainer.SetSelection.Label:SetText(Localized.BagSet);
     self.GroupContainer.NameInput.Text:SetText(Localized.ContainerName);
     self.GroupContainer.BackgroundSelection.Label:SetText(Localized.Background);

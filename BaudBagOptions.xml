@@ -143,15 +143,6 @@
 						</Anchors>
 					</CheckButton>
 
-					<!--CheckButton name="$parentSellJunkCheck" parentKey="SellJunkCheck" inherits="OptionsCheckButtonTemplate">
-						<Anchors>
-							<Anchor point="TOPLEFT" relativeKey="$parent.Header" relativePoint="BOTTOMLEFT" x="10" y="-10" />
-						</Anchors>
-						<Scripts>
-							<OnClick function="BaudBagSellJunkCheck_OnClick" />
-						</Scripts>
-					</CheckButton-->
-
 
 				</Frames>
 			</Frame>
@@ -192,7 +183,7 @@
 						</Layers>
 					</Frame>
 
-					<CheckButton name="$parentEnabledCheck" parentKey="EnabledCheck" inherits="OptionsCheckButtonTemplate">
+					<CheckButton name="$parentEnabledCheck" parentKey="EnabledCheck" inherits="OptionsCheckButtonTemplate" id="Enabled">
 						<Anchors>
 							<Anchor point="TOPLEFT" relativeTo="$parentSetDropDown" relativePoint="TOPRIGHT" x="5" y="-2" />
 						</Anchors>
@@ -201,7 +192,7 @@
 						</Scripts>
 					</CheckButton>
 
-					<CheckButton name="$parentCloseAllCheck" parentKey="CloseAllCheck" inherits="OptionsCheckButtonTemplate">
+					<CheckButton name="$parentCloseAllCheck" parentKey="CloseAllCheck" inherits="OptionsCheckButtonTemplate" id="CloseAll">
 						<Anchors>
 							<Anchor point="TOPLEFT" relativeTo="$parentEnabledCheckText" relativePoint="TOPRIGHT" x="10" y="6" />
 						</Anchors>
