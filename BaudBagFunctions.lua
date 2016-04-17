@@ -43,7 +43,10 @@ function BaudBag_DebugMsg(type, msg, ...)
     if (BaudBag_DebugCfg[type].Active) then
         DEFAULT_CHAT_FRAME:AddMessage(GetTime().." BaudBag ("..BaudBag_DebugCfg[type].Name.."): "..msg);
         if (... ~= nil) then
-            BaudBag_Vardump(...)
+            for n=1,select('#',...) do
+                local dumpValue = select(n,...)
+                BaudBag_Vardump(dumpValue)
+            end
         end
     end
     if (BaudBag_DebugLog) then
