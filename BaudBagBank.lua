@@ -131,3 +131,16 @@ function ReagentBankSlotButton_OnClick(self, event, ...)
         RBankContainer:Show();
     end
 end
+
+
+
+
+function BaudBagToggleBank(self)
+    if _G[Prefix.."Container2_1"]:IsShown() then
+        _G[Prefix.."Container2_1"]:Hide();
+        BaudBagAutoOpenSet(2, true);
+    else
+        _G[Prefix.."Container2_1"]:Show();
+        BaudBagAutoOpenSet(2, false);
+    end
+end
