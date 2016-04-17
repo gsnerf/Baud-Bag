@@ -16,6 +16,7 @@ Localization.lua
 BaudBagFunctions.lua
 BaudBagConfig.lua
 BaudBagCache.lua
+BaudBagToolTips.lua
 BaudBagOptions.xml
 BaudBagToken.xml
 BaudBagBank.xml
