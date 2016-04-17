@@ -1767,22 +1767,17 @@ function BaudBagUpdateContainer(Container)
                 for Slot = (SubBag.maxSlots or 0) + 1, SubBag.size do
                     -- determine type of template for item button
                     local template;
-                    local onClickFunction = nil;
-                    if (SubBag:GetID() == BANK_CONTAINER) then
+                    if (BaudBag_IsBankContainer(SubBag:GetID())) then
                         template = "BankItemButtonGenericTemplate";
                     elseif (SubBag:GetID() == REAGENTBANK_CONTAINER) then
                         template = "ReagentBankItemButtonGenericTemplate";
                     else
                         template = "ContainerFrameItemButtonTemplate";
-                        onClickFunction = BaudBag_ContainerFrameItemButton_OnClick;
                     end
 
                     -- create item button
                     local Button = CreateFrame("Button", SubBag:GetName().."Item"..Slot, SubBag, template);
                     Button:SetID(Slot);
-                    --if (onClickFunction ~= nil) then
-                    --    Button:SetScript("OnClick", onClickFunction);
-                    --end
 
                     local Texture = Button:CreateTexture(Button:GetName().."Border","OVERLAY");
                     Texture:SetTexture("Interface\\Buttons\\UI-ActionButton-Border");
