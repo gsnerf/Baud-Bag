@@ -5,6 +5,7 @@ v6.0.3
     + rarity coloring
     + new item highlight
     + junk selling
+  - fixed tooltips in offline bank
 v6.0.2
   - propably found long time bug for overlayed bag icons
   - reworked interal (debug) logging system
