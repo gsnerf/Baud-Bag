@@ -556,17 +556,6 @@ local function ShowContainerOptions(self)
     InterfaceOptionsFrame_OpenToCategory("Baud Bag");
 end
 
-
-function BaudBagToggleBank(self)
-    if _G[Prefix.."Container2_1"]:IsShown() then
-        _G[Prefix.."Container2_1"]:Hide();
-        BaudBagAutoOpenSet(2, true);
-    else
-        _G[Prefix.."Container2_1"]:Show();
-        BaudBagAutoOpenSet(2, false);
-    end
-end
-
 --[[ 
     This initializes the drop down menus for each container.
     Beware that the bank box won't exist yet when this is initialized at first.
@@ -1312,13 +1301,6 @@ CloseAllBags = function(frame)
         end
     end
 end
--- 
--- function CloseAllBags()
--- CloseBackpack();
--- for i=1, NUM_CONTAINER_FRAMES, 1 do
--- CloseBag(i);
--- end
--- end
 
 local pre_BagSlotButton_OnClick = BagSlotButton_OnClick;
 BagSlotButton_OnClick = function(self, event, ...)
@@ -1332,19 +1314,6 @@ BagSlotButton_OnClick = function(self, event, ...)
     end
 
 end
-
-
--- Keyring was REMOVED as of WoW 4.2
--- local pre_ToggleKeyRing = ToggleKeyRing;
--- ToggleKeyRing = function(self)
--- if BBConfig and (BBConfig[1].Enabled == false) then
--- return pre_ToggleKeyRing();
--- end
--- if not BagsReady then
--- return;
--- end
--- ToggleBag(-2);
--- end
  
 local function IsBagShown(BagID)
     local SubBag = _G[Prefix.."SubBag"..BagID];
@@ -1854,19 +1823,6 @@ end
 hooksecurefunc("ContainerFrameItemButton_OnModifiedClick", BaudBag_OnModifiedClick);
 hooksecurefunc("BankFrameItemButtonGeneric_OnModifiedClick", BaudBag_OnModifiedClick);
 
--- Keyring was REMOVED as of WoW 4.2
--- function BaudBagKeyRing_OnLoad(self, event, ...)
--- local Clone = KeyRingButton;
--- Clone:GetScript("OnLoad")(self);
--- self:SetScript("OnClick", Clone:GetScript("OnClick"));
--- self:SetScript("OnReceiveDrag", Clone:GetScript("OnReceiveDrag"));
--- self:SetScript("OnEnter", Clone:GetScript("OnEnter"));
--- self:SetScript("OnLeave", Clone:GetScript("OnLeave"));
--- self:GetNormalTexture():SetTexCoord(0.5625,0,0,0,0.5625,0.60937,0,0.60937);
--- self:GetHighlightTexture():SetTexCoord(0.5625,0,0,0,0.5625,0.60937,0,0.60937);
--- self:GetPushedTexture():SetTexCoord(0.5625,0,0,0,0.5625,0.60937,0,0.60937);
--- end
-
 function BaudBagUpdateFromBBConfig()
     BaudUpdateJoinedBags();
     BaudBagUpdateBagFrames();
@@ -2249,45 +2205,6 @@ CloseBag = function(id)
     end
 end
 
---[[ function BaudBag_ContainerFrameItemButton_OnClick(self, button)
-    local modifiedClick = IsModifiedClick();
-	-- If we can loot the item and autoloot toggle is active, then do a normal click
-	if ( button ~= "LeftButton" and modifiedClick and IsModifiedClick("AUTOLOOTTOGGLE") ) then
-		local _, _, _, _, _, lootable = GetContainerItemInfo(self:GetParent():GetID(), self:GetID());
-		if ( lootable ) then
-			modifiedClick = false;
-		end
-	end
-	if ( modifiedClick ) then
-		ContainerFrameItemButton_OnModifiedClick(self, button);
-	else
-		BaudBag_ContainerFrameItemButton_OnUnmodifiedClick(self, button);
-	end
-end
-
-function BaudBag_ContainerFrameItemButton_OnUnmodifiedClick(self, button)
-    -- the left button doesn't do anything secure so we can call the original function for it
-    if (button == "LeftButton") then
-        ContainerFrameItemButton_OnClick(self, button);
-        return;
-    end
-
-    if (BaudBagFrame.BankOpen) then
-        -- determine if the item is a reagent
-        local itemId = GetContainerItemID(self:GetParent():GetID(), self:GetID());
-        local isReagent = (itemId and BaudBagFrame.IsCraftingReagent(itemId));
-        local targetReagentBank = IsReagentBankUnlocked() and isReagent;
-    
-        BaudBag_DebugMsg("Temp", "handling itemId "..itemId.." with result "..(isReagent and "is reagent" or "not a reagent")..", "..(targetReagentBank and "targeting reagent bank" or "not targeting reagent bank"));
-
-        -- put into bank or reagent bank respectively
-        UseContainerItem(self:GetParent():GetID(), self:GetID(), nil, targetReagentBank);
-	    StackSplitFrame:Hide();
-    else
-        
-    end 
-end]]
-
 function BaudBag_ContainerFrameItemButton_OnClick(self, button)
     BaudBag_DebugMsg("ItemHandle", "OnClick called for "..button.." from bag "..self:GetParent():GetID());
     if (button ~= "LeftButton" and BaudBagFrame.BankOpen) then
@@ -2305,8 +2222,6 @@ function BaudBag_ContainerFrameItemButton_OnClick(self, button)
         end
     end
 end
-
---hooksecurefunc("ContainerFrameItemButton_OnClick", BaudBag_ContainerFrameItemButton_OnClick);
 
 function BaudBag_FixContainerClickForReagent(Bag, Slot)
     -- determine if there is another item with the same item in the reagent bank
