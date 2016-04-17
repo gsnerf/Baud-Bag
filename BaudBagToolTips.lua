@@ -21,8 +21,6 @@ hooksecurefunc(GameTooltip, "SetInventoryItem", function (Data, Unit, InvID)
         end
         BaudBag_DebugMsg("Tooltip", "... success");
         BaudBagModifyBagTooltip(4 + InvID - 67);
-    else
-        BaudBag_DebugMsg("Tooltip", "nothing done");
     end
     
 end);
