@@ -14,6 +14,24 @@ local Prefix = "BaudBag";
     }
 ]]
 
+--[[ EXPERIMENTAL
+
+BBCache = {}
+
+function BBCache:initialize()
+    BaudBag_DebugMsg("Cache", "[initialize] initializing BaudBag_Cache with object methods");
+    setmetatable(BaudBag_Cache, self);
+    self.__index = self;
+end
+
+function BBCache:test()
+     BaudBag_DebugMsg("Cache", "[test] TEST");
+end
+
+function BBCache:getBankBag(bagId)
+    
+end ]]
+
 --[[ 
 This function initializes the cache if it does not already exist.
 Needs to be called in ADDON_LOADED event!
@@ -53,8 +71,9 @@ This returns a boolean value wether the data of the chosen bag is cached or not.
 At the moment only: bag == bankbag
 ]]
 function BaudBagUseCache(Bag)
-    BaudBag_DebugMsg("Cache", "[UseCache] Bag: "..Bag..", Enabled: "..(BBConfig[2].Enabled and "true" or "false")..", bank open: "..(BaudBagFrame.BankOpen and "true" or "false"));
-    return (BBConfig[2].Enabled and ((Bag < 0) or (Bag >= 5)) and (not BaudBagFrame.BankOpen));
+    local useCache = (BBConfig[2].Enabled and ((Bag < 0) or (Bag >= 5)) and (not BaudBagFrame.BankOpen)); 
+    BaudBag_DebugMsg("Cache", "[UseCache] Bag: "..Bag..", Enabled: "..(BBConfig[2].Enabled and "true" or "false")..", bank open: "..(BaudBagFrame.BankOpen and "true" or "false"), useCache);
+    return useCache;
 end
 
 --[[
@@ -80,31 +99,34 @@ end
 
 --[[ Show the ToolTip for a cached item ]]
 function BaudBagShowCachedTooltip(self, event, ...)
+    local bagId = (self.isBag) and self.Bag or self:GetParent():GetID();
+    local slotId = (not self.isBag) and self:GetID() or nil;
 
-    -- failsafe if the current item is not a bank item or BB is turned of for the bank
-    if BBConfig and (BBConfig[2].Enabled == false) and not (self and (strsub(self:GetName(), 1, 9) == Prefix.."Bank")) then
-        return;
+    if (not BaudBagUseCache(bagId)) then
+        return
     end
-
+    
     -- show tooltip for a bag
-    local Bag, Slot;
+    local bagCache = BaudBagGetBagCache(bagId);
     if self.isBag then
-        Bag = self:GetID();
-        if BaudBagUseCache(Bag) then
-            if not GameTooltip:GetItem()then
-                ShowHyperlink(self, BaudBagGetBagCache(Bag).BagLink);
-            end
-            BaudBagModifyBagTooltip(Bag);
+        if (not bagCache) then
+            BaudBag_DebugMsg("Tooltip", "[ShowCachedTooltip] Could not show cache for bag as there is no cache entry [bagId]", bagId);
+            return;
         end
+        
+        BaudBag_DebugMsg("Tooltip", "[ShowCachedTooltip] Showing cache for bag [bagId, cacheEntry]", bagId, bagCache);
+        ShowHyperlink(self, bagCache.BagLink);
         return;
     end
 
     -- show tooltip for an item inside a bag
-    Bag, Slot = self:GetParent():GetID(), self:GetID();
-    if not BaudBagUseCache(Bag) or GameTooltip:IsShown() or not BaudBagGetBagCache(Bag)[Slot] then
+    local slotCache = bagCache[slotId];
+    if not slotCache then
+        BaudBag_DebugMsg("Tooltip", "[ShowCachedTooltip] Cannot show cache for item because there is no cache entry [bagId, slotId]", bagId, slotId);
         return;
     end
-    ShowHyperlink(self, BaudBagGetBagCache(Bag)[Slot].Link);
+    BaudBag_DebugMsg("Tooltip", "[ShowCachedTooltip] Showing cached item info [bagId, slotId, cachEntry]", bagId, slotId, slotCache);
+    ShowHyperlink(self, slotCache.Link);
 end
 
 --[[ hook cached tooltip to item enter events ]]
