@@ -61,6 +61,7 @@ local EventFuncs =
             --end
 
             -- make sure the cache is initialized
+            --BBCache:initialize();
             BaudBagInitCache();
 
             -- the rest of the bank slots are cleared in the next event
@@ -1736,7 +1737,7 @@ function BaudBagUpdateContainer(Container)
                 for Slot = (SubBag.maxSlots or 0) + 1, SubBag.size do
                     -- determine type of template for item button
                     local template;
-                    if (BaudBag_IsBankContainer(SubBag:GetID())) then
+                    if (SubBag:GetID() == BANK_CONTAINER) then
                         template = "BankItemButtonGenericTemplate";
                     elseif (SubBag:GetID() == REAGENTBANK_CONTAINER) then
                         template = "ReagentBankItemButtonGenericTemplate";
