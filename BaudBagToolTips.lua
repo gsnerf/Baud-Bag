@@ -1,3 +1,4 @@
+local _;
 local Prefix = "BaudBag";
 
 -- Adds container name when mousing over bags, aswell as simulating offline bank item mouse over
