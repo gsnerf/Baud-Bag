@@ -124,8 +124,7 @@
 						</Anchors>
 						<Scripts>
 							<OnLoad>
-								-- TODO: replace with Localized!
-								self.Label:SetText("Basic Settings");
+								self.Label:SetText(BaudBagLocalized.OptionsGroupGlobal);
 							</OnLoad>
 						</Scripts>
 					</Frame>
@@ -162,7 +161,7 @@
 						</Anchors>
 						<Scripts>
 							<OnLoad>
-								self.Label:SetText("Container Settings");
+								self.Label:SetText(BaudBagLocalized.OptionsGroupContainer);
 							</OnLoad>
 						</Scripts>
 					</Frame>

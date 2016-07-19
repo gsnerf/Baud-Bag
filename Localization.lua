@@ -51,6 +51,8 @@ if (Locale=="zhTW") then -- Translator: Isler
     MenuCatSpecific = "Container Specifics",
     MenuCatGeneral = "General",
     TooltipScanReagent = "Crafting Reagent",
+    OptionsGroupGlobal = "Basic Settings",
+    OptionsGroupContainer = "Container Settings"
   };
 elseif (Locale=="zhCN") then  -- Translator: Isler
   BaudBagLocalized = {
@@ -103,6 +105,8 @@ elseif (Locale=="zhCN") then  -- Translator: Isler
     MenuCatSpecific = "Container Specifics",
     MenuCatGeneral = "General",
     TooltipScanReagent = "Crafting Reagent",
+    OptionsGroupGlobal = "Basic Settings",
+    OptionsGroupContainer = "Container Settings"
   };
 elseif (Locale=="frFR") then  -- Translator: Isler
   BaudBagLocalized = {
@@ -154,6 +158,8 @@ elseif (Locale=="frFR") then  -- Translator: Isler
     MenuCatSpecific = "Container Specifics",
     MenuCatGeneral = "General",
     TooltipScanReagent = "Crafting Reagent",
+    OptionsGroupGlobal = "Basic Settings",
+    OptionsGroupContainer = "Container Settings"
   };
 elseif (Locale == "deDE") then -- Translator: Thurmal
   BaudBagLocalized = {
@@ -205,6 +211,8 @@ elseif (Locale == "deDE") then -- Translator: Thurmal
     MenuCatSpecific = "Taschenspezifisches",
     MenuCatGeneral = "Allgemeines",
     TooltipScanReagent = "Handwerksmaterial",
+    OptionsGroupGlobal = "Allgemeines",
+    OptionsGroupContainer = "Taschen-Typ spezifisches"
   };
 elseif (Locale == "koKR") then -- Translator: talkswind
   BaudBagLocalized = {
@@ -256,6 +264,8 @@ elseif (Locale == "koKR") then -- Translator: talkswind
     MenuCatSpecific = "Container Specifics",
     MenuCatGeneral = "General",
     TooltipScanReagent = "Crafting Reagent",
+    OptionsGroupGlobal = "Basic Settings",
+    OptionsGroupContainer = "Container Settings"
   };
 elseif (Locale == "ruRU") then -- Translator: StingerSoft
   BaudBagLocalized = {
@@ -307,6 +317,8 @@ elseif (Locale == "ruRU") then -- Translator: StingerSoft
     MenuCatSpecific = "Container Specifics",
     MenuCatGeneral = "General",
     TooltipScanReagent = "Crafting Reagent",
+    OptionsGroupGlobal = "Basic Settings",
+    OptionsGroupContainer = "Container Settings"
   };
 else --enUS or enUK (default)
   BaudBagLocalized = {
@@ -358,6 +370,8 @@ else --enUS or enUK (default)
     MenuCatSpecific = "Container Specifics",
     MenuCatGeneral = "General",
     TooltipScanReagent = "Crafting Reagent",
+    OptionsGroupGlobal = "Basic Settings",
+    OptionsGroupContainer = "Container Settings"
   };
     -- we now overwrite item values for not translated other languages so it at least works!
     if (Locale == "esES") then
