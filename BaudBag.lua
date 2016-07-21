@@ -46,20 +46,6 @@ local EventFuncs =
 
             BaudBag_DebugMsg("Bags", "Event ADDON_LOADED fired");
 
-            -- this seem to be an embed to the no longer developed cosmos addon, propably safe to remove
-            --if (EarthFeature_AddButton) then   --add by Isler
-            --	EarthFeature_AddButton(
-            --	{
-            --		id = "BaudBag";
-            --		name = Localized.FeatureFrameName;
-            --		subtext = "BaudBag";
-            --		tooltip = Localized.FeatureFrameTooltip;
-            --		icon = "Interface\\Icons\\Spell_Fire_SunKey";
-            --		callback = function() InterfaceOptionsFrame_OpenToCategory(BaudBagOptionsFrame); end;
-            --	}
-            --	);
-            --end
-
             -- make sure the cache is initialized
             --BBCache:initialize();
             BaudBagInitCache();
