@@ -405,7 +405,7 @@ function BaudBagContainer_OnUpdate(self, event, ...)
 
     if (self.Refresh) then
         BaudBagUpdateContainer(self);
-        BaudBagUpdateOpenBags();
+        BaudBagUpdateOpenBagHighlight();
     end
 
     if (self.UpdateSlots) then
@@ -444,7 +444,7 @@ function BaudBagContainer_OnShow(self, event, ...)
     self.FadeStart = GetTime();
     PlaySound("igBackPackOpen");
     BaudBagUpdateContainer(self);
-    BaudBagUpdateOpenBags();
+    BaudBagUpdateOpenBagHighlight();
     if (self:GetID() == 1) then
         BaudBagUpdateFreeSlots(self);
     end
@@ -470,7 +470,7 @@ function BaudBagContainer_OnHide(self, event, ...)
     self.Closing = true;
     PlaySound("igBackPackClose");
     self.AutoOpened = false;
-    BaudBagUpdateOpenBags();
+    BaudBagUpdateOpenBagHighlight();
 
     --[[TODO: look into merging the set specific close handling!!!]]--
     --[[
@@ -1031,9 +1031,21 @@ function BaudUpdateJoinedBags()
     BagsReady = true;
 end
 
---[[ Sets the highlight texture of bag slots indicating wether the contained bag is opened or not ]]--
 function BaudBagUpdateOpenBags()
-    BaudBag_DebugMsg("Bags", "[BaudBagUpdateOpenBags]");
+    local Open, Frame;
+    for Bag = -3, LastBagID do
+        if not (Bag == -2) then
+            Frame = _G[Prefix.."SubBag"..Bag];
+            if (IsBagOpen(Bag)) then
+                BaudBagUpdateSubBag(Frame);
+            end
+        end
+    end
+end
+
+--[[ Sets the highlight texture of bag slots indicating wether the contained bag is opened or not ]]--
+function BaudBagUpdateOpenBagHighlight()
+    BaudBag_DebugMsg("Bags", "[BaudBagUpdateOpenBagHighlight]");
     local Open, Frame, Highlight, Highlight2;
     -- The bank bag(-1) has no open indicator
     for Bag = -3, LastBagID do
