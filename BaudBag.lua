@@ -151,14 +151,14 @@ local EventFuncs =
         BAG_UPDATE_COOLDOWN = function(self, event, ...)
             local BagID = ...;
             BaudBag_DebugMsg("ItemHandle", "Item is on Cooldown after usage", BagID);
-            BaudUpdateJoinedBags();
+            BaudBagUpdateOpenBags();
         end,
 
         QUEST_ACCEPTED = function(self, event, ...)
-            BaudUpdateJoinedBags();
+            BaudBagUpdateOpenBags();
         end,
         QUEST_REMOVED = function(self, event, ...)
-            BaudUpdateJoinedBags();
+            BaudBagUpdateOpenBags();
         end
     };
 
@@ -1031,12 +1031,31 @@ function BaudUpdateJoinedBags()
 end
 
 function BaudBagUpdateOpenBags()
-    local Open, Frame;
+    local Open, Frame, Slot, ItemButton, QuestTexture;
     for Bag = -3, LastBagID do
         if not (Bag == -2) then
             Frame = _G[Prefix.."SubBag"..Bag];
-            if (IsBagOpen(Bag)) then
-                BaudBagUpdateSubBag(Frame);
+            if (BaudBag_IsBagOpen(Bag)) then
+                BaudBag_DebugMsg("Bags", "Updating Items of Bag (BagID)", Bag);
+                for Slot = 1, GetContainerNumSlots(Bag) do
+                    ItemButton = _G[Prefix.."SubBag"..Bag.."Item"..Slot];
+                    QuestTexture = _G[ItemButton:GetName().."IconQuestTexture"];
+                    
+                    ContainerFrame_UpdateCooldown(Bag, ItemButton);
+                    
+                    if (QuestTexture) then
+                        local isQuestItem, questId, isActive = GetContainerItemQuestInfo(Bag, ItemButton:GetID());
+                        if ( questId and not isActive ) then
+                            QuestTexture:SetTexture(TEXTURE_ITEM_QUEST_BANG);
+                            QuestTexture:Show();
+                        elseif ( questId or isQuestItem ) then
+                            QuestTexture:SetTexture(TEXTURE_ITEM_QUEST_BORDER);
+                            QuestTexture:Show();		
+                        else
+                            QuestTexture:Hide();
+                        end
+                    end
+                end
             end
         end
     end
