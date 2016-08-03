@@ -1,4 +1,9 @@
 ﻿=== Changelog ===
+v7.0.1
+  - bumped version to legion pre-patch
+  - fixed performance issues introduced with 6.2.0 beta versions
+  - fixed offline bank issues
+  - reworked debug system to hopefully perform better when not used.
 v6.0.3
   - reworked options panel
   - reworked some optios to be global for all containers:
