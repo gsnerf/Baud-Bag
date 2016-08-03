@@ -86,8 +86,8 @@ local EventFuncs =
             BBContainer1:SetWidth(15 + 30);
             BBContainer1:SetHeight(15 + 4 * 30);
 
-            BaudBagBankBags_Initialize();
             BaudBagUpdateFromBBConfig();
+            BaudBagBankBags_Initialize();
             if BBConfig and (BBConfig[2].Enabled == true) then 
                 BaudBag_DebugMsg("Bank", "BaudBag enabled for Bank, disable default bank event");
                 BankFrame:UnregisterEvent("BANKFRAME_OPENED");
