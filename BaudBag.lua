@@ -1482,14 +1482,24 @@ function BaudBagUpdateSubBag(SubBag)
             end
 
             if Link then
-                Name, _, Quality, _, _, Type, _, _, _, _ = GetItemInfo(Link);
+                Name, _, Quality = GetItemInfo(Link);
                 isNewItem = C_NewItems.IsNewItem(SubBag:GetID(), Slot);
                 isBattlePayItem = IsBattlePayItem(SubBag:GetID(), Slot);
             end
         elseif bagCache[Slot] then
             Link = bagCache[Slot].Link;
             if Link then
-                Name, _, Quality, _, _, Type, _, _, _, Texture, _ = GetItemInfo(Link);
+                -- regular items ... 
+                if (strmatch(Link, "|Hitem:")) then
+                    Name, _, Quality, _, _, _, _, _, _, Texture = GetItemInfo(Link);
+                -- ... or a caged battle pet ...
+                elseif (strmatch(Link, "|Hbattlepet:")) then
+                    local _, speciesID, _, qualityString = strsplit(":", Link);
+                    Name, Texture = C_PetJournal.GetPetInfoBySpeciesID(speciesID);
+                    Quality = tonumber(qualityString);
+                -- ... we don't know about everything else
+                end
+                
                 ItemButton.hasItem = 1;
                 isNewItem = C_NewItems.IsNewItem(SubBag:GetID(), Slot);
                 isBattlePayItem = IsBattlePayItem(SubBag:GetID(), Slot);
@@ -1497,6 +1507,7 @@ function BaudBagUpdateSubBag(SubBag)
                 Texture = nil;
                 ItemButton.hasItem = nil;
             end
+
             SetItemButtonTexture(ItemButton, Texture);
             SetItemButtonCount(ItemButton, bagCache[Slot].Count or 0);
         end
