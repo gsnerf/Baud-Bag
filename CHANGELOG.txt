@@ -2,6 +2,7 @@
 v7.0.2
   - fixed grey item equip on visiting mail
   - fixed skin selection in options
+  - initial support for CaerdonWardrobe (does not work on offline bank yet)
 v7.0.1
   - bumped version to legion pre-patch
   - fixed performance issues introduced with 6.2.0 beta versions
