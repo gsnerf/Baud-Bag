@@ -7,6 +7,7 @@
 ]]
 
 --[[ defining variables for the events ]]--
+local AddOnName, AddOnTable = ...
 local Localized = BaudBagLocalized;
 
 local Prefix = "BaudBag";
@@ -18,6 +19,8 @@ local BagsReady;
 local BagsSearched = {};
 local _;
 local ItemToolTip;
+
+_G[AddOnName] = AddOnTable;
 
 local BBFrameFuncs = {
     IsCraftingReagent = function (itemId)
@@ -1538,7 +1541,13 @@ function BaudBagUpdateSubBag(SubBag)
             Texture:SetVertexColor(0.5, 0.5, 0, 1);
             Texture:Show();
         end
+
+        AddOnTable:ItemSlot_Updated(SubBag:GetID(), Slot, ItemButton);
     end
+end
+
+function AddOnTable:ItemSlot_Updated(bagId, slotId, button)
+    -- just an empty hook for other addons
 end
 
 --[[ Updates the rarity for the given button on basis of the given quality and configuration options ]]
