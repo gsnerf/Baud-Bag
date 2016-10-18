@@ -285,7 +285,7 @@ end
 -- onclick
 function BaudBagOptionsBackgroundDropDown_OnClick(self)
     BBConfig[SelectedBags][SelectedContainer].Background = self.value;
-    UIDropDownMenu_SetSelectedValue(BaudBagOptionsBackgroundDropDown, self.value);
+    UIDropDownMenu_SetSelectedValue(BaudBagOptions.GroupContainer.BackgroundSelection, self.value);
     BaudBagUpdateContainer(_G["BaudBagContainer"..SelectedBags.."_"..SelectedContainer]); -- TODO: move to BaudBagBBConfig save?
 end
 
