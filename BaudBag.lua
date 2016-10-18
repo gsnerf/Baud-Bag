@@ -233,6 +233,11 @@ Func = function(self, event, ...)
     end
 end
 EventFuncs.MERCHANT_SHOW = Func;
+
+Func = function(self, event, ...)
+    BaudBag_DebugMsg("Bags", "Event fired (event)", event);
+    BaudBagAutoOpenSet(1, false);
+end
 EventFuncs.MAIL_SHOW = Func;
 EventFuncs.AUCTION_HOUSE_SHOW = Func;
 
