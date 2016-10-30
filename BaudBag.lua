@@ -1,12 +1,4 @@
-﻿--[[To do list:
-    Slash commands
-    Multi character viewing
-    Option for disabling fading
-    Update offline bank even when it's disabled
-    Vertex color for backgrounds
-]]
-
---[[ defining variables for the events ]]--
+﻿--[[ defining variables for the events ]]--
 local AddOnName, AddOnTable = ...
 local Localized = BaudBagLocalized;
 
@@ -221,7 +213,7 @@ Func = function(self, event, ...)
     BaudBag_DebugMsg("Bags", "Event fired (event)", event);
     BaudBagAutoOpenSet(1, false);
 
-    if (BBConfig.SellJunk) then
+    if (BBConfig.SellJunk and MerchantFrame:IsShown()) then
         BaudBagForEachBag(1,
             function(Bag, Index)
                 for Slot = 1, GetContainerNumSlots(Bag) do
