@@ -1,0 +1,40 @@
+@startuml
+package "WoW-Defaults" {
+    interface SmallMoneyFrameTemplate
+    interface UIDropDownMenuTemplate
+}
+package "BaudBag" {
+    interface BaudBagBagsFrameTemplate
+    interface BaudBagContainerTemplate
+    interface BaudBagFirstContainerTemplate {
+        SmallMoneyFrameTemplate MoneyFrame
+        BaudBagTokenFrameTemplate TokenFrame
+    }
+    interface BaudBagSubBagTemplate
+    interface BaudBagTokenFrameTemplate
+
+    class BaudBagSearchFrame
+    class BaudBagContainerDropDown
+    class BaudBagContainer1_1 {
+        BaudBagBagsFrameTemplate BagsFrame
+    }
+    class BaudBagContainer2_1 {
+        BaudBagBagsFrameTemplate BagsFrame
+    }
+    class BaudBagFrame
+    class BagContainer
+
+    BaudBagContainerTemplate <|-- BaudBagFirstContainerTemplate
+    BaudBagFirstContainerTemplate <|-- BaudBagContainer1_1
+    BaudBagFirstContainerTemplate <|-- BaudBagContainer2_1
+    BaudBagFirstContainerTemplate -up-> SmallMoneyFrameTemplate
+    BaudBagFirstContainerTemplate --> BaudBagTokenFrameTemplate
+    BaudBagContainer1_1 --> BaudBagBagsFrameTemplate
+    BaudBagContainer2_1 --> BaudBagBagsFrameTemplate
+    BaudBagContainer2_1 *-- BaudBagBankSlotPurchaseFrame
+    BaudBagContainer2_1 *-- "BaudBagSubBag-1"
+    BaudBagContainer2_1 *-- "BaudBagSubBag-3"
+
+    UIDropDownMenuTemplate <|-down- BaudBagContainerDropDown
+}
+@enduml
