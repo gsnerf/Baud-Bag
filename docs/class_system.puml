@@ -1,0 +1,37 @@
+@startuml
+class BaudBag
+class Config
+class Cache
+
+enum BagSetType {
+    Backpack,
+    Bank,
+    GuildBank,
+    VoidStorage
+}
+
+class BagSet {
+    BagSetType type
+}
+
+enum ContainerType {
+    Joined,
+    Tabbed
+}
+
+class Container {
+    ContainerType type
+}
+class SubContainer{
+    number containerId
+}
+
+note left of SubContainer : this represents a "Bag" in WoW, see DevReadMe.txt
+
+BaudBag *-- Config
+BaudBag *-- Cache
+BaudBag *-- BagSet
+
+BagSet *-- Container
+Container *-- SubContainer
+@enduml
