@@ -1,6 +1,6 @@
 ﻿package-as: BaudBag
 ignore:
-    - BaudBag.wowproj
-    - BaudBag.wowsln
-    - DevReadMe.txt
+    - docs
 manual-changelog: CHANGELOG.txt
+optional-dependencies:
+    - caerdon-wardrobe
