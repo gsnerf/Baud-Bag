@@ -26,4 +26,4 @@ BaudBagToken.xml
 BaudBagBank.xml
 BaudBag.xml
 BaudBagVoidStorage.xml
-CaedronWardrobeSupport.lua
+external\CaedronWardrobeSupport.lua
