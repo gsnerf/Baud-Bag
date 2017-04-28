@@ -11,7 +11,7 @@ enum BagSetType {
 }
 
 class BagSet {
-    BagSetType type
+    BagSetType Type
     PerformInitialBuild()
     ApplyConfiguration()
 }
@@ -22,12 +22,12 @@ enum ContainerType {
 }
 
 class Container {
-    ContainerType type
+    ContainerType Type
     Update()
-    SaveCoordinats()
+    SaveCoordinates()
 }
 class SubContainer{
-    number containerId
+    number ContainerId
     Update()
 }
 
