@@ -17,7 +17,15 @@ function Prototype:SetName(name)
 end
 
 function Prototype:Render()
-    
+    -- TODO
+end
+
+function Prototype:Update()
+    -- TODO
+end
+
+function Prototype:SafeCoordinates()
+    -- TODO
 end
 
 local Metatable = { __index = Prototype }
