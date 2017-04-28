@@ -12,6 +12,8 @@ enum BagSetType {
 
 class BagSet {
     BagSetType type
+    PerformInitialBuild()
+    ApplyConfiguration()
 }
 
 enum ContainerType {
@@ -21,9 +23,12 @@ enum ContainerType {
 
 class Container {
     ContainerType type
+    Update()
+    SaveCoordinats()
 }
 class SubContainer{
     number containerId
+    Update()
 }
 
 note left of SubContainer : this represents a "Bag" in WoW, see DevReadMe.txt
@@ -33,5 +38,6 @@ BaudBag *-- Cache
 BaudBag *-- BagSet
 
 BagSet *-- Container
+BagSet *-- SubContainer
 Container *-- SubContainer
 @enduml
