@@ -1,12 +1,11 @@
-﻿-- Author      : gsnerf
--- Create Date : 11/11/2010 6:16:49 PM
-
-local _;
+﻿local AddOnName, AddOnTable = ...
+local _
 
 -- some locally needed variables
-local Localized	= BaudBagLocalized;
-local SliderBars, GlobalCheckButtons, ContainerCheckButtons;
-BBConfig = {};
+local Localized	= BaudBagLocalized
+local SliderBars, GlobalCheckButtons, ContainerCheckButtons
+BBConfig = {}
+AddOnTable.Config = BBConfig
 
 function BaudBagSetCfgPreReq(Bars, GlobalButtons, ContainerButtons)
     SliderBars            = Bars;
