@@ -1,4 +1,15 @@
-﻿Config structure:
+﻿Coding Guidelines:
+
+Currently there are a number of different styles mixed together in this addon.
+To make the code better readable and more coherent we want to achieve a consistent style that fits in better with what the WoW API uses itself.
+To achieve this try to follow these guides:
+- local variables are lowerCamelCase: totallyImportantValue
+- functions are upper CamelCase: GetSomeValue()
+- boolean variables should indicate that they hold booleans: isOfType, hasSomeProperty etc.
+- if you create a new file ALWAYS place 'local _' at the top! (prevents unwanted tainting of official UI code)
+- no ; for line endings!
+
+Config structure:
 
 Config
 	|-1 (Bagset)
