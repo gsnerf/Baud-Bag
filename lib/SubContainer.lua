@@ -2,17 +2,26 @@ local AddOnName, AddOnTable = ...
 local _
 
 local Prototype = {
-    startColumn = 0,
-    highlighted = false,
-    frame = nil
+    BagSet = nil,
+    ContainerId = nil,
+    Name = "",
+    StartColumn = 0,
+    Size = 0,
+    FreeSlots = 0,
+    IsHighlighted = false,
+    Frame = nil
 }
 
+function Prototype:GetID()
+    return self.ContainerId
+end
+
 function Prototype:ToggleHighlight()
-    self.highlighted = not self.highlighted
+    self.IsHighlighted = not self.IsHighlighted
 end
 
 function Prototype:GetFrame()
-    return self.frame
+    return self.Frame
 end
 
 function Prototype:Render()

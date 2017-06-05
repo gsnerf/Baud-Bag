@@ -24,7 +24,7 @@ function Prototype:Update()
     -- TODO
 end
 
-function Prototype:SafeCoordinates()
+function Prototype:SaveCoordinates()
     -- TODO
 end
 

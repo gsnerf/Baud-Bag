@@ -3,7 +3,7 @@ local AddOnName, AddOnTable = ...
 local Localized = BaudBagLocalized;
 
 local Prefix = "BaudBag";
-local LastBagID = NUM_BANKBAGSLOTS + 4;
+local LastBagID = NUM_BANKBAGSLOTS + NUM_BAG_SLOTS;
 local MaxCont = {1,1};
 local NumCont = {};
 local FadeTime = 0.2;
