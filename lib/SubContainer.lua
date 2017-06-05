@@ -34,19 +34,21 @@ end
 
 local Metatable = { __index = Prototype }
 
-function AddOnTable:CreateSubContainer(subBagTemplate)
+function AddOnTable:CreateSubContainer(bagSet, containerId)
     local subContainer = _G.setmetatable({}, Metatable)
-    subContainer.frame = CreateFrame("Frame", AddOnName.."SubBag"..Bag, nil, subBagTemplate);
+    subContainer.Frame = CreateFrame("Frame", AddOnName.."SubBag"..Bag, nil, nil);
+    subContainer.BagSet = bagSet
+    subContainer.ContainerId = containerId
     return subContainer
 end
 
 local function EventUpdateFunction(self, event, ...)
     -- only update if the event is for the current bag!
-    local bag = ...;
-    if (self:GetID() ~= bag) then
+    local idOfBagToUpdate = ...;
+    if (self.ContainerId ~= idOfBagToUpdate) then
         return;
     end
-    BaudBag_DebugMsg("ItemHandle", "Event fired for subBag, Params[Event, ID]", event, self:GetID());
+    BaudBag_DebugMsg("ItemHandle", "Event fired for subBag, Params[Event, ID]", event, self.ContainerId);
     self:Update(event, ...);
 end
 
