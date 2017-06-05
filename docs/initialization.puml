@@ -1,0 +1,20 @@
+@startuml
+
+participant BaudBagFrame
+
+[-> BaudBagFrame: BaudBagFrame_OnLoad(self, event, ...)
+
+create BagSet
+BaudBagFrame -> BagSet: new
+BaudBagFrame -> BagSet: PerformInitialBuild
+activate BagSet
+
+create Container
+BagSet -> Container: new
+
+create SubContainer
+BagSet -> SubContainer: new
+BagSet -> BagSet: tinsert subcontainer into internal list
+
+
+@enduml
