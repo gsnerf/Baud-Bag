@@ -297,7 +297,7 @@
 	</Frame>
 	<Frame name="BaudBagFirstContainerTemplate" virtual="true" inherits="BaudBagContainerTemplate">
 		<Frames>
-			<CheckButton name="$parentBagsButton">
+			<CheckButton name="$parentBagsButton" parentKey="BagsButton">
 				<Size>
 					<AbsDimension x="24" y="24" />
 				</Size>
@@ -312,12 +312,12 @@
 				<HighlightTexture file="Interface\Buttons\UI-Common-MouseHilight" alphaMode="ADD" />
 				<CheckedTexture file="Interface\Buttons\UI-SpellbookIcon-PrevPage-Down" />
 			</CheckButton>
-			<Frame name="$parentMoneyFrame" inherits="SmallMoneyFrameTemplate">
+			<Frame name="$parentMoneyFrame" parentKey="MoneyFrame" inherits="SmallMoneyFrameTemplate">
 				<Size>
 					<AbsDimension x="206" y="14" />
 				</Size>
 			</Frame>
-			<Frame name="$parentTokenFrame" inherits="BaudBagTokenFrameTemplate" hidden="true">
+			<Frame name="$parentTokenFrame" parentKey="TokenFrame" inherits="BaudBagTokenFrameTemplate" hidden="true">
 				<Size>
 					<AbsDimension x="206" y="14" />
 				</Size>
@@ -325,7 +325,7 @@
 		</Frames>
 		<Layers>
 			<Layer>
-				<FontString name="$parentSlots" inherits="GameFontNormal" justifyH="LEFT" />
+				<FontString name="$parentSlots" parentKey="FreeSlots" inherits="GameFontNormal" justifyH="LEFT" />
 			</Layer>
 		</Layers>
 	</Frame>

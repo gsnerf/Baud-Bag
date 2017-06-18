@@ -638,6 +638,33 @@ local function GetTexturePiece(Name, MinX, MaxX, MinY, MaxY, Layer)
     return Texture;
 end
 
+local function Container1_RenderMoneyFrameBackground(Container, Parent, RenderMoneyFrameOnly)
+    RenderMoneyFrameOnly = RenderMoneyFrameOnly or true
+
+    local helper = AddOnTable:GetTextureHelper()
+    helper.Parent = _G[Parent]
+    helper.File = "Interface\\ContainerFrame\\UI-BackpackBackground.blp";
+    helper.Width, helper.Height = 256, 256;
+
+    local TargetHeight = Container.MoneyFrame:GetHeight()
+    local parentName = Container.MoneyFrame:GetName()
+
+    -- left part of ONLY the yellow border
+    local Texture = helper:GetTexturePiece("MoneyLineLeft", 80,84, 228,246, nil, TargetHeight);
+    Texture:SetPoint("LEFT", Parent.."Left", "RIGHT");
+    Texture:SetPoint("TOP", parentName, "TOP", 0, 0);
+
+    -- right part of ONLY the yellow border
+    Texture = helper:GetTexturePiece("MoneyLineRight", 240,244, 228,246, nil, TargetHeight);
+    Texture:SetPoint("RIGHT", Parent.."Right", "LEFT");
+    Texture:SetPoint("TOP", parentName, "TOP", 0, 0);
+
+    -- center part of ONLY the yellow border
+    Texture = helper:GetTexturePiece("MoneyLineCenter", 85,239, 228,246, nil, TargetHeight);
+    Texture:SetPoint("LEFT", Parent.."MoneyLineLeft", "RIGHT");
+    Texture:SetPoint("RIGHT", Parent.."MoneyLineRight", "LEFT");
+end
+
 -- [[ maybe TODO: remove artwork for keyring container (check if artwork still exists uppon launch) ]] --
 function BaudBagUpdateBackground(Container)
     local Background = BBConfig[Container.BagSet][Container:GetID()].Background;
