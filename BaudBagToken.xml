@@ -46,35 +46,6 @@
 		</Scripts>
 	</Button>
 	
-	<!--<Frame name="BaudBagTokenFrame" parent="UIParent" hidden="true">
-		<Size>
-			<AbsDimension y="32"/>
-		</Size>
-		<Frames>
-			<Button name="$parentToken1" inherits="BaudBagTokenTemplate" id="1">
-				<Anchors>
-					<Anchor point="LEFT">
-						<Offset x="13" y="0"/>
-					</Anchor>
-				</Anchors>
-			</Button>
-			<Button name="$parentToken2" inherits="BaudBagTokenTemplate" id="2">
-				<Anchors>
-					<Anchor point="LEFT" relativeTo="$parentToken1" relativePoint="RIGHT">
-						<Offset x="2" y="0"/>
-					</Anchor>
-				</Anchors>
-			</Button>
-			<Button name="$parentToken3" inherits="BaudBagTokenTemplate" id="3">
-				<Anchors>
-					<Anchor point="LEFT" relativeTo="$parentToken2" relativePoint="RIGHT">
-						<Offset x="2" y="0"/>
-					</Anchor>
-				</Anchors>
-			</Button>
-		</Frames>
-	</Frame>-->
-
 	<Frame name="BaudBagTokenFrameTemplate" hidden="true" virtual="true">
 		<Size>
 			<AbsDimension y="32"/>
