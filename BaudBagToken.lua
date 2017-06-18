@@ -14,6 +14,14 @@ local _;
 MAX_WATCHED_TOKENS_ORIG = MAX_WATCHED_TOKENS;
 MAX_WATCHED_TOKENS_BAUD_BAG = 5;
 
+
+local function calculateScaleFix(TokenFrame)
+    local scale = TokenFrame:GetEffectiveScale()
+    local scaleFix = 5 - math.ceil(scale / 0.2)
+    BaudBag_DebugMsg("Token", "Applying scale fix (scale, scaleFix)", scale, scaleFix);
+    return scaleFix
+end
+
 local pre_BackpackTokenFrame_Update = BackpackTokenFrame_Update;
 BackpackTokenFrame_Update = function()
     BaudBag_DebugMsg("Token", "Update was called on TokenFrame");
@@ -35,7 +43,7 @@ BackpackTokenFrame_Update = function()
     local name, count, icon;
     local digits, countSize;
     local usedWidth = 0;
-    local digitWidth = 8;
+    local digitWidth = 8 + calculateScaleFix(TokenFrame)
     for i=1, MAX_WATCHED_TOKENS do
         name, count, icon, itemID = GetBackpackCurrencyInfo(i);
         watchButton = _G[TokenFrame:GetName().."Token"..i];
