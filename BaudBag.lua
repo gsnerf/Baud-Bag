@@ -829,27 +829,13 @@ function BaudBagUpdateBackground(Container)
         -- Adds the box for the money/slot indicators and if needed the token frame
         if (Container:GetID() == 1) then
             if (BackpackTokenFrame_IsShown() == 1 and Container:GetName() == "BaudBagContainer1_1") then
-                Bottom = BaudBagTokenFrame_RenderBackgrounds(Container, Parent, Bottom)
+                Bottom = Bottom + 43;
+                Container1_RenderMoneyFrameBackground(Container, Parent, false)
+                BaudBagTokenFrame_RenderBackgrounds(Container, Parent)
             else
                 -- make sure the window gets big enough and the correct texture is chosen
                 Bottom = Bottom + 20;
-                TextureFile = "Interface\\ContainerFrame\\UI-BackpackBackground.blp";
-                TextureWidth, TextureHeight = 256, 256;
-				
-                -- left part of ONLY the yellow border
-                Texture = GetTexturePiece("BottomFillLeft",80,84,224,242,"BACKGROUND");
-                Texture:SetPoint("LEFT", Parent.."Left", "RIGHT");
-                Texture:SetPoint("BOTTOM", Parent.."Bottom", "TOP", 0, -2);
-
-                -- right part of ONLY the yellow border
-                Texture = GetTexturePiece("BottomFillRight",240,244,224,242,"BACKGROUND");
-                Texture:SetPoint("RIGHT", Parent.."Right", "LEFT");
-                Texture:SetPoint("BOTTOM", Parent.."Bottom", "TOP", 0, -2);
-				
-                -- center part of ONLY the yellow border
-                Texture = GetTexturePiece("BottomFillCenter",85,239,224,242,"BACKGROUND");
-                Texture:SetPoint("LEFT", Parent.."BottomFillLeft", "RIGHT");
-                Texture:SetPoint("RIGHT", Parent.."BottomFillRight", "LEFT");
+                Container1_RenderMoneyFrameBackground(Container, Parent)
             end
         end
 
@@ -884,13 +870,13 @@ function BaudBagUpdateBackground(Container)
         TextureParent:Show();
         if (Container:GetID() == 1) then
             if (BackpackTokenFrame_IsShown() == 1 and Container:GetName() == "BaudBagContainer1_1") then
-                _G[Container:GetName().."Slots"]:SetPoint("BOTTOMLEFT",Backdrop,"BOTTOMLEFT",12,26);
-                _G[Container:GetName().."MoneyFrame"]:SetPoint("BOTTOMRIGHT",Backdrop,"BOTTOMRIGHT",0,26);
-                _G[Container:GetName().."TokenFrame"]:SetPoint("BOTTOMLEFT",Backdrop,"BOTTOMLEFT",0,4);
-                _G[Container:GetName().."TokenFrame"]:SetPoint("BOTTOMRIGHT",Backdrop,"BOTTOMRIGHT",0,4);
+                Container.TokenFrame:SetPoint("BOTTOMLEFT",Backdrop,"BOTTOMLEFT", 0,6);
+                Container.TokenFrame:SetPoint("BOTTOMRIGHT",Backdrop,"BOTTOMRIGHT", 0,6);
+                Container.MoneyFrame:SetPoint("BOTTOMRIGHT",Container.TokenFrame,"TOPRIGHT", 0,-1);
+                Container.FreeSlots:SetPoint("BOTTOMLEFT",Container.TokenFrame,"TOPLEFT", 0,4);
             else
-                _G[Container:GetName().."Slots"]:SetPoint("BOTTOMLEFT",Backdrop,"BOTTOMLEFT",12,7);
-                _G[Container:GetName().."MoneyFrame"]:SetPoint("BOTTOMRIGHT",Backdrop,"BOTTOMRIGHT",0,6);
+                Container.FreeSlots:SetPoint("BOTTOMLEFT",Backdrop,"BOTTOMLEFT",12,7);
+                Container.MoneyFrame:SetPoint("BOTTOMRIGHT",Backdrop,"BOTTOMRIGHT",0,6);
             end
         end
     else
