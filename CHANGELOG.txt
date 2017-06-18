@@ -1,6 +1,7 @@
 ﻿=== Changelog ===
 v7.2.1
   - extensive internal restructuring
+  - reworked TokenFrame and MoneyFrame in first backpack container to better fit and worked out some scaling issues
 v7.0.3
   - added special handling for vendors that are also quests givers 
 v7.0.2
