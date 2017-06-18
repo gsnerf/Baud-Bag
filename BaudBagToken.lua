@@ -9,6 +9,7 @@
 
 	Additionally to the self rendering in our bags (done in BaudBag.lua BaudBagUpdateBackground()) the max trackable tokens are raised to 5.
   ]]
+local AddOnName, AddOnTable = ...
 local _;
 MAX_WATCHED_TOKENS_ORIG = MAX_WATCHED_TOKENS;
 MAX_WATCHED_TOKENS_BAUD_BAG = 5;
@@ -151,4 +152,51 @@ BackpackTokenButton_OnClick = function(self, button)
     if ( IsModifiedClick("CHATLINK") ) then
         ChatEdit_InsertLink(select(2, GetItemInfo(self.itemID))); 
     end
+end
+
+function BaudBagTokenFrame_RenderBackgrounds(Container, Parent, Bottom)
+    BaudBag_DebugMsg("Token", "Showing Token Frame for Container (Name, ID)'", Container:GetName(), Container:GetID());
+    
+    -- init texture helper for easy usage
+    local helper = AddOnTable:GetTextureHelper()
+    helper.Parent = _G[Parent]
+
+    -- make sure the window gets big enough and the correct texture is chosen
+    Bottom = Bottom + 39;
+    helper.File = "Interface\\ContainerFrame\\UI-BackpackBackground.blp";
+    helper.Width, helper.Height = 256, 256;
+
+    -- left part of ONLY the yellow border
+    local Texture = helper:GetTexturePiece("BottomFillLeft", 80,84, 224,242, "BACKGROUND");
+    Texture:SetPoint("LEFT", Parent.."Left", "RIGHT");
+    Texture:SetPoint("BOTTOM", Parent.."Bottom", "TOP", 0, 17);
+
+    -- right part of ONLY the yellow border
+    Texture = helper:GetTexturePiece("BottomFillRight", 240,244, 224,242, "BACKGROUND");
+    Texture:SetPoint("RIGHT", Parent.."Right", "LEFT");
+    Texture:SetPoint("BOTTOM", Parent.."Bottom", "TOP", 0, 17);
+
+    -- center part of ONLY the yellow border
+    Texture = helper:GetTexturePiece("BottomFillCenter", 85,239, 224,242, "BACKGROUND");
+    Texture:SetPoint("LEFT", Parent.."BottomFillLeft", "RIGHT");
+    Texture:SetPoint("RIGHT", Parent.."BottomFillRight", "LEFT");
+
+    helper.File = "Interface\\ContainerFrame\\UI-Backpack-TokenFrame.blp";
+    helper.Width, helper.Height = 256, 32;
+    local TexLeftStart, TexLeftEnd = 0, 10;
+    local TexRightStart, TexRightEnd = 165, 179;
+
+    Texture = helper:GetTexturePiece("TokensFillLeft", 7, 13, 6, 24, "BACKGROUND");
+    Texture:SetPoint("LEFT", Parent.."Left", "RIGHT");
+    Texture:SetPoint("BOTTOM", Parent.."Bottom", "TOP", 0, -2);
+
+    Texture = helper:GetTexturePiece("TokensFillRight", 165, 171, 6, 24, "BACKGROUND");
+    Texture:SetPoint("RIGHT", Parent.."Right", "LEFT");
+    Texture:SetPoint("BOTTOM", Parent.."Bottom", "TOP", 0, -2);
+
+    Texture = helper:GetTexturePiece("TokensFillCenter", 14, 164, 6, 24, "BACKGROUND");
+    Texture:SetPoint("LEFT", Parent.."TokensFillLeft", "RIGHT");
+    Texture:SetPoint("RIGHT", Parent.."TokensFillRight", "LEFT");
+
+    return Bottom
 end

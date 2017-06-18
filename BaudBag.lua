@@ -802,43 +802,7 @@ function BaudBagUpdateBackground(Container)
         -- Adds the box for the money/slot indicators and if needed the token frame
         if (Container:GetID() == 1) then
             if (BackpackTokenFrame_IsShown() == 1 and Container:GetName() == "BaudBagContainer1_1") then
-                BaudBag_DebugMsg("Token", "Showing Token Frame for Container (Name, ID)'", Container:GetName(), Container:GetID());
-                -- make sure the window gets big enough and the correct texture is chosen
-                Bottom = Bottom + 39;
-                TextureFile = "Interface\\ContainerFrame\\UI-BackpackBackground.blp";
-                TextureWidth, TextureHeight = 256, 256;
-				
-                -- left part of ONLY the yellow border
-                Texture = GetTexturePiece("BottomFillLeft",80,84,224,242,"BACKGROUND");
-                Texture:SetPoint("LEFT", Parent.."Left", "RIGHT");
-                Texture:SetPoint("BOTTOM", Parent.."Bottom", "TOP", 0, 17);
-
-                -- right part of ONLY the yellow border
-                Texture = GetTexturePiece("BottomFillRight",240,244,224,242,"BACKGROUND");
-                Texture:SetPoint("RIGHT", Parent.."Right", "LEFT");
-                Texture:SetPoint("BOTTOM", Parent.."Bottom", "TOP", 0, 17);
-				
-                -- center part of ONLY the yellow border
-                Texture = GetTexturePiece("BottomFillCenter",85,239,224,242,"BACKGROUND");
-                Texture:SetPoint("LEFT", Parent.."BottomFillLeft", "RIGHT");
-                Texture:SetPoint("RIGHT", Parent.."BottomFillRight", "LEFT");
-				
-                TextureFile = "Interface\\ContainerFrame\\UI-Backpack-TokenFrame.blp";
-                TextureWidth, TextureHeight = 256, 32;
-                local TexLeftStart, TexLeftEnd = 0, 10;
-                local TexRightStart, TexRightEnd = 165, 179;
-				
-                Texture = GetTexturePiece("TokensFillLeft", 7, 13, 6, 24, "BACKGROUND");
-                Texture:SetPoint("LEFT", Parent.."Left", "RIGHT");
-                Texture:SetPoint("BOTTOM", Parent.."Bottom", "TOP", 0, -2);
-
-                Texture = GetTexturePiece("TokensFillRight", 165, 171, 6, 24, "BACKGROUND");
-                Texture:SetPoint("RIGHT", Parent.."Right", "LEFT");
-                Texture:SetPoint("BOTTOM", Parent.."Bottom", "TOP", 0, -2);
-				
-                Texture = GetTexturePiece("TokensFillCenter", 14, 164, 6, 24, "BACKGROUND");
-                Texture:SetPoint("LEFT", Parent.."TokensFillLeft", "RIGHT");
-                Texture:SetPoint("RIGHT", Parent.."TokensFillRight", "LEFT");
+                Bottom = BaudBagTokenFrame_RenderBackgrounds(Container, Parent, Bottom)
             else
                 -- make sure the window gets big enough and the correct texture is chosen
                 Bottom = Bottom + 20;
