@@ -18,6 +18,7 @@ BaudBagFunctions.lua
 lib\BaseTypes.lua
 lib\Container.lua
 lib\SubContainer.lua
+lib\TextureHelper.lua
 BaudBagConfig.lua
 BaudBagCache.lua
 BaudBagToolTips.lua
