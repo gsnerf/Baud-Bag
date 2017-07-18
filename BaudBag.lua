@@ -840,29 +840,7 @@ function BaudBagUpdateBackground(Container)
         end
 
         -- Add a picture of the bag in the circle
-        Texture = _G[Parent.."Bag"];
-        if not Texture then
-            Texture = TextureParent:CreateTexture(Parent.."Bag");
-            Texture:SetWidth(40);
-            Texture:SetHeight(40);
-            Texture:ClearAllPoints();
-            Texture:SetPoint("TOPLEFT", Parent.."TopLeft", "TOPLEFT", 3, -3);
-            Texture:SetDrawLayer("BACKGROUND");
-        end
-		
-        local Icon;
-        local BagID = Container.Bags[1]:GetID();
-        local bagCache = BaudBagGetBagCache(BagID);
-        if (BagID <= 0) then
-            Icon = BaudBagIcons[BagID];
-        elseif (Container.BagSet == 2) and not BaudBagFrame.BankOpen and bagCache.BagLink then
-            Icon = GetItemIcon(bagCache.BagLink);
-        else
-            Icon = GetInventoryItemTexture("player", ContainerIDToInventoryID(BagID));
-        end
-		
-        SetPortraitToTexture(Texture, Icon or "Interface\\Icons\\INV_Misc_QuestionMark");
-        Backdrop:SetBackdrop(nil);
+        Container_UpdateBagPicture(Container, Parent, Backdrop)
 
         -- Adjust the positioning of several bag components
         _G[Container:GetName().."Name"]:SetPoint("TOPLEFT",Backdrop,"TOPLEFT",(45 + ShiftName),-7);
@@ -933,6 +911,32 @@ function BaudBagUpdateBackground(Container)
     Container.UnlockInfo:ClearAllPoints();
     Container.UnlockInfo:SetPoint("TOPLEFT", -10, 3);
     Container.UnlockInfo:SetPoint("BOTTOMRIGHT", 10, -3);
+end
+
+function Container_UpdateBagPicture(Container, Parent, Backdrop)
+    local Texture = _G[Parent.."Bag"];
+    if not Texture then
+        Texture = TextureParent:CreateTexture(Parent.."Bag");
+        Texture:SetWidth(40);
+        Texture:SetHeight(40);
+        Texture:ClearAllPoints();
+        Texture:SetPoint("TOPLEFT", Parent.."TopLeft", "TOPLEFT", 3, -3);
+        Texture:SetDrawLayer("BACKGROUND");
+    end
+    
+    local Icon;
+    local BagID = Container.Bags[1]:GetID();
+    local bagCache = BaudBagGetBagCache(BagID);
+    if (BagID <= 0) then
+        Icon = BaudBagIcons[BagID];
+    elseif (Container.BagSet == 2) and not BaudBagFrame.BankOpen and bagCache.BagLink then
+        Icon = GetItemIcon(bagCache.BagLink);
+    else
+        Icon = GetInventoryItemTexture("player", ContainerIDToInventoryID(BagID));
+    end
+    
+    SetPortraitToTexture(Texture, Icon or "Interface\\Icons\\INV_Misc_QuestionMark");
+    Backdrop:SetBackdrop(nil);
 end
 
 
