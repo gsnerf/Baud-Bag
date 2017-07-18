@@ -834,7 +834,7 @@ function BaudBagUpdateBackground(Container)
                 BaudBagTokenFrame_RenderBackgrounds(Container, Parent)
             else
                 -- make sure the window gets big enough and the correct texture is chosen
-                Bottom = Bottom + 20;
+                Bottom = Bottom + 21;
                 Container1_RenderMoneyFrameBackground(Container, Parent)
             end
         end
@@ -875,8 +875,8 @@ function BaudBagUpdateBackground(Container)
                 Container.MoneyFrame:SetPoint("BOTTOMRIGHT",Container.TokenFrame,"TOPRIGHT", 0,-1);
                 Container.FreeSlots:SetPoint("BOTTOMLEFT",Container.TokenFrame,"TOPLEFT", 0,4);
             else
-                Container.FreeSlots:SetPoint("BOTTOMLEFT",Backdrop,"BOTTOMLEFT",12,7);
-                Container.MoneyFrame:SetPoint("BOTTOMRIGHT",Backdrop,"BOTTOMRIGHT",0,6);
+                Container.FreeSlots:SetPoint("BOTTOMLEFT",Backdrop,"BOTTOMLEFT", 12,7);
+                Container.MoneyFrame:SetPoint("BOTTOMRIGHT",Backdrop,"BOTTOMRIGHT", 0,3);
             end
         end
     else
