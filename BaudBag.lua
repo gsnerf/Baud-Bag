@@ -665,14 +665,13 @@ local function Container1_RenderMoneyFrameBackground(Container, Parent, RenderMo
     Texture:SetPoint("RIGHT", Parent.."MoneyLineRight", "LEFT");
 end
 
--- [[ maybe TODO: remove artwork for keyring container (check if artwork still exists uppon launch) ]] --
 function Container_UpdateBackground(Container)
-    local Background = BBConfig[Container.BagSet][Container:GetID()].Background;
-    local Backdrop = _G[Container:GetName().."Backdrop"];
-    Backdrop:SetFrameLevel(Container:GetFrameLevel());
-    local Left, Right, Top, Bottom;
+    local Background = BBConfig[Container.BagSet][Container:GetID()].Background
+    local Backdrop = _G[Container:GetName().."Backdrop"]
+    Backdrop:SetFrameLevel(Container:GetFrameLevel())
+    local Left, Right, Top, Bottom
     -- This shifts the name of the bank frame over to make room for the extra button
-    local ShiftName = (Container:GetID()==1) and 25 or 0;
+    local ShiftName = (Container:GetID() == 1) and 25 or 0
 
     -- these are the default blizz-frames
     if (Background <= 3) then
@@ -680,15 +679,15 @@ function Container_UpdateBackground(Container)
     else
         Left, Right, Top, Bottom = Container_UpdateOtherBackground(Container, Backdrop, ShiftName)
     end
-    _G[Container:GetName().."Name"]:SetPoint("RIGHT",Container:GetName().."MenuButton","LEFT");
+    _G[Container:GetName().."Name"]:SetPoint("RIGHT", Container:GetName().."MenuButton", "LEFT")
 
-    Backdrop:ClearAllPoints();
-    Backdrop:SetPoint("TOPLEFT",-Left,Top);
-    Backdrop:SetPoint("BOTTOMRIGHT",Right,-Bottom);
-    Container:SetHitRectInsets(-Left,-Right,-Top,-Bottom);
-    Container.UnlockInfo:ClearAllPoints();
-    Container.UnlockInfo:SetPoint("TOPLEFT", -10, 3);
-    Container.UnlockInfo:SetPoint("BOTTOMRIGHT", 10, -3);
+    Backdrop:ClearAllPoints()
+    Backdrop:SetPoint("TOPLEFT", -Left, Top)
+    Backdrop:SetPoint("BOTTOMRIGHT", Right, -Bottom)
+    Container:SetHitRectInsets(-Left, -Right, -Top, -Bottom)
+    Container.UnlockInfo:ClearAllPoints()
+    Container.UnlockInfo:SetPoint("TOPLEFT", -10, 3)
+    Container.UnlockInfo:SetPoint("BOTTOMRIGHT", 10, -3)
 end
 
 function Container_UpdateBlizzBackground(Container, Backdrop, ShiftName)
