@@ -33,12 +33,12 @@
 			<Anchor point="CENTER" />
 		</Anchors>
 		<Frames>
-			<Frame name="$parentBackdrop">
+			<Frame name="$parentBackdrop" parentKey="Backdrop">
 				<Frames>
-					<Frame name="$parentTextures" setAllPoints="true" />
+					<Frame name="$parentTextures" parentKey="Textures" setAllPoints="true" />
 				</Frames>
 			</Frame>
-			<Button name="$parentCloseButton" inherits="UIPanelCloseButton">
+			<Button name="$parentCloseButton" parentKey="CloseButton" inherits="UIPanelCloseButton">
 				<Anchors>
 					<Anchor point="TOPRIGHT" />
 				</Anchors>
@@ -49,7 +49,7 @@
 					</OnClick>
 				</Scripts>
 			</Button>
-			<Button name="$parentMenuButton">
+			<Button name="$parentMenuButton" parentKey="MenuButton">
 				<Size x="16" y="16" />
 				<Anchors>
 					<Anchor point="TOPRIGHT" relativeTo="$parentCloseButton" relativePoint="TOPLEFT" x="0" y="-8" />
@@ -61,7 +61,7 @@
 				<PushedTexture file="Interface\Buttons\UI-PlusButton-Down" />
 				<HighlightTexture file="Interface\Buttons\UI-PlusButton-Hilight" alphaMode="ADD" />
 			</Button>
-			<Button name="$parentSearchButton">
+			<Button name="$parentSearchButton" parentKey="SearchButton">
 				<Size x="16" y="16" />
 				<Anchors>
 					<Anchor point="TOPRIGHT" relativeTo="$parentMenuButton" relativePoint="TOPLEFT" x="0" y="0" />
@@ -236,7 +236,7 @@
 		</Frames>
 		<Layers>
 			<Layer>
-				<FontString name="$parentName" inherits="GameFontNormal" justifyH="LEFT">
+				<FontString name="$parentName" parentKey="Name" inherits="GameFontNormal" justifyH="LEFT">
 					<Size>
 						<AbsDimension x="0" y="12" />
 					</Size>
