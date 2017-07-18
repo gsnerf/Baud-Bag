@@ -707,59 +707,61 @@ function Container_UpdateBlizzBackground(Container, Backdrop, ShiftName)
     end
 
     local Parent = Backdrop.Textures:GetName()
-    TextureParent = Backdrop.Textures
-    TextureParent:SetFrameLevel(Container:GetFrameLevel())
     local Texture
 
-    -- choose the correct texture file with correct sizes
-    TextureFile = "Interface\\ContainerFrame\\UI-Bag-Components"
+    -- initialize texture helper
+    local helper = AddOnTable:GetTextureHelper()
+    helper.Parent = Backdrop.Textures
+    helper.Parent:SetFrameLevel(Container:GetFrameLevel())
+    helper.Width, helper.Height = 256, 512
+    helper.File = "Interface\\ContainerFrame\\UI-Bag-Components"
     if (Background == 2) then
-        TextureFile = TextureFile.."-Bank"
+        helper.File = helper.File.."-Bank"
     elseif(Background == 3)then
-        TextureFile = TextureFile.."-Keyring"
+        helper.File = helper.File.."-Keyring"
     end
-    TextureWidth, TextureHeight = 256, 512
+    helper.DefaultLayer = "ARTWORK"
 
     -- --------------------------
     -- create new textures now
     -- --------------------------
     -- BORDERS FIRST
     -- transparent circle top left
-    Texture = GetTexturePiece("TopLeft", 65, 116, 1, 49,"ARTWORK")
+    Texture = helper:GetTexturePiece("TopLeft", 65, 116, 1, 49)
     Texture:SetPoint("TOPLEFT", -7, 4)
 
     -- right end of header + transparent piece for close button (with or without blank part on the bottom)
-    Texture = GetTexturePiece("TopRight",    223, 252, 5, BlankTop and 30 or 49, "ARTWORK")
+    Texture = helper:GetTexturePiece("TopRight", 223, 252, 5, BlankTop and 30 or 49)
     Texture:SetPoint("TOPRIGHT")
 
     -- bottom left round corner
-    Texture = GetTexturePiece("BottomLeft",   72, 79, 169, 177, "ARTWORK")
+    Texture = helper:GetTexturePiece("BottomLeft", 72, 79, 169, 177)
     Texture:SetPoint("BOTTOMLEFT")
 
     -- bottom right round corner
-    Texture = GetTexturePiece("BottomRight", 247, 252, 172, 177, "ARTWORK")
+    Texture = helper:GetTexturePiece("BottomRight", 247, 252, 172, 177)
     Texture:SetPoint("BOTTOMRIGHT")
 
     -- container header (contains name, with or without blank part on the bottom)
-    Texture = GetTexturePiece("Top",         117, 222, 5, BlankTop and 30 or 49,"ARTWORK")
+    Texture = helper:GetTexturePiece("Top", 117, 222, 5, BlankTop and 30 or 49)
     Texture:SetPoint("TOP")
     Texture:SetPoint("RIGHT", Parent.."TopRight", "LEFT")
     Texture:SetPoint("LEFT", Parent.."TopLeft", "RIGHT")
 
     -- left border
-    Texture = GetTexturePiece("Left", 72, 76, 182, 432, "ARTWORK")
+    Texture = helper:GetTexturePiece("Left", 72, 76, 182, 432)
     Texture:SetPoint("LEFT")
     Texture:SetPoint("BOTTOM", Parent.."BottomLeft", "TOP")
     Texture:SetPoint("TOP", Parent.."TopLeft", "BOTTOM")
 
     -- right border
-    Texture = GetTexturePiece("Right", 248, 252, 182, 432, "ARTWORK")
+    Texture = helper:GetTexturePiece("Right", 248, 252, 182, 432)
     Texture:SetPoint("RIGHT")
     Texture:SetPoint("BOTTOM", Parent.."BottomRight", "TOP")
     Texture:SetPoint("TOP", Parent.."TopRight", "BOTTOM")
 
     -- bottom border
-    Texture = GetTexturePiece("Bottom", 80, 246, 173, 177, "OVERLAY")
+    Texture = helper:GetTexturePiece("Bottom", 80, 246, 173, 177, nil, nil, "OVERLAY")
     Texture:SetPoint("BOTTOM")
     Texture:SetPoint("LEFT", Parent.."BottomLeft", "RIGHT")
     Texture:SetPoint("RIGHT", Parent.."BottomRight", "LEFT")
@@ -768,27 +770,27 @@ function Container_UpdateBlizzBackground(Container, Backdrop, ShiftName)
     if (Blanks > 0) then
         local Width = Blanks * 42
         if BlankTop then
-            Texture = GetTexturePiece("BlankFillEdge", 116, 223, 31, 34, "ARTWORK")
+            Texture = helper:GetTexturePiece("BlankFillEdge", 116, 223, 31, 34)
             Texture:SetPoint("TOPLEFT", Parent.."Top", "BOTTOMLEFT")
             Texture:SetPoint("RIGHT", Container, "LEFT", Width, 0)
 
-            Texture = GetTexturePiece("BlankFillLeft", 72, 116, 142, 162, "ARTWORK")
+            Texture = helper:GetTexturePiece("BlankFillLeft", 72, 116, 142, 162)
             Texture:SetPoint("TOPRIGHT", Parent.."TopLeft", "BOTTOMRIGHT", 0, 3)
             Texture:SetPoint("BOTTOM", Container, "TOP", 0, -42)
 
             -- Since the texture in already stretched about double in height, try to keep the ratio
             local TexWidth = (Width / 2 > 107) and 107 or (Width / 2)
-            Texture = GetTexturePiece("BlankFill", 223-TexWidth, 223, 35, 49, "ARTWORK")
+            Texture = helper:GetTexturePiece("BlankFill", 223-TexWidth, 223, 35, 49)
             Texture:SetPoint("TOPRIGHT", Parent.."BlankFillEdge", "BOTTOMRIGHT")
             Texture:SetPoint("BOTTOMLEFT", Parent.."BlankFillLeft", "BOTTOMRIGHT")
         else
-            Texture = GetTexturePiece("BlankFillEdge", 245, 248, 30, 49, "ARTWORK")
+            Texture = helper:GetTexturePiece("BlankFillEdge", 245, 248, 30, 49)
             Texture:SetPoint("BOTTOM", Container, "BOTTOM", 0, -5)
             Texture:SetPoint("RIGHT", Parent.."Right", "LEFT")
             Texture:SetHeight(42)
             -- Avoids the texture becomming too compressed if the space is infact small
             local TexWidth = (Width > 132) and 132 or Width
-            Texture = GetTexturePiece("BlankFill", 245-TexWidth, 244, 30, 49, "ARTWORK")
+            Texture = helper:GetTexturePiece("BlankFill", 245-TexWidth, 244, 30, 49)
             Texture:SetPoint("BOTTOMRIGHT", Parent.."BlankFillEdge", "BOTTOMLEFT")
             Texture:SetPoint("TOPRIGHT", Parent.."BlankFillEdge", "TOPLEFT")
             Texture:SetPoint("LEFT", Container, "RIGHT", -Width, 0)
@@ -810,18 +812,18 @@ function Container_UpdateBlizzBackground(Container, Backdrop, ShiftName)
             Col = 1
             Row = Row + 1
         end
-        Texture = GetTexturePiece("Slot"..Slot, 118, 164, 213, 258, "BORDER")
+        Texture = helper:GetTexturePiece("Slot"..Slot, 118, 164, 213, 258, nil, nil, "BORDER")
         OffsetX, OffsetY = -2, -2
         Texture:SetPoint("TOPLEFT", Container, "TOPLEFT", (Col - 1) * 42 + OffsetX - 3, (Row - 1) * -41 + 2 - OffsetY)
     end
     
     -- adapt to increased container size
-    if (Container.Slots > (TextureParent.Slots or -1)) then
-        TextureParent.Slots = Container.Slots
+    if (Container.Slots > (helper.Parent.Slots or -1)) then
+        helper.Parent.Slots = Container.Slots
     else
         -- Hide extra slot textures
-        for Slot = (Container.Slots + 1), TextureParent.Slots do
-            _G[TextureParent:GetName().."Slot"..Slot]:Hide()
+        for Slot = (Container.Slots + 1), helper.Parent.Slots do
+            _G[helper.Parent:GetName().."Slot"..Slot]:Hide()
         end
     end
     
@@ -832,10 +834,10 @@ function Container_UpdateBlizzBackground(Container, Backdrop, ShiftName)
         BaudBag_DebugMsg("BagBackgrounds", "There are blanks to show (affectedSlot, BlankTop, Container.Slots, Cols)", Slot, BlankTop, Container.Slots, Cols)
         if (Slot >= 1) or (Slot <= Container.Slots) then
             if not BlankTop then
-                Texture = GetTexturePiece("Corner", 154, 164, 248, 258, "OVERLAY")
+                Texture = helper:GetTexturePiece("Corner", 154, 164, 248, 258, nil, nil, "OVERLAY")
                 Texture:SetPoint("BOTTOMRIGHT", Parent.."Slot"..Slot)
             else
-                Texture = GetTexturePiece("Corner", 118, 128, 213, 223, "OVERLAY")
+                Texture = helper:GetTexturePiece("Corner", 118, 128, 213, 223, nil, nil, "OVERLAY")
                 Texture:SetPoint("TOPLEFT", Parent.."Slot"..Slot)
             end
         end
@@ -860,7 +862,7 @@ function Container_UpdateBlizzBackground(Container, Backdrop, ShiftName)
     -- Adjust the positioning of several bag components
     Container.Name:SetPoint("TOPLEFT", Backdrop, "TOPLEFT", (45 + ShiftName), -7)
     Container.CloseButton:SetPoint("TOPRIGHT", Backdrop, "TOPRIGHT", 3, 3)
-    TextureParent:Show()
+    helper.Parent:Show()
     if (Container:GetID() == 1) then
         if (BackpackTokenFrame_IsShown() == 1 and Container:GetName() == "BaudBagContainer1_1") then
             Container.TokenFrame:SetPoint("BOTTOMLEFT",  Backdrop, "BOTTOMLEFT", 0, 6)
@@ -879,7 +881,7 @@ end
 function Container_UpdateBagPicture(Container, Parent, Backdrop)
     local Texture = _G[Parent.."Bag"]
     if not Texture then
-        Texture = TextureParent:CreateTexture(Parent.."Bag")
+        Texture = Backdrop.Textures:CreateTexture(Parent.."Bag")
         Texture:SetWidth(40)
         Texture:SetHeight(40)
         Texture:ClearAllPoints()
