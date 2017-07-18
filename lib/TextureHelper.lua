@@ -5,7 +5,8 @@ local Prototype = {
     File,
     Parent,
     Width,
-    Height
+    Height,
+    DefaultLayer = "BACKGROUND"
 }
 
 --- Creates a new Texture inside the current value of Parent.
@@ -21,7 +22,7 @@ local Prototype = {
 -- @param[opt="BACKGROUND"] Layer The layer to write the texture to
 function Prototype:GetTexturePiece(Name, MinX, MaxX, MinY, MaxY, Width, Height, Layer)
     -- handle optional parameters
-    Layer = Layer or "BACKGROUND"
+    Layer = Layer or self.DefaultLayer
     Width = Width or (MaxX - MinX + 1)
     Height = Height or (MaxY - MinY + 1)
 
