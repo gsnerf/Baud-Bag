@@ -667,7 +667,7 @@ end
 
 function Container_UpdateBackground(Container)
     local Background = BBConfig[Container.BagSet][Container:GetID()].Background
-    local Backdrop = _G[Container:GetName().."Backdrop"]
+    local Backdrop = Container.Backdrop
     Backdrop:SetFrameLevel(Container:GetFrameLevel())
     local Left, Right, Top, Bottom
     -- This shifts the name of the bank frame over to make room for the extra button
@@ -679,7 +679,7 @@ function Container_UpdateBackground(Container)
     else
         Left, Right, Top, Bottom = Container_UpdateOtherBackground(Container, Backdrop, ShiftName)
     end
-    _G[Container:GetName().."Name"]:SetPoint("RIGHT", Container:GetName().."MenuButton", "LEFT")
+    Container.Name:SetPoint("RIGHT", Container:GetName().."MenuButton", "LEFT")
 
     Backdrop:ClearAllPoints()
     Backdrop:SetPoint("TOPLEFT", -Left, Top)
@@ -706,8 +706,8 @@ function Container_UpdateBlizzBackground(Container, Backdrop, ShiftName)
         Top = Top + 18;
     end
 
-    local Parent = Backdrop:GetName().."Textures";
-    TextureParent = _G[Parent];
+    local Parent = Backdrop.Textures:GetName();
+    TextureParent = Backdrop.Textures;
     TextureParent:SetFrameLevel(Container:GetFrameLevel());
     local Texture;
 
@@ -858,8 +858,8 @@ function Container_UpdateBlizzBackground(Container, Backdrop, ShiftName)
     Container_UpdateBagPicture(Container, Parent, Backdrop)
 
     -- Adjust the positioning of several bag components
-    _G[Container:GetName().."Name"]:SetPoint("TOPLEFT",Backdrop,"TOPLEFT",(45 + ShiftName),-7);
-    _G[Container:GetName().."CloseButton"]:SetPoint("TOPRIGHT",Backdrop,"TOPRIGHT",3,3);
+    Container.Name:SetPoint("TOPLEFT", Backdrop,"TOPLEFT",(45 + ShiftName),-7);
+    Container.CloseButton:SetPoint("TOPRIGHT",Backdrop,"TOPRIGHT",3,3);
     TextureParent:Show();
     if (Container:GetID() == 1) then
         if (BackpackTokenFrame_IsShown() == 1 and Container:GetName() == "BaudBagContainer1_1") then
@@ -904,19 +904,19 @@ end
 
 function Container_UpdateOtherBackground(Container, Backdrop, ShiftName)
     local Left, Right, Top, Bottom = 8, 8, 28, 8;
-    _G[Backdrop:GetName().."Textures"]:Hide();
-    _G[Container:GetName().."Name"]:SetPoint("TOPLEFT",(2 + ShiftName),18);
-    _G[Container:GetName().."CloseButton"]:SetPoint("TOPRIGHT",8,28);
+    Backdrop.Textures:Hide();
+    Container.Name:SetPoint("TOPLEFT",(2 + ShiftName),18);
+    Container.CloseButton:SetPoint("TOPRIGHT",8,28);
     if (Container:GetID() == 1) then
         if (BackpackTokenFrame_IsShown() == 1  and Container:GetName() == "BaudBagContainer1_1") then
-            _G[Container:GetName().."Slots"]:SetPoint("BOTTOMLEFT",2,-17);
-            _G[Container:GetName().."MoneyFrame"]:SetPoint("BOTTOMRIGHT",8,-18);
-            _G[Container:GetName().."TokenFrame"]:SetPoint("BOTTOMLEFT",8,-36);
-            _G[Container:GetName().."TokenFrame"]:SetPoint("BOTTOMRIGHT",8,-36);
+            Container.FreeSlots:SetPoint("BOTTOMLEFT",2,-17);
+            Container.MoneyFrame:SetPoint("BOTTOMRIGHT",8,-18);
+            Container.TokenFrame:SetPoint("BOTTOMLEFT",8,-36);
+            Container.TokenFrame:SetPoint("BOTTOMRIGHT",8,-36);
             Bottom = Bottom + 36;
         else
-            _G[Container:GetName().."Slots"]:SetPoint("BOTTOMLEFT",2,-17);
-            _G[Container:GetName().."MoneyFrame"]:SetPoint("BOTTOMRIGHT",8,-18);
+            Container.FreeSlots:SetPoint("BOTTOMLEFT",2,-17);
+            Container.MoneyFrame:SetPoint("BOTTOMRIGHT",8,-18);
             Bottom = Bottom + 18;
         end
     end
