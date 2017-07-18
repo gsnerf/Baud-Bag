@@ -666,7 +666,7 @@ local function Container1_RenderMoneyFrameBackground(Container, Parent, RenderMo
 end
 
 -- [[ maybe TODO: remove artwork for keyring container (check if artwork still exists uppon launch) ]] --
-function BaudBagUpdateBackground(Container)
+function Container_UpdateBackground(Container)
     local Background = BBConfig[Container.BagSet][Container:GetID()].Background;
     local Backdrop = _G[Container:GetName().."Backdrop"];
     Backdrop:SetFrameLevel(Container:GetFrameLevel());
@@ -1820,7 +1820,7 @@ function BaudBagUpdateContainer(Container)
         Container:SetHeight(Row * 39 - 2);
     end
 
-    BaudBagUpdateBackground(Container);
+    Container_UpdateBackground(Container);
     BaudBag_DebugMsg("Bags", "Finished Arranging Container.");
 end
 
