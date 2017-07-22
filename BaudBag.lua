@@ -27,6 +27,30 @@ local BBFrameFuncs = {
     end
 };
 
+--[[ Local helper methods used in event handling ]]
+local function BackpackBagOverview_Initialize()
+    -- prepare BagSlot creation
+    local BagSlot, Texture;
+    local BBContainer1 = _G[Prefix.."Container1_1BagsFrame"];
+
+    -- create BagSlots for the bag overview in the inventory (frame that pops out and only shows the available bags)
+    BaudBag_DebugMsg("Bags", "Creating bag slot buttons.");
+    for Bag = 1, 4 do
+        -- the slot name before "BagXSlot" has to be 10 chars long or else this will HARDCRASH
+        BagSlot	= CreateFrame("CheckButton", "BaudBInveBag"..(Bag - 1).."Slot", BBContainer1, "BagSlotButtonTemplate");
+        -- BagSlot:SetPoint("TOPLEFT", 8, -8 - (Bag - 1) * 39);
+        BagSlot:SetPoint("TOPLEFT", 8, -8 - (Bag - 1) * 30);
+        BagSlot:SetFrameStrata("HIGH");
+        BagSlot.HighlightBag = false;
+        BagSlot.Bag = Bag;
+        BagSlot:HookScript("OnEnter",	BaudBag_BagSlot_OnEnter);
+        BagSlot:HookScript("OnUpdate",	BaudBag_BagSlot_OnUpdate);
+        BagSlot:HookScript("OnLeave",	BaudBag_BagSlot_OnLeave);
+    end
+    
+    BBContainer1:SetWidth(15 + 30);
+    BBContainer1:SetHeight(15 + 4 * 30);
+end
 
 --[[ NON XML EVENT HANDLERS ]]--
 --[[ these are the custom defined BaudBagFrame event handlers attached to a single event type]]--
@@ -56,30 +80,7 @@ local EventFuncs =
             BaudBag_DebugMsg("Bags", "Event PLAYER_LOGIN fired");
             
 
-            -- prepare BagSlot creation
-            local BagSlot, Texture;
-            local BBContainer1 = _G[Prefix.."Container1_1BagsFrame"];
-
-            -- create BagSlots for the bag overview in the inventory (frame that pops out and only shows the available bags)
-            BaudBag_DebugMsg("Bags", "Creating bag slot buttons.");
-            for Bag = 1, 4 do
-                -- the slot name before "BagXSlot" has to be 10 chars long or else this will HARDCRASH
-                BagSlot	= CreateFrame("CheckButton", "BaudBInveBag"..(Bag - 1).."Slot", BBContainer1, "BagSlotButtonTemplate");
-                -- BagSlot:SetPoint("TOPLEFT", 8, -8 - (Bag - 1) * 39);
-                BagSlot:SetPoint("TOPLEFT", 8, -8 - (Bag - 1) * 30);
-                BagSlot:SetFrameStrata("HIGH");
-                BagSlot.HighlightBag = false;
-                BagSlot.Bag = Bag;
-                BagSlot:HookScript("OnEnter",	BaudBag_BagSlot_OnEnter);
-                BagSlot:HookScript("OnUpdate",	BaudBag_BagSlot_OnUpdate);
-                BagSlot:HookScript("OnLeave",	BaudBag_BagSlot_OnLeave);
-                -- _G[BagSlot:GetName().."ItemAnim"]:UnregisterAllEvents();
-            end
-            -- BBContainer1:SetWidth(13 + 39);
-            -- BBContainer1:SetHeight(13 + 4 * 39 + 20);
-            BBContainer1:SetWidth(15 + 30);
-            BBContainer1:SetHeight(15 + 4 * 30);
-
+            BackpackBagOverview_Initialize()
             BaudBagUpdateFromBBConfig();
             BaudBagBankBags_Initialize();
             if BBConfig and (BBConfig[2].Enabled == true) then 
