@@ -1893,34 +1893,37 @@ function BaudBagSearchButton_Click(self, event, ...)
 
         Left, Right, Top, Bottom	= 10, 10, 25, 7;
         BagSearchHeightOffset		= 22;
-        local Parent	= Backdrop:GetName().."Textures";
-        TextureParent	= _G[Parent];
-        TextureParent:SetFrameLevel(SearchFrame:GetFrameLevel());
+        local Parent = Backdrop:GetName().."Textures";
         local Texture;
 		
-        -- choose the correct texture file with correct sizes
-        TextureFile = "Interface\\ContainerFrame\\UI-Bag-Components";
+        -- initialize texture helper
+        local helper = AddOnTable:GetTextureHelper()
+        helper.Parent = _G[Parent]
+        helper.Parent:SetFrameLevel(Container:GetFrameLevel())
+        helper.Width, helper.Height = 256, 512
+        helper.File = "Interface\\ContainerFrame\\UI-Bag-Components"
         if (Background == 2) then
-            TextureFile = TextureFile.."-Bank";
-        elseif (Background == 3)then
-            TextureFile = TextureFile.."-Keyring";
+            helper.File = helper.File.."-Bank"
+        elseif(Background == 3)then
+            helper.File = helper.File.."-Keyring"
         end
-        TextureWidth, TextureHeight = 256, 512;
+        helper.DefaultLayer = "ARTWORK"
+
 
         -- --------------------------
         -- create new textures now
         -- --------------------------
         -- BORDERS FIRST
         -- transparent circle top left
-        Texture = GetTexturePiece("Left", 106, 117, 5, 30,"ARTWORK");
+        Texture = helper:GetTexturePiece("Left", 106, 117, 5, 30);
         Texture:SetPoint("TOPLEFT");
 
         -- right end of header + transparent piece for close button (with or without blank part on the bottom)
-        Texture = GetTexturePiece("Right", 223, 252, 5, 30,"ARTWORK");
+        Texture = helper:GetTexturePiece("Right", 223, 252, 5, 30);
         Texture:SetPoint("TOPRIGHT");
 
         -- container header (contains name, with or without blank part on the bottom)
-        Texture = GetTexturePiece("Center", 117, 222, 5, 30,"ARTWORK");
+        Texture = helper:GetTexturePiece("Center", 117, 222, 5, 30);
         Texture:SetPoint("TOP");
         Texture:SetPoint("RIGHT", Parent.."Right", "LEFT");
         Texture:SetPoint("LEFT", Parent.."Left", "RIGHT");
@@ -1931,7 +1934,7 @@ function BaudBagSearchButton_Click(self, event, ...)
 		
         -- make sure the backdrop of "else" is removed and the texture is actually shown
         Backdrop:SetBackdrop(nil);
-        TextureParent:Show();
+        helper.Parent:Show();
     else
         Left, Right, Top, Bottom = 8, 8, 8, 8;
         BagSearchHeightOffset = 32;
