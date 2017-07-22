@@ -353,15 +353,11 @@ function BaudBag_OnLoad(self, event, ...)
             -- create SubBag or use predefined XML frame when available
             targetBagSet = BaudBag_IsInventory(Bag) and 1 or 2
 
-            if (BaudBag_IsBankDefaultContainer(Bag)) then
-                BaudBag_DebugMsg("Bank", "Getting existing bank bag", Bag);
-                SubBag = _G[Prefix.."SubBag"..Bag];
-            else
-                --SubBag = CreateFrame("Frame", Prefix.."SubBag"..Bag, nil, "BaudBagSubBagTemplate");
-                AddOnTable["SubBags"][Bag] = SubBagObject
-                SubBagObject = AddOnTable:CreateSubContainer(targetBagSet, Bag)
-                SubBag = SubBagObject.Frame
-            end
+            AddOnTable["SubBags"][Bag] = SubBagObject
+            SubBagObject = AddOnTable:CreateSubContainer(targetBagSet, Bag)
+            SubBag = SubBagObject.Frame
+
+            -- propably legacy configuration on the frame itself
             SubBag:SetID(Bag);
             SubBag.BagSet = targetBagSet
             SubBag:SetParent(Prefix.."Container"..SubBag.BagSet.."_1");
