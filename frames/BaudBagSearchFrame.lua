@@ -220,16 +220,7 @@ function BaudBagSearchFrameEditBox_OnTextChanged(self, isUserInput)
     end
 end
 
---[[
-if the SearchFrame is hidden the search text and any existing search markers needs to be cleared
-]]--
-function BaudBagSearchFrame_OnHide(self, event, ...)
-    self.EditBox:SetText("")
-    BaudBagSearchFrame.AttachedTo = nil
-    BaudBagSearchFrameEditBox_RemoveHighlights()
-end
-
-local function BaudBagSearchFrameEditBox_RemoveHighlights()
+local function RemoveSearchHighlights()
     local SubBag, Frame, Open, ItemButton, Link, Name, Texture
     for Bag = -3, LastBagID do
         if not (Bag == -2) then
@@ -243,6 +234,15 @@ local function BaudBagSearchFrameEditBox_RemoveHighlights()
             end
         end
     end
+end
+
+--[[
+if the SearchFrame is hidden the search text and any existing search markers needs to be cleared
+]]--
+function BaudBagSearchFrame_OnHide(self, event, ...)
+    self.EditBox:SetText("")
+    self.AttachedTo = nil
+    RemoveSearchHighlights()
 end
 
 function BaudBagSearchFrame_CheckClose(caller)
