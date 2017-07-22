@@ -25,6 +25,7 @@ BaudBagToolTips.lua
 BaudBagOptions.xml
 BaudBagToken.xml
 BaudBagBank.xml
+frames\BaudBagSearchFrame.xml
 BaudBag.xml
 BaudBagVoidStorage.xml
 external\CaedronWardrobeSupport.lua
