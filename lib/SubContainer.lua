@@ -36,7 +36,7 @@ local Metatable = { __index = Prototype }
 
 function AddOnTable:CreateSubContainer(bagSet, containerId)
     local subContainer = _G.setmetatable({}, Metatable)
-    subContainer.Frame = CreateFrame("Frame", AddOnName.."SubBag"..Bag, nil, nil);
+    subContainer.Frame = CreateFrame("Frame", AddOnName.."SubBag"..containerId, nil, "BaudBagSubBagTemplate")
     subContainer.BagSet = bagSet
     subContainer.ContainerId = containerId
     return subContainer

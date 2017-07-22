@@ -12,6 +12,7 @@ local _;
 local ItemToolTip;
 
 _G[AddOnName] = AddOnTable;
+AddOnTable["SubBags"] = {}
 
 local BBFrameFuncs = {
     IsCraftingReagent = function (itemId)
@@ -345,18 +346,24 @@ function BaudBag_OnLoad(self, event, ...)
 
     -- create all necessary SubBags now with basic initialization, correct referencing later when config is available
     BaudBag_DebugMsg("Bags", "Creating sub bags.");
+    local SubBagObject, targetBagSet
     for Bag = -3, LastBagID do
         -- need to skip the now defunc keyring
         if not (Bag == -2) then
             -- create SubBag or use predefined XML frame when available
+            targetBagSet = BaudBag_IsInventory(Bag) and 1 or 2
+
             if (BaudBag_IsBankDefaultContainer(Bag)) then
                 BaudBag_DebugMsg("Bank", "Getting existing bank bag", Bag);
                 SubBag = _G[Prefix.."SubBag"..Bag];
             else
-                SubBag = CreateFrame("Frame", Prefix.."SubBag"..Bag, nil, "BaudBagSubBagTemplate");
+                --SubBag = CreateFrame("Frame", Prefix.."SubBag"..Bag, nil, "BaudBagSubBagTemplate");
+                AddOnTable["SubBags"][Bag] = SubBagObject
+                SubBagObject = AddOnTable:CreateSubContainer(targetBagSet, Bag)
+                SubBag = SubBagObject.Frame
             end
             SubBag:SetID(Bag);
-            SubBag.BagSet = BaudBag_IsInventory(Bag) and 1 or 2;
+            SubBag.BagSet = targetBagSet
             SubBag:SetParent(Prefix.."Container"..SubBag.BagSet.."_1");
         end
     end
