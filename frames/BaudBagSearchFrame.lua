@@ -6,8 +6,6 @@ local LastBagID = NUM_BANKBAGSLOTS + NUM_BAG_SLOTS
 
 local BagsSearched = {}
 
-
-
 function BaudBagSearchFrame_ShowFrame(ParentContainer, Scale, Background)
     local SearchFrame	= _G[Prefix.."SearchFrame"]
     local Backdrop		= SearchFrame.Backdrop
@@ -231,7 +229,7 @@ function BaudBagSearchFrame_OnHide(self, event, ...)
     BaudBagSearchFrameEditBox_RemoveHighlights()
 end
 
-function BaudBagSearchFrameEditBox_RemoveHighlights()
+local function BaudBagSearchFrameEditBox_RemoveHighlights()
     local SubBag, Frame, Open, ItemButton, Link, Name, Texture
     for Bag = -3, LastBagID do
         if not (Bag == -2) then
