@@ -620,24 +620,6 @@ local function HideObject(Object)
     Object:Hide();
 end
 
-local TextureFile, TextureWidth, TextureHeight, TextureParent;
-
-local function GetTexturePiece(Name, MinX, MaxX, MinY, MaxY, Layer)
-    local Texture = _G[TextureParent:GetName()..Name];
-    if not Texture then
-        Texture = TextureParent:CreateTexture(TextureParent:GetName()..Name);
-    end
-    Texture:ClearAllPoints();
-    Texture:SetTexture(TextureFile);
-    Texture:SetTexCoord(MinX / TextureWidth, (MaxX + 1) / TextureWidth, MinY / TextureHeight, (MaxY + 1) / TextureHeight);
-    Texture:SetWidth(MaxX - MinX + 1);
-    Texture:SetHeight(MaxY - MinY + 1);
-    Texture:SetDrawLayer(Layer);
-    Texture:Show();
-    --  Texture:SetVertexColor(0.2,0.2,1);
-    return Texture;
-end
-
 local function Container1_RenderMoneyFrameBackground(Container, Parent, RenderMoneyFrameOnly)
     RenderMoneyFrameOnly = RenderMoneyFrameOnly or true
 
