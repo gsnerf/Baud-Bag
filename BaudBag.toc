@@ -18,12 +18,14 @@ BaudBagFunctions.lua
 lib\BaseTypes.lua
 lib\Container.lua
 lib\SubContainer.lua
+lib\TextureHelper.lua
 BaudBagConfig.lua
 BaudBagCache.lua
 BaudBagToolTips.lua
 BaudBagOptions.xml
 BaudBagToken.xml
 BaudBagBank.xml
+frames\BaudBagSearchFrame.xml
 BaudBag.xml
 BaudBagVoidStorage.xml
 external\CaedronWardrobeSupport.lua

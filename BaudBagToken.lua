@@ -9,9 +9,18 @@
 
 	Additionally to the self rendering in our bags (done in BaudBag.lua BaudBagUpdateBackground()) the max trackable tokens are raised to 5.
   ]]
+local AddOnName, AddOnTable = ...
 local _;
 MAX_WATCHED_TOKENS_ORIG = MAX_WATCHED_TOKENS;
 MAX_WATCHED_TOKENS_BAUD_BAG = 5;
+
+
+local function calculateScaleFix(TokenFrame)
+    local scale = TokenFrame:GetEffectiveScale()
+    local scaleFix = 5 - math.ceil(scale / 0.2)
+    BaudBag_DebugMsg("Token", "Applying scale fix (scale, scaleFix)", scale, scaleFix);
+    return scaleFix
+end
 
 local pre_BackpackTokenFrame_Update = BackpackTokenFrame_Update;
 BackpackTokenFrame_Update = function()
@@ -34,7 +43,7 @@ BackpackTokenFrame_Update = function()
     local name, count, icon;
     local digits, countSize;
     local usedWidth = 0;
-    local digitWidth = 8;
+    local digitWidth = 8 + calculateScaleFix(TokenFrame)
     for i=1, MAX_WATCHED_TOKENS do
         name, count, icon, itemID = GetBackpackCurrencyInfo(i);
         watchButton = _G[TokenFrame:GetName().."Token"..i];
@@ -151,4 +160,30 @@ BackpackTokenButton_OnClick = function(self, button)
     if ( IsModifiedClick("CHATLINK") ) then
         ChatEdit_InsertLink(select(2, GetItemInfo(self.itemID))); 
     end
+end
+
+function BaudBagTokenFrame_RenderBackgrounds(Container, Parent)
+    BaudBag_DebugMsg("Token", "Showing Token Frame for Container (Name, ID)'", Container:GetName(), Container:GetID());
+    
+    -- init texture helper
+    local helper = AddOnTable:GetTextureHelper()
+    helper.Parent = _G[Parent]
+    helper.File = "Interface\\ContainerFrame\\UI-Backpack-TokenFrame.blp";
+    helper.Width, helper.Height = 256, 32;
+
+    local TargetHeight =  Container.TokenFrame:GetHeight();
+
+    Texture = helper:GetTexturePiece("TokensFillLeft", 7,13, 6,24, nil, TargetHeight);
+    Texture:SetPoint("LEFT", Parent.."Left", "RIGHT");
+    Texture:SetPoint("BOTTOM", Parent.."Bottom", "TOP", 0, 0);
+
+    Texture = helper:GetTexturePiece("TokensFillRight", 165,171, 6,24, nil, TargetHeight);
+    Texture:SetPoint("RIGHT", Parent.."Right", "LEFT");
+    Texture:SetPoint("BOTTOM", Parent.."Bottom", "TOP", 0, 0);
+
+    Texture = helper:GetTexturePiece("TokensFillCenter", 14,164, 6,24, nil, TargetHeight);
+    Texture:SetPoint("LEFT", Parent.."TokensFillLeft", "RIGHT");
+    Texture:SetPoint("RIGHT", Parent.."TokensFillRight", "LEFT");
+
+    return Bottom
 end
