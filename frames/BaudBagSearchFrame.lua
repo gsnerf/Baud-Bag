@@ -1,3 +1,4 @@
+local _
 local AddOnName, AddOnTable = ...
 local Localized = BaudBagLocalized
 
@@ -7,7 +8,7 @@ local LastBagID = NUM_BANKBAGSLOTS + NUM_BAG_SLOTS
 local BagsSearched = {}
 
 function BaudBagSearchFrame_ShowFrame(ParentContainer, Scale, Background)
-    local SearchFrame	= _G[Prefix.."SearchFrame"]
+    local SearchFrame	= BaudBagSearchFrame
     local Backdrop		= SearchFrame.Backdrop
     local EditBox		= SearchFrame.EditBox
     local BagSearchHeightOffset = 0
