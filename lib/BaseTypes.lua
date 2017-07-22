@@ -1,3 +1,5 @@
+local _
+
 BagSetType = {
     Backpack = {
         Id = 1,
