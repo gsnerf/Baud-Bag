@@ -1858,8 +1858,8 @@ function BaudBagSearchButton_Click(self, event, ...)
     local Container		= self:GetParent();
     local Scale			= BBConfig[Container.BagSet][Container:GetID()].Scale / 100;
     local Background	= BBConfig[Container.BagSet][Container:GetID()].Background;
-    local Backdrop		= _G[SearchFrame:GetName().."Backdrop"];
-    local EditBox		= _G[SearchFrame:GetName().."EditBox"];
+    local Backdrop		= SearchFrame.Backdrop
+    local EditBox		= SearchFrame.EditBox
     local BagSearchHeightOffset = 0;
     local BagSearchHeight		= 20;
 	
@@ -1880,7 +1880,7 @@ function BaudBagSearchButton_Click(self, event, ...)
 		
         -- initialize texture helper
         local helper = AddOnTable:GetTextureHelper()
-        helper.Parent = _G[Parent]
+        helper.Parent = Backdrop.Textures
         helper.Parent:SetFrameLevel(Container:GetFrameLevel())
         helper.Width, helper.Height = 256, 512
         helper.File = "Interface\\ContainerFrame\\UI-Bag-Components"
@@ -1911,8 +1911,8 @@ function BaudBagSearchButton_Click(self, event, ...)
         Texture:SetPoint("LEFT", Parent.."Left", "RIGHT");
 
         -- fix positions of some elements
-        _G[SearchFrame:GetName().."CloseButton"]:SetPoint("TOPRIGHT",Backdrop,"TOPRIGHT",3,3);
-        _G[SearchFrame:GetName().."EditBox"]:SetPoint("TOPLEFT", -1, 18);
+        SearchFrame.CloseButton:SetPoint("TOPRIGHT",Backdrop,"TOPRIGHT",3,3)
+        SearchFrame.EditBox:SetPoint("TOPLEFT", -1, 18)
 		
         -- make sure the backdrop of "else" is removed and the texture is actually shown
         Backdrop:SetBackdrop(nil);
@@ -1921,9 +1921,9 @@ function BaudBagSearchButton_Click(self, event, ...)
         Left, Right, Top, Bottom = 8, 8, 8, 8;
         BagSearchHeightOffset = 32;
         BagSearchHeight	= 12;
-        _G[Backdrop:GetName().."Textures"]:Hide();
-        _G[SearchFrame:GetName().."CloseButton"]:SetPoint("TOPRIGHT", 9, 10);
-        _G[SearchFrame:GetName().."EditBox"]:SetPoint("TOPLEFT", -1, 0);
+        Backdrop.Textures:Hide()
+        SearchFrame.CloseButton:SetPoint("TOPRIGHT", 9, 10)
+        SearchFrame.EditBox:SetPoint("TOPLEFT", -1, 0)
 		
         -- "solid"
         if (Background == 5) then
@@ -1970,8 +1970,8 @@ function BaudBagSearchButton_Click(self, event, ...)
     -- make sure the frame lies on the same lvl as the calling container
     SearchFrame:SetFrameLevel(self:GetParent():GetFrameLevel());
     Backdrop:SetFrameLevel(SearchFrame:GetFrameLevel());
-    _G[SearchFrame:GetName().."CloseButton"]:SetFrameLevel(SearchFrame:GetFrameLevel()+1);
-    _G[SearchFrame:GetName().."EditBox"]:SetFrameLevel(SearchFrame:GetFrameLevel()+1);
+    SearchFrame.CloseButton:SetFrameLevel(SearchFrame:GetFrameLevel()+1);
+    SearchFrame.EditBox:SetFrameLevel(SearchFrame:GetFrameLevel()+1);
 	
     -- adjust the scaling according to the calling container
     SearchFrame:SetScale(Scale);
@@ -2000,7 +2000,7 @@ end
 if the SearchFrame is hidden the search text and any existing search markers needs to be cleared
 ]]--
 function BaudBagSearchFrame_OnHide(self, event, ...)
-    _G[self:GetName().."EditBox"]:SetText("");
+    self.EditBox:SetText("");
     BaudBagSearchFrame.AttachedTo = nil;
     BaudBagSearchFrameEditBox_RemoveHighlights();
 end

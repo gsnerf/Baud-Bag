@@ -261,13 +261,13 @@
 			<AbsDimension y="20" />
 		</Size>
 		<Frames>
-			<Frame name="$parentBackdrop">
+			<Frame name="$parentBackdrop" parentKey="Backdrop">
 				<Frames>
-					<Frame name="$parentTextures" setAllPoints="true" />
+					<Frame name="$parentTextures" parentKey="Textures" setAllPoints="true" />
 				</Frames>
 			</Frame>
 			
-			<Button name="$parentCloseButton" inherits="UIPanelCloseButton">
+			<Button name="$parentCloseButton" parentKey="CloseButton" inherits="UIPanelCloseButton">
 				<Anchors>
 					<Anchor point="TOPRIGHT" />
 				</Anchors>
@@ -278,7 +278,7 @@
 				</Scripts>
 			</Button>
 
-			<EditBox name="$parentEditBox"  inherits="InputBoxTemplate" autoFocus="false">
+			<EditBox name="$parentEditBox" parentKey="EditBox" inherits="InputBoxTemplate" autoFocus="false">
 				<Size>
 					<AbsDimension y="12" />
 				</Size>
