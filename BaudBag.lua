@@ -1428,6 +1428,10 @@ SubBagEvents.UPDATE_INVENTORY_ALERTS = Func;
 
 --[[ xml defined (called) BaudBagSubBag event handlers ]]--
 function BaudBagSubBag_OnLoad(self, event, ...)
+    if BaudBag_IsBankDefaultContainer(self:GetID()) then
+        return
+    end
+
     for Key, Value in pairs(SubBagEvents)do
         self:RegisterEvent(Key);
     end
@@ -1547,7 +1551,7 @@ end
 
 
 function BaudBagSubBag_OnEvent(self, event, ...)
-    if not self:GetParent():IsShown() or (self:GetID() >= 5) and not BaudBagFrame.BankOpen then
+    if not self:GetParent():IsShown() or BaudBag_IsBankDefaultContainer(Bag) or (self:GetID() >= 5) and not BaudBagFrame.BankOpen then
         return;
     end
     SubBagEvents[event](self, event, ...);
