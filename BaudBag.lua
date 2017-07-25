@@ -944,15 +944,13 @@ function BaudUpdateJoinedBags()
     BaudBag_DebugMsg("Bags", "Updating joined bags...");
     -- first update the status of currently open bags
     local OpenBags = {};
-    for Bag = -3, LastBagID do
-        if not (Bag == -2) then
-            OpenBags[Bag] = _G[Prefix.."SubBag"..Bag]:GetParent():IsShown();
-            if OpenBags[Bag] then
-                BaudBag_DebugMsg("Bags", "Bag open (BagID)", Bag);
-            end
+    for BagId,SubContainer in ipairs(AddOnTable["SubBags"]) do
+        OpenBags[BagId] = SubContainer.Frame:GetParent():IsShown()
+        if OpenBags[BagId] then
+            BaudBag_DebugMsg("Bags", "Bag open (BagID)", Bag);
         end
     end
-	
+    
     -- now make sure that containers that have been "finished" will be updated correctly
     local SubBag, Container, IsOpen, ContNum, BagID;
     local function FinishContainer()
