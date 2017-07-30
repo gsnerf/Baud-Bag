@@ -8,7 +8,6 @@ local MaxCont = {1,1};
 local NumCont = {};
 local FadeTime = 0.2;
 local BagsReady;
-local BagsSearched = {};
 local _;
 local ItemToolTip;
 
@@ -28,6 +27,30 @@ local BBFrameFuncs = {
     end
 };
 
+--[[ Local helper methods used in event handling ]]
+local function BackpackBagOverview_Initialize()
+    -- prepare BagSlot creation
+    local BagSlot, Texture;
+    local BBContainer1 = _G[Prefix.."Container1_1BagsFrame"];
+
+    -- create BagSlots for the bag overview in the inventory (frame that pops out and only shows the available bags)
+    BaudBag_DebugMsg("Bags", "Creating bag slot buttons.");
+    for Bag = 1, 4 do
+        -- the slot name before "BagXSlot" has to be 10 chars long or else this will HARDCRASH
+        BagSlot	= CreateFrame("CheckButton", "BaudBInveBag"..(Bag - 1).."Slot", BBContainer1, "BagSlotButtonTemplate");
+        -- BagSlot:SetPoint("TOPLEFT", 8, -8 - (Bag - 1) * 39);
+        BagSlot:SetPoint("TOPLEFT", 8, -8 - (Bag - 1) * 30);
+        BagSlot:SetFrameStrata("HIGH");
+        BagSlot.HighlightBag = false;
+        BagSlot.Bag = Bag;
+        BagSlot:HookScript("OnEnter",	BaudBag_BagSlot_OnEnter);
+        BagSlot:HookScript("OnUpdate",	BaudBag_BagSlot_OnUpdate);
+        BagSlot:HookScript("OnLeave",	BaudBag_BagSlot_OnLeave);
+    end
+    
+    BBContainer1:SetWidth(15 + 30);
+    BBContainer1:SetHeight(15 + 4 * 30);
+end
 
 --[[ NON XML EVENT HANDLERS ]]--
 --[[ these are the custom defined BaudBagFrame event handlers attached to a single event type]]--
@@ -57,30 +80,7 @@ local EventFuncs =
             BaudBag_DebugMsg("Bags", "Event PLAYER_LOGIN fired");
             
 
-            -- prepare BagSlot creation
-            local BagSlot, Texture;
-            local BBContainer1 = _G[Prefix.."Container1_1BagsFrame"];
-
-            -- create BagSlots for the bag overview in the inventory (frame that pops out and only shows the available bags)
-            BaudBag_DebugMsg("Bags", "Creating bag slot buttons.");
-            for Bag = 1, 4 do
-                -- the slot name before "BagXSlot" has to be 10 chars long or else this will HARDCRASH
-                BagSlot	= CreateFrame("CheckButton", "BaudBInveBag"..(Bag - 1).."Slot", BBContainer1, "BagSlotButtonTemplate");
-                -- BagSlot:SetPoint("TOPLEFT", 8, -8 - (Bag - 1) * 39);
-                BagSlot:SetPoint("TOPLEFT", 8, -8 - (Bag - 1) * 30);
-                BagSlot:SetFrameStrata("HIGH");
-                BagSlot.HighlightBag = false;
-                BagSlot.Bag = Bag;
-                BagSlot:HookScript("OnEnter",	BaudBag_BagSlot_OnEnter);
-                BagSlot:HookScript("OnUpdate",	BaudBag_BagSlot_OnUpdate);
-                BagSlot:HookScript("OnLeave",	BaudBag_BagSlot_OnLeave);
-                -- _G[BagSlot:GetName().."ItemAnim"]:UnregisterAllEvents();
-            end
-            -- BBContainer1:SetWidth(13 + 39);
-            -- BBContainer1:SetHeight(13 + 4 * 39 + 20);
-            BBContainer1:SetWidth(15 + 30);
-            BBContainer1:SetHeight(15 + 4 * 30);
-
+            BackpackBagOverview_Initialize()
             BaudBagUpdateFromBBConfig();
             BaudBagBankBags_Initialize();
             if BBConfig and (BBConfig[2].Enabled == true) then 
@@ -620,24 +620,6 @@ local function HideObject(Object)
     Object:Hide();
 end
 
-local TextureFile, TextureWidth, TextureHeight, TextureParent;
-
-local function GetTexturePiece(Name, MinX, MaxX, MinY, MaxY, Layer)
-    local Texture = _G[TextureParent:GetName()..Name];
-    if not Texture then
-        Texture = TextureParent:CreateTexture(TextureParent:GetName()..Name);
-    end
-    Texture:ClearAllPoints();
-    Texture:SetTexture(TextureFile);
-    Texture:SetTexCoord(MinX / TextureWidth, (MaxX + 1) / TextureWidth, MinY / TextureHeight, (MaxY + 1) / TextureHeight);
-    Texture:SetWidth(MaxX - MinX + 1);
-    Texture:SetHeight(MaxY - MinY + 1);
-    Texture:SetDrawLayer(Layer);
-    Texture:Show();
-    --  Texture:SetVertexColor(0.2,0.2,1);
-    return Texture;
-end
-
 local function Container1_RenderMoneyFrameBackground(Container, Parent, RenderMoneyFrameOnly)
     RenderMoneyFrameOnly = RenderMoneyFrameOnly or true
 
@@ -665,274 +647,292 @@ local function Container1_RenderMoneyFrameBackground(Container, Parent, RenderMo
     Texture:SetPoint("RIGHT", Parent.."MoneyLineRight", "LEFT");
 end
 
--- [[ maybe TODO: remove artwork for keyring container (check if artwork still exists uppon launch) ]] --
-function BaudBagUpdateBackground(Container)
-    local Background = BBConfig[Container.BagSet][Container:GetID()].Background;
-    local Backdrop = _G[Container:GetName().."Backdrop"];
-    Backdrop:SetFrameLevel(Container:GetFrameLevel());
-    local Left, Right, Top, Bottom;
+function Container_UpdateBackground(Container)
+    local Background = BBConfig[Container.BagSet][Container:GetID()].Background
+    local Backdrop = Container.Backdrop
+    Backdrop:SetFrameLevel(Container:GetFrameLevel())
+    local Left, Right, Top, Bottom
     -- This shifts the name of the bank frame over to make room for the extra button
-    local ShiftName = (Container:GetID()==1) and 25 or 0;
+    local ShiftName = (Container:GetID() == 1) and 25 or 0
 
     -- these are the default blizz-frames
     if (Background <= 3) then
-        Left, Right, Top, Bottom = 10, 10, 25, 7;
-        local Cols = BBConfig[Container.BagSet][Container:GetID()].Columns;
-        if (Container.Slots < Cols) then
-            Cols = Container.Slots;
-        end
-        local Col = 0;
-        local Blanks = Cols - mod(Container.Slots - 1, Cols) - 1;
-        local BlankTop = BBConfig[Container.BagSet][Container:GetID()].BlankTop and(Blanks ~= 0);
+        Left, Right, Top, Bottom = Container_UpdateBlizzBackground(Container, Backdrop, ShiftName)
+    else
+        Left, Right, Top, Bottom = Container_UpdateOtherBackground(Container, Backdrop, ShiftName)
+    end
+    Container.Name:SetPoint("RIGHT", Container:GetName().."MenuButton", "LEFT")
 
+    Backdrop:ClearAllPoints()
+    Backdrop:SetPoint("TOPLEFT", -Left, Top)
+    Backdrop:SetPoint("BOTTOMRIGHT", Right, -Bottom)
+    Container:SetHitRectInsets(-Left, -Right, -Top, -Bottom)
+    Container.UnlockInfo:ClearAllPoints()
+    Container.UnlockInfo:SetPoint("TOPLEFT", -10, 3)
+    Container.UnlockInfo:SetPoint("BOTTOMRIGHT", 10, -3)
+end
+
+function Container_UpdateBlizzBackground(Container, Backdrop, ShiftName)
+    local Left, Right, Top, Bottom = 10, 10, 25, 7
+    local Cols = BBConfig[Container.BagSet][Container:GetID()].Columns
+    if (Container.Slots < Cols) then
+        Cols = Container.Slots
+    end
+    local Col = 0
+    local Blanks = Cols - mod(Container.Slots - 1, Cols) - 1
+    local BlankTop = BBConfig[Container.BagSet][Container:GetID()].BlankTop and (Blanks ~= 0)
+
+    if BlankTop then
+        Col = Blanks
+    else
+        Top = Top + 18
+    end
+
+    local Parent = Backdrop.Textures:GetName()
+    local Texture
+
+    -- initialize texture helper
+    local helper = AddOnTable:GetTextureHelper()
+    helper.Parent = Backdrop.Textures
+    helper.Parent:SetFrameLevel(Container:GetFrameLevel())
+    helper.Width, helper.Height = 256, 512
+    helper.File = "Interface\\ContainerFrame\\UI-Bag-Components"
+    if (Background == 2) then
+        helper.File = helper.File.."-Bank"
+    elseif(Background == 3)then
+        helper.File = helper.File.."-Keyring"
+    end
+    helper.DefaultLayer = "ARTWORK"
+
+    -- --------------------------
+    -- create new textures now
+    -- --------------------------
+    -- BORDERS FIRST
+    -- transparent circle top left
+    Texture = helper:GetTexturePiece("TopLeft", 65, 116, 1, 49)
+    Texture:SetPoint("TOPLEFT", -7, 4)
+
+    -- right end of header + transparent piece for close button (with or without blank part on the bottom)
+    Texture = helper:GetTexturePiece("TopRight", 223, 252, 5, BlankTop and 30 or 49)
+    Texture:SetPoint("TOPRIGHT")
+
+    -- bottom left round corner
+    Texture = helper:GetTexturePiece("BottomLeft", 72, 79, 169, 177)
+    Texture:SetPoint("BOTTOMLEFT")
+
+    -- bottom right round corner
+    Texture = helper:GetTexturePiece("BottomRight", 247, 252, 172, 177)
+    Texture:SetPoint("BOTTOMRIGHT")
+
+    -- container header (contains name, with or without blank part on the bottom)
+    Texture = helper:GetTexturePiece("Top", 117, 222, 5, BlankTop and 30 or 49)
+    Texture:SetPoint("TOP")
+    Texture:SetPoint("RIGHT", Parent.."TopRight", "LEFT")
+    Texture:SetPoint("LEFT", Parent.."TopLeft", "RIGHT")
+
+    -- left border
+    Texture = helper:GetTexturePiece("Left", 72, 76, 182, 432)
+    Texture:SetPoint("LEFT")
+    Texture:SetPoint("BOTTOM", Parent.."BottomLeft", "TOP")
+    Texture:SetPoint("TOP", Parent.."TopLeft", "BOTTOM")
+
+    -- right border
+    Texture = helper:GetTexturePiece("Right", 248, 252, 182, 432)
+    Texture:SetPoint("RIGHT")
+    Texture:SetPoint("BOTTOM", Parent.."BottomRight", "TOP")
+    Texture:SetPoint("TOP", Parent.."TopRight", "BOTTOM")
+
+    -- bottom border
+    Texture = helper:GetTexturePiece("Bottom", 80, 246, 173, 177, nil, nil, "OVERLAY")
+    Texture:SetPoint("BOTTOM")
+    Texture:SetPoint("LEFT", Parent.."BottomLeft", "RIGHT")
+    Texture:SetPoint("RIGHT", Parent.."BottomRight", "LEFT")
+    
+    -- BLANKS NEXT
+    if (Blanks > 0) then
+        local Width = Blanks * 42
         if BlankTop then
-            Col = Blanks;
+            Texture = helper:GetTexturePiece("BlankFillEdge", 116, 223, 31, 34)
+            Texture:SetPoint("TOPLEFT", Parent.."Top", "BOTTOMLEFT")
+            Texture:SetPoint("RIGHT", Container, "LEFT", Width, 0)
+
+            Texture = helper:GetTexturePiece("BlankFillLeft", 72, 116, 142, 162)
+            Texture:SetPoint("TOPRIGHT", Parent.."TopLeft", "BOTTOMRIGHT", 0, 3)
+            Texture:SetPoint("BOTTOM", Container, "TOP", 0, -42)
+
+            -- Since the texture in already stretched about double in height, try to keep the ratio
+            local TexWidth = (Width / 2 > 107) and 107 or (Width / 2)
+            Texture = helper:GetTexturePiece("BlankFill", 223-TexWidth, 223, 35, 49)
+            Texture:SetPoint("TOPRIGHT", Parent.."BlankFillEdge", "BOTTOMRIGHT")
+            Texture:SetPoint("BOTTOMLEFT", Parent.."BlankFillLeft", "BOTTOMRIGHT")
         else
-            Top = Top + 18;
-        end
-
-        local Parent = Backdrop:GetName().."Textures";
-        TextureParent = _G[Parent];
-        TextureParent:SetFrameLevel(Container:GetFrameLevel());
-        local Texture;
-
-        -- choose the correct texture file with correct sizes
-        TextureFile = "Interface\\ContainerFrame\\UI-Bag-Components";
-        if (Background == 2) then
-            TextureFile = TextureFile.."-Bank";
-        elseif(Background == 3)then
-            TextureFile = TextureFile.."-Keyring";
-        end
-        TextureWidth, TextureHeight = 256, 512;
-
-        -- --------------------------
-        -- create new textures now
-        -- --------------------------
-        -- BORDERS FIRST
-        -- transparent circle top left
-        Texture = GetTexturePiece("TopLeft", 65, 116, 1, 49,"ARTWORK");
-        Texture:SetPoint("TOPLEFT", -7, 4);
-
-        -- right end of header + transparent piece for close button (with or without blank part on the bottom)
-        Texture = GetTexturePiece("TopRight", 223, 252, 5, BlankTop and 30 or 49,"ARTWORK");
-        Texture:SetPoint("TOPRIGHT");
-
-        -- bottom left round corner
-        Texture = GetTexturePiece("BottomLeft",72,79,169,177,"ARTWORK");
-        Texture:SetPoint("BOTTOMLEFT");
-
-        -- bottom right round corner
-        Texture = GetTexturePiece("BottomRight",247,252,172,177,"ARTWORK");
-        Texture:SetPoint("BOTTOMRIGHT");
-
-        -- container header (contains name, with or without blank part on the bottom)
-        Texture = GetTexturePiece("Top", 117, 222, 5, BlankTop and 30 or 49,"ARTWORK");
-        Texture:SetPoint("TOP");
-        Texture:SetPoint("RIGHT",Parent.."TopRight","LEFT");
-        Texture:SetPoint("LEFT",Parent.."TopLeft","RIGHT");
-
-        -- left border
-        Texture = GetTexturePiece("Left",72,76,182,432,"ARTWORK");
-        Texture:SetPoint("LEFT");
-        Texture:SetPoint("BOTTOM",Parent.."BottomLeft","TOP");
-        Texture:SetPoint("TOP",Parent.."TopLeft","BOTTOM");
-
-        -- right border
-        Texture = GetTexturePiece("Right",248,252,182,432,"ARTWORK");
-        Texture:SetPoint("RIGHT");
-        Texture:SetPoint("BOTTOM",Parent.."BottomRight","TOP");
-        Texture:SetPoint("TOP",Parent.."TopRight","BOTTOM");
-
-        -- bottom border
-        Texture = GetTexturePiece("Bottom",80,246,173,177,"OVERLAY");
-        Texture:SetPoint("BOTTOM");
-        Texture:SetPoint("LEFT",Parent.."BottomLeft","RIGHT");
-        Texture:SetPoint("RIGHT",Parent.."BottomRight","LEFT");
-		
-        -- BLANKS NEXT
-        if (Blanks > 0) then
-            local Width = Blanks * 42;
-            if BlankTop then
-                Texture = GetTexturePiece("BlankFillEdge", 116, 223, 31, 34,"ARTWORK");
-                Texture:SetPoint("TOPLEFT",Parent.."Top","BOTTOMLEFT");
-                Texture:SetPoint("RIGHT",Container,"LEFT",Width,0);
-
-                Texture = GetTexturePiece("BlankFillLeft", 72, 116, 142, 162,"ARTWORK");
-                Texture:SetPoint("TOPRIGHT",Parent.."TopLeft","BOTTOMRIGHT",0,3);
-                Texture:SetPoint("BOTTOM",Container,"TOP",0,-42);
-
-                --Since the texture in already stretched about double in height, try to keep the ratio
-                local TexWidth = (Width / 2 > 107)and 107 or (Width / 2);
-                Texture = GetTexturePiece("BlankFill", 223-TexWidth, 223, 35, 49,"ARTWORK");
-                Texture:SetPoint("TOPRIGHT",Parent.."BlankFillEdge","BOTTOMRIGHT");
-                Texture:SetPoint("BOTTOMLEFT",Parent.."BlankFillLeft","BOTTOMRIGHT");
-            else
-                Texture = GetTexturePiece("BlankFillEdge",245,248,30,49,"ARTWORK");
-                Texture:SetPoint("BOTTOM",Container,"BOTTOM",0,-5);
-                Texture:SetPoint("RIGHT",Parent.."Right","LEFT");
-                Texture:SetHeight(42);
-                --Avoids the texture becomming too compressed if the space is infact small
-                local TexWidth = (Width > 132)and 132 or Width;
-                Texture = GetTexturePiece("BlankFill",245-TexWidth,244,30,49,"ARTWORK");
-                Texture:SetPoint("BOTTOMRIGHT",Parent.."BlankFillEdge","BOTTOMLEFT");
-                Texture:SetPoint("TOPRIGHT",Parent.."BlankFillEdge","TOPLEFT");
-                Texture:SetPoint("LEFT",Container,"RIGHT",-Width,0);
-                HideObject(Parent.."BlankFillLeft");
-            end
-        else
-            HideObject(Parent.."BlankFill");
-            HideObject(Parent.."BlankFillEdge");
-            HideObject(Parent.."BlankFillLeft");
-        end
-
-        -- CREATE SLOT BACKGROUNDS
-        -- Width is 42, Height is 41
-        local Row = 1;
-        local OffsetX, OffsetY;
-        for Slot = 1, Container.Slots do
-            Col = Col + 1;
-            if (Col > Cols) then
-                Col = 1;
-                Row = Row + 1;
-            end
-            Texture = GetTexturePiece("Slot"..Slot,118,164,213,258,"BORDER");
-            OffsetX, OffsetY = -2, -2;
-            Texture:SetPoint("TOPLEFT", Container, "TOPLEFT", (Col - 1) * 42 + OffsetX - 3, (Row - 1) * -41 + 2 - OffsetY);
-        end
-		
-        -- adapt to increased container size
-        if (Container.Slots > (TextureParent.Slots or -1)) then
-            TextureParent.Slots = Container.Slots;
-        else
-            -- Hide extra slot textures
-            for Slot = (Container.Slots + 1), TextureParent.Slots do
-                _G[TextureParent:GetName().."Slot"..Slot]:Hide();
-            end
-        end
-		
-        -- Makes corner gap look better
-        HideObject(Parent.."Corner");
-        if (Blanks > 0) then
-            local Slot = BlankTop and (Cols + 1) or (Container.Slots - Cols);
-            BaudBag_DebugMsg("BagBackgrounds", "There are blanks to show (affectedSlot, BlankTop, Container.Slots, Cols)", Slot, BlankTop, Container.Slots, Cols);
-            if (Slot >= 1) or (Slot <= Container.Slots) then
-                if not BlankTop then
-                    Texture = GetTexturePiece("Corner",154,164,248,258,"OVERLAY");
-                    Texture:SetPoint("BOTTOMRIGHT",Parent.."Slot"..Slot);
-                else
-                    Texture = GetTexturePiece("Corner",118,128,213,223,"OVERLAY");
-                    Texture:SetPoint("TOPLEFT",Parent.."Slot"..Slot);
-                end
-            end
-        end
-
-        -- Adds the box for the money/slot indicators and if needed the token frame
-        if (Container:GetID() == 1) then
-            if (BackpackTokenFrame_IsShown() == 1 and Container:GetName() == "BaudBagContainer1_1") then
-                Bottom = Bottom + 43;
-                Container1_RenderMoneyFrameBackground(Container, Parent, false)
-                BaudBagTokenFrame_RenderBackgrounds(Container, Parent)
-            else
-                -- make sure the window gets big enough and the correct texture is chosen
-                Bottom = Bottom + 20;
-                Container1_RenderMoneyFrameBackground(Container, Parent)
-            end
-        end
-
-        -- Add a picture of the bag in the circle
-        Texture = _G[Parent.."Bag"];
-        if not Texture then
-            Texture = TextureParent:CreateTexture(Parent.."Bag");
-            Texture:SetWidth(40);
-            Texture:SetHeight(40);
-            Texture:ClearAllPoints();
-            Texture:SetPoint("TOPLEFT", Parent.."TopLeft", "TOPLEFT", 3, -3);
-            Texture:SetDrawLayer("BACKGROUND");
-        end
-		
-        local Icon;
-        local BagID = Container.Bags[1]:GetID();
-        local bagCache = BaudBagGetBagCache(BagID);
-        if (BagID <= 0) then
-            Icon = BaudBagIcons[BagID];
-        elseif (Container.BagSet == 2) and not BaudBagFrame.BankOpen and bagCache.BagLink then
-            Icon = GetItemIcon(bagCache.BagLink);
-        else
-            Icon = GetInventoryItemTexture("player", ContainerIDToInventoryID(BagID));
-        end
-		
-        SetPortraitToTexture(Texture, Icon or "Interface\\Icons\\INV_Misc_QuestionMark");
-        Backdrop:SetBackdrop(nil);
-
-        -- Adjust the positioning of several bag components
-        _G[Container:GetName().."Name"]:SetPoint("TOPLEFT",Backdrop,"TOPLEFT",(45 + ShiftName),-7);
-        _G[Container:GetName().."CloseButton"]:SetPoint("TOPRIGHT",Backdrop,"TOPRIGHT",3,3);
-        TextureParent:Show();
-        if (Container:GetID() == 1) then
-            if (BackpackTokenFrame_IsShown() == 1 and Container:GetName() == "BaudBagContainer1_1") then
-                Container.TokenFrame:SetPoint("BOTTOMLEFT",Backdrop,"BOTTOMLEFT", 0,6);
-                Container.TokenFrame:SetPoint("BOTTOMRIGHT",Backdrop,"BOTTOMRIGHT", 0,6);
-                Container.MoneyFrame:SetPoint("BOTTOMRIGHT",Container.TokenFrame,"TOPRIGHT", 0,-1);
-                Container.FreeSlots:SetPoint("BOTTOMLEFT",Container.TokenFrame,"TOPLEFT", 0,4);
-            else
-                Container.FreeSlots:SetPoint("BOTTOMLEFT",Backdrop,"BOTTOMLEFT",12,7);
-                Container.MoneyFrame:SetPoint("BOTTOMRIGHT",Backdrop,"BOTTOMRIGHT",0,6);
-            end
+            Texture = helper:GetTexturePiece("BlankFillEdge", 245, 248, 30, 49)
+            Texture:SetPoint("BOTTOM", Container, "BOTTOM", 0, -5)
+            Texture:SetPoint("RIGHT", Parent.."Right", "LEFT")
+            Texture:SetHeight(42)
+            -- Avoids the texture becomming too compressed if the space is infact small
+            local TexWidth = (Width > 132) and 132 or Width
+            Texture = helper:GetTexturePiece("BlankFill", 245-TexWidth, 244, 30, 49)
+            Texture:SetPoint("BOTTOMRIGHT", Parent.."BlankFillEdge", "BOTTOMLEFT")
+            Texture:SetPoint("TOPRIGHT", Parent.."BlankFillEdge", "TOPLEFT")
+            Texture:SetPoint("LEFT", Container, "RIGHT", -Width, 0)
+            HideObject(Parent.."BlankFillLeft")
         end
     else
-        Left, Right, Top, Bottom = 8, 8, 28, 8;
-        _G[Backdrop:GetName().."Textures"]:Hide();
-        _G[Container:GetName().."Name"]:SetPoint("TOPLEFT",(2 + ShiftName),18);
-        _G[Container:GetName().."CloseButton"]:SetPoint("TOPRIGHT",8,28);
-        if (Container:GetID() == 1) then
-            if (BackpackTokenFrame_IsShown() == 1  and Container:GetName() == "BaudBagContainer1_1") then
-                _G[Container:GetName().."Slots"]:SetPoint("BOTTOMLEFT",2,-17);
-                _G[Container:GetName().."MoneyFrame"]:SetPoint("BOTTOMRIGHT",8,-18);
-                _G[Container:GetName().."TokenFrame"]:SetPoint("BOTTOMLEFT",8,-36);
-                _G[Container:GetName().."TokenFrame"]:SetPoint("BOTTOMRIGHT",8,-36);
-                Bottom = Bottom + 36;
-            else
-                _G[Container:GetName().."Slots"]:SetPoint("BOTTOMLEFT",2,-17);
-                _G[Container:GetName().."MoneyFrame"]:SetPoint("BOTTOMRIGHT",8,-18);
-                Bottom = Bottom + 18;
-            end
-        end
+        HideObject(Parent.."BlankFill")
+        HideObject(Parent.."BlankFillEdge")
+        HideObject(Parent.."BlankFillLeft")
+    end
 
-        if (Background == 5) then
-            Backdrop:SetBackdrop({
-                bgFile = "Interface\\Buttons\\WHITE8X8",
-                edgeFile = "Interface\\DialogFrame\\UI-DialogBox-Border",
-                tile = true, tileSize = 8, edgeSize = 32,
-                insets = { left = 11, right = 12, top = 12, bottom = 11 }
-            });
-            Left, Right, Top, Bottom = Left+8, Right+8, Top+8, Bottom+8;
-            Backdrop:SetBackdropColor(0.1,0.1,0.1,1);
-        elseif (Background == 6) then
-            Backdrop:SetBackdrop({
-                bgFile = "Interface\\Buttons\\WHITE8X8",
-                tile = true, tileSize = 14, edgeSize = 14,
-                insets = { left = 2, right = 2, top = 2, bottom = 2 }
-            });
-            Backdrop:SetBackdropColor(0.0, 0.0, 0.0, 0.6);
-        else
-            Backdrop:SetBackdrop({
-                bgFile = "Interface\\Tooltips\\UI-Tooltip-Background",
-                edgeFile = "Interface\\Tooltips\\UI-Tooltip-Border",
-                tile = true, tileSize = 16, edgeSize = 16,
-                insets = { left = 5, right = 5, top = 5, bottom = 5 }
-            });
-            Backdrop:SetBackdropColor(0,0,0,1);
+    -- CREATE SLOT BACKGROUNDS
+    -- Width is 42, Height is 41
+    local Row = 1
+    local OffsetX, OffsetY
+    for Slot = 1, Container.Slots do
+        Col = Col + 1
+        if (Col > Cols) then
+            Col = 1
+            Row = Row + 1
+        end
+        Texture = helper:GetTexturePiece("Slot"..Slot, 118, 164, 213, 258, nil, nil, "BORDER")
+        OffsetX, OffsetY = -2, -2
+        Texture:SetPoint("TOPLEFT", Container, "TOPLEFT", (Col - 1) * 42 + OffsetX - 3, (Row - 1) * -41 + 2 - OffsetY)
+    end
+    
+    -- adapt to increased container size
+    if (Container.Slots > (helper.Parent.Slots or -1)) then
+        helper.Parent.Slots = Container.Slots
+    else
+        -- Hide extra slot textures
+        for Slot = (Container.Slots + 1), helper.Parent.Slots do
+            _G[helper.Parent:GetName().."Slot"..Slot]:Hide()
         end
     end
-    _G[Container:GetName().."Name"]:SetPoint("RIGHT",Container:GetName().."MenuButton","LEFT");
+    
+    -- Makes corner gap look better
+    HideObject(Parent.."Corner")
+    if (Blanks > 0) then
+        local Slot = BlankTop and (Cols + 1) or (Container.Slots - Cols)
+        BaudBag_DebugMsg("BagBackgrounds", "There are blanks to show (affectedSlot, BlankTop, Container.Slots, Cols)", Slot, BlankTop, Container.Slots, Cols)
+        if (Slot >= 1) or (Slot <= Container.Slots) then
+            if not BlankTop then
+                Texture = helper:GetTexturePiece("Corner", 154, 164, 248, 258, nil, nil, "OVERLAY")
+                Texture:SetPoint("BOTTOMRIGHT", Parent.."Slot"..Slot)
+            else
+                Texture = helper:GetTexturePiece("Corner", 118, 128, 213, 223, nil, nil, "OVERLAY")
+                Texture:SetPoint("TOPLEFT", Parent.."Slot"..Slot)
+            end
+        end
+    end
 
-    Backdrop:ClearAllPoints();
-    Backdrop:SetPoint("TOPLEFT",-Left,Top);
-    Backdrop:SetPoint("BOTTOMRIGHT",Right,-Bottom);
-    Container:SetHitRectInsets(-Left,-Right,-Top,-Bottom);
-    Container.UnlockInfo:ClearAllPoints();
-    Container.UnlockInfo:SetPoint("TOPLEFT", -10, 3);
-    Container.UnlockInfo:SetPoint("BOTTOMRIGHT", 10, -3);
+    -- Adds the box for the money/slot indicators and if needed the token frame
+    if (Container:GetID() == 1) then
+        if (BackpackTokenFrame_IsShown() == 1 and Container:GetName() == "BaudBagContainer1_1") then
+            Bottom = Bottom + 43
+            Container1_RenderMoneyFrameBackground(Container, Parent, false)
+            BaudBagTokenFrame_RenderBackgrounds(Container, Parent)
+        else
+            -- make sure the window gets big enough and the correct texture is chosen
+            Bottom = Bottom + 21
+            Container1_RenderMoneyFrameBackground(Container, Parent)
+        end
+    end
+
+    -- Add a picture of the bag in the circle
+    Container_UpdateBagPicture(Container, Parent, Backdrop)
+
+    -- Adjust the positioning of several bag components
+    Container.Name:SetPoint("TOPLEFT", Backdrop, "TOPLEFT", (45 + ShiftName), -7)
+    Container.CloseButton:SetPoint("TOPRIGHT", Backdrop, "TOPRIGHT", 3, 3)
+    helper.Parent:Show()
+    if (Container:GetID() == 1) then
+        if (BackpackTokenFrame_IsShown() == 1 and Container:GetName() == "BaudBagContainer1_1") then
+            Container.TokenFrame:SetPoint("BOTTOMLEFT",  Backdrop, "BOTTOMLEFT", 0, 6)
+            Container.TokenFrame:SetPoint("BOTTOMRIGHT", Backdrop, "BOTTOMRIGHT", 0, 6)
+            Container.MoneyFrame:SetPoint("BOTTOMRIGHT", Container.TokenFrame, "TOPRIGHT", 0, -1)
+            Container.FreeSlots:SetPoint("BOTTOMLEFT",   Container.TokenFrame, "TOPLEFT", 0, 4)
+        else
+            Container.FreeSlots:SetPoint("BOTTOMLEFT",   Backdrop, "BOTTOMLEFT", 12, 7)
+            Container.MoneyFrame:SetPoint("BOTTOMRIGHT", Backdrop, "BOTTOMRIGHT", 0, 3)
+        end
+    end
+
+    return Left, Right, Top, Bottom
+end
+
+function Container_UpdateBagPicture(Container, Parent, Backdrop)
+    local Texture = _G[Parent.."Bag"]
+    if not Texture then
+        Texture = Backdrop.Textures:CreateTexture(Parent.."Bag")
+        Texture:SetWidth(40)
+        Texture:SetHeight(40)
+        Texture:ClearAllPoints()
+        Texture:SetPoint("TOPLEFT", Parent.."TopLeft", "TOPLEFT", 3, -3)
+        Texture:SetDrawLayer("BACKGROUND")
+    end
+    
+    local Icon
+    local BagID = Container.Bags[1]:GetID()
+    local bagCache = BaudBagGetBagCache(BagID)
+    if (BagID <= 0) then
+        Icon = BaudBagIcons[BagID]
+    elseif (Container.BagSet == 2) and not BaudBagFrame.BankOpen and bagCache.BagLink then
+        Icon = GetItemIcon(bagCache.BagLink)
+    else
+        Icon = GetInventoryItemTexture("player", ContainerIDToInventoryID(BagID))
+    end
+    
+    SetPortraitToTexture(Texture, Icon or "Interface\\Icons\\INV_Misc_QuestionMark")
+    Backdrop:SetBackdrop(nil)
+end
+
+function Container_UpdateOtherBackground(Container, Backdrop, ShiftName)
+    local Left, Right, Top, Bottom = 8, 8, 28, 8
+    Backdrop.Textures:Hide()
+    Container.Name:SetPoint("TOPLEFT", (2 + ShiftName), 18)
+    Container.CloseButton:SetPoint("TOPRIGHT", 8, 28)
+
+    if (Container:GetID() == 1) then
+        if (BackpackTokenFrame_IsShown() == 1  and Container:GetName() == "BaudBagContainer1_1") then
+            Container.FreeSlots:SetPoint("BOTTOMLEFT",   2, -17)
+            Container.MoneyFrame:SetPoint("BOTTOMRIGHT", 8, -18)
+            Container.TokenFrame:SetPoint("BOTTOMLEFT",  8, -36)
+            Container.TokenFrame:SetPoint("BOTTOMRIGHT", 8, -36)
+            Bottom = Bottom + 36
+        else
+            Container.FreeSlots:SetPoint("BOTTOMLEFT",   2, -17)
+            Container.MoneyFrame:SetPoint("BOTTOMRIGHT", 8, -18)
+            Bottom = Bottom + 18
+        end
+    end
+
+    if (Background == 5) then
+        Backdrop:SetBackdrop({
+            bgFile = "Interface\\Buttons\\WHITE8X8",
+            edgeFile = "Interface\\DialogFrame\\UI-DialogBox-Border",
+            tile = true, tileSize = 8, edgeSize = 32,
+            insets = { left = 11, right = 12, top = 12, bottom = 11 }
+        })
+        Left, Right, Top, Bottom = Left+8, Right+8, Top+8, Bottom+8
+        Backdrop:SetBackdropColor(0.1, 0.1, 0.1, 1)
+    elseif (Background == 6) then
+        Backdrop:SetBackdrop({
+            bgFile = "Interface\\Buttons\\WHITE8X8",
+            tile = true, tileSize = 14, edgeSize = 14,
+            insets = { left = 2, right = 2, top = 2, bottom = 2 }
+        })
+        Backdrop:SetBackdropColor(0.0, 0.0, 0.0, 0.6)
+    else
+        Backdrop:SetBackdrop({
+            bgFile = "Interface\\Tooltips\\UI-Tooltip-Background",
+            edgeFile = "Interface\\Tooltips\\UI-Tooltip-Border",
+            tile = true, tileSize = 16, edgeSize = 16,
+            insets = { left = 5, right = 5, top = 5, bottom = 5 }
+        })
+        Backdrop:SetBackdropColor(0, 0, 0, 1)
+    end
+
+    return Left, Right, Top, Bottom
 end
 
 
@@ -1810,7 +1810,7 @@ function BaudBagUpdateContainer(Container)
         Container:SetHeight(Row * 39 - 2);
     end
 
-    BaudBagUpdateBackground(Container);
+    Container_UpdateBackground(Container);
     BaudBag_DebugMsg("Bags", "Finished Arranging Container.");
 end
 
@@ -1851,260 +1851,13 @@ function BaudBagUpdateFromBBConfig()
     end
 end
 
-
 function BaudBagSearchButton_Click(self, event, ...)
     -- get references to all needed frames and data
-    local SearchFrame	= _G[Prefix.."SearchFrame"];
-    local Container		= self:GetParent();
-    local Scale			= BBConfig[Container.BagSet][Container:GetID()].Scale / 100;
-    local Background	= BBConfig[Container.BagSet][Container:GetID()].Background;
-    local Backdrop		= _G[SearchFrame:GetName().."Backdrop"];
-    local EditBox		= _G[SearchFrame:GetName().."EditBox"];
-    local BagSearchHeightOffset = 0;
-    local BagSearchHeight		= 20;
-	
-    -- remember the element the search frame is attached to
-    SearchFrame.AttachedTo = Container:GetName();
-	
-    -- draw the background depending on the containers background
-    --Backdrop:SetFrameLevel(SearchFrame:GetFrameLevel());
-    local Left, Right, Top, Bottom;
-	
-    -- these are the default blizz-frames
-    if (Background <= 3) then
-
-        Left, Right, Top, Bottom	= 10, 10, 25, 7;
-        BagSearchHeightOffset		= 22;
-        local Parent	= Backdrop:GetName().."Textures";
-        TextureParent	= _G[Parent];
-        TextureParent:SetFrameLevel(SearchFrame:GetFrameLevel());
-        local Texture;
-		
-        -- choose the correct texture file with correct sizes
-        TextureFile = "Interface\\ContainerFrame\\UI-Bag-Components";
-        if (Background == 2) then
-            TextureFile = TextureFile.."-Bank";
-        elseif (Background == 3)then
-            TextureFile = TextureFile.."-Keyring";
-        end
-        TextureWidth, TextureHeight = 256, 512;
-
-        -- --------------------------
-        -- create new textures now
-        -- --------------------------
-        -- BORDERS FIRST
-        -- transparent circle top left
-        Texture = GetTexturePiece("Left", 106, 117, 5, 30,"ARTWORK");
-        Texture:SetPoint("TOPLEFT");
-
-        -- right end of header + transparent piece for close button (with or without blank part on the bottom)
-        Texture = GetTexturePiece("Right", 223, 252, 5, 30,"ARTWORK");
-        Texture:SetPoint("TOPRIGHT");
-
-        -- container header (contains name, with or without blank part on the bottom)
-        Texture = GetTexturePiece("Center", 117, 222, 5, 30,"ARTWORK");
-        Texture:SetPoint("TOP");
-        Texture:SetPoint("RIGHT", Parent.."Right", "LEFT");
-        Texture:SetPoint("LEFT", Parent.."Left", "RIGHT");
-
-        -- fix positions of some elements
-        _G[SearchFrame:GetName().."CloseButton"]:SetPoint("TOPRIGHT",Backdrop,"TOPRIGHT",3,3);
-        _G[SearchFrame:GetName().."EditBox"]:SetPoint("TOPLEFT", -1, 18);
-		
-        -- make sure the backdrop of "else" is removed and the texture is actually shown
-        Backdrop:SetBackdrop(nil);
-        TextureParent:Show();
-    else
-        Left, Right, Top, Bottom = 8, 8, 8, 8;
-        BagSearchHeightOffset = 32;
-        BagSearchHeight	= 12;
-        _G[Backdrop:GetName().."Textures"]:Hide();
-        _G[SearchFrame:GetName().."CloseButton"]:SetPoint("TOPRIGHT", 9, 10);
-        _G[SearchFrame:GetName().."EditBox"]:SetPoint("TOPLEFT", -1, 0);
-		
-        -- "solid"
-        if (Background == 5) then
-            Backdrop:SetBackdrop({
-                bgFile = "Interface\\Buttons\\WHITE8X8",
-                edgeFile = "Interface\\DialogFrame\\UI-DialogBox-Border",
-                tile = true, tileSize = 8, edgeSize = 32,
-                insets = { left = 11, right = 12, top = 12, bottom = 11 }
-            });
-            Left, Right, Top, Bottom = Left+8, Right+8, Top+8, Bottom+8;
-            BagSearchHeightOffset = BagSearchHeightOffset + 8;
-            Backdrop:SetBackdropColor(0.1, 0.1, 0.1, 1);
-            -- "transparent2"
-        elseif (Background == 6) then
-            Backdrop:SetBackdrop({
-                bgFile = "Interface\\Buttons\\WHITE8X8",
-                tile = true, tileSize = 14, edgeSize = 14,
-                insets = { left = 2, right = 2, top = 2, bottom = 2 }
-            });
-            Backdrop:SetBackdropColor(0.0, 0.0, 0.0, 0.6);
-            -- "transparent"
-        else
-            Backdrop:SetBackdrop({
-                bgFile = "Interface\\Tooltips\\UI-Tooltip-Background",
-                edgeFile = "Interface\\Tooltips\\UI-Tooltip-Border",
-                tile = true, tileSize = 14, edgeSize = 14,
-                insets = { left = 2, right = 2, top = 2, bottom = 2 }
-            });
-            Backdrop:SetBackdropColor(0.0, 0.0, 0.0, 1.0);
-        end
-    end
-	
-    -- correct the sizes depending on the frame backdrop
-    Backdrop:ClearAllPoints();
-    Backdrop:SetPoint("TOPLEFT", -Left, Top);
-    Backdrop:SetPoint("BOTTOMRIGHT", Right, -Bottom);
-    SearchFrame:SetHitRectInsets(-Left, -Right, -Top, -Bottom);
-	
-    -- position the frame above the calling container
-    SearchFrame:SetPoint("BOTTOMLEFT", self:GetParent(), "TOPLEFT", 0, BagSearchHeightOffset);
-    SearchFrame:SetPoint("RIGHT", self:GetParent(), "RIGHT");
-    SearchFrame:SetHeight(BagSearchHeight);
-	
-    -- make sure the frame lies on the same lvl as the calling container
-    SearchFrame:SetFrameLevel(self:GetParent():GetFrameLevel());
-    Backdrop:SetFrameLevel(SearchFrame:GetFrameLevel());
-    _G[SearchFrame:GetName().."CloseButton"]:SetFrameLevel(SearchFrame:GetFrameLevel()+1);
-    _G[SearchFrame:GetName().."EditBox"]:SetFrameLevel(SearchFrame:GetFrameLevel()+1);
-	
-    -- adjust the scaling according to the calling container
-    SearchFrame:SetScale(Scale);
-	
-    -- finally show it
-    BaudBagSearchFrame:Show();
-    BaudBagSearchFrameEditBox:SetFocus();
-end
-
-function BaudBagSearchFrame_CheckClose(caller)
-    BaudBag_DebugMsg("Search", "Checking if searchframe needs to be closed:");
-    if (BaudBagSearchFrame:IsVisible()) then
-        BaudBag_DebugMsg("Search", "(sourceName, attachedTo)", caller:GetName(), BaudBagSearchFrame.AttachedTo);
-        local isSelf		= (caller:GetName() == BaudBagSearchFrame:GetName());
-        local isAttached	= (caller:GetName() == BaudBagSearchFrame.AttachedTo);
-        local isClosed		= _G[BaudBagSearchFrame.AttachedTo].Closing or (not _G[BaudBagSearchFrame.AttachedTo]:IsVisible());
-		
-        BaudBag_DebugMsg("Search", "isSelf, isAttached, isClosed", isSelf, isAttached, isClosed);
-        if (isSelf or (isAttached and isClosed)) then
-            BaudBagSearchFrame:Hide();
-        end
-    end
-end
-
---[[
-if the SearchFrame is hidden the search text and any existing search markers needs to be cleared
-]]--
-function BaudBagSearchFrame_OnHide(self, event, ...)
-    _G[self:GetName().."EditBox"]:SetText("");
-    BaudBagSearchFrame.AttachedTo = nil;
-    BaudBagSearchFrameEditBox_RemoveHighlights();
-end
-
-function BaudBagSearchFrameEditBox_OnTextChanged(self, isUserInput)
-    BaudBag_DebugMsg("Search", "Changed search phrase, researching open bags");
-    local compareString = _G[Prefix.."SearchFrameEditBox"]:GetText();
-	
-    -- check search text for validity
-    if (false) then
-        -- TODO!!!a
-        return
-    end
-	
-    -- go through all bags to find the open ones
-    local SubBag, Frame, Open, ItemButton, Link, Name, Texture;
-    local Status, Result;
-    local bagCache, slotCache;
-    for Bag = -3, LastBagID do
-        if not (Bag == -2) then
-            SubBag = _G[Prefix.."SubBag"..Bag];
-            Open	= SubBag:IsShown()and SubBag:GetParent():IsShown() and not SubBag:GetParent().Closing;
-            bagCache = BaudBagGetBagCache(SubBag:GetID());
-
-            -- if the bag is open go through its items and compare the itemname
-            if (Open) then
-                BaudBag_DebugMsg("Search", "Bag is open, going through items (BagID)", Bag);
-                BagsSearched[Bag] = true;
-
-                for Slot = 1, SubBag.size do
-                    ItemButton = _G[SubBag:GetName().."Item"..Slot];
-                    slotCache = bagCache and bagCache[Slot] or nil;
-
-                    -- get item link according to the type of bag
-                    if (SubBag.BagSet ~= 2) or BaudBagFrame.BankOpen then
-                        Link = GetContainerItemLink(SubBag:GetID(), Slot);
-                    elseif slotCache then
-                        Link = slotCache.Link;
-                    end
-
-                    -- get the name for that link
-                    if Link then
-                        -- debug message
-                        printableLink = gsub(Link, "\124", "\124\124");
-                        BaudBag_DebugMsg("Search", "Found a link (link)", printableLink);
-
-                        -- we can have different types of links, usually it is an item...
-                        if (strmatch(Link, "|Hitem:")) then
-                            Name, _, _, _, _, _, _, _, _, _ = GetItemInfo(Link);
-
-                            -- ... or a cages battle pet ...
-                        elseif (strmatch(Link, "|Hbattlepet:")) then
-                            local _, speciesID, _, _, _, _, _, battlePetID = strsplit(":", Link)
-                            Name, _, _, _, _, _, _, _, _, _= C_PetJournal.GetPetInfoBySpeciesID(speciesID);
-
-                            -- ... we don't know about everything else
-                        else
-                            Name = "Unknown";
-                        end
-                    end
-
-                    -- add transparency if search active but not a result
-                    Texture = ItemButton;
-                    if (Link and compareString ~= "") then
-                        BaudBag_DebugMsg("Search", "Searching (searchString, itemName)", compareString, Name);
-
-                        -- first run string search and go through results later (because of error handling)
-                        Status, Result = pcall(string.find, string.lower(Name), string.lower(compareString));
-
-                        -- find was run successfull: act depending on result
-                        if (Status) then
-                            --if (string.find(string.lower(Name), string.lower(compareString)) == nil) then
-                            if (Result == nil) then
-                                BaudBag_DebugMsg("Search", "Itemname does not match");
-                                Texture:SetAlpha(0.2);
-                            else
-                                BaudBag_DebugMsg("Search", "Item seems to match");
-                                Texture:SetAlpha(1);
-                            end
-                            -- find failed, create debug message
-                        else
-                            BaudBag_DebugMsg("Search", "current search creates problem (result)", Result);
-                            return;
-                        end
-                    else
-                        Texture:SetAlpha(1);
-                    end
-                end
-            end
-        end
-    end
-end
-
-function BaudBagSearchFrameEditBox_RemoveHighlights()
-    local SubBag, Frame, Open, ItemButton, Link, Name, Texture;
-    for Bag = -3, LastBagID do
-        if not (Bag == -2) then
-            if (BagsSearched[Bag]) then
-                SubBag = _G[Prefix.."SubBag"..Bag];
-                for Slot = 1, SubBag.size do
-                    ItemButton = _G[SubBag:GetName().."Item"..Slot];
-                    ItemButton:SetAlpha(1);
-                end
-                BagsSearched[Bag] = false;
-            end
-        end
-    end
+    local Container		= self:GetParent()
+    local Scale			= BBConfig[Container.BagSet][Container:GetID()].Scale / 100
+    local Background	= BBConfig[Container.BagSet][Container:GetID()].Background
+    
+    BaudBagSearchFrame_ShowFrame(Container, Scale, Background)
 end
 
 --[[ if the mouse hovers over the bag slot item the slots belonging to this bag should be shown after a certain time (atm 350ms or 0.35s) ]]

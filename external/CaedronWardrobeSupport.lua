@@ -1,3 +1,5 @@
+local _
+
 if IsAddOnLoaded("CaerdonWardrobe") then
     CaerdonWardrobe:RegisterBagAddon();
 end

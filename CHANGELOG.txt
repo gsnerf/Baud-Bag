@@ -1,4 +1,6 @@
 ﻿=== Changelog ===
+v7.2.2
+  - even more extensive restructuring
 v7.2.1
   - extensive internal restructuring
   - reworked TokenFrame and MoneyFrame in first backpack container to better fit and worked out some scaling issues

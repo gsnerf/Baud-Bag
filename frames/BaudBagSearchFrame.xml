@@ -1,0 +1,48 @@
+<Ui xmlns="http://www.blizzard.com/wow/ui/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.blizzard.com/wow/ui/ ..\FrameXML\UI.xsd">
+	
+	<Script file="BaudBagSearchFrame.lua" />
+
+	<Frame name="BaudBagSearchFrame" parent="UIParent" hidden="true">
+		<Anchors>
+			<Anchor Point="CENTER" />
+		</Anchors>
+		<Size>
+			<AbsDimension y="20" />
+		</Size>
+		<Frames>
+			<Frame name="$parentBackdrop" parentKey="Backdrop">
+				<Frames>
+					<Frame name="$parentTextures" parentKey="Textures" setAllPoints="true" />
+				</Frames>
+			</Frame>
+			
+			<Button name="$parentCloseButton" parentKey="CloseButton" inherits="UIPanelCloseButton">
+				<Anchors>
+					<Anchor point="TOPRIGHT" />
+				</Anchors>
+				<Scripts>
+					<OnClick>
+						self:GetParent():Hide();
+					</OnClick>
+				</Scripts>
+			</Button>
+
+			<EditBox name="$parentEditBox" parentKey="EditBox" inherits="InputBoxTemplate" autoFocus="false">
+				<Size>
+					<AbsDimension y="12" />
+				</Size>
+				<Anchors>
+					<Anchor point="TOPLEFT" x="-1" y="18" />
+					<Anchor point="RIGHT" relativeTo="$parentCloseButton" relativePoint="LEFT" x="2" />
+				</Anchors>
+				<Scripts>
+					<OnTextChanged function="BaudBagSearchFrameEditBox_OnTextChanged" />
+				</Scripts>
+			</EditBox>
+		</Frames>
+		<Scripts>
+			<OnHide function="BaudBagSearchFrame_OnHide" />
+		</Scripts>
+	</Frame>
+
+</Ui>

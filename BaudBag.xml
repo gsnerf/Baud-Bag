@@ -33,12 +33,12 @@
 			<Anchor point="CENTER" />
 		</Anchors>
 		<Frames>
-			<Frame name="$parentBackdrop">
+			<Frame name="$parentBackdrop" parentKey="Backdrop">
 				<Frames>
-					<Frame name="$parentTextures" setAllPoints="true" />
+					<Frame name="$parentTextures" parentKey="Textures" setAllPoints="true" />
 				</Frames>
 			</Frame>
-			<Button name="$parentCloseButton" inherits="UIPanelCloseButton">
+			<Button name="$parentCloseButton" parentKey="CloseButton" inherits="UIPanelCloseButton">
 				<Anchors>
 					<Anchor point="TOPRIGHT" />
 				</Anchors>
@@ -49,7 +49,7 @@
 					</OnClick>
 				</Scripts>
 			</Button>
-			<Button name="$parentMenuButton">
+			<Button name="$parentMenuButton" parentKey="MenuButton">
 				<Size x="16" y="16" />
 				<Anchors>
 					<Anchor point="TOPRIGHT" relativeTo="$parentCloseButton" relativePoint="TOPLEFT" x="0" y="-8" />
@@ -61,7 +61,7 @@
 				<PushedTexture file="Interface\Buttons\UI-PlusButton-Down" />
 				<HighlightTexture file="Interface\Buttons\UI-PlusButton-Hilight" alphaMode="ADD" />
 			</Button>
-			<Button name="$parentSearchButton">
+			<Button name="$parentSearchButton" parentKey="SearchButton">
 				<Size x="16" y="16" />
 				<Anchors>
 					<Anchor point="TOPRIGHT" relativeTo="$parentMenuButton" relativePoint="TOPLEFT" x="0" y="0" />
@@ -236,7 +236,7 @@
 		</Frames>
 		<Layers>
 			<Layer>
-				<FontString name="$parentName" inherits="GameFontNormal" justifyH="LEFT">
+				<FontString name="$parentName" parentKey="Name" inherits="GameFontNormal" justifyH="LEFT">
 					<Size>
 						<AbsDimension x="0" y="12" />
 					</Size>
@@ -252,49 +252,7 @@
 			<OnDragStop function="BaudBagContainer_OnDragStop" />
 		</Scripts>
 	</Frame>
-
-	<Frame name="BaudBagSearchFrame" parent="UIParent" hidden="true">
-		<Anchors>
-			<Anchor Point="CENTER" />
-		</Anchors>
-		<Size>
-			<AbsDimension y="20" />
-		</Size>
-		<Frames>
-			<Frame name="$parentBackdrop">
-				<Frames>
-					<Frame name="$parentTextures" setAllPoints="true" />
-				</Frames>
-			</Frame>
-			
-			<Button name="$parentCloseButton" inherits="UIPanelCloseButton">
-				<Anchors>
-					<Anchor point="TOPRIGHT" />
-				</Anchors>
-				<Scripts>
-					<OnClick>
-						self:GetParent():Hide();
-					</OnClick>
-				</Scripts>
-			</Button>
-
-			<EditBox name="$parentEditBox"  inherits="InputBoxTemplate" autoFocus="false">
-				<Size>
-					<AbsDimension y="12" />
-				</Size>
-				<Anchors>
-					<Anchor point="TOPLEFT" x="-1" y="18" />
-					<Anchor point="RIGHT" relativeTo="$parentCloseButton" relativePoint="LEFT" x="2" />
-				</Anchors>
-				<Scripts>
-					<OnTextChanged function="BaudBagSearchFrameEditBox_OnTextChanged" />
-				</Scripts>
-			</EditBox>
-		</Frames>
-		<Scripts>
-			<OnHide function="BaudBagSearchFrame_OnHide" />
-		</Scripts>
-	</Frame>
+	
 	<Frame name="BaudBagFirstContainerTemplate" virtual="true" inherits="BaudBagContainerTemplate">
 		<Frames>
 			<CheckButton name="$parentBagsButton" parentKey="BagsButton">
@@ -334,6 +292,7 @@
 			<Anchor point="CENTER" />
 		</Anchors>
 		<Frames>
+			<!-- this is necessary to let WoW correctly update the content of the bags -->
 			<Button parentKey="FilterIcon" hidden="true">
 				<Size x="0" y="0"/>
 				<Anchors>

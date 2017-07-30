@@ -1,3 +1,5 @@
+local _
+
 BagSetType = {
     Backpack = 1,
     Bank = 2,
