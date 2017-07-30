@@ -292,6 +292,7 @@
 			<Anchor point="CENTER" />
 		</Anchors>
 		<Frames>
+			<!-- this is necessary to let WoW correctly update the content of the bags -->
 			<Button parentKey="FilterIcon" hidden="true">
 				<Size x="0" y="0"/>
 				<Anchors>
