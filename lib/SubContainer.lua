@@ -24,6 +24,12 @@ function Prototype:GetFrame()
     return self.Frame
 end
 
+function Prototype:IsOpen()
+    -- TODO: is self.Frame:IsShown() really necessary here?
+    local parent = self.Frame:GetParent()
+    return self.Frame:IsShown() and parent:IsShown() and not parent.Closing;
+end
+
 function Prototype:Render()
     -- TODO
 end

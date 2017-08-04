@@ -946,7 +946,7 @@ function BaudUpdateJoinedBags()
     -- first update the status of currently open bags
     local OpenBags = {};
     for BagId,SubContainer in ipairs(AddOnTable["SubBags"]) do
-        OpenBags[BagId] = SubContainer.Frame:GetParent():IsShown()
+        OpenBags[BagId] = SubContainer:IsOpen()
         if OpenBags[BagId] then
             BaudBag_DebugMsg("Bags", "Bag open (BagID)", Bag);
         end
@@ -1307,32 +1307,24 @@ BagSlotButton_OnClick = function(self, event, ...)
 
 end
  
-local function IsBagShown(BagID)
-    local SubBag = _G[Prefix.."SubBag"..BagID];
-    return SubBag:IsShown()and SubBag:GetParent():IsShown()and not SubBag:GetParent().Closing;
+local function IsBagShown(BagId)
+    local SubContainer = AddOnTable["SubBags"][BagId]
+    BaudBag_DebugMsg("BagOpening", "Got SubContainer", SubContainer)
+    return SubContainer:IsOpen()
 end
 
-local pre_IsBagOpen = IsBagOpen;
+local pre_IsBagOpen = IsBagOpen
 -- IsBagOpen = function(BagID)
-function BaudBag_IsBagOpen(BagID)
-
+function BaudBag_IsBagOpen(BagId)
     -- fallback
-    if (not BBConfig or not BaudBag_BagHandledByBaudBag(BagID)) then
-        BaudBag_DebugMsg("BagOpening", "BaudBag is not responsible for this bag, calling default ui");
-        return pre_IsBagOpen(BagID);
+    if (not BBConfig or not BaudBag_BagHandledByBaudBag(BagId)) then
+        BaudBag_DebugMsg("BagOpening", "BaudBag is not responsible for this bag, calling default ui")
+        return pre_IsBagOpen(BagId)
     end
     
-    local SubBag = _G[Prefix.."SubBag"..BagID];
-    local open = SubBag and SubBag:IsShown() and SubBag:GetParent():IsShown() and not SubBag:GetParent().Closing;
-
-    if (bagContainer) then
-        BaudBag_DebugMsg("BagOpening", "[IsBagOpen] (BagID, open)", BagID, open);
-    end
-    if (bankContainer) then
-        BaudBag_DebugMsg("BagOpening", "[IsBagOpen] called on bank bag (BagID, open)", BagID, open);
-    end
-
-    return open;
+    local open = IsBagShown(BagId)
+    BaudBag_DebugMsg("BagOpening", "[IsBagOpen] (BagId, open)", BagId, open)
+    return open
 end
 
 -- hooksecurefunc("IsBagOpen", BaudBag_IsBagOpen);
@@ -1355,18 +1347,6 @@ hooksecurefunc("BackpackButton_OnClick", function(self)
     end
     self:SetChecked(IsBagShown(0));
 end);
-
--- hooksecurefunc("UpdateMicroButtons",function()
--- if BBConfig and (BBConfig[1].Enabled == false) then
--- return;
--- end
--- if IsBagShown(KEYRING_CONTAINER)then
--- KeyRingButton:SetButtonState("PUSHED", 1);
--- else
--- KeyRingButton:SetButtonState("NORMAL");
--- end
--- end);
-
 
 --self is hooked to be able to replace the original bank box with this one
 local pre_BankFrame_OnEvent = BankFrame_OnEvent;
