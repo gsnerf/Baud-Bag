@@ -347,6 +347,7 @@ function BaudBag_OnLoad(self, event, ...)
     -- create all necessary SubBags now with basic initialization, correct referencing later when config is available
     BaudBag_DebugMsg("Bags", "Creating sub bags.");
     local SubBagObject, targetBagSet
+    -- this should be the ONLY place we iterate directly over the IDs in the future
     for Bag = -3, LastBagID do
         -- need to skip the now defunc keyring
         if not (Bag == -2) then
@@ -1010,28 +1011,27 @@ end
 
 function BaudBagUpdateOpenBags()
     local Open, Frame, Slot, ItemButton, QuestTexture;
-    for Bag = -3, LastBagID do
-        if not (Bag == -2) then
-            Frame = _G[Prefix.."SubBag"..Bag];
-            if (BaudBag_IsBagOpen(Bag)) then
-                BaudBag_DebugMsg("Bags", "Updating Items of Bag (BagID)", Bag);
-                for Slot = 1, GetContainerNumSlots(Bag) do
-                    ItemButton = _G[Prefix.."SubBag"..Bag.."Item"..Slot];
-                    QuestTexture = _G[ItemButton:GetName().."IconQuestTexture"];
-                    
-                    ContainerFrame_UpdateCooldown(Bag, ItemButton);
-                    
-                    if (QuestTexture) then
-                        local isQuestItem, questId, isActive = GetContainerItemQuestInfo(Bag, ItemButton:GetID());
-                        if ( questId and not isActive ) then
-                            QuestTexture:SetTexture(TEXTURE_ITEM_QUEST_BANG);
-                            QuestTexture:Show();
-                        elseif ( questId or isQuestItem ) then
-                            QuestTexture:SetTexture(TEXTURE_ITEM_QUEST_BORDER);
-                            QuestTexture:Show();		
-                        else
-                            QuestTexture:Hide();
-                        end
+    for BagId, SubContainer in ipairs(AddOnTable["SubBags"]) do
+        Frame = _G[Prefix.."SubBag"..BagId];
+        -- TODO the subconainer should know that by itself in the future!
+        if (BaudBag_IsBagOpen(BagId)) then
+            BaudBag_DebugMsg("Bags", "Updating Items of Bag (BagID)", BagId);
+            for Slot = 1, GetContainerNumSlots(BagId) do
+                ItemButton = _G[Prefix.."SubBag"..BagId.."Item"..Slot];
+                QuestTexture = _G[ItemButton:GetName().."IconQuestTexture"];
+                
+                ContainerFrame_UpdateCooldown(BagId, ItemButton);
+                
+                if (QuestTexture) then
+                    local isQuestItem, questId, isActive = GetContainerItemQuestInfo(BagId, ItemButton:GetID());
+                    if ( questId and not isActive ) then
+                        QuestTexture:SetTexture(TEXTURE_ITEM_QUEST_BANG);
+                        QuestTexture:Show();
+                    elseif ( questId or isQuestItem ) then
+                        QuestTexture:SetTexture(TEXTURE_ITEM_QUEST_BORDER);
+                        QuestTexture:Show();
+                    else
+                        QuestTexture:Hide();
                     end
                 end
             end
@@ -1044,29 +1044,26 @@ function BaudBagUpdateOpenBagHighlight()
     BaudBag_DebugMsg("Bags", "[BaudBagUpdateOpenBagHighlight]");
     local Open, Frame, Highlight, Highlight2;
     -- The bank bag(-1) has no open indicator
-    for Bag = -3, LastBagID do
-        if not (Bag == -2) then
-            Frame   = _G[Prefix.."SubBag"..Bag];
+    for BagId, SubContainer in ipairs(AddOnTable["SubBags"]) do
+        if not (BagId == -2) then
+            Frame   = _G[Prefix.."SubBag"..BagId];
             Parent  = Frame:GetParent();
             Open	= Frame:IsShown() and Frame:GetParent():IsShown() and not Frame:GetParent().Closing;
             -- init default
             Parent.UnlockInfo:Hide();
-            if (Bag == 0) then
+            if (BagId == 0) then
                 MainMenuBarBackpackButton:SetChecked(Open);
-            elseif (Bag > 4) then
-                Highlight  = _G["BaudBBankBag"..(Bag-4).."HighlightFrameTexture"];
-                --Highlight2 = _G["BankSlotsFrame"]["Bag"..(Bag-4)]["HighlightFrame"]["HighlightTexture"];
+            elseif (BagId > 4) then
+                Highlight  = _G["BaudBBankBag"..(BagId-4).."HighlightFrameTexture"];
                 if Open then
                     Highlight:Show();
-                    --Highlight2:Show();
                 else
                     Highlight:Hide();
-                    --Highlight2:Hide();
                 end
-            elseif (Bag > 0) then
-                _G["CharacterBag"..(Bag-1).."Slot"]:SetChecked(Open);
-                _G["BaudBInveBag"..(Bag-1).."Slot"]:SetChecked(Open);
-            elseif (Bag == -3) then
+            elseif (BagId > 0) then
+                _G["CharacterBag"..(BagId-1).."Slot"]:SetChecked(Open);
+                _G["BaudBInveBag"..(BagId-1).."Slot"]:SetChecked(Open);
+            elseif (BagId == -3) then
                 Highlight  = _G["BBReagentsBagHighlightFrameTexture"];
                 if Open then
                     Highlight:Show();
