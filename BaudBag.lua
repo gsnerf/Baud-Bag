@@ -945,7 +945,7 @@ function BaudUpdateJoinedBags()
     BaudBag_DebugMsg("Bags", "Updating joined bags...");
     -- first update the status of currently open bags
     local OpenBags = {};
-    for BagId,SubContainer in ipairs(AddOnTable["SubBags"]) do
+    for BagId,SubContainer in pairs(AddOnTable["SubBags"]) do
         OpenBags[BagId] = SubContainer:IsOpen()
         if OpenBags[BagId] then
             BaudBag_DebugMsg("Bags", "Bag open (BagID)", Bag);
@@ -1011,7 +1011,7 @@ end
 
 function BaudBagUpdateOpenBags()
     local Open, Frame, Slot, ItemButton, QuestTexture;
-    for BagId, SubContainer in ipairs(AddOnTable["SubBags"]) do
+    for BagId, SubContainer in pairs(AddOnTable["SubBags"]) do
         Frame = _G[Prefix.."SubBag"..BagId];
         -- TODO the subconainer should know that by itself in the future!
         if (BaudBag_IsBagOpen(BagId)) then
@@ -1044,40 +1044,38 @@ function BaudBagUpdateOpenBagHighlight()
     BaudBag_DebugMsg("Bags", "[BaudBagUpdateOpenBagHighlight]");
     local Open, Frame, Highlight, Highlight2;
     -- The bank bag(-1) has no open indicator
-    for BagId, SubContainer in ipairs(AddOnTable["SubBags"]) do
-        if not (BagId == -2) then
-            Frame   = _G[Prefix.."SubBag"..BagId];
-            Parent  = Frame:GetParent();
-            Open	= Frame:IsShown() and Frame:GetParent():IsShown() and not Frame:GetParent().Closing;
-            -- init default
-            Parent.UnlockInfo:Hide();
-            if (BagId == 0) then
-                MainMenuBarBackpackButton:SetChecked(Open);
-            elseif (BagId > 4) then
-                Highlight  = _G["BaudBBankBag"..(BagId-4).."HighlightFrameTexture"];
-                if Open then
-                    Highlight:Show();
-                else
-                    Highlight:Hide();
-                end
-            elseif (BagId > 0) then
-                _G["CharacterBag"..(BagId-1).."Slot"]:SetChecked(Open);
-                _G["BaudBInveBag"..(BagId-1).."Slot"]:SetChecked(Open);
-            elseif (BagId == -3) then
-                Highlight  = _G["BBReagentsBagHighlightFrameTexture"];
-                if Open then
-                    Highlight:Show();
-                else
-                    Highlight:Hide();
-                end
-                if (not IsReagentBankUnlocked()) then		
-		            Parent.UnlockInfo:Show();
-		            MoneyFrame_Update( Parent.UnlockInfo.CostMoneyFrame, GetReagentBankCost());
-		            Parent.DepositButton:Disable();
-	            else
-		            Parent.UnlockInfo:Hide();
-		            Parent.DepositButton:Enable();
-	            end
+    for BagId, SubContainer in pairs(AddOnTable["SubBags"]) do
+        Frame   = _G[Prefix.."SubBag"..BagId];
+        Parent  = Frame:GetParent();
+        Open	= Frame:IsShown() and Frame:GetParent():IsShown() and not Frame:GetParent().Closing;
+        -- init default
+        Parent.UnlockInfo:Hide();
+        if (BagId == 0) then
+            MainMenuBarBackpackButton:SetChecked(Open);
+        elseif (BagId > 4) then
+            Highlight  = _G["BaudBBankBag"..(BagId-4).."HighlightFrameTexture"];
+            if Open then
+                Highlight:Show();
+            else
+                Highlight:Hide();
+            end
+        elseif (BagId > 0) then
+            _G["CharacterBag"..(BagId-1).."Slot"]:SetChecked(Open);
+            _G["BaudBInveBag"..(BagId-1).."Slot"]:SetChecked(Open);
+        elseif (BagId == -3) then
+            Highlight  = _G["BBReagentsBagHighlightFrameTexture"];
+            if Open then
+                Highlight:Show();
+            else
+                Highlight:Hide();
+            end
+            if (not IsReagentBankUnlocked()) then		
+                Parent.UnlockInfo:Show();
+                MoneyFrame_Update( Parent.UnlockInfo.CostMoneyFrame, GetReagentBankCost());
+                Parent.DepositButton:Disable();
+            else
+                Parent.UnlockInfo:Hide();
+                Parent.DepositButton:Enable();
             end
         end
     end
@@ -1652,7 +1650,7 @@ function BaudBagUpdateContainer(Container)
     Container.Slots     = 0;
 
     -- calculate sizes in all subbags
-    for _, SubBag in ipairs(Container.Bags) do
+    for _, SubBag in pairs(Container.Bags) do
 
         -- prepare bag cache for use
         local bagCache = BaudBagGetBagCache(SubBag:GetID());
