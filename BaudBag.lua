@@ -354,8 +354,8 @@ function BaudBag_OnLoad(self, event, ...)
             -- create SubBag or use predefined XML frame when available
             targetBagSet = BaudBag_IsInventory(Bag) and 1 or 2
 
-            AddOnTable["SubBags"][Bag] = SubBagObject
             SubBagObject = AddOnTable:CreateSubContainer(targetBagSet, Bag)
+            AddOnTable["SubBags"][Bag] = SubBagObject
             SubBag = SubBagObject.Frame
 
             -- propably legacy configuration on the frame itself
