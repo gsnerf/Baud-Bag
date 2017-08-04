@@ -36,7 +36,12 @@ local Metatable = { __index = Prototype }
 
 function AddOnTable:CreateSubContainer(bagSet, containerId)
     local subContainer = _G.setmetatable({}, Metatable)
-    subContainer.Frame = CreateFrame("Frame", AddOnName.."SubBag"..containerId, nil, "BaudBagSubBagTemplate")
+    -- TODO this is a really nasty workaround... I don't like it AT ALL... but I don't see a good way right now :(
+    local templateName = "BaudBagSubBagTemplate"
+    if (BaudBag_IsBankDefaultContainer(containerId)) then
+        templateName = nil
+    end
+    subContainer.Frame = CreateFrame("Frame", AddOnName.."SubBag"..containerId, nil, templateName)
     subContainer.BagSet = bagSet
     subContainer.ContainerId = containerId
     return subContainer
