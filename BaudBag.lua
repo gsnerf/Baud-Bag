@@ -352,7 +352,7 @@ function BaudBag_OnLoad(self, event, ...)
         -- need to skip the now defunc keyring
         if not (Bag == -2) then
             -- create SubBag or use predefined XML frame when available
-            targetBagSet = BaudBag_IsInventory(Bag) and 1 or 2
+            targetBagSet = BaudBag_IsInventory(Bag) and BagSetType.Backpack or BagSetType.Bank
 
             SubBagObject = AddOnTable:CreateSubContainer(targetBagSet, Bag)
             AddOnTable["SubBags"][Bag] = SubBagObject
@@ -360,7 +360,6 @@ function BaudBag_OnLoad(self, event, ...)
 
             -- propably legacy configuration on the frame itself
             SubBag:SetID(Bag);
-            SubBag.BagSet = targetBagSet
             SubBag:SetParent(Prefix.."Container"..SubBag.BagSet.."_1");
         end
     end

@@ -40,7 +40,7 @@ end
 
 local Metatable = { __index = Prototype }
 
-function AddOnTable:CreateSubContainer(bagSet, containerId)
+function AddOnTable:CreateSubContainer(bagSetType, containerId)
     local subContainer = _G.setmetatable({}, Metatable)
     -- TODO this is a really nasty workaround... I don't like it AT ALL... but I don't see a good way right now :(
     local templateName = "BaudBagSubBagTemplate"
@@ -48,7 +48,8 @@ function AddOnTable:CreateSubContainer(bagSet, containerId)
         templateName = nil
     end
     subContainer.Frame = CreateFrame("Frame", AddOnName.."SubBag"..containerId, nil, templateName)
-    subContainer.BagSet = bagSet
+    subContainer.Frame.BagSet = bagSetType.Id
+    subContainer.BagSet = bagSetType
     subContainer.ContainerId = containerId
     return subContainer
 end
