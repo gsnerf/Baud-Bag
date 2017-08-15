@@ -1755,7 +1755,7 @@ function BaudBagUpdateContainer(Container)
             end
 
             -- position item slots
-            BaudBagUpdateSubBag(SubBag);
+            AddOnTable["SubBags"][SubBag:GetID()]:Update()
             for Slot = 1, SubBag.maxSlots do
                 ItemButton = _G[SubBag:GetName().."Item"..Slot];
                 if (Slot <= SubBag.size) then
