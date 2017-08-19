@@ -34,6 +34,37 @@ function Prototype:Render()
     -- TODO
 end
 
+function Prototype:UpdateSlot()
+    local frame = self.Frame
+    if (frame.size > (frame.maxSlots or 0)) then
+        for slot = (frame.maxSlots or 0) + 1, frame.size do
+            -- determine type of template for item button
+            local template
+            if (self.ContainerId == BANK_CONTAINER) then
+                template = "BankItemButtonGenericTemplate"
+            elseif (self.ContainerId == REAGENTBANK_CONTAINER) then
+                template = "ReagentBankItemButtonGenericTemplate"
+            else
+                template = "ContainerFrameItemButtonTemplate"
+            end
+
+            -- create item button
+            local button = CreateFrame("Button", frame:GetName().."Item"..slot, frame, template)
+            button:SetID(slot)
+
+            local texture = button:CreateTexture(button:GetName().."Border","OVERLAY")
+            texture:SetTexture("Interface\\Buttons\\UI-ActionButton-Border")
+            texture:SetPoint("CENTER")
+            texture:SetBlendMode("ADD")
+            texture:SetAlpha(0.8)
+            texture:SetHeight(70)
+            texture:SetWidth(70)
+            texture:Hide()
+        end
+        frame.maxSlots = frame.size
+    end
+end
+
 function Prototype:Update()
     local name, link, quality, type, texture, itemButton, isNewItem, isBattlePayItem
     local showColor = BBConfig[self.BagSet.Id][self.Frame:GetParent():GetID()].RarityColor

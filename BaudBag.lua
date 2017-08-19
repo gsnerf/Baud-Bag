@@ -1721,33 +1721,7 @@ function BaudBagUpdateContainer(Container)
             BaudBag_DebugMsg("Bags", "Adding (bagName)", SubBag:GetName());
 
             -- Create extra slots if needed
-            if (SubBag.size > (SubBag.maxSlots or 0)) then
-                for Slot = (SubBag.maxSlots or 0) + 1, SubBag.size do
-                    -- determine type of template for item button
-                    local template;
-                    if (SubBag:GetID() == BANK_CONTAINER) then
-                        template = "BankItemButtonGenericTemplate";
-                    elseif (SubBag:GetID() == REAGENTBANK_CONTAINER) then
-                        template = "ReagentBankItemButtonGenericTemplate";
-                    else
-                        template = "ContainerFrameItemButtonTemplate";
-                    end
-
-                    -- create item button
-                    local Button = CreateFrame("Button", SubBag:GetName().."Item"..Slot, SubBag, template);
-                    Button:SetID(Slot);
-
-                    local Texture = Button:CreateTexture(Button:GetName().."Border","OVERLAY");
-                    Texture:SetTexture("Interface\\Buttons\\UI-ActionButton-Border");
-                    Texture:SetPoint("CENTER");
-                    Texture:SetBlendMode("ADD");
-                    Texture:SetAlpha(0.8);
-                    Texture:SetHeight(70);
-                    Texture:SetWidth(70);
-                    Texture:Hide();
-                end
-                SubBag.maxSlots = SubBag.size;
-            end
+            AddOnTable["SubBags"][SubBag:GetID()]:UpdateSlot()
 			
             -- update container contents (special bank containers don't need this, regular bank only when open)
             if (not BaudBag_IsBankDefaultContainer(SubBag:GetID())) and (BaudBagFrame.BankOpen or (SubBag:GetID() < 5)) then
