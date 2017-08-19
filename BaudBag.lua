@@ -1011,12 +1011,12 @@ end
 function BaudBagUpdateOpenBags()
     local Open, Frame, Slot, ItemButton, QuestTexture;
     for BagId, SubContainer in pairs(AddOnTable["SubBags"]) do
-        Frame = _G[Prefix.."SubBag"..BagId];
+        Frame = SubContainer.Frame
         -- TODO the subconainer should know that by itself in the future!
         if (BaudBag_IsBagOpen(BagId)) then
             BaudBag_DebugMsg("Bags", "Updating Items of Bag (BagID)", BagId);
             for Slot = 1, GetContainerNumSlots(BagId) do
-                ItemButton = _G[Prefix.."SubBag"..BagId.."Item"..Slot];
+                ItemButton = _G[Frame:GetName().."Item"..Slot];
                 QuestTexture = _G[ItemButton:GetName().."IconQuestTexture"];
                 
                 ContainerFrame_UpdateCooldown(BagId, ItemButton);
@@ -1044,9 +1044,9 @@ function BaudBagUpdateOpenBagHighlight()
     local Open, Frame, Highlight, Highlight2;
     -- The bank bag(-1) has no open indicator
     for BagId, SubContainer in pairs(AddOnTable["SubBags"]) do
-        Frame   = _G[Prefix.."SubBag"..BagId];
+        Frame   = SubContainer.Frame
         Parent  = Frame:GetParent();
-        Open	= Frame:IsShown() and Frame:GetParent():IsShown() and not Frame:GetParent().Closing;
+        Open	= SubContainer:IsOpen()
         -- init default
         Parent.UnlockInfo:Hide();
         if (BagId == 0) then
