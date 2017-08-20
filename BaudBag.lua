@@ -1719,9 +1719,10 @@ function BaudBagUpdateContainer(Container)
             SubBag:Hide();
         else
             BaudBag_DebugMsg("Bags", "Adding (bagName)", SubBag:GetName());
+            local SubBagObject = AddOnTable["SubBags"][SubBag:GetID()]
 
             -- Create extra slots if needed
-            AddOnTable["SubBags"][SubBag:GetID()]:CreateMissingSlots()
+            SubBagObject:CreateMissingSlots()
 			
             -- update container contents (special bank containers don't need this, regular bank only when open)
             if (not BaudBag_IsBankDefaultContainer(SubBag:GetID())) and (BaudBagFrame.BankOpen or (SubBag:GetID() < 5)) then
@@ -1729,28 +1730,8 @@ function BaudBagUpdateContainer(Container)
             end
 
             -- position item slots
-            AddOnTable["SubBags"][SubBag:GetID()]:UpdateSlotContents()
-            for Slot = 1, SubBag.maxSlots do
-                ItemButton = _G[SubBag:GetName().."Item"..Slot];
-                if (Slot <= SubBag.size) then
-                    Col = Col + 1;
-                    if (Col > MaxCols) then
-                        Col = 1;
-                        Row = Row + 1;
-                    end
-                    ItemButton:ClearAllPoints();
-                    -- Slot spacing is different for the blizzard textured background
-                    if (Background <= 3) then
-                        ItemButton:SetPoint("TOPLEFT", Container, "TOPLEFT", (Col-1)*42, (Row-1)*-41);
-                    else
-                        ItemButton:SetPoint("TOPLEFT", Container, "TOPLEFT", (Col-1)*39, (Row-1)*-39);
-                    end
-                    ItemButton:SetFrameLevel(SlotLevel);
-                    ItemButton:Show();
-                else
-                    ItemButton:Hide();
-                end
-            end
+            SubBagObject:UpdateSlotContents()
+            Col, Row = SubBagObject:UpdateSlotPositions(Container, Background, Col, Row, MaxCols, SlotLevel)
             SubBag:Show();
         end
     end

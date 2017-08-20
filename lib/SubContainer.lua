@@ -156,6 +156,34 @@ function Prototype:UpdateSlotContents()
     end
 end
 
+-- returns the adapted col and row values
+function Prototype:UpdateSlotPositions(container, background, col, row, maxCols, slotLevel)
+    local frame = self.Frame
+    local slot, itemButton
+    for slot = 1, frame.maxSlots do
+        itemButton = _G[frame:GetName().."Item"..slot]
+        if (slot <= frame.size) then
+            col = col + 1
+            if (col > maxCols) then
+                col = 1
+                row = row + 1
+            end
+            itemButton:ClearAllPoints()
+            -- Slot spacing is different for the blizzard textured background
+            if (background <= 3) then
+                itemButton:SetPoint("TOPLEFT", container, "TOPLEFT", (col-1)*42, (row-1)*-41)
+            else
+                itemButton:SetPoint("TOPLEFT", container, "TOPLEFT", (col-1)*39, (row-1)*-39)
+            end
+            itemButton:SetFrameLevel(slotLevel);
+            itemButton:Show();
+        else
+            itemButton:Hide();
+        end
+    end
+    return col, row
+end
+
 local Metatable = { __index = Prototype }
 
 function AddOnTable:CreateSubContainer(bagSetType, containerId)
