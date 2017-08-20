@@ -65,7 +65,7 @@ function Prototype:CreateMissingSlots()
     end
 end
 
-function Prototype:Update()
+function Prototype:UpdateSlotContents()
     local name, link, quality, type, texture, itemButton, isNewItem, isBattlePayItem
     local showColor = BBConfig[self.BagSet.Id][self.Frame:GetParent():GetID()].RarityColor
     local isBankBag = self.BagSet.Id == BagSetType.Bank.Id
