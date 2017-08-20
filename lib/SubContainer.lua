@@ -34,7 +34,7 @@ function Prototype:Render()
     -- TODO
 end
 
-function Prototype:UpdateSlot()
+function Prototype:CreateMissingSlots()
     local frame = self.Frame
     if (frame.size > (frame.maxSlots or 0)) then
         for slot = (frame.maxSlots or 0) + 1, frame.size do

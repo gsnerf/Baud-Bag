@@ -1721,7 +1721,7 @@ function BaudBagUpdateContainer(Container)
             BaudBag_DebugMsg("Bags", "Adding (bagName)", SubBag:GetName());
 
             -- Create extra slots if needed
-            AddOnTable["SubBags"][SubBag:GetID()]:UpdateSlot()
+            AddOnTable["SubBags"][SubBag:GetID()]:CreateMissingSlots()
 			
             -- update container contents (special bank containers don't need this, regular bank only when open)
             if (not BaudBag_IsBankDefaultContainer(SubBag:GetID())) and (BaudBagFrame.BankOpen or (SubBag:GetID() < 5)) then
