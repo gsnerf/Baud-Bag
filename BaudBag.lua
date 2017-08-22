@@ -259,7 +259,7 @@ Func = function(self, event, ...)
         -- if the main bank bag is visible make sure the content of the sub-bags is also shown  
         local BankBag = _G[Prefix.."SubBag-1"];
         if BankBag:GetParent():IsShown() then
-            BaudBagUpdateSubBag(BankBag);
+            AddOnTable["SubBags"][-1]:UpdateSlotContents()
         end
         BankFrameItemButton_Update(_G[BankBag:GetName().."Item"..arg1]);
         BagSet = 2;
@@ -1366,7 +1366,7 @@ local SubBagEvents = {
         if (self.size > 0) then
             BaudBag_DebugMsg("Bags", "Event BAG_UPDATE fired, calling ContainerFrame_Update (BagID)", arg1);
             ContainerFrame_Update(self);
-            BaudBagUpdateSubBag(self);
+            AddOnTable["SubBags"][self:GetID()]:UpdateSlotContents()
         else
             BaudBag_DebugMsg("Bags", "Event BAG_UPDATE fired, refreshing (BagID)", arg1);
             self:GetParent().Refresh = true;
@@ -1406,91 +1406,6 @@ function BaudBagSubBag_OnLoad(self, event, ...)
 
     for Key, Value in pairs(SubBagEvents)do
         self:RegisterEvent(Key);
-    end
-end
-
-
-function BaudBagUpdateSubBag(SubBag)
-    local Name, Link, Quality, Type, Texture, ItemButton, isNewItem, isBattlePayItem;
-    local ShowColor     = BBConfig[SubBag.BagSet][SubBag:GetParent():GetID()].RarityColor;
-
-    --local ShowColorAltern = BBConfig[SubBag.BagSet][SubBag:GetParent():GetID()].RarityColorAltern;
-    local bagCache;
-    SubBag.FreeSlots = 0;
-    BaudBag_DebugMsg("Bags", "Updating SubBag (ID, isBagContainer, isBankOpen)", SubBag:GetID(), SubBag.BagSet ~= 2, BaudBagFrame.BankOpen);
-
-    for Slot = 1, SubBag.size do
-        Quality = nil;
-        ItemButton = _G[SubBag:GetName().."Item"..Slot];
-        isNewItem = false;
-        isBattlePayItem = false;
-        bagCache = BaudBagGetBagCache(SubBag:GetID());
-
-        if (SubBag.BagSet ~= 2) or BaudBagFrame.BankOpen then
-            Link = GetContainerItemLink(SubBag:GetID(), Slot);
-
-            if (SubBag.BagSet == 2) then
-                if not Link then
-                    bagCache[Slot] = nil;
-                else
-                    bagCache[Slot] = {Link = Link, Count = select(2, GetContainerItemInfo(SubBag:GetID(), Slot))};
-                end
-            end
-
-            if Link then
-                Name, _, Quality = GetItemInfo(Link);
-                isNewItem = C_NewItems.IsNewItem(SubBag:GetID(), Slot);
-                isBattlePayItem = IsBattlePayItem(SubBag:GetID(), Slot);
-            end
-        elseif bagCache[Slot] then
-            Link = bagCache[Slot].Link;
-            if Link then
-                -- regular items ... 
-                if (strmatch(Link, "|Hitem:")) then
-                    Name, _, Quality, _, _, _, _, _, _, Texture = GetItemInfo(Link);
-                -- ... or a caged battle pet ...
-                elseif (strmatch(Link, "|Hbattlepet:")) then
-                    local _, speciesID, _, qualityString = strsplit(":", Link);
-                    Name, Texture = C_PetJournal.GetPetInfoBySpeciesID(speciesID);
-                    Quality = tonumber(qualityString);
-                -- ... we don't know about everything else
-                end
-                
-                ItemButton.hasItem = 1;
-                isNewItem = C_NewItems.IsNewItem(SubBag:GetID(), Slot);
-                isBattlePayItem = IsBattlePayItem(SubBag:GetID(), Slot);
-            else
-                Texture = nil;
-                ItemButton.hasItem = nil;
-            end
-
-            SetItemButtonTexture(ItemButton, Texture);
-            SetItemButtonCount(ItemButton, bagCache[Slot].Count or 0);
-        end
-
-        if (ItemButton.BattlepayItemTexture) then
-            if (isBattlePayItem) then
-                ItemButton.BattlepayItemTexture:Show();
-            else
-                ItemButton.BattlepayItemTexture:Hide();
-            end
-        end
-
-        if not Link then
-            SubBag.FreeSlots = SubBag.FreeSlots + 1;
-        end
-
-        -- add rarity coloring
-        BaudBagItemButton_UpdateRarity(ItemButton, Quality, ShowColor);
-
-        -- highlight the slots to show the connection to the bag
-        if (SubBag.Highlight) then
-            Texture = _G[ItemButton:GetName().."Border"];
-            Texture:SetVertexColor(0.5, 0.5, 0, 1);
-            Texture:Show();
-        end
-
-        AddOnTable:ItemSlot_Updated(SubBag:GetID(), Slot, ItemButton);
     end
 end
 
@@ -1807,9 +1722,9 @@ function BaudBag_BagSlot_OnUpdate(self, event, ...)
     if (self.HighlightBag and (not self.HighlightBagOn) and GetTime() >= self.HighlightBagCount) then
         BaudBag_DebugMsg("BagHover", "showing item (itemName)", self:GetName());
         self.HighlightBagOn	= true;
-        local SubBag		= _G[Prefix.."SubBag"..self.Bag];
-        SubBag.Highlight	= true;
-        BaudBagUpdateSubBag(SubBag);
+        local SubBag = AddOnTable["SubBags"][self.Bag]
+        SubBag.Frame.Highlight = true
+        SubBag:UpdateSlotContents()
     end
 end
 
@@ -1820,9 +1735,9 @@ function BaudBag_BagSlot_OnLeave(self, event, ...)
 	
     if (self.HighlightBagOn) then
         self.HighlightBagOn	= false;
-        local SubBag		= _G[Prefix.."SubBag"..self.Bag];
-        SubBag.Highlight	= false;
-        BaudBagUpdateSubBag(SubBag);
+        local SubBag = AddOnTable["SubBags"][self.Bag]
+        SubBag.Frame.Highlight = false
+        SubBag:UpdateSlotContents()
     end
 	
 end
