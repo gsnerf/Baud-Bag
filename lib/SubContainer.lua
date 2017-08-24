@@ -184,6 +184,59 @@ function Prototype:UpdateSlotPositions(container, background, col, row, maxCols,
     return col, row
 end
 
+local function UpdateBackpackHighlight(subContainer)
+    local open = subContainer:IsOpen()
+    -- needed in this case???
+    subContainer.Frame:GetParent().UnlockInfo:Hide()
+
+    if (subContainer.ContainerId == BACKPACK_CONTAINER) then
+        MainMenuBarBackpackButton:SetChecked(open)
+    else
+        local bagId = subContainer.ContainerId -1
+        _G["CharacterBag"..bagId.."Slot"]:SetChecked(open)
+        _G["BaudBInveBag"..bagId.."Slot"]:SetChecked(open)
+    end
+end
+
+local function UpdateBankBagHighlight(subContainer)
+    local highlight = _G["BaudBBankBag"..(subContainer.ContainerId-4).."HighlightFrameTexture"]
+    local open = subContainer:IsOpen()
+    local parent = subContainer.Frame:GetParent()
+    local unlockInfo = parent.UnlockInfo
+    local depositButton = parent.DepositButton
+
+    unlockInfo:Hide()
+
+    if (subContainer.ContainerId == REAGENTBANK_CONTAINER) then
+        highlight = _G["BBReagentsBagHighlightFrameTexture"]
+
+        if (not IsReagentBankUnlocked()) then
+            unlockInfo:Show()
+            depositButton:Disable()
+            MoneyFrame_Update( unlockInfo.CostMoneyFrame, GetReagentBankCost() )
+        else
+            unlockInfo:Hide()
+            depositButton:Enable()
+        end
+    end
+
+    if (subContainer.ContainerId ~= BANK_CONTAINER) then
+        if open then
+            highlight:Show()
+        else
+            highlight:Hide()
+        end
+    end
+end
+
+function Prototype:UpdateOpenBagHighlight()
+    if (self.BagSet.Id == BagSetType.Backpack.Id) then
+        UpdateBackpackHighlight(self)
+    elseif (self.BagSet.Id == BagSetType.Bank.Id) then
+        UpdateBankBagHighlight(self)
+    end
+end
+
 local Metatable = { __index = Prototype }
 
 function AddOnTable:CreateSubContainer(bagSetType, containerId)

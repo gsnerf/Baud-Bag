@@ -1041,42 +1041,8 @@ end
 --[[ Sets the highlight texture of bag slots indicating wether the contained bag is opened or not ]]--
 function BaudBagUpdateOpenBagHighlight()
     BaudBag_DebugMsg("Bags", "[BaudBagUpdateOpenBagHighlight]");
-    local Open, Frame, Highlight, Highlight2;
-    -- The bank bag(-1) has no open indicator
-    for BagId, SubContainer in pairs(AddOnTable["SubBags"]) do
-        Frame   = SubContainer.Frame
-        Parent  = Frame:GetParent();
-        Open	= SubContainer:IsOpen()
-        -- init default
-        Parent.UnlockInfo:Hide();
-        if (BagId == 0) then
-            MainMenuBarBackpackButton:SetChecked(Open);
-        elseif (BagId > 4) then
-            Highlight  = _G["BaudBBankBag"..(BagId-4).."HighlightFrameTexture"];
-            if Open then
-                Highlight:Show();
-            else
-                Highlight:Hide();
-            end
-        elseif (BagId > 0) then
-            _G["CharacterBag"..(BagId-1).."Slot"]:SetChecked(Open);
-            _G["BaudBInveBag"..(BagId-1).."Slot"]:SetChecked(Open);
-        elseif (BagId == -3) then
-            Highlight  = _G["BBReagentsBagHighlightFrameTexture"];
-            if Open then
-                Highlight:Show();
-            else
-                Highlight:Hide();
-            end
-            if (not IsReagentBankUnlocked()) then		
-                Parent.UnlockInfo:Show();
-                MoneyFrame_Update( Parent.UnlockInfo.CostMoneyFrame, GetReagentBankCost());
-                Parent.DepositButton:Disable();
-            else
-                Parent.UnlockInfo:Hide();
-                Parent.DepositButton:Enable();
-            end
-        end
+    for _, SubContainer in pairs(AddOnTable["SubBags"]) do
+        SubContainer:UpdateOpenBagHighlight()
     end
 end
 
