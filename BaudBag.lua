@@ -1010,31 +1010,8 @@ end
 
 function BaudBagUpdateOpenBags()
     local Open, Frame, Slot, ItemButton, QuestTexture;
-    for BagId, SubContainer in pairs(AddOnTable["SubBags"]) do
-        Frame = SubContainer.Frame
-        -- TODO the subconainer should know that by itself in the future!
-        if (BaudBag_IsBagOpen(BagId)) then
-            BaudBag_DebugMsg("Bags", "Updating Items of Bag (BagID)", BagId);
-            for Slot = 1, GetContainerNumSlots(BagId) do
-                ItemButton = _G[Frame:GetName().."Item"..Slot];
-                QuestTexture = _G[ItemButton:GetName().."IconQuestTexture"];
-                
-                ContainerFrame_UpdateCooldown(BagId, ItemButton);
-                
-                if (QuestTexture) then
-                    local isQuestItem, questId, isActive = GetContainerItemQuestInfo(BagId, ItemButton:GetID());
-                    if ( questId and not isActive ) then
-                        QuestTexture:SetTexture(TEXTURE_ITEM_QUEST_BANG);
-                        QuestTexture:Show();
-                    elseif ( questId or isQuestItem ) then
-                        QuestTexture:SetTexture(TEXTURE_ITEM_QUEST_BORDER);
-                        QuestTexture:Show();
-                    else
-                        QuestTexture:Hide();
-                    end
-                end
-            end
-        end
+    for _, subContainer in pairs(AddOnTable["SubBags"]) do
+        subContainer:UpdateItemOverlays()
     end
 end
 

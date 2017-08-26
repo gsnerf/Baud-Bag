@@ -184,6 +184,34 @@ function Prototype:UpdateSlotPositions(container, background, col, row, maxCols,
     return col, row
 end
 
+--[[ This only does something when the container is open (so the items are actually visible) ]]
+function Prototype:UpdateItemOverlays()
+    if self:IsOpen() then
+        BaudBag_DebugMsg("Bags", "Updating Items of Bag (ContainerId)", self.ContainerId)
+        local itemButton, questTexture
+        local frame = self.Frame
+        for Slot = 1, GetContainerNumSlots(self.ContainerId) do
+            itemButton = _G[frame:GetName().."Item"..Slot]
+            questTexture = _G[itemButton:GetName().."IconQuestTexture"]
+            
+            ContainerFrame_UpdateCooldown(self.ContainerId, itemButton)
+            
+            if (questTexture) then
+                local isQuestItem, questId, isActive = GetContainerItemQuestInfo(self.ContainerId, itemButton:GetID())
+                if ( questId and not isActive ) then
+                    questTexture:SetTexture(TEXTURE_ITEM_QUEST_BANG)
+                    questTexture:Show()
+                elseif ( questId or isQuestItem ) then
+                    questTexture:SetTexture(TEXTURE_ITEM_QUEST_BORDER)
+                    questTexture:Show()
+                else
+                    questTexture:Hide()
+                end
+            end
+        end
+    end
+end
+
 local function UpdateBackpackHighlight(subContainer)
     local open = subContainer:IsOpen()
     -- needed in this case???
