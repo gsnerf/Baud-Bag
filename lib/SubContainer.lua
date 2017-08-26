@@ -8,16 +8,12 @@ local Prototype = {
     StartColumn = 0,
     Size = 0,
     FreeSlots = 0,
-    IsHighlighted = false,
+    HighlightSlots = false,
     Frame = nil
 }
 
 function Prototype:GetID()
     return self.ContainerId
-end
-
-function Prototype:ToggleHighlight()
-    self.IsHighlighted = not self.IsHighlighted
 end
 
 function Prototype:GetFrame()
@@ -146,7 +142,7 @@ function Prototype:UpdateSlotContents()
         BaudBagItemButton_UpdateRarity(itemButton, quality, showColor)
 
         -- highlight the slots to show the connection to the bag
-        if (self.IsHighlighted) then
+        if (self.HighlightSlots) then
             texture = _G[itemButton:GetName().."Border"]
             texture:SetVertexColor(0.5, 0.5, 0, 1)
             texture:Show()
@@ -263,6 +259,11 @@ function Prototype:UpdateOpenBagHighlight()
     elseif (self.BagSet.Id == BagSetType.Bank.Id) then
         UpdateBankBagHighlight(self)
     end
+end
+
+function Prototype:SetSlotHighlighting(shouldHighlight)
+    self.HighlightSlots = shouldHighlight
+    self:UpdateSlotContents()
 end
 
 local Metatable = { __index = Prototype }

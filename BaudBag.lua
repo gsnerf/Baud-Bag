@@ -1665,9 +1665,7 @@ function BaudBag_BagSlot_OnUpdate(self, event, ...)
     if (self.HighlightBag and (not self.HighlightBagOn) and GetTime() >= self.HighlightBagCount) then
         BaudBag_DebugMsg("BagHover", "showing item (itemName)", self:GetName());
         self.HighlightBagOn	= true;
-        local SubBag = AddOnTable["SubBags"][self.Bag]
-        SubBag.Frame.Highlight = true
-        SubBag:UpdateSlotContents()
+        AddOnTable["SubBags"][self.Bag]:SetSlotHighlighting(true)
     end
 end
 
@@ -1678,9 +1676,7 @@ function BaudBag_BagSlot_OnLeave(self, event, ...)
 	
     if (self.HighlightBagOn) then
         self.HighlightBagOn	= false;
-        local SubBag = AddOnTable["SubBags"][self.Bag]
-        SubBag.Frame.Highlight = false
-        SubBag:UpdateSlotContents()
+        AddOnTable["SubBags"][self.Bag]:SetSlotHighlighting(false)
     end
 	
 end
