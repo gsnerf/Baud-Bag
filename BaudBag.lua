@@ -1112,11 +1112,7 @@ ToggleBackpack = function()
         return;
     end
 	
-    if this and (this == FuBarPluginBagFuFrame) then
-        OpenAllBags();
-    else
-        ToggleBag(0);
-    end
+    ToggleBag(0);
 end
 
 
