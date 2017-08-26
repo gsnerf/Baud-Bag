@@ -12,6 +12,7 @@ local _;
 local ItemToolTip;
 
 _G[AddOnName] = AddOnTable;
+AddOnTable["Sets"] = {}
 AddOnTable["SubBags"] = {}
 
 local BBFrameFuncs = {
@@ -344,25 +345,14 @@ function BaudBag_OnLoad(self, event, ...)
         Container:SetID(1);
     end
 
+    BaudBag_DebugMsg("Bags", "Create BagSets")
+    BackpackSet = AddOnTable:CreateBagSet(BagSetType.Backpack)
+    BankSet = AddOnTable:CreateBagSet(BagSetType.Bank)
+
     -- create all necessary SubBags now with basic initialization, correct referencing later when config is available
-    BaudBag_DebugMsg("Bags", "Creating sub bags.");
-    local SubBagObject, targetBagSet
-    -- this should be the ONLY place we iterate directly over the IDs in the future
-    for Bag = -3, LastBagID do
-        -- need to skip the now defunc keyring
-        if not (Bag == -2) then
-            -- create SubBag or use predefined XML frame when available
-            targetBagSet = BaudBag_IsInventory(Bag) and BagSetType.Backpack or BagSetType.Bank
-
-            SubBagObject = AddOnTable:CreateSubContainer(targetBagSet, Bag)
-            AddOnTable["SubBags"][Bag] = SubBagObject
-            SubBag = SubBagObject.Frame
-
-            -- propably legacy configuration on the frame itself
-            SubBag:SetID(Bag);
-            SubBag:SetParent(Prefix.."Container"..SubBag.BagSet.."_1");
-        end
-    end
+    BaudBag_DebugMsg("Bags", "Creating sub bags")
+    BackpackSet:PerformInitialBuild()
+    BankSet:PerformInitialBuild()
 
     -- create tooltip for parsing exactly once!
     ItemToolTip = CreateFrame("GameTooltip", "BaudBagScanningTooltip", nil, "GameTooltipTemplate");
