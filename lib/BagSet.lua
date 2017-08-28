@@ -3,8 +3,9 @@ local _
 
 local Prototype = {
     Type = nil,
-    Containers = {},
-    SubContainers = {}
+    -- sub tables have to be reassigned on init or ALL new elements will have the SAME tables for access...
+    Containers = nil,
+    SubContainers = nil
 }
 
 function Prototype:GetType()
@@ -18,7 +19,8 @@ function Prototype:PerformInitialBuild()
             local subContainer = AddOnTable:CreateSubContainer(self.Type, containerId)
             -- necessary at least for migration
             AddOnTable["SubBags"][containerId] = subContainer
-            table.insert(self.SubContainers, subContainer)
+            self.SubContainers[containerId] = subContainer
+--            table.insert(self.SubContainers, subContainer)
 
             -- a little bit of legacy code hopefully not needed at some point in the future
             local subContainerFrame = subContainer.Frame
@@ -37,6 +39,8 @@ local Metatable = { __index = Prototype }
 function AddOnTable:CreateBagSet(type)
     local bagSet = _G.setmetatable({}, Metatable)
     bagSet.Type = type
+    bagSet.Containers = {}
+    bagSet.SubContainers = {}
     AddOnTable["Sets"][type.Id] = bagSet
     return bagSet
 end
