@@ -3,7 +3,7 @@ local _
 
 local Prototype = {
     Type = nil,
-    -- sub tables have to be reassigned on init or ALL new elements will have the SAME tables for access...
+    --[[  sub tables have to be reassigned on init or ALL new elements will have the SAME tables for access... ]]
     Containers = nil,
     SubContainers = nil
 }
@@ -20,7 +20,6 @@ function Prototype:PerformInitialBuild()
             -- necessary at least for migration
             AddOnTable["SubBags"][containerId] = subContainer
             self.SubContainers[containerId] = subContainer
---            table.insert(self.SubContainers, subContainer)
 
             -- a little bit of legacy code hopefully not needed at some point in the future
             local subContainerFrame = subContainer.Frame
@@ -29,6 +28,23 @@ function Prototype:PerformInitialBuild()
         end
     end
 
+end
+
+function Prototype:GetSlotInfo()
+    local free = 0
+    local overall = 0
+
+    BaudBag_DebugMsg("Bags", "Counting free slots for (set)", self.Type.Id)
+
+    for id, subContainer in pairs(self.SubContainers) do
+        if (id ~= -3) then
+            local subFree, subOverall = subContainer:GetSlotInfo()
+            free = free + subFree
+            overall = overall + subOverall
+        end
+    end
+    
+    return free, overall
 end
 
 function Prototype:ApplyConfiguration(configuration)

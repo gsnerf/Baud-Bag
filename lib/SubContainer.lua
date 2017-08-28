@@ -266,6 +266,33 @@ function Prototype:SetSlotHighlighting(shouldHighlight)
     self:UpdateSlotContents()
 end
 
+function Prototype:GetSlotInfo()
+    BaudBag_DebugMsg("Bags", "Counting free slots for container (id)", self.ContainerId)
+    local useCache = BaudBagUseCache(self.ContainerId)
+
+    if useCache then
+        local cache = BaudBagGetBagCache(self.ContainerId)
+
+        -- if we don't have a hit in the cache make sure to return values that make sense
+        local link = cache.BagLink
+        if not BaudBag_IsBankDefaultContainer(self.ContainerId) and (not link or (GetItemFamily(link) ~= 0)) then
+            return 0, 0
+        end
+
+        local free = 0
+        for slot = 1, cache.Size do
+            if not cache[slot]then
+                free = free + 1
+            end
+        end
+        return free, cache.Size
+    else
+        local freeSlots, _ = GetContainerNumFreeSlots(self.ContainerId)
+        local overallSlots = GetContainerNumSlots(self.ContainerId)
+        return freeSlots, overallSlots
+    end
+end
+
 local Metatable = { __index = Prototype }
 
 function AddOnTable:CreateSubContainer(bagSetType, containerId)
