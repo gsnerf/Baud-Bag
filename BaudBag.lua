@@ -1383,63 +1383,10 @@ function BaudBagContainerSaveCoords(Frame)
     BBConfig[Frame.BagSet][Frame:GetID()].Coords = {X, Y};
 end
 
-
-local TotalFree, TotalSlots;
-
-local function AddFreeSlots(Bag)
-
-    -- failsafe
-    if (Bag <= -3 or Bag == -2) then
-        return;
-    end
-
-    -- prepare
-    local Cache = BaudBagUseCache(Bag);
-    local bagCache = BaudBagGetBagCache(Bag);
-    local NumSlots;
-	
-    -- handle non cacheable bag
-    if not Cache then
-        local Free, Family = GetContainerNumFreeSlots(Bag);
-        if (Family ~= 0) then
-            return;
-        end
-        TotalFree = TotalFree + Free;
-        NumSlots = GetContainerNumSlots(Bag);
-    else
-        -- handle cachable bag
-        if (Bag > 0)then
-            local Link = bagCache.BagLink;
-            if not Link or (GetItemFamily(Link) ~= 0) then
-                return;
-            end
-        end
-        NumSlots = bagCache.Size;
-        for Slot = 1, NumSlots do
-            if not bagCache[Slot]then
-                TotalFree = TotalFree + 1;
-            end
-        end
-    end
-    TotalSlots = TotalSlots + NumSlots;
-end
-
-
 function BaudBagUpdateFreeSlots(Frame)
     Frame.UpdateSlots = nil;
-    BaudBag_DebugMsg("Bags", "Counting free slots for (set)", Frame.BagSet);
-    TotalFree, TotalSlots = 0, 0;
-    if(Frame.BagSet==1)then
-        for Bag = 0, 4 do
-            AddFreeSlots(Bag);
-        end
-    else
-        AddFreeSlots(-1);
-        for Bag = 5, LastBagID do
-            AddFreeSlots(Bag);
-        end
-    end
-    _G[Frame:GetName().."Slots"]:SetText(TotalFree.."/"..TotalSlots..Localized.Free);
+    local free, overall = AddOnTable["Sets"][Frame.BagSet]:GetSlotInfo()
+    _G[Frame:GetName().."Slots"]:SetText(free.."/"..overall..Localized.Free)
 end
 
 --This is for the button that toggles the bank bag display
