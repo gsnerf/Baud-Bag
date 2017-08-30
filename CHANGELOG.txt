@@ -1,5 +1,5 @@
 ﻿=== Changelog ===
-v7.3.0
+v7.3.1
   - updated playsound usage to blizzards new id based system
 v7.2.2
   - even more extensive restructuring

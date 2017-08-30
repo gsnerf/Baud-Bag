@@ -175,11 +175,11 @@
 										if ( ExecuteVoidTransfer() ) then
 										-- was successful so play an appropriate sound
 										if ( numDeposits == 0 ) then
-										PlaySound("UI_VoidStorage_Withdraw");
+										PlaySound(SOUNDKIT.UI_VOID_STORAGE_WITHDRAW);
 										elseif ( numWithdrawals == 0 ) then
-										PlaySound("UI_VoidStorage_Deposit");
+										PlaySound(SOUNDKIT.UI_VOID_STORAGE_DEPOSIT);
 										else
-										PlaySound("UI_VoidStorage_Both");
+										PlaySound(SOUNDKIT.UI_VOID_STORAGE_BOTH);
 										end
 										end
 									</OnClick>
@@ -319,7 +319,7 @@
 								</Anchors>
 								<Scripts>
 									<OnClick>
-										PlaySound("igMainMenuOptionCheckBoxOn");
+										PlaySound(SOUNDKIT.IG_MAINMENU_OPTION_CHECKBOX_ON);
 										SetCVar("lastVoidStorageTutorial", self.currentTutorial);
 										VoidStorageFrame_Update();
 									</OnClick>
@@ -435,7 +435,7 @@
 								</Anchors>
 								<Scripts>
 									<OnClick>
-										PlaySound("UI_Voidstorage_Unlock");
+										PlaySound(SOUNDKIT.UI_VOID_STORAGE_UNLOCK);
 										UnlockVoidStorage();
 									</OnClick>
 								</Scripts>
