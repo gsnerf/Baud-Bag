@@ -435,7 +435,7 @@ function BaudBagContainer_OnShow(self, event, ...)
 	
     -- container seems to not be visible, open and update
     self.FadeStart = GetTime();
-    PlaySound("igBackPackOpen");
+    PlaySound(SOUNDKIT.IG_BACKPACK_OPEN);
     BaudBagUpdateContainer(self);
     BaudBagUpdateOpenBagHighlight();
     if (self:GetID() == 1) then
@@ -461,7 +461,7 @@ function BaudBagContainer_OnHide(self, event, ...)
     -- set vars for fading out ans start process
     self.FadeStart = GetTime();
     self.Closing = true;
-    PlaySound("igBackPackClose");
+    PlaySound(SOUNDKIT.IG_BACKPACK_CLOSE);
     self.AutoOpened = false;
     BaudBagUpdateOpenBagHighlight();
 
