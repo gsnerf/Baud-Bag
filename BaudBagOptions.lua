@@ -249,9 +249,9 @@ end
 
 function PlayCheckBoxSound(self)
     if (self:GetChecked()) then
-        PlaySound("igMainMenuOptionCheckBoxOff");
+        PlaySound(SOUNDKIT.IG_MAINMENU_OPTION_CHECKBOX_OFF);
     else
-        PlaySound("igMainMenuOptionCheckBoxOn");
+        PlaySound(SOUNDKIT.IG_MAINMENU_OPTION_CHECKBOX_ON);
     end
 end
 
@@ -293,7 +293,7 @@ end
 --[[ CheckBox (non "enabled") functions ]]
 function BaudBagOptionsCheckButton_OnClick(self, event, ...)
     -- make the apropriate sound
-    PlaySound(self:GetChecked() and "igMainMenuOptionCheckBoxOff" or "igMainMenuOptionCheckBoxOn");
+    PlaySound(self:GetChecked() and SOUNDKIT.IG_MAINMENU_OPTION_CHECKBOX_OFF or SOUNDKIT.IG_MAINMENU_OPTION_CHECKBOX_ON);
     
     -- apply change based on group
     local SavedVar;
