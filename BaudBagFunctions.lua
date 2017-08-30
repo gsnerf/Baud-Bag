@@ -1,7 +1,5 @@
-﻿-- Author      : gsnerf
--- Create Date : 11/14/2010 11:52:55 PM
-
-local _;
+﻿local _
+local AddOnName, AddOnTable = ...
 
 local BaudBag_DebugCfg = {
     
