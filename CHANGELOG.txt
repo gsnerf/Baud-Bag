@@ -1,19 +1,15 @@
 ﻿=== Changelog ===
-v7.3.1
+v7.3.2
   - updated playsound usage to blizzards new id based system
+  - fixed background selection broken somewhere in the extensive restructuring of past versions
 v7.2.2
-  - even more extensive restructuring
-v7.2.1
-  - extensive internal restructuring
   - reworked TokenFrame and MoneyFrame in first backpack container to better fit and worked out some scaling issues
+  - extensive internal restructuring
 v7.0.3
   - added special handling for vendors that are also quests givers 
-v7.0.2
   - fixed grey item equip on visiting mail
   - fixed skin selection in options
   - initial support for CaerdonWardrobe (does not work on offline bank yet)
-v7.0.1
-  - bumped version to legion pre-patch
   - fixed performance issues introduced with 6.2.0 beta versions
   - fixed offline bank issues
   - reworked debug system to hopefully perform better when not used.
@@ -92,3 +88,4 @@ v4.0.0
 === Known Issues ===
 
 If the columns of the first bagpack container are set to a low value the visible tokens and money may be visible outside the bag frame.
+One cannot right-click on reagents to put them in the reagent bank, it will only be put in the regular bank. (Restriction by Blizz API)
