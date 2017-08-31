@@ -956,6 +956,7 @@ function BaudUpdateJoinedBags()
 
     -- now go through all bags in all bagsets and determine which containers they need to be in
     for BagSet = 1, 2 do
+        local bagSetType = (BagSet == 1) and BagSetType.Backpack or BagSetType.Bank
         ContNum = 0;
         BaudBagForEachBag(BagSet, function(Bag, Index)
             -- a new container needs to be opened whenever there is no information about a joined state and of course for the first subbag
@@ -968,14 +969,8 @@ function BaudUpdateJoinedBags()
                 -- now create new container and update with basic data
                 IsOpen = false;
                 ContNum = ContNum + 1;
-                if (MaxCont[BagSet] < ContNum) then
-                    Container = CreateFrame("Frame", Prefix.."Container"..BagSet.."_"..ContNum, UIParent, "BaudBagContainerTemplate");
-                    Container:SetID(ContNum);
-                    Container.BagSet = BagSet;
-                    MaxCont[BagSet] = ContNum;
-                end
-                Container = _G[Prefix.."Container"..BagSet.."_"..ContNum];
-                Container.Bags = {};
+                local containerObject = AddOnTable:CreateContainer(bagSetType, ContNum)
+                Container = containerObject.Frame
                 BaudUpdateContainerData(BagSet,ContNum);
             end
 
