@@ -657,9 +657,9 @@ function Container_UpdateBackground(Container)
 
     -- these are the default blizz-frames
     if (Background <= 3) then
-        Left, Right, Top, Bottom = Container_UpdateBlizzBackground(Container, Backdrop, ShiftName)
+        Left, Right, Top, Bottom = Container_UpdateBlizzBackground(Container, Background, Backdrop, ShiftName)
     else
-        Left, Right, Top, Bottom = Container_UpdateOtherBackground(Container, Backdrop, ShiftName)
+        Left, Right, Top, Bottom = Container_UpdateOtherBackground(Container, Background, Backdrop, ShiftName)
     end
     Container.Name:SetPoint("RIGHT", Container:GetName().."MenuButton", "LEFT")
 
@@ -672,7 +672,7 @@ function Container_UpdateBackground(Container)
     Container.UnlockInfo:SetPoint("BOTTOMRIGHT", 10, -3)
 end
 
-function Container_UpdateBlizzBackground(Container, Backdrop, ShiftName)
+function Container_UpdateBlizzBackground(Container, Background, Backdrop, ShiftName)
     local Left, Right, Top, Bottom = 10, 10, 25, 7
     local Cols = BBConfig[Container.BagSet][Container:GetID()].Columns
     if (Container.Slots < Cols) then
@@ -886,7 +886,7 @@ function Container_UpdateBagPicture(Container, Parent, Backdrop)
     Backdrop:SetBackdrop(nil)
 end
 
-function Container_UpdateOtherBackground(Container, Backdrop, ShiftName)
+function Container_UpdateOtherBackground(Container, Background, Backdrop, ShiftName)
     local Left, Right, Top, Bottom = 8, 8, 28, 8
     Backdrop.Textures:Hide()
     Container.Name:SetPoint("TOPLEFT", (2 + ShiftName), 18)
