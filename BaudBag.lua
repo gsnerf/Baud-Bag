@@ -4,7 +4,7 @@ local Localized = BaudBagLocalized;
 
 local Prefix = "BaudBag";
 local LastBagID = NUM_BANKBAGSLOTS + NUM_BAG_SLOTS;
-local MaxCont = {1,1};
+local MaxCont = {0,0};
 local NumCont = {};
 local FadeTime = 0.2;
 local BagsReady;
@@ -969,8 +969,11 @@ function BaudUpdateJoinedBags()
                 -- now create new container and update with basic data
                 IsOpen = false;
                 ContNum = ContNum + 1;
-                local containerObject = AddOnTable:CreateContainer(bagSetType, ContNum)
-                Container = containerObject.Frame
+                if (MaxCont[BagSet] < ContNum) then
+                    local containerObject = AddOnTable:CreateContainer(bagSetType, ContNum)
+                    Container = containerObject.Frame
+                    MaxCont[BagSet] = ContNum;
+                end
                 BaudUpdateContainerData(BagSet,ContNum);
             end
 
