@@ -30,11 +30,11 @@ function Prototype:SaveCoordsToConfig()
 end
 
 function Prototype:UpdateFromConfig()
-    if (Frame == nil) then
+    if (self.Frame == nil) then
         BaudBag_DebugMsg("Container", "Frame doesn't exist yet. Called UpdateFromConfig() to early???", self.Id, self.Name)
         return
     end
-    BaudBag_DebugMsg("Container", "Updating container from config", self.Name)
+    BaudBag_DebugMsg("Container", "Updating container from config (name)", self.Name)
 
     local containerConfig = BBConfig[self.Frame.BagSet][self.Id]
 
@@ -48,6 +48,7 @@ function Prototype:UpdateFromConfig()
     self.Frame:ClearAllPoints()
     self.Frame:SetScale(scale)
     self.Frame:SetPoint("CENTER", UIParent, "BOTTOMLEFT", (x / scale), (y / scale))
+    self.Frame.Name:SetText(containerConfig.Name or "")
 end
 
 function Prototype:Render()

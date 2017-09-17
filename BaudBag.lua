@@ -507,7 +507,7 @@ end
 
 function BaudBagContainer_OnDragStop(self, event, ...)
     self:StopMovingOrSizing();
-    BaudBagContainerSaveCoords(self);
+    AddOnTable["Sets"][self.BagSet].Containers[self:GetID()]:SaveCoordsToConfig()
 end
 
 
@@ -586,23 +586,6 @@ function BaudBagContainerDropDown_Initialize()
     info.text = Localized.Options;
     info.func = ShowContainerOptions;
     UIDropDownMenu_AddButton(info);
-end
-
-
---This function updates misc. options for a bag
--- DEPRECATED this has been moved to Container:UpdateFromConfig()
-function BaudUpdateContainerData(BagSet, ContNum)
-    local Container = _G[Prefix.."Container"..BagSet.."_"..ContNum];
-    BaudBag_DebugMsg("Bags", "Updating container data (containerName)", Container:GetName());
-    _G[Container:GetName().."Name"]:SetText(BBConfig[BagSet][ContNum].Name or "");
-    local Scale = BBConfig[BagSet][ContNum].Scale / 100;
-    Container:SetScale(Scale);
-    if not BBConfig[BagSet][ContNum].Coords then
-        BaudBagContainerSaveCoords(Container);
-    end
-    Container:ClearAllPoints();
-    local X, Y = unpack(BBConfig[BagSet][ContNum].Coords);
-    Container:SetPoint("CENTER",UIParent,"BOTTOMLEFT",(X / Scale), (Y / Scale));
 end
 
 
@@ -974,8 +957,9 @@ function BaudUpdateJoinedBags()
                     local containerObject = AddOnTable:CreateContainer(bagSetType, ContNum)
                     Container = containerObject.Frame
                     MaxCont[BagSet] = ContNum;
+                    AddOnTable["Sets"][BagSet].Containers[ContNum] = containerObject
                 end
-                BaudUpdateContainerData(BagSet,ContNum);
+                AddOnTable["Sets"][BagSet].Containers[ContNum]:UpdateFromConfig()
             end
 
             -- make sure the current SubBag is added to the currently open container
