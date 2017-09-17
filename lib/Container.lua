@@ -42,14 +42,12 @@ function Prototype:UpdateFromConfig()
         self:SaveCoordsToConfig()
     end
 
-    self.Frame:ClearAllPoints()
-
     local scale = containerConfig.Scale / 100
-    local x, y = unpack(containerConfig.Coords)+
+    local x, y = unpack(containerConfig.Coords)
 
+    self.Frame:ClearAllPoints()
     self.Frame:SetScale(scale)
     self.Frame:SetPoint("CENTER", UIParent, "BOTTOMLEFT", (x / scale), (y / scale))
-    
 end
 
 function Prototype:Render()

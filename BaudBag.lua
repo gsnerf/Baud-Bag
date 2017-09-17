@@ -590,6 +590,7 @@ end
 
 
 --This function updates misc. options for a bag
+-- DEPRECATED this has been moved to Container:UpdateFromConfig()
 function BaudUpdateContainerData(BagSet, ContNum)
     local Container = _G[Prefix.."Container"..BagSet.."_"..ContNum];
     BaudBag_DebugMsg("Bags", "Updating container data (containerName)", Container:GetName());
@@ -1371,7 +1372,7 @@ function BaudBagSubBag_OnEvent(self, event, ...)
     SubBagEvents[event](self, event, ...);
 end
 
-
+--[[ DEPRECATED moved to Container:SaveCoordsToConfig() ]]
 function BaudBagContainerSaveCoords(Frame)
     BaudBag_DebugMsg("Bags", "Saving container coords (FrameName)", Frame:GetName());
     local Scale = Frame:GetScale();
