@@ -1356,16 +1356,6 @@ function BaudBagSubBag_OnEvent(self, event, ...)
     SubBagEvents[event](self, event, ...);
 end
 
---[[ DEPRECATED moved to Container:SaveCoordsToConfig() ]]
-function BaudBagContainerSaveCoords(Frame)
-    BaudBag_DebugMsg("Bags", "Saving container coords (FrameName)", Frame:GetName());
-    local Scale = Frame:GetScale();
-    local X, Y = Frame:GetCenter();
-    X = X * Scale;
-    Y = Y * Scale;
-    BBConfig[Frame.BagSet][Frame:GetID()].Coords = {X, Y};
-end
-
 function BaudBagUpdateFreeSlots(Frame)
     Frame.UpdateSlots = nil;
     local free, overall = AddOnTable["Sets"][Frame.BagSet]:GetSlotInfo()
