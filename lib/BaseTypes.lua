@@ -1,12 +1,14 @@
 local AddOnName, AddOnTable = ...
 local _
 
+-- Definition
 BagSetType = {
     Backpack = {
         Id = 1,
         IsSubContainerOf = function(containerId)
             return (BACKPACK_CONTAINER <= containerId  and containerId <= BACKPACK_CONTAINER + NUM_BAG_SLOTS)
-        end
+        end,
+        ContainerIterationOrder = {}
     },
     Bank = {
         Id = 2,
@@ -14,7 +16,8 @@ BagSetType = {
             local isBankDefaultContainer = (containerId == BANK_CONTAINER) or (containerId == REAGENTBANK_CONTAINER)
             local isBankSubContainer = (ITEM_INVENTORY_BANK_BAG_OFFSET < containerId) and (containerId <= ITEM_INVENTORY_BANK_BAG_OFFSET + NUM_BANKBAGSLOTS)
             return isBankDefaultContainer or isBankSubContainer
-        end
+        end,
+        ContainerIterationOrder = {}
     } --[[,
     GuildBank = {
         Id = 3,
@@ -30,12 +33,26 @@ BagSetType = {
     } ]]
 }
 
+-- INITIALIZATION of BagSetType:
+-- * Backpack:
+for bag = BACKPACK_CONTAINER, NUM_BAG_SLOTS do
+    table.insert(BagSetType.Backpack.ContainerIterationOrder, bag)
+end
+-- * Bank:
+table.insert(BagSetType.Bank.ContainerIterationOrder, BANK_CONTAINER)
+for bag = NUM_BAG_SLOTS + 1, NUM_BAG_SLOTS + NUM_BANKBAGSLOTS do
+    table.insert(BagSetType.Bank.ContainerIterationOrder, bag)
+end
+table.insert(BagSetType.Bank.ContainerIterationOrder, REAGENTBANK_CONTAINER)
+
+
+-- Definition
 ContainerType = {
     Joined,
     Tabbed
 }
 
---[[ this is a really dump way to  ]]
+--[[ this is a really dump way to access the config to get the joined state... ]]
 local idIndexMap = {}
 idIndexMap[BANK_CONTAINER] = 1
 idIndexMap[REAGENTBANK_CONTAINER] = NUM_BANKBAGSLOTS + 2

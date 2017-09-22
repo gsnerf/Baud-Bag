@@ -15,19 +15,16 @@ end
 
 --[[ This will be called ONCE when the BaudBag Frame is loaded (this is usually before the ADDON_LOADED event is called) ]]
 function Prototype:PerformInitialBuild()
-    for containerId = -3, NUM_BANKBAGSLOTS + NUM_BAG_SLOTS do
-        if self.Type.IsSubContainerOf(containerId) then
-            -- todo: somehow get reasonable values here
-            local subContainer = AddOnTable:CreateSubContainer(self.Type, containerId)
-            -- necessary at least for migration
-            AddOnTable["SubBags"][containerId] = subContainer
-            self.SubContainers[containerId] = subContainer
+    for _, containerId in ipairs(self.Type.ContainerIterationOrder) do
+        local subContainer = AddOnTable:CreateSubContainer(self.Type, containerId)
+        -- necessary at least for migration
+        AddOnTable["SubBags"][containerId] = subContainer
+        self.SubContainers[containerId] = subContainer
 
-            -- a little bit of legacy code hopefully not needed at some point in the future
-            local subContainerFrame = subContainer.Frame
-            subContainerFrame:SetID(containerId);
-            subContainerFrame:SetParent(AddOnName.."Container"..subContainerFrame.BagSet.."_1");
-        end
+        -- a little bit of legacy code hopefully not needed at some point in the future
+        local subContainerFrame = subContainer.Frame
+        subContainerFrame:SetID(containerId);
+        subContainerFrame:SetParent(AddOnName.."Container"..subContainerFrame.BagSet.."_1");
     end
 end
 
