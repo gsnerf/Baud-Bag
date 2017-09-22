@@ -916,68 +916,11 @@ end
 --[[ This function updates the parent containers for each bag, according to the options setup ]]--
 function BaudUpdateJoinedBags()
     BaudBag_DebugMsg("Bags", "Updating joined bags...");
-    -- first update the status of currently open bags
-    local OpenBags = {};
-    for BagId,SubContainer in pairs(AddOnTable["SubBags"]) do
-        OpenBags[BagId] = SubContainer:IsOpen()
-        if OpenBags[BagId] then
-            BaudBag_DebugMsg("Bags", "Bag open (BagID)", Bag);
-        end
+    
+    for bagSet = 1, 2 do
+        NumCont[bagSet] = AddOnTable["Sets"][bagSet]:RebuildContainers()
     end
     
-    -- now make sure that containers that have been "finished" will be updated correctly
-    local SubBag, Container, IsOpen, ContNum, BagID;
-    local function FinishContainer()
-        if IsOpen then
-            BaudBag_DebugMsg("Bags", "Showing Container (Name)", Container:GetName());
-            Container:Show();
-        else
-            BaudBag_DebugMsg("Bags", "Hiding Container (Name)", Container:GetName());
-            Container:Hide();
-        end
-        BaudBagUpdateContainer(Container);
-    end
-
-    -- now go through all bags in all bagsets and determine which containers they need to be in
-    for BagSet = 1, 2 do
-        local bagSetType = (BagSet == 1) and BagSetType.Backpack or BagSetType.Bank
-        ContNum = 0;
-        BaudBagForEachBag(BagSet, function(Bag, Index)
-            -- a new container needs to be opened whenever there is no information about a joined state and of course for the first subbag
-            if (ContNum == 0) or (BBConfig[BagSet].Joined[Index] == false) then
-                -- if we aren't opening the first container, make sure the previous one is correctly closed and updated
-                if (ContNum ~= 0) then
-                    FinishContainer();
-                end
-
-                -- now create new container and update with basic data
-                IsOpen = false;
-                ContNum = ContNum + 1;
-                if (MaxCont[BagSet] < ContNum) then
-                    local containerObject = AddOnTable:CreateContainer(bagSetType, ContNum)
-                    Container = containerObject.Frame
-                    MaxCont[BagSet] = ContNum;
-                    AddOnTable["Sets"][BagSet].Containers[ContNum] = containerObject
-                end
-                AddOnTable["Sets"][BagSet].Containers[ContNum]:UpdateFromConfig()
-            end
-
-            -- make sure the current SubBag is added to the currently open container
-            SubBag = _G[Prefix.."SubBag"..Bag];
-            tinsert(Container.Bags, SubBag);
-            SubBag:SetParent(Container);
-            if (OpenBags[Bag]) then
-                IsOpen = true;
-            end
-        end);
-        FinishContainer();
-
-        NumCont[BagSet] = ContNum;
-        --Hide extra containers that were created before
-        for ContNum = (ContNum + 1), MaxCont[BagSet] do
-            _G[Prefix.."Container"..BagSet.."_"..ContNum]:Hide();
-        end
-    end
     BagsReady = true;
 end
 

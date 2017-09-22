@@ -30,21 +30,37 @@ end
 
 --[[ This will be called on first load as well as every configuration change (via options screen) ]]
 function Prototype:RebuildContainers()
-    local bagSetConfig = AddOnTable.Config[self.Type.Id]
+    local function FinishContainer(localContainerObject, localIsOpen)
+        if localIsOpen then
+            BaudBag_DebugMsg("Container", "Showing Container (Name)", localContainerObject.Name)
+            localContainerObject.Frame:Show()
+        else
+            BaudBag_DebugMsg("Container", "Hiding Container (Name)", localContainerObject.Name)
+            localContainerObject.Frame:Hide()
+        end
+        -- DEPRECATED this will have to be moved to Container:Update() as soon as it works correctly
+        BaudBagUpdateContainer(localContainerObject.Frame)
+    end
+
+    --local bagSetConfig = AddOnTable.Config[self.Type.Id]
+    local bagSetConfig = BBConfig[self.Type.Id]
     local containerNumber = 0
     local containerObject
-    for id, subContainer in pairs(self.SubContainers) do
+    local isOpen = false
+
+    for _, id in ipairs(self.Type.ContainerIterationOrder) do
+        local subContainer = self.SubContainers[id]
         local index = AddOnTable.ContainerIdOptionsIndexMap[id]
         if (containerNumber == 0) or (bagSetConfig.Joined[index] == false) then
             -- if we aren't opening the first container, make sure the previous one is correctly closed and updated
             if (containerNumber ~= 0) then
-                -- TODO
-                --FinishContainer()
+                FinishContainer(containerObject, isOpen)
             end
 
+            isOpen = false
             containerNumber = containerNumber + 1;
             if (self.MaxContainerNumber < containerNumber) then
-                containerObject = AddOnTable:CreateContainer(bagSetType, containerNumber)
+                containerObject = AddOnTable:CreateContainer(self.Type, containerNumber)
 
                 self.Containers[containerNumber] = containerObject
                 self.MaxContainerNumber = containerNumber
@@ -55,21 +71,22 @@ function Prototype:RebuildContainers()
             containerObject:UpdateFromConfig()
         end
 
-        -- TODO: add SubBags to container here?
         tinsert(containerObject.SubContainers, subContainer)
+        -- TODO: let's see if we can keep this temporary
+        tinsert(containerObject.Frame.Bags, subContainer.Frame)
         subContainer.Frame:SetParent(containerObject.Frame)
-
-        -- TODO: handle open state of bags???
-
+        if subContainer:IsOpen() then
+            isOpen = true
+        end
     end
-    --FinishContainer()
-
-    -- TODO: save current number of containers?
+    FinishContainer(containerObject, isOpen)
 
     -- hide all containers that where created but configured away
     for index = (containerNumber + 1), self.MaxContainerNumber do
         self.Containers[index].Frame:Hide();
     end
+
+    return containerNumber
 end
 
 function Prototype:GetSlotInfo()
