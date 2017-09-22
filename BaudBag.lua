@@ -100,7 +100,7 @@ local EventFuncs =
             else
                 --Add offline again to bag name
                 for ContNum = 1, NumCont[2]do
-                    BaudBagUpdateName(_G[Prefix.."Container2_"..ContNum]);
+                    AddOnTable["Sets"][2].Containers[ContNum]:UpdateName()
                 end
             end
             BaudBagAutoOpenSet(1, true);
@@ -1387,24 +1387,13 @@ function BaudBagUpdateBagFrames()
     end
 end
 
-
-function BaudBagUpdateName(Container)
-    local Name = _G[Container:GetName().."Name"];
-    if (Container.BagSet ~= 2) or BaudBagFrame.BankOpen then
-        Name:SetText(BBConfig[Container.BagSet][Container:GetID()].Name or "");
-        Name:SetTextColor(NORMAL_FONT_COLOR.r,NORMAL_FONT_COLOR.g,NORMAL_FONT_COLOR.b);
-    else
-        Name:SetText(BBConfig[Container.BagSet][Container:GetID()].Name..Localized.Offline);
-        Name:SetTextColor(RED_FONT_COLOR.r,RED_FONT_COLOR.g,RED_FONT_COLOR.b);
-    end
-end
-
+--[[ DEPRECATED this WILL be moved to Container:Update()]]
 function BaudBagUpdateContainer(Container)
     BaudBag_DebugMsg("Bags", "Updating Container (name)", Container:GetName());
     
     -- initialize bag update
     Container.Refresh   = false;
-    BaudBagUpdateName(Container);
+    AddOnTable["Sets"][Container.BagSet].Containers[Container:GetID()]:UpdateName()
     local SlotLevel     = Container:GetFrameLevel() + 1;
     local ContCfg       = BBConfig[Container.BagSet][Container:GetID()];
     local Background    = ContCfg.Background;
@@ -1543,9 +1532,6 @@ function BaudBagUpdateFromBBConfig()
         elseif (BagSet == 2) then
             BankFrame:UnregisterEvent("BANKFRAME_OPENED")
         end
-        -- now make sure the bag names are up to date
-        -- for Container = 1, 
-        -- BaudBagUpdateName(_G[Prefix.."Container"..BagSet.."_"..SelectedContainer]);
     end
 end
 

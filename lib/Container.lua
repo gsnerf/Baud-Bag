@@ -20,6 +20,21 @@ function Prototype:SetName(name)
     self.Name = name
 end
 
+function Prototype:UpdateName()
+    local containerConfig = BBConfig[self.Frame.BagSet][self.Id]
+    local targetName = containerConfig.Name or ""
+    local targetColor = NORMAL_FONT_COLOR
+
+    if ((self.Frame.BagSet == 2) and (not BaudBagFrame.BankOpen)) then
+        targetName = containerConfig.Name..AddOnTable["Localized"].Offline
+        targetColor = RED_FONT_COLOR
+    end
+
+    local nameWidget = self.Frame.Name
+    nameWidget:SetText(targetName)
+    nameWidget:SetTextColor(targetColor.r, targetColor.g, targetColor.b)
+end
+
 function Prototype:SaveCoordsToConfig()
     BaudBag_DebugMsg("Container", "Saving container coords to config (name)", self.Name)
     local scale = self.Frame:GetScale()

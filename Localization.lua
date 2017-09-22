@@ -1,4 +1,6 @@
 --This file is UTF-8
+local AddOnName, AddOnTable = ...
+local _
 local Locale = GetLocale();
 
 if (Locale=="zhTW") then -- Translator: Isler
@@ -384,3 +386,5 @@ else --enUS or enUK (default)
         BaudBagLocalized.TooltipScanReagent = "Crafting Reagent";
     end
 end
+
+AddOnTable["Localized"] = BaudBagLocalized
