@@ -43,6 +43,6 @@ for id = BACKPACK_CONTAINER, NUM_BAG_SLOTS do
     idIndexMap[id] = id + 1
 end
 for id = NUM_BAG_SLOTS + 1, NUM_BAG_SLOTS + NUM_BANKBAGSLOTS do
-    idIndexMap[id] = id - NUM_BAG_SLOTS
+    idIndexMap[id] = id - NUM_BAG_SLOTS + 1
 end
 AddOnTable.ContainerIdOptionsIndexMap = idIndexMap
