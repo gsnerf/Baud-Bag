@@ -109,6 +109,18 @@ end
 function Prototype:ApplyConfiguration(configuration)
 end
 
+function Prototype:Open()
+    for _, container in ipairs(self.Containers) do
+        container.Frame:Show()
+    end
+end
+
+function Prototype:Close()
+    for _, container in ipairs(self.Containers) do
+        container.Frame:Hide()
+    end
+end
+
 local Metatable = { __index = Prototype }
 
 function AddOnTable:CreateBagSet(type)

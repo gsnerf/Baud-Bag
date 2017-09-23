@@ -3,8 +3,6 @@ local AddOnName, AddOnTable = ...
 local Localized = BaudBagLocalized;
 
 local Prefix = "BaudBag";
-local LastBagID = NUM_BANKBAGSLOTS + NUM_BAG_SLOTS;
-local MaxCont = {0,0};
 local NumCont = {};
 local FadeTime = 0.2;
 local BagsReady;
@@ -100,7 +98,7 @@ local EventFuncs =
             else
                 --Add offline again to bag name
                 for ContNum = 1, NumCont[2]do
-                    AddOnTable["Sets"][2].Containers[ContNum]:UpdateName()
+                    AddOnTable.Sets[2].Containers[ContNum]:UpdateName()
                 end
             end
             BaudBagAutoOpenSet(1, true);
@@ -920,7 +918,7 @@ function BaudUpdateJoinedBags()
     for bagSet = 1, 2 do
         NumCont[bagSet] = AddOnTable["Sets"][bagSet]:RebuildContainers()
     end
-    
+
     BagsReady = true;
 end
 
@@ -987,9 +985,7 @@ function BaudBagAutoOpenSet(BagSet, Close)
 end
 
 function BaudBagCloseBagSet(BagSet)
-    for ContNum = 1, MaxCont[BagSet] do
-        _G[Prefix.."Container"..BagSet.."_"..ContNum]:Hide();
-    end
+    AddOnTable.Sets[BagSet]:Close()
 end
 
 --[[ backpack specific original functions ]]--
@@ -1463,6 +1459,8 @@ end
 hooksecurefunc("ContainerFrameItemButton_OnModifiedClick", BaudBag_OnModifiedClick);
 hooksecurefunc("BankFrameItemButtonGeneric_OnModifiedClick", BaudBag_OnModifiedClick);
 
+-- TODO: after changes there is some weird behavior after applying changes (like changing the name)
+-- Seems to be in Background drawing for Slot Count
 function BaudBagUpdateFromBBConfig()
     BaudUpdateJoinedBags();
     BaudBagUpdateBagFrames();
