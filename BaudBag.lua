@@ -944,41 +944,40 @@ end
 ]]--
 function BaudBagAutoOpenSet(BagSet, Close)
     -- debug messages:
-    local closeState = Close and "true" or "false";
-    BaudBag_DebugMsg("BagOpening", "[AutoOpenSet Entry] (BagSet, Close)", BagSet, closeState);
+    local closeState = Close and "true" or "false"
+    BaudBag_DebugMsg("BagOpening", "[AutoOpenSet Entry] (BagSet, Close)", BagSet, closeState)
     
     -- Set 2 doesn't need container 1 to be shown because that's a given
-    local Container;
+    local Container
     for ContNum = BagSet, NumCont[BagSet] do
 
         --[[ DEBUG ]]--
-        local autoOpen = BBConfig[BagSet][ContNum].AutoOpen;
-        BaudBag_DebugMsg("BagOpening", "[AutoOpenSet FOR] (ContNum, AutoOpen)", ContNum, autoOpen);
+        local autoOpen = BBConfig[BagSet][ContNum].AutoOpen
+        BaudBag_DebugMsg("BagOpening", "[AutoOpenSet FOR] (ContNum, AutoOpen)", ContNum, autoOpen)
 
         if autoOpen then
-            Container = _G[Prefix.."Container"..BagSet.."_"..ContNum];
+            Container = _G[Prefix.."Container"..BagSet.."_"..ContNum]
             if not Close then
                 if not Container:IsShown() then
-                    BaudBag_DebugMsg("BagOpening", "[AutoOpenSet FOR (IsShown)] FALSE");
-                    Container.AutoOpened = true;
-                    Container:Show();
-                    BaudBagUpdateContainer(Container);
+                    BaudBag_DebugMsg("BagOpening", "[AutoOpenSet FOR (IsShown)] FALSE")
+                    Container.AutoOpened = true
+                    Container:Show()
                 else
-                    BaudBag_DebugMsg("BagOpening", "[AutoOpenSet FOR (IsShown)] TRUE");
-                    BaudBagUpdateContainer(Container);
+                    BaudBag_DebugMsg("BagOpening", "[AutoOpenSet FOR (IsShown)] TRUE")
                 end
+                BaudBagUpdateContainer(Container)
             elseif Container.AutoOpened then
-                BaudBag_DebugMsg("BagOpening", "[AutoOpenSet FOR (AutoOpened)] TRUE");
-                Container.AutoOpened = false;
+                BaudBag_DebugMsg("BagOpening", "[AutoOpenSet FOR (AutoOpened)] TRUE")
+                Container.AutoOpened = false
                 if BBConfig[BagSet][ContNum].AutoClose then
-                    BaudBag_DebugMsg("BagOpening", "[AutoOpenSet FOR (AutoOpened)] AutoClose set, hiding!");
-                    Container:Hide();
+                    BaudBag_DebugMsg("BagOpening", "[AutoOpenSet FOR (AutoOpened)] AutoClose set, hiding!")
+                    Container:Hide()
                 else
-                    BaudBag_DebugMsg("BagOpening", "[AutoOpenSet FOR (AutoOpened)] AutoClose not set, ignoring hide!");
+                    BaudBag_DebugMsg("BagOpening", "[AutoOpenSet FOR (AutoOpened)] AutoClose not set, ignoring hide!")
                 end
             else
-                BaudBag_DebugMsg("BagOpening", "[AutoOpenSet FOR (AutoOpened)] FALSE");
-                BaudBagUpdateContainer(Container);
+                BaudBag_DebugMsg("BagOpening", "[AutoOpenSet FOR (AutoOpened)] FALSE")
+                BaudBagUpdateContainer(Container)
             end
         end
     end

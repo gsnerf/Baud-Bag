@@ -5,6 +5,7 @@ local _
 local Localized	= BaudBagLocalized
 local SliderBars, GlobalCheckButtons, ContainerCheckButtons
 BBConfig = {}
+-- TODO: somehow changes of BBConfig are not getting stored in AddOnTable.Config, propably something to do with resetting BBConfig at later points...
 AddOnTable.Config = BBConfig
 
 function BaudBagSetCfgPreReq(Bars, GlobalButtons, ContainerButtons)
