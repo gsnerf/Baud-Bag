@@ -47,6 +47,7 @@ function Prototype:RebuildContainers()
     local containerNumber = 0
     local containerObject
     local isOpen = false
+    local subContainerIndex = 1
 
     for _, id in ipairs(self.Type.ContainerIterationOrder) do
         local subContainer = self.SubContainers[id]
@@ -55,26 +56,26 @@ function Prototype:RebuildContainers()
             -- if we aren't opening the first container, make sure the previous one is correctly closed and updated
             if (containerNumber ~= 0) then
                 FinishContainer(containerObject, isOpen)
+                subContainerIndex = 1
             end
 
             isOpen = false
-            containerNumber = containerNumber + 1;
+            containerNumber = containerNumber + 1
             if (self.MaxContainerNumber < containerNumber) then
                 containerObject = AddOnTable:CreateContainer(self.Type, containerNumber)
 
                 self.Containers[containerNumber] = containerObject
                 self.MaxContainerNumber = containerNumber
-
-                --Container = containerObject.Frame
             end
             containerObject = self.Containers[containerNumber]
             containerObject:UpdateFromConfig()
         end
 
-        tinsert(containerObject.SubContainers, subContainer)
-        -- TODO: let's see if we can keep this temporary
-        tinsert(containerObject.Frame.Bags, subContainer.Frame)
+        BaudBag_DebugMsg("Container", "(orderIndex, id)", orderIndex, id)
+        containerObject.SubContainers[subContainerIndex] = subContainer
+        containerObject.Frame.Bags[subContainerIndex] = subContainer.Frame
         subContainer.Frame:SetParent(containerObject.Frame)
+        subContainerIndex = subContainerIndex + 1
         if subContainer:IsOpen() then
             isOpen = true
         end
