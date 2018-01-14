@@ -1252,7 +1252,7 @@ function BaudBagSubBag_OnEvent(self, event, ...)
     SubBagEvents[event](self, event, ...);
 end
 
--- DEPRECATED: move to Container!
+-- DEPRECATED: move to BagSet!
 function BaudBagUpdateFreeSlots(Frame)
     Frame.UpdateSlots = nil;
     local free, overall = AddOnTable["Sets"][Frame.BagSet]:GetSlotInfo()
