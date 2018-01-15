@@ -1286,16 +1286,16 @@ end
 
 --[[ DEPRECATED this WILL be moved to Container:Update()]]
 function BaudBagUpdateContainer(Container)
-    BaudBag_DebugMsg("Bags", "Updating Container (name)", Container:GetName());
+    BaudBag_DebugMsg("Bags", "Updating Container (name)", Container:GetName())
+    local ContainerObject = AddOnTable["Sets"][Container.BagSet].Containers[Container:GetID()]
     
     -- initialize bag update
-    Container.Refresh   = false;
-    AddOnTable["Sets"][Container.BagSet].Containers[Container:GetID()]:UpdateName()
-    local SlotLevel     = Container:GetFrameLevel() + 1;
-    local ContCfg       = BBConfig[Container.BagSet][Container:GetID()];
-    local Background    = ContCfg.Background;
-    local MaxCols       = ContCfg.Columns;
-    local Size, KeyRing;
+    Container.Refresh   = false
+    ContainerObject:UpdateName()
+    local ContCfg       = BBConfig[Container.BagSet][Container:GetID()]
+    local Background    = ContCfg.Background
+    local MaxCols       = ContCfg.Columns
+    local Size
     Container.Slots     = 0;
 
     -- calculate sizes in all subbags
@@ -1330,6 +1330,7 @@ function BaudBagUpdateContainer(Container)
         end
 
         SubBag.size = Size;
+        AddOnTable["SubBags"][SubBag:GetID()].Size = Size
         Container.Slots = Container.Slots + Size;
 
         -- last but not least update visibility for deposit button of reagent bank
@@ -1362,29 +1363,7 @@ function BaudBagUpdateContainer(Container)
     end
 
     -- now go through all sub bags
-    local Slots, SubBag, ItemButton;
-    for _, SubBag in pairs(Container.Bags) do
-        -- not existing subbags (bags with no itemslots) are hidden
-        if (SubBag.size <= 0) then
-            SubBag:Hide();
-        else
-            BaudBag_DebugMsg("Bags", "Adding (bagName)", SubBag:GetName());
-            local SubBagObject = AddOnTable["SubBags"][SubBag:GetID()]
-
-            -- Create extra slots if needed
-            SubBagObject:CreateMissingSlots()
-			
-            -- update container contents (special bank containers don't need this, regular bank only when open)
-            if (not BaudBag_IsBankDefaultContainer(SubBag:GetID())) and (BaudBagFrame.BankOpen or (SubBag:GetID() < 5)) then
-                ContainerFrame_Update(SubBag);
-            end
-
-            -- position item slots
-            SubBagObject:UpdateSlotContents()
-            Col, Row = SubBagObject:UpdateSlotPositions(Container, Background, Col, Row, MaxCols, SlotLevel)
-            SubBag:Show();
-        end
-    end
+    Col, Row = ContainerObject:UpdateSubContainers(Col, Row)
 
     if (Background <= 3) then
         Container:SetWidth(MaxCols * 42 - 5);

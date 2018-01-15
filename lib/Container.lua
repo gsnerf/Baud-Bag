@@ -74,6 +74,41 @@ function Prototype:Update()
     -- TODO
 end
 
+function Prototype:UpdateSubContainers(col, row)
+    local contCfg       = BBConfig[self.Frame.BagSet][self.Id]
+    local background    = contCfg.Background
+    local maxCols       = contCfg.Columns
+    local slotLevel     = self.Frame:GetFrameLevel() + 1
+    local container
+
+    BaudBag_DebugMsg("Container", "Started Updating SubContainers For Container", self.Id)
+
+    for _, container in pairs(self.SubContainers) do
+        BaudBag_DebugMsg("Container", "Updating SubContainer with ID and Size", container.ContainerId, container.Size)
+        -- not existing subbags (bags with no itemslots) are hidden
+        if (container.Size <= 0) then
+            container.Frame:Hide();
+        else
+            BaudBag_DebugMsg("Bags", "Adding (bagName)", container.Name);
+
+            container:CreateMissingSlots()
+			
+            -- update container contents (special bank containers don't need this, regular bank only when open)
+            if (not BaudBag_IsBankDefaultContainer(container.ContainerId)) and (BaudBagFrame.BankOpen or (container.ContainerId < 5)) then
+                ContainerFrame_Update(container.Frame);
+            end
+
+            -- position item slots
+            container:UpdateSlotContents()
+            col, row = container:UpdateSlotPositions(self.Frame, background, col, row, maxCols, slotLevel)
+            container.Frame:Show();
+        end
+    end
+
+    -- TODO: It seems some how strange to pass this through 2 layers... let's see if we can get rid of that in the future!
+    return col, row
+end
+
 function Prototype:SaveCoordinates()
     -- TODO
 end
