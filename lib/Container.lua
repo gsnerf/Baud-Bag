@@ -87,21 +87,21 @@ function Prototype:UpdateSubContainers(col, row)
         BaudBag_DebugMsg("Container", "Updating SubContainer with ID and Size", container.ContainerId, container.Size)
         -- not existing subbags (bags with no itemslots) are hidden
         if (container.Size <= 0) then
-            container.Frame:Hide();
+            container.Frame:Hide()
         else
-            BaudBag_DebugMsg("Bags", "Adding (bagName)", container.Name);
+            BaudBag_DebugMsg("Bags", "Adding (bagName)", container.Name)
 
             container:CreateMissingSlots()
 			
             -- update container contents (special bank containers don't need this, regular bank only when open)
             if (not BaudBag_IsBankDefaultContainer(container.ContainerId)) and (BaudBagFrame.BankOpen or (container.ContainerId < 5)) then
-                ContainerFrame_Update(container.Frame);
+                ContainerFrame_Update(container.Frame)
             end
 
             -- position item slots
             container:UpdateSlotContents()
             col, row = container:UpdateSlotPositions(self.Frame, background, col, row, maxCols, slotLevel)
-            container.Frame:Show();
+            container.Frame:Show()
         end
     end
 
