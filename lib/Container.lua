@@ -74,6 +74,55 @@ function Prototype:Update()
     -- TODO
 end
 
+function Prototype:UpdateSize()
+    local container
+
+    for _, container in pairs(self.SubContainers) do
+    
+        -- prepare bag cache for use
+        local bagCache = BaudBagGetBagCache(container.ContainerId)
+        local size, slot
+
+        -- process inventory, bank only if it is open
+        if (self.Frame.BagSet ~= 2) or BaudBagFrame.BankOpen then
+            size = GetContainerNumSlots(container.ContainerId)
+
+            -- process bank
+            if (self.Frame.BagSet == 2) then
+                -- Clear out excess information if the size of a bag decreases
+                -- TODO move this to cache!
+                if (bagCache.Size > size) then
+                    for slot = size, bagCache.Size do
+                        if bagCache[slot] then
+                            bagCache[slot] = nil
+                        end
+                    end
+                end
+                bagCache.Size = size
+            end
+        else
+            size = bagCache and bagCache.Size or 0
+        end
+
+        -- special treatment for default bank containers, as their data can ALWAYS be retrieved
+        if (BaudBag_IsBankDefaultContainer(container.ContainerId)) then
+            size = GetContainerNumSlots(container.ContainerId)
+        end
+
+        container.Frame.size = size
+        container.Size = size
+        self.Frame.Slots = self.Frame.Slots + size
+
+        -- last but not least update visibility for deposit button of reagent bank
+        if (container.ContainerId == REAGENTBANK_CONTAINER and BaudBagFrame.BankOpen) then
+            self.Frame.DepositButton:Show()
+        else
+            self.Frame.DepositButton:Hide()
+        end
+
+    end
+end
+
 function Prototype:UpdateSubContainers(col, row)
     local contCfg       = BBConfig[self.Frame.BagSet][self.Id]
     local background    = contCfg.Background

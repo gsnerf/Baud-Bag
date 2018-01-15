@@ -1299,49 +1299,8 @@ function BaudBagUpdateContainer(Container)
     Container.Slots     = 0;
 
     -- calculate sizes in all subbags
-    for _, SubBag in pairs(Container.Bags) do
-
-        -- prepare bag cache for use
-        local bagCache = BaudBagGetBagCache(SubBag:GetID());
-
-        -- process inventory, bank only if it is open
-        if (Container.BagSet ~= 2) or BaudBagFrame.BankOpen then
-            Size = GetContainerNumSlots(SubBag:GetID());
-
-            -- process bank
-            if (Container.BagSet == 2) then
-                -- Clear out excess information if the size of a bag decreases
-                if (bagCache.Size > Size) then
-                    for Slot = Size, bagCache.Size do
-                        if bagCache[Slot] then
-                            bagCache[Slot] = nil;
-                        end
-                    end
-                end
-                bagCache.Size = Size;
-            end
-        else
-            Size = bagCache and bagCache.Size or 0;
-        end
-
-        -- special treatment for default bank containers, as their data can ALWAYS be retrieved
-        if (BaudBag_IsBankDefaultContainer(SubBag:GetID())) then
-            Size = GetContainerNumSlots(SubBag:GetID());
-        end
-
-        SubBag.size = Size;
-        AddOnTable["SubBags"][SubBag:GetID()].Size = Size
-        Container.Slots = Container.Slots + Size;
-
-        -- last but not least update visibility for deposit button of reagent bank
-        if (SubBag:GetID() == REAGENTBANK_CONTAINER and BaudBagFrame.BankOpen) then
-            Container.DepositButton:Show();
-        else
-            Container.DepositButton:Hide();
-        end
-
-    end
-
+    ContainerObject:UpdateSize()
+    
     -- this should only happen when the dev coded some bullshit!
     if (Container.Slots <= 0) then
         if Container:IsShown() then
