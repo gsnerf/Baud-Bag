@@ -542,6 +542,14 @@ function BaudBagContainerDropDown_Initialize()
     info.text = Localized.Options;
     info.func = ShowContainerOptions;
     UIDropDownMenu_AddButton(info);
+
+    -- increase backpack size
+    local needToShow = not (IsAccountSecured() and size > BACKPACK_BASE_SIZE)
+    if (needToShow) then
+        info.text = BACKPACK_AUTHENTICATOR_INCREASE_SIZE
+        info.func = BaudBag_AddSlotsClick
+        UIDropDownMenu_AddButton(info)
+    end
 end
 
 
@@ -1554,4 +1562,10 @@ function BaudBag_FixContainerClickForReagent(Bag, Slot)
             return;
         end
     end
+end
+
+-- new backpack slots stuff
+function BaudBag_AddSlotsClick()
+    StaticPopup_Show("BACKPACK_INCREASE_SIZE")
+    ContainerFrame_SetBackpackForceExtended(true)
 end
