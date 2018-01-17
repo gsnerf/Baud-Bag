@@ -159,13 +159,24 @@ local EventFuncs =
 
 --[[ here come functions that will be hooked up to multiple events ]]--
 local Func = function(self, event, ...)
-	
-    BaudBagBankBags_UpdateContent(event)
+    BaudBag_DebugMsg("Bank", "Event fired", event)
+    
+	-- set bank open marker if it was opend
+    if (event == "BANKFRAME_OPENED") then
+        BaudBagFrame.BankOpen = true
+    end
+    
+    -- everything coming now is only needed if the bank is visible
+    local bankVisible = BBConfig[2].Enabled and (event == "BANKFRAME_OPENED")
+    BaudBagBankBags_UpdateContent(bankVisible)
+    if not bankVisible then
+        return
+    end
     BaudBagAutoOpenSet(1)
     BaudBagAutoOpenSet(2)
 end
-EventFuncs.BANKFRAME_OPENED = Func;
-EventFuncs.PLAYERBANKBAGSLOTS_CHANGED = Func;
+EventFuncs.BANKFRAME_OPENED = Func
+EventFuncs.PLAYERBANKBAGSLOTS_CHANGED = Func
 
 Func = function(self, event, ...)
     BaudBag_DebugMsg("Bags", "Event fired (event)", event);
