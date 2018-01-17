@@ -1,4 +1,7 @@
 ﻿=== Changelog ===
+v7.3.3
+  - added button linking to blizzards authenticator system for people that don't have the extra 4 slots yet ("hidden" in menu drop down)
+  - major restructoring of big parts of the addon if you encounter problems please don't hesitate to report!
 v7.3.2
   - updated playsound usage to blizzards new id based system
   - fixed background selection broken somewhere in the extensive restructuring of past versions

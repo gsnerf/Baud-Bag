@@ -101,6 +101,46 @@ function BaudBagBankBags_Update()
     BBContainer2:SetHeight(BBContainer2.Height + 40);
 end
 
+function BaudBagBankBags_UpdateContent(bankVisible)
+    
+    -- make sure the player can buy new bankslots
+    BaudBagBankSlotPurchaseButton:Enable()
+
+    local BankItemButtonPrefix        = Prefix.."SubBag"..BANK_CONTAINER.."Item"
+    local ReagentBankItemButtonPrefix = Prefix.."SubBag"..REAGENTBANK_CONTAINER.."Item"
+
+    for Index = 1, NUM_BANKGENERIC_SLOTS do
+        BankFrameItemButton_Update(_G[BankItemButtonPrefix..Index])
+    end
+    for Index = 1, NUM_BANKBAGSLOTS do
+        BankFrameItemButton_Update(_G["BaudBBankBag"..Index])
+    end
+    for Index = 1, GetContainerNumSlots(REAGENTBANK_CONTAINER) do
+        BankFrameItemButton_Update(_G[ReagentBankItemButtonPrefix..Index])
+    end
+    BaudBagBankBags_Update()
+    BaudBag_DebugMsg("Bank", "Recording bank bag info.")
+    for Bag = 1, NUM_BANKBAGSLOTS do
+        BaudBagGetBagCache(Bag + 4).BagLink  = GetInventoryItemLink("player", 67 + Bag)
+        BaudBagGetBagCache(Bag + 4).BagCount = GetInventoryItemCount("player", 67 + Bag)
+    end
+
+    if not bankVisible then
+        BaudBag_DebugMsg("Bank", "Bankframe does not really seem to be open or event was not BANKFRAME_OPENED. Stepping over actually opening the Bankframes")
+        return
+    end
+
+    local BBContainer2_1 = _G[Prefix.."Container2_1"]
+    if BBContainer2_1:IsShown() then
+        -- TODO we need direct access to the Container Object here in the future!
+        BaudBagUpdateContainer(BBContainer2_1)
+        BaudBagUpdateFreeSlots(BBContainer2_1)
+    else
+        BBContainer2_1.AutoOpened = true
+        BBContainer2_1:Show()
+    end
+end
+
 
 
 --[[ this prepares the visual style of the reagent bag slot ]]

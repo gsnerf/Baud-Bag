@@ -11,11 +11,12 @@
 ## Title: Baud Bag
 ## Title-zhCN: 背包整合 Baud Bag
 ## Title-zhTW: 背包整合 Baud Bag
-## Version: 7.3.2
+## Version: 7.3.3
 
 Localization.lua
 BaudBagFunctions.lua
 lib\BaseTypes.lua
+lib\BagSet.lua
 lib\Container.lua
 lib\SubContainer.lua
 lib\TextureHelper.lua

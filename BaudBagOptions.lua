@@ -1,4 +1,5 @@
-local _;
+local AddOnName, AddOnTable = ...
+local _
 
 local Localized	= BaudBagLocalized;
 local MaxBags   = NUM_BANKBAGSLOTS + 2;
@@ -262,7 +263,7 @@ function BaudBagOptionsNameEditBox_OnTextChanged()
     end
     -- BBConfig[SelectedBags][SelectedContainer].Name = _G[Prefix.."NameEditBox"]:GetText();
     BBConfig[SelectedBags][SelectedContainer].Name = BaudBagOptions.GroupContainer.NameInput:GetText();
-    BaudBagUpdateName(_G["BaudBagContainer"..SelectedBags.."_"..SelectedContainer]);  -- TODO: move to BaudBagBBConfig save?
+    AddOnTable["Sets"][SelectedBags].Containers[SelectedContainer]:UpdateName() -- TODO: move to BaudBagBBConfig save?
 end
 
 
