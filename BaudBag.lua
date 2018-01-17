@@ -555,7 +555,7 @@ function BaudBagContainerDropDown_Initialize()
     UIDropDownMenu_AddButton(info);
 
     -- increase backpack size
-    local needToShow = not (IsAccountSecured() and size > BACKPACK_BASE_SIZE)
+    local needToShow = not (IsAccountSecured() and GetContainerNumSlots(1) > BACKPACK_BASE_SIZE)
     if (needToShow) then
         info.text = BACKPACK_AUTHENTICATOR_INCREASE_SIZE
         info.func = BaudBag_AddSlotsClick
