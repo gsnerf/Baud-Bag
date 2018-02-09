@@ -12,6 +12,7 @@ local ItemToolTip;
 _G[AddOnName] = AddOnTable;
 AddOnTable["Sets"] = {}
 AddOnTable["SubBags"] = {}
+AddOnTable["Backgrounds"] = {}
 
 local BBFrameFuncs = {
     IsCraftingReagent = function (itemId)
@@ -67,6 +68,7 @@ local EventFuncs =
             -- make sure the cache is initialized
             --BBCache:initialize();
             BaudBagInitCache();
+            AddOnTable:RegisterDefaultBackgrounds()
 
             -- the rest of the bank slots are cleared in the next event
             -- TODO: recheck why this is necessary and if it can be avoided
@@ -611,7 +613,7 @@ function Container_UpdateBackground(Container)
     if (Background <= 3) then
         Left, Right, Top, Bottom = Container_UpdateBlizzBackground(Container, Background, Backdrop, ShiftName)
     else
-        Left, Right, Top, Bottom = Container_UpdateOtherBackground(Container, Background, Backdrop, ShiftName)
+        Left, Right, Top, Bottom = AddOnTable["Backgrounds"][Background]:Update(Container, Backdrop, ShiftName)
     end
     Container.Name:SetPoint("RIGHT", Container:GetName().."MenuButton", "LEFT")
 
@@ -837,56 +839,6 @@ function Container_UpdateBagPicture(Container, Parent, Backdrop)
     SetPortraitToTexture(Texture, Icon or "Interface\\Icons\\INV_Misc_QuestionMark")
     Backdrop:SetBackdrop(nil)
 end
-
-function Container_UpdateOtherBackground(Container, Background, Backdrop, ShiftName)
-    local Left, Right, Top, Bottom = 8, 8, 28, 8
-    Backdrop.Textures:Hide()
-    Container.Name:SetPoint("TOPLEFT", (2 + ShiftName), 18)
-    Container.CloseButton:SetPoint("TOPRIGHT", 8, 28)
-
-    if (Container:GetID() == 1) then
-        if (BackpackTokenFrame_IsShown() == 1  and Container:GetName() == "BaudBagContainer1_1") then
-            Container.FreeSlots:SetPoint("BOTTOMLEFT",   2, -17)
-            Container.MoneyFrame:SetPoint("BOTTOMRIGHT", 8, -18)
-            Container.TokenFrame:SetPoint("BOTTOMLEFT",  8, -36)
-            Container.TokenFrame:SetPoint("BOTTOMRIGHT", 8, -36)
-            Bottom = Bottom + 36
-        else
-            Container.FreeSlots:SetPoint("BOTTOMLEFT",   2, -17)
-            Container.MoneyFrame:SetPoint("BOTTOMRIGHT", 8, -18)
-            Bottom = Bottom + 18
-        end
-    end
-
-    if (Background == 5) then
-        Backdrop:SetBackdrop({
-            bgFile = "Interface\\Buttons\\WHITE8X8",
-            edgeFile = "Interface\\DialogFrame\\UI-DialogBox-Border",
-            tile = true, tileSize = 8, edgeSize = 32,
-            insets = { left = 11, right = 12, top = 12, bottom = 11 }
-        })
-        Left, Right, Top, Bottom = Left+8, Right+8, Top+8, Bottom+8
-        Backdrop:SetBackdropColor(0.1, 0.1, 0.1, 1)
-    elseif (Background == 6) then
-        Backdrop:SetBackdrop({
-            bgFile = "Interface\\Buttons\\WHITE8X8",
-            tile = true, tileSize = 14, edgeSize = 14,
-            insets = { left = 2, right = 2, top = 2, bottom = 2 }
-        })
-        Backdrop:SetBackdropColor(0.0, 0.0, 0.0, 0.6)
-    else
-        Backdrop:SetBackdrop({
-            bgFile = "Interface\\Tooltips\\UI-Tooltip-Background",
-            edgeFile = "Interface\\Tooltips\\UI-Tooltip-Border",
-            tile = true, tileSize = 16, edgeSize = 16,
-            insets = { left = 5, right = 5, top = 5, bottom = 5 }
-        })
-        Backdrop:SetBackdropColor(0, 0, 0, 1)
-    end
-
-    return Left, Right, Top, Bottom
-end
-
 
 --[[ This function updates the parent containers for each bag, according to the options setup ]]--
 function BaudUpdateJoinedBags()

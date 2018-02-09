@@ -20,6 +20,9 @@ lib\BagSet.lua
 lib\Container.lua
 lib\SubContainer.lua
 lib\TextureHelper.lua
+lib\Backgrounds\BlizzardBackground.lua
+lib\Backgrounds\SimpleBackground.lua
+lib\Backgrounds\BackgroundRegistration.lua
 BaudBagConfig.lua
 BaudBagCache.lua
 BaudBagToolTips.lua
