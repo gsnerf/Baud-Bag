@@ -984,52 +984,7 @@ end
 function BaudBagUpdateContainer(Container)
     BaudBag_DebugMsg("Bags", "Updating Container (name)", Container:GetName())
     local ContainerObject = AddOnTable["Sets"][Container.BagSet].Containers[Container:GetID()]
-    
-    -- initialize bag update
-    Container.Refresh   = false
-    ContainerObject:UpdateName()
-    local ContCfg       = BBConfig[Container.BagSet][Container:GetID()]
-    local Background    = ContCfg.Background
-    local MaxCols       = ContCfg.Columns
-    local Size
-    Container.Slots     = 0;
-
-    -- calculate sizes in all subbags
-    ContainerObject:UpdateSize()
-    
-    -- this should only happen when the dev coded some bullshit!
-    if (Container.Slots <= 0) then
-        if Container:IsShown() then
-            DEFAULT_CHAT_FRAME:AddMessage("Container \""..ContCfg.Name.."\" has no contents.",1,1,0);
-            Container:Hide();
-        end
-        return;
-    end
-
-    -- fix container slot size when only one item row exists
-    if (Container.Slots < MaxCols) then
-        MaxCols = Container.Slots;
-    end
-
-    local Col, Row = 0, 1;
-    --The textured background puts its empty space on the upper left
-    if ContCfg.BlankTop then
-        Col = MaxCols - mod(Container.Slots - 1,MaxCols) - 1;
-    end
-
-    -- now go through all sub bags
-    Col, Row = ContainerObject:UpdateSubContainers(Col, Row)
-
-    if (Background <= 3) then
-        Container:SetWidth(MaxCols * 42 - 5);
-        Container:SetHeight(Row * 41 - 4);
-    else
-        Container:SetWidth(MaxCols * 39 - 2);
-        Container:SetHeight(Row * 39 - 2);
-    end
-
-    ContainerObject:UpdateBackground()
-    BaudBag_DebugMsg("Bags", "Finished Arranging Container.");
+    ContainerObject:Update()
 end
 
 function BaudBag_OnModifiedClick(self, button)

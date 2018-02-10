@@ -66,12 +66,50 @@ function Prototype:UpdateFromConfig()
     self.Frame.Name:SetText(containerConfig.Name or "")
 end
 
-function Prototype:Render()
-    -- TODO
-end
-
 function Prototype:Update()
-    -- TODO
+    -- initialize bag update
+    self.Frame.Refresh   = false
+    self:UpdateName()
+    local contCfg         = BBConfig[self.Frame.BagSet][self.Id]
+    local numberOfColumns = contCfg.Columns
+    self.Frame.Slots      = 0
+
+    -- calculate sizes in all subbags
+    self:UpdateSize()
+    
+    -- this should only happen when the dev coded some bullshit!
+    if (self.Frame.Slots <= 0) then
+        if self.Frame:IsShown() then
+            DEFAULT_CHAT_FRAME:AddMessage("Container \""..contCfg.Name.."\" has no contents.", 1, 1, 0)
+            self.Frame:Hide()
+        end
+        return
+    end
+
+    -- fix container slot size when only one item row exists
+    if (self.Frame.Slots < numberOfColumns) then
+        numberOfColumns = self.Frame.Slots
+    end
+
+    local column, row = 0, 1
+    --The textured background puts its empty space on the upper left
+    if contCfg.BlankTop then
+        column = numberOfColumns - mod(self.Frame.Slots - 1, numberOfColumns) - 1;
+    end
+
+    -- now go through all sub bags
+    _, row = self:UpdateSubContainers(column, row)
+
+    if (contCfg.Background <= 3) then
+        self.Frame:SetWidth(numberOfColumns * 42 - 5);
+        self.Frame:SetHeight(row * 41 - 4);
+    else
+        self.Frame:SetWidth(numberOfColumns * 39 - 2);
+        self.Frame:SetHeight(row * 39 - 2);
+    end
+
+    self:UpdateBackground()
+    BaudBag_DebugMsg("Bags", "Finished Arranging Container.");
 end
 
 function Prototype:UpdateSize()
