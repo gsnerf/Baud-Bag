@@ -565,26 +565,6 @@ function BaudBagContainerDropDown_Initialize()
     end
 end
 
-function Container_UpdateBackground(Container)
-    local Background = BBConfig[Container.BagSet][Container:GetID()].Background
-    local Backdrop = Container.Backdrop
-    Backdrop:SetFrameLevel(Container:GetFrameLevel())
-    local Left, Right, Top, Bottom
-    -- This shifts the name of the bank frame over to make room for the extra button
-    local ShiftName = (Container:GetID() == 1) and 25 or 0
-
-    Left, Right, Top, Bottom = AddOnTable["Backgrounds"][Background]:Update(Container, Backdrop, ShiftName)
-    Container.Name:SetPoint("RIGHT", Container:GetName().."MenuButton", "LEFT")
-
-    Backdrop:ClearAllPoints()
-    Backdrop:SetPoint("TOPLEFT", -Left, Top)
-    Backdrop:SetPoint("BOTTOMRIGHT", Right, -Bottom)
-    Container:SetHitRectInsets(-Left, -Right, -Top, -Bottom)
-    Container.UnlockInfo:ClearAllPoints()
-    Container.UnlockInfo:SetPoint("TOPLEFT", -10, 3)
-    Container.UnlockInfo:SetPoint("BOTTOMRIGHT", 10, -3)
-end
-
 --[[ This function updates the parent containers for each bag, according to the options setup ]]--
 function BaudUpdateJoinedBags()
     BaudBag_DebugMsg("Bags", "Updating joined bags...");
@@ -1048,7 +1028,7 @@ function BaudBagUpdateContainer(Container)
         Container:SetHeight(Row * 39 - 2);
     end
 
-    Container_UpdateBackground(Container);
+    ContainerObject:UpdateBackground()
     BaudBag_DebugMsg("Bags", "Finished Arranging Container.");
 end
 

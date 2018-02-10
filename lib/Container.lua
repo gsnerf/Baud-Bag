@@ -158,6 +158,25 @@ function Prototype:UpdateSubContainers(col, row)
     return col, row
 end
 
+function Prototype:UpdateBackground()
+    local backgroundId = BBConfig[self.Frame.BagSet][self.Id].Background
+    local backdrop = self.Frame.Backdrop
+    backdrop:SetFrameLevel(self.Frame:GetFrameLevel())
+    -- This shifts the name of the bank frame over to make room for the extra button
+    local shiftName = (self.Frame:GetID() == 1) and 25 or 0
+    
+    local left, right, top, bottom = AddOnTable["Backgrounds"][backgroundId]:Update(self.Frame, backdrop, shiftName)
+    self.Frame.Name:SetPoint("RIGHT", self.Frame:GetName().."MenuButton", "LEFT")
+
+    backdrop:ClearAllPoints()
+    backdrop:SetPoint("TOPLEFT", -left, top)
+    backdrop:SetPoint("BOTTOMRIGHT", right, -bottom)
+    self.Frame:SetHitRectInsets(-left, -right, -top, -bottom)
+    self.Frame.UnlockInfo:ClearAllPoints()
+    self.Frame.UnlockInfo:SetPoint("TOPLEFT", -10, 3)
+    self.Frame.UnlockInfo:SetPoint("BOTTOMRIGHT", 10, -3)
+end
+
 function Prototype:SaveCoordinates()
     -- TODO
 end
