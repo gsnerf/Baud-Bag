@@ -215,10 +215,6 @@ function Prototype:UpdateBackground()
     self.Frame.UnlockInfo:SetPoint("BOTTOMRIGHT", 10, -3)
 end
 
-function Prototype:SaveCoordinates()
-    -- TODO
-end
-
 local Metatable = { __index = Prototype }
 
 function AddOnTable:CreateContainer(bagSetType, bbContainerId)
