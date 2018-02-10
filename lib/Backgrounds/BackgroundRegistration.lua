@@ -3,6 +3,22 @@ local _
 local Localized	= BaudBagLocalized;
 
 function AddOnTable:RegisterDefaultBackgrounds()
+    -- blizzard backgrounds
+    AddOnTable:CreateBlizzardBackground(
+        1, Localized.BlizInventory,
+        "Interface\\ContainerFrame\\UI-Bag-Components"
+    )
+
+    AddOnTable:CreateBlizzardBackground(
+        2, Localized.BlizBank,
+        "Interface\\ContainerFrame\\UI-Bag-Components-Bank"
+    )
+
+    AddOnTable:CreateBlizzardBackground(
+        3, Localized.BlizKeyring,
+        "Interface\\ContainerFrame\\UI-Bag-Components-Keyring"
+    )
+
     -- additional backgrounds
     AddOnTable:CreateSimpleBackground(
         4, Localized.Transparent,
