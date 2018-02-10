@@ -365,8 +365,10 @@ end
 
 function BaudBagContainer_OnUpdate(self, event, ...)
 
+    local containerObject = AddOnTable["Sets"][self.BagSet].Containers[self:GetID()]
+
     if (self.Refresh) then
-        BaudBagUpdateContainer(self);
+        containerObject:Update()
         BaudBagUpdateOpenBagHighlight();
     end
 
