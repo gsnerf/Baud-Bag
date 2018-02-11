@@ -56,6 +56,8 @@ function Prototype:CreateMissingSlots()
             texture:SetHeight(70)
             texture:SetWidth(70)
             texture:Hide()
+
+            AddOnTable:ItemSlot_Created(self.ContainerId, slot, button)
         end
         frame.maxSlots = frame.size
     end
