@@ -9,7 +9,8 @@ local Prototype = {
     Size = 0,
     FreeSlots = 0,
     HighlightSlots = false,
-    Frame = nil
+    Frame = nil,
+    Items = nil
 }
 
 function Prototype:GetID()
@@ -44,27 +45,16 @@ function Prototype:CreateMissingSlots()
                 template = "ContainerFrameItemButtonTemplate"
             end
 
-            -- create item button
-            local button = CreateFrame("Button", frame:GetName().."Item"..slot, frame, template)
-            button:SetID(slot)
-
-            local texture = button:CreateTexture(button:GetName().."Border","OVERLAY")
-            texture:SetTexture("Interface\\Buttons\\UI-ActionButton-Border")
-            texture:SetPoint("CENTER")
-            texture:SetBlendMode("ADD")
-            texture:SetAlpha(0.8)
-            texture:SetHeight(70)
-            texture:SetWidth(70)
-            texture:Hide()
-
-            AddOnTable:ItemSlot_Created(self.ContainerId, slot, button)
+            local button = AddOnTable:CreateItemButton(self, slot, template)
+            self.Items[slot] = button
+            
+            AddOnTable:ItemSlot_Created(self.ContainerId, slot, button.Frame)
         end
         frame.maxSlots = frame.size
     end
 end
 
 function Prototype:UpdateSlotContents()
-    local name, link, quality, type, texture, itemButton, isNewItem, isBattlePayItem
     local showColor = BBConfig[self.BagSet.Id][self.Frame:GetParent():GetID()].RarityColor
     local isBankBag = self.BagSet.Id == BagSetType.Bank.Id
     local bagCache = BaudBagGetBagCache(self.ContainerId)
@@ -81,76 +71,22 @@ function Prototype:UpdateSlotContents()
     BaudBag_DebugMsg("Bags", "Updating SubBag (ID, Size, isBagContainer, isBankOpen)", self.ContainerId, self.Size, not isBankBag, BaudBagFrame.BankOpen)
 
     for slot = 1, self.Size do
-        quality = nil
-        itemButton = _G[self.Frame:GetName().."Item"..slot]
-        isNewItem = false
-        isBattlePayItem = false
-        
-        if not useCache then
-            link = GetContainerItemLink(self.ContainerId, slot)
-
-            if (isBankBag) then
-                if not link then
-                    bagCache[slot] = nil
-                else
-                    bagCache[slot] = { Link = link, Count = select(2, GetContainerItemInfo(self.ContainerId, slot)) }
-                end
-            end
-
-            if link then
-                name, _, quality = GetItemInfo(link)
-                isNewItem = C_NewItems.IsNewItem(self.ContainerId, slot)
-                isBattlePayItem = IsBattlePayItem(self.ContainerId, slot)
-            end
-        elseif bagCache[slot] then
-            link = bagCache[slot].Link
-            if link then
-                -- regular items ... 
-                if (strmatch(link, "|Hitem:")) then
-                    name, _, quality, _, _, _, _, _, _, texture = GetItemInfo(link)
-                -- ... or a caged battle pet ...
-                elseif (strmatch(link, "|Hbattlepet:")) then
-                    local _, speciesID, _, qualityString = strsplit(":", link)
-                    name, texture = C_PetJournal.GetPetInfoBySpeciesID(speciesID)
-                    quality = tonumber(qualityString)
-                -- ... we don't know about everything else
-                end
-                
-                itemButton.hasItem = 1
-                isNewItem = C_NewItems.IsNewItem(self.ContainerId, slot)
-                isBattlePayItem = IsBattlePayItem(self.ContainerId, slot)
-            else
-                texture = nil
-                itemButton.hasItem = nil
-            end
-
-            SetItemButtonTexture(itemButton, texture)
-            SetItemButtonCount(itemButton, bagCache[slot].Count or 0)
-        end
-
-        if (itemButton.BattlepayItemTexture) then
-            if (isBattlePayItem) then
-                itemButton.BattlepayItemTexture:Show()
-            else
-                itemButton.BattlepayItemTexture:Hide()
-            end
-        end
+        local itemObject = self.Items[slot]
+        local link = itemObject:UpdateContent(useCache, bagCache[slot])
 
         if not link then
             self.FreeSlots = self.FreeSlots + 1
         end
 
         -- add rarity coloring
-        BaudBagItemButton_UpdateRarity(itemButton, quality, showColor)
+        itemObject:UpdateRarity(showColor)
 
         -- highlight the slots to show the connection to the bag
         if (self.HighlightSlots) then
-            texture = _G[itemButton:GetName().."Border"]
-            texture:SetVertexColor(0.5, 0.5, 0, 1)
-            texture:Show()
+            itemObject:ShowHighlight()
         end
 
-        AddOnTable:ItemSlot_Updated(self.ContainerId, slot, itemButton)
+        AddOnTable:ItemSlot_Updated(self.ContainerId, slot, itemObject.Frame)
     end
 end
 
@@ -304,10 +240,12 @@ function AddOnTable:CreateSubContainer(bagSetType, containerId)
     if (BaudBag_IsBankDefaultContainer(containerId)) then
         templateName = nil
     end
-    subContainer.Frame = CreateFrame("Frame", AddOnName.."SubBag"..containerId, nil, templateName)
+    subContainer.Name = AddOnName.."SubBag"..containerId
+    subContainer.Frame = CreateFrame("Frame", subContainer.Name, nil, templateName)
     subContainer.Frame.BagSet = bagSetType.Id
     subContainer.BagSet = bagSetType
     subContainer.ContainerId = containerId
+    subContainer.Items = {}
     return subContainer
 end
 

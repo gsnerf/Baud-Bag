@@ -924,6 +924,7 @@ function AddOnTable:ItemSlot_Updated(bagId, slotId, button)
 end
 
 --[[ Updates the rarity for the given button on basis of the given quality and configuration options ]]
+--[[ DEPRECATED!!! Goes to ItemButton ]]
 function BaudBagItemButton_UpdateRarity(button, quality, showColor)
     -- add rarity coloring
     local Texture = _G[button:GetName().."Border"];
@@ -943,7 +944,7 @@ function BaudBagItemButton_UpdateRarity(button, quality, showColor)
         Texture:Show();
     else
         Texture:Hide();
-    end    
+    end
 end
 
 

@@ -17,6 +17,7 @@ Localization.lua
 BaudBagFunctions.lua
 lib\BaseTypes.lua
 lib\BagSet.lua
+lib\ItemButton.lua
 lib\Container.lua
 lib\SubContainer.lua
 lib\TextureHelper.lua
