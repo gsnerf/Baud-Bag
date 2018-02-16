@@ -112,3 +112,12 @@ function AddOnTable:CreateItemButton(subContainer, slotIndex, buttonTemplate)
     
     return itemButton
 end
+
+
+function AddOnTable:ItemSlot_Created(bagId, slotId, button)
+    -- just an empty hook for other addons
+end
+
+function AddOnTable:ItemSlot_Updated(bagId, slotId, button)
+    -- just an empty hook for other addons
+end

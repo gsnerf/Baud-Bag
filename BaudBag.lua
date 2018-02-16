@@ -915,13 +915,6 @@ function BaudBagSubBag_OnLoad(self, event, ...)
     end
 end
 
-function AddOnTable:ItemSlot_Created(bagId, slotId, button)
-    -- just an empty hook for other addons
-end
-
-function AddOnTable:ItemSlot_Updated(bagId, slotId, button)
-    -- just an empty hook for other addons
-end
 
 --[[ Updates the rarity for the given button on basis of the given quality and configuration options ]]
 --[[ DEPRECATED!!! Goes to ItemButton ]]
