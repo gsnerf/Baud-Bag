@@ -10,7 +10,7 @@ local Prototype = {
 }
 
 function Prototype:UpdateContent(useCache, slotCache)
-    local name, count, link, quality, type, texture, isNewItem, isBattlePayItem
+    local name, count, link, quality, texture, isNewItem, isBattlePayItem
     local cacheEntry = nil
 
     if not useCache then
@@ -58,7 +58,7 @@ function Prototype:UpdateContent(useCache, slotCache)
         end
     end
 
-    return link
+    return link, cacheEntry
 end
 
 function Prototype:UpdateRarity(showColor)

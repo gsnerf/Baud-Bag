@@ -72,7 +72,11 @@ function Prototype:UpdateSlotContents()
 
     for slot = 1, self.Size do
         local itemObject = self.Items[slot]
-        local link = itemObject:UpdateContent(useCache, bagCache[slot])
+        local link, newCacheEntry = itemObject:UpdateContent(useCache, bagCache[slot])
+
+        if (isBankBag and not useCache) then
+            bagCache[slot] = newCacheEntry
+        end
 
         if not link then
             self.FreeSlots = self.FreeSlots + 1
