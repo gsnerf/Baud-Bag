@@ -97,12 +97,12 @@ end
 -- returns the adapted col and row values
 function Prototype:UpdateSlotPositions(container, background, col, row, maxCols, slotLevel)
     local frame = self.Frame
-    local slot, itemButton
+    local slot, itemObject
     local buttonWidth = background <= 3 and 42 or 39
     local buttonHeight = background <= 3 and -41 or -39
 
     for slot = 1, frame.maxSlots do
-        itemButton = _G[frame:GetName().."Item"..slot]
+        itemOject = self.Items[slot]
         if (slot <= frame.size) then
             col = col + 1
             if (col > maxCols) then
@@ -111,9 +111,9 @@ function Prototype:UpdateSlotPositions(container, background, col, row, maxCols,
             end
             local x = (col-1) * buttonWidth
             local y = (row-1) * buttonHeight
-            self.Items[slot]:UpdatePosition(container, x, y, slotLevel)
+            itemOject:UpdatePosition(container, x, y, slotLevel)
         else
-            itemButton:Hide();
+            itemOject.Frame:Hide()
         end
     end
     return col, row
