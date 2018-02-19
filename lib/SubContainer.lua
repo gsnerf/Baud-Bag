@@ -129,23 +129,9 @@ function Prototype:UpdateItemOverlays()
         local itemButton, questTexture
         local frame = self.Frame
         for Slot = 1, GetContainerNumSlots(self.ContainerId) do
-            itemButton = _G[frame:GetName().."Item"..Slot]
-            questTexture = _G[itemButton:GetName().."IconQuestTexture"]
-            
-            ContainerFrame_UpdateCooldown(self.ContainerId, itemButton)
-            
-            if (questTexture) then
-                local isQuestItem, questId, isActive = GetContainerItemQuestInfo(self.ContainerId, itemButton:GetID())
-                if ( questId and not isActive ) then
-                    questTexture:SetTexture(TEXTURE_ITEM_QUEST_BANG)
-                    questTexture:Show()
-                elseif ( questId or isQuestItem ) then
-                    questTexture:SetTexture(TEXTURE_ITEM_QUEST_BORDER)
-                    questTexture:Show()
-                else
-                    questTexture:Hide()
-                end
-            end
+            local itemSlotObject = self.Items[Slot]
+            ContainerFrame_UpdateCooldown(self.ContainerId, itemSlotObject.Frame)
+            itemSlotObject:UpdateQuestOverlay(self.ContainerId)
         end
     end
 end

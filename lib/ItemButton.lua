@@ -84,6 +84,23 @@ function Prototype:UpdateRarity(showColor)
     end
 end
 
+function Prototype:UpdateQuestOverlay(containerId)
+    local questTexture = _G[self.Name.."IconQuestTexture"]
+
+    if (questTexture) then
+        local isQuestItem, questId, isActive = GetContainerItemQuestInfo(containerId, self.SlotIndex)
+        if ( questId and not isActive ) then
+            questTexture:SetTexture(TEXTURE_ITEM_QUEST_BANG)
+            questTexture:Show()
+        elseif ( questId or isQuestItem ) then
+            questTexture:SetTexture(TEXTURE_ITEM_QUEST_BORDER)
+            questTexture:Show()
+        else
+            questTexture:Hide()
+        end
+    end
+end
+
 function Prototype:ShowHighlight()
     local texture = _G[self.Name.."Border"]
     texture:SetVertexColor(0.5, 0.5, 0, 1)
