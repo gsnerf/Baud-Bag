@@ -61,6 +61,18 @@ function Prototype:UpdateContent(useCache, slotCache)
     return link, cacheEntry
 end
 
+--[[
+    Updates the position of this ItemButton slot.
+    TODO: is this really necessary?
+    -> Shouldn't this be done relative to the other slots instead of absolutely inside the container?
+]]
+function Prototype:UpdatePosition(container, x, y, slotLevel)
+    self.Frame:ClearAllPoints()
+    self.Frame:SetPoint("TOPLEFT", container, "TOPLEFT", x, y)
+    self.Frame:SetFrameLevel(slotLevel)
+    self.Frame:Show()
+end
+
 function Prototype:UpdateRarity(showColor)
     local quality = self.Quality
     local texture = _G[self.Name.."Border"]

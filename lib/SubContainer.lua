@@ -98,6 +98,9 @@ end
 function Prototype:UpdateSlotPositions(container, background, col, row, maxCols, slotLevel)
     local frame = self.Frame
     local slot, itemButton
+    local buttonWidth = background <= 3 and 42 or 39
+    local buttonHeight = background <= 3 and -41 or -39
+
     for slot = 1, frame.maxSlots do
         itemButton = _G[frame:GetName().."Item"..slot]
         if (slot <= frame.size) then
@@ -106,15 +109,9 @@ function Prototype:UpdateSlotPositions(container, background, col, row, maxCols,
                 col = 1
                 row = row + 1
             end
-            itemButton:ClearAllPoints()
-            -- Slot spacing is different for the blizzard textured background
-            if (background <= 3) then
-                itemButton:SetPoint("TOPLEFT", container, "TOPLEFT", (col-1)*42, (row-1)*-41)
-            else
-                itemButton:SetPoint("TOPLEFT", container, "TOPLEFT", (col-1)*39, (row-1)*-39)
-            end
-            itemButton:SetFrameLevel(slotLevel);
-            itemButton:Show();
+            local x = (col-1) * buttonWidth
+            local y = (row-1) * buttonHeight
+            self.Items[slot]:UpdatePosition(container, x, y, slotLevel)
         else
             itemButton:Hide();
         end
