@@ -271,11 +271,10 @@ Func = function(self, event, ...)
         bagCache[slot] = nil;
     end
     
-    BaudBagItemButton_UpdateRarity(
-        Button, 
-        Quality, 
-        BBConfig[2][_G["BaudBagSubBag-3"]:GetParent():GetID()].RarityColor
-    );
+    local subBagObject = AddOnTable["SubBags"][-3]
+    local rarityColor = BBConfig[2][subBagObject.Frame:GetParent():GetID()].RarityColor
+    subBagObject.Items[slot]:UpdateContent(false)
+    subBagObject.Items[slot]:UpdateRarity(rarityColor)
 end
 EventFuncs.PLAYERREAGENTBANKSLOTS_CHANGED = Func;
 
@@ -912,31 +911,6 @@ function BaudBagSubBag_OnLoad(self, event, ...)
 
     for Key, Value in pairs(SubBagEvents)do
         self:RegisterEvent(Key);
-    end
-end
-
-
---[[ Updates the rarity for the given button on basis of the given quality and configuration options ]]
---[[ DEPRECATED!!! Goes to ItemButton ]]
-function BaudBagItemButton_UpdateRarity(button, quality, showColor)
-    -- add rarity coloring
-    local Texture = _G[button:GetName().."Border"];
-    if quality and (quality > 1) and showColor then
-        -- default with set option
-        -- Texture:SetVertexColor(GetItemQualityColor(Quality));
-        -- alternative rarity coloring
-        if (quality ~=2) and (quality ~= 3) and (quality ~= 4) then
-            Texture:SetVertexColor(GetItemQualityColor(quality));
-        elseif (quality == 2) then        --uncommon
-            Texture:SetVertexColor(0.1,   1,   0, 0.5);
-        elseif (quality == 3) then        --rare
-            Texture:SetVertexColor(  0, 0.4, 0.8, 0.8);
-        elseif (quality == 4) then        --epic
-            Texture:SetVertexColor(0.6, 0.2, 0.9, 0.5);
-        end
-        Texture:Show();
-    else
-        Texture:Hide();
     end
 end
 

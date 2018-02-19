@@ -73,6 +73,7 @@ function Prototype:UpdatePosition(container, x, y, slotLevel)
     self.Frame:Show()
 end
 
+--[[ Updates the rarity for this on basis of the current items quality ]]
 function Prototype:UpdateRarity(showColor)
     local quality = self.Quality
     local texture = _G[self.Name.."Border"]
