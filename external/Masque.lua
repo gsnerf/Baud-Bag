@@ -10,28 +10,27 @@ local function ItemSlotCreated(self, bagID, slotID, button)
         return
     end
 
-    --[[
     local buttonData = {
         -- FloatingBG = {...},
-        Icon = _G[button:GetName().."IconTexture"],
-        Cooldown = _G[button:GetName().."Cooldown"],
-        Flash = button.flash,
-        -- Pushed = {...},
-        Normal = _G[button:GetName().."NormalTexture"],
+        Icon = button.icon,
+        Cooldown = button.Cooldown,
+        -- Flash = button.flash,
+        Pushed = button:GetPushedTexture(),
+        Normal = button:GetNormalTexture(),
         -- Disabled = {...},
         -- Checked = {...},
-        Border = button.iconBorder,
+        Border = button.IconBorder,
         -- AutoCastable = {...},
-        -- Highlight = {...},
+        Highlight = button:GetHighlightTexture(),
         -- HotKey = {...},
-        Count = _G[button:GetName().."Count"]
+        Count = button.Count,
         -- Name = {...},
         -- Duration = {...},
         -- Shine = {...},
-    }]]
+    }
     local group = Masque:Group('BaudBag')
-    --group:AddButton(button, buttonData)
-    group:AddButton(button)
+    group:AddButton(button, buttonData)
+    --group:AddButton(button)
 
 end
 
