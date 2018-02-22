@@ -144,10 +144,10 @@ function AddOnTable:CreateItemButton(subContainer, slotIndex, buttonTemplate)
 end
 
 
-function AddOnTable:ItemSlot_Created(bagId, slotId, button)
+function AddOnTable:ItemSlot_Created(bagSet, containerId, subContainerId, slotId, button)
     -- just an empty hook for other addons
 end
 
-function AddOnTable:ItemSlot_Updated(bagId, slotId, button)
+function AddOnTable:ItemSlot_Updated(bagSet, containerId, subContainerId, slotId, button)
     -- just an empty hook for other addons
 end

@@ -1,10 +1,12 @@
 local AddOnName, AddOnTable = ...
 local _
+local Localized = AddOnTable["Localized"]
 
 -- Definition
 BagSetType = {
     Backpack = {
         Id = 1,
+        Name = Localized.Inventory,
         IsSubContainerOf = function(containerId)
             return (BACKPACK_CONTAINER <= containerId  and containerId <= BACKPACK_CONTAINER + NUM_BAG_SLOTS)
         end,
@@ -12,6 +14,7 @@ BagSetType = {
     },
     Bank = {
         Id = 2,
+        Name = Localized.BankBox,
         IsSubContainerOf = function(containerId)
             local isBankDefaultContainer = (containerId == BANK_CONTAINER) or (containerId == REAGENTBANK_CONTAINER)
             local isBankSubContainer = (ITEM_INVENTORY_BANK_BAG_OFFSET < containerId) and (containerId <= ITEM_INVENTORY_BANK_BAG_OFFSET + NUM_BANKBAGSLOTS)

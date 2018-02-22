@@ -110,6 +110,7 @@ function Prototype:Update()
 
     self:UpdateBackground()
     BaudBag_DebugMsg("Bags", "Finished Arranging Container.");
+    AddOnTable:Container_Updated(self.Id)
 end
 
 function Prototype:UpdateSize()
@@ -233,4 +234,8 @@ function AddOnTable:CreateContainer(bagSetType, bbContainerId)
     container.Frame = frame
     container.SubContainers = {}
     return container
+end
+
+function AddOnTable:Container_Updated(bagSet, containerId)
+    -- just an empty hook for other addons
 end

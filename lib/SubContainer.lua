@@ -48,7 +48,7 @@ function Prototype:CreateMissingSlots()
             local button = AddOnTable:CreateItemButton(self, slot, template)
             self.Items[slot] = button
             
-            AddOnTable:ItemSlot_Created(self.ContainerId, slot, button.Frame)
+            AddOnTable:ItemSlot_Created(self.BagSet, frame:GetParent():GetID(), self.ContainerId, slot, button.Frame)
         end
         frame.maxSlots = frame.size
     end
@@ -90,7 +90,7 @@ function Prototype:UpdateSlotContents()
             itemObject:ShowHighlight()
         end
 
-        AddOnTable:ItemSlot_Updated(self.ContainerId, slot, itemObject.Frame)
+        AddOnTable:ItemSlot_Updated(self.BagSet, self.Frame:GetParent():GetID(), self.ContainerId, slot, itemObject.Frame)
     end
 end
 

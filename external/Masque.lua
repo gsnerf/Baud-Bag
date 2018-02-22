@@ -5,7 +5,7 @@ if IsAddOnLoaded("Masque") then
     Masque = LibStub("Masque", true)
 end
 
-local function ItemSlotCreated(self, bagID, slotID, button)
+local function ItemSlotCreated(self, bagSet, containerId, subContainerId, slotId, button)
     if not IsAddOnLoaded("Masque") or button == nil then
         return
     end
@@ -28,10 +28,17 @@ local function ItemSlotCreated(self, bagID, slotID, button)
         -- Duration = {...},
         -- Shine = {...},
     }
-    local group = Masque:Group('BaudBag')
+    local group = Masque:Group('BaudBag', bagSet.Name.." Container "..containerId)
     group:AddButton(button, buttonData)
-    --group:AddButton(button)
+end
 
+local function ContainerUpdated(self, bagSet, containerId)
+    if not IsAddOnLoaded("Masque") then
+        return
+    end
+
+    Masque:Group('BaudBag', bagSet.Name.." Container "..containerId):ReSkin()
 end
 
 hooksecurefunc(BaudBag, "ItemSlot_Created", ItemSlotCreated)
+hooksecurefunc(BaudBag, "Container_Updated", ContainerUpdated)
