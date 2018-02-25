@@ -274,7 +274,7 @@ Func = function(self, event, ...)
     local subBagObject = AddOnTable["SubBags"][-3]
     local rarityColor = BBConfig[2][subBagObject.Frame:GetParent():GetID()].RarityColor
     subBagObject.Items[slot]:UpdateContent(false)
-    subBagObject.Items[slot]:UpdateRarity(rarityColor)
+    subBagObject.Items[slot]:UpdateCustomRarity(rarityColor)
 end
 EventFuncs.PLAYERREAGENTBANKSLOTS_CHANGED = Func;
 
