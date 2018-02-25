@@ -45,18 +45,14 @@ function Prototype:UpdateContent(useCache, slotCache)
         end
 
         SetItemButtonTexture(self.Frame, texture)
+        --SetItemButtonQuality(self.Frame, quality, itemID);
         SetItemButtonCount(self.Frame, slotCache.Count or 0)
+		--SetItemButtonDesaturated(self.Frame, locked);
     end
 
     self.Quality = quality
 
-    if (self.Frame.BattlepayItemTexture) then
-        if (isBattlePayItem) then
-            self.Frame.BattlepayItemTexture:Show()
-        else
-            self.Frame.BattlepayItemTexture:Hide()
-        end
-    end
+    self:UpdateBattlepayOverlay(isBattlePayItem)
 
     return link, cacheEntry
 end
@@ -74,7 +70,7 @@ function Prototype:UpdatePosition(container, x, y, slotLevel)
 end
 
 --[[ Updates the rarity for this on basis of the current items quality ]]
-function Prototype:UpdateRarity(showColor)
+function Prototype:UpdateCustomRarity(showColor)
     local quality = self.Quality
     local texture = _G[self.Name.."Border"]
 
@@ -110,6 +106,17 @@ function Prototype:UpdateQuestOverlay(containerId)
             questTexture:Show()
         else
             questTexture:Hide()
+        end
+    end
+end
+
+function Prototype:UpdateBattlepayOverlay(isBattlePayItem)
+    local battlePayTexture = self.Frame.BattlepayItemTexture
+    if (battlePayTexture) then
+        if (isBattlePayItem) then
+            battlePayTexture:Show()
+        else
+            battlePayTexture:Hide()
         end
     end
 end

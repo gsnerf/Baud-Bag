@@ -83,7 +83,7 @@ function Prototype:UpdateSlotContents()
         end
 
         -- add rarity coloring
-        itemObject:UpdateRarity(showColor)
+        itemObject:UpdateCustomRarity(showColor)
 
         -- highlight the slots to show the connection to the bag
         if (self.HighlightSlots) then
