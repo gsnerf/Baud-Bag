@@ -6,6 +6,7 @@ local Prototype = {
     Name = "DefaultContainer",
     Frame = nil,
     SubContainers = nil,
+    BagSet = nil,
     -- the values below aren't used yet
     Columns = 11,
     Icon = "",
@@ -110,7 +111,7 @@ function Prototype:Update()
 
     self:UpdateBackground()
     BaudBag_DebugMsg("Bags", "Finished Arranging Container.");
-    AddOnTable:Container_Updated(self.Id)
+    AddOnTable:Container_Updated(self.BagSet, self.Id)
 end
 
 function Prototype:UpdateSize()
@@ -233,6 +234,7 @@ function AddOnTable:CreateContainer(bagSetType, bbContainerId)
     frame.Bags = {}
     container.Frame = frame
     container.SubContainers = {}
+    container.BagSet = bagSetType
     return container
 end
 
