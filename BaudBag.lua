@@ -91,21 +91,6 @@ local EventFuncs =
             end
         end,
 
-        BANKFRAME_CLOSED = function(self, event, ...)
-            BaudBag_DebugMsg("Bank", "Event BANKFRAME_CLOSED fired");
-            BaudBagFrame.BankOpen = false;
-            BaudBagBankSlotPurchaseButton:Disable();
-            if _G[Prefix.."Container2_1"].AutoOpened then
-                _G[Prefix.."Container2_1"]:Hide();
-            else
-                --Add offline again to bag name
-                for ContNum = 1, NumCont[2]do
-                    AddOnTable.Sets[2].Containers[ContNum]:UpdateName()
-                end
-            end
-            BaudBagAutoOpenSet(1, true);
-        end,
-
         PLAYER_MONEY = function(self, event, ...)
             BaudBag_DebugMsg("Bags", "Event PLAYER_MONEY fired");
             BaudBagBankBags_Update();
@@ -160,26 +145,6 @@ local EventFuncs =
     };
 
 --[[ here come functions that will be hooked up to multiple events ]]--
-local Func = function(self, event, ...)
-    BaudBag_DebugMsg("Bank", "Event fired", event)
-    
-	-- set bank open marker if it was opend
-    if (event == "BANKFRAME_OPENED") then
-        BaudBagFrame.BankOpen = true
-    end
-    
-    -- everything coming now is only needed if the bank is visible
-    local bankVisible = BBConfig[2].Enabled and (event == "BANKFRAME_OPENED")
-    BaudBagBankBags_UpdateContent(bankVisible)
-    if not bankVisible then
-        return
-    end
-    BaudBagAutoOpenSet(1)
-    BaudBagAutoOpenSet(2)
-end
-EventFuncs.BANKFRAME_OPENED = Func
-EventFuncs.PLAYERBANKBAGSLOTS_CHANGED = Func
-
 Func = function(self, event, ...)
     BaudBag_DebugMsg("Bags", "Event fired (event)", event);
     BaudBagAutoOpenSet(1, false);
@@ -246,43 +211,6 @@ EventFuncs.BAG_OPEN = Func;
 EventFuncs.BAG_UPDATE = Func;
 EventFuncs.BAG_CLOSED = Func;
 EventFuncs.PLAYERBANKSLOTS_CHANGED = Func;
-
---[[ This updates the visual of the given reagent bank item ]]
-Func = function(self, event, ...)
-    local slot = ...;
-    BaudBag_DebugMsg("BankReagent", "Updating Slot", slot);
-
-    -- first basic update
-    local Button = _G["BaudBagSubBag-3Item"..(slot)];
-    BankFrameItemButton_Update(Button);
-
-    ---- now update custom rarity colloring
-    local bagCache = BaudBagGetBagCache(REAGENTBANK_CONTAINER);
-    local Link = GetContainerItemLink(REAGENTBANK_CONTAINER, slot);
-    local Quality = nil;
-
-    -- even though we are in "online" there might be no item on this slot!
-    if Link then
-        _, _, Quality, _, _, _, _, _, _, _ = GetItemInfo(Link);
-        --isNewItem       = C_NewItems.IsNewItem(REAGENTBANK_CONTAINER, slot);
-        --isBattlePayItem = IsBattlePayItem(REAGENTBANK_CONTAINER, slot);
-        bagCache[slot]  = {Link = Link, Count = select(2, GetContainerItemInfo(REAGENTBANK_CONTAINER, slot))};
-    else
-        bagCache[slot] = nil;
-    end
-    
-    local subBagObject = AddOnTable["SubBags"][-3]
-    local rarityColor = BBConfig[2][subBagObject.Frame:GetParent():GetID()].RarityColor
-    subBagObject.Items[slot]:UpdateContent(false)
-    subBagObject.Items[slot]:UpdateCustomRarity(rarityColor)
-end
-EventFuncs.PLAYERREAGENTBANKSLOTS_CHANGED = Func;
-
-Func = function(self, event, ...)
-    _G["BaudBagSubBag-3"]:GetParent().UnlockInfo:Hide();
-	_G["BaudBagSubBag-3"]:GetParent().DepositButton:Enable();
-end
-EventFuncs.REAGENTBANK_PURCHASED = Func;
 --[[ END OF NON XML EVENT HANDLERS ]]--
 
 
@@ -301,8 +229,9 @@ function BaudBag_OnLoad(self, event, ...)
 
     -- register for global events (actually handled in OnEvent function)
     for Key, Value in pairs(EventFuncs)do
-        self:RegisterEvent(Key);
+        self:RegisterEvent(Key)
     end
+    BaudBag_RegisterBankEvents(self)
 
     -- the first container from each set (inventory/bank) is different and is created in the XML
     local SubBag, Container;
@@ -335,7 +264,10 @@ end
 
 --[[ this will call the correct event handler]]--
 function BaudBag_OnEvent(self, event, ...)
-    EventFuncs[event](self, event, ...);
+    BaudBag_OnBankEvent(self, event, ...)
+    if EventFuncs[event] then
+        EventFuncs[event](self, event, ...)
+    end
 end
 
 -- this just makes sure the bags will be visible at the correct layer position when opened
