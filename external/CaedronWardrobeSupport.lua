@@ -4,22 +4,22 @@ if IsAddOnLoaded("CaerdonWardrobe") then
     CaerdonWardrobe:RegisterBagAddon();
 end
 
-local function ItemSlotUpdated(self, bagID, slotID, button)
+local function ItemSlotUpdated(self, bagSet, containerId, subContainerId, slotId, button)
     if not IsAddOnLoaded("CaerdonWardrobe") then
         return
     end
 
-    local itemID = GetContainerItemID(bagID, slotID)
-    if itemID then
+    local itemId = GetContainerItemID(subContainerId, slotId)
+    if itemId then
         local options = {
             showMogIcon=true,
             showBindStatus=true,
             showSellables=true
         }
 
-        CaerdonWardrobe:ProcessItem(itemID, bagID, slotID, button, options)
+        CaerdonWardrobe:ProcessItem(itemId, bagId, slotId, button, options)
     else
-		CaerdonWardrobe:ProcessItem(nil, bagID, slotID, button, nil)
+		CaerdonWardrobe:ProcessItem(nil, bagId, slotId, button, nil)
     end 
 end
 

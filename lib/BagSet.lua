@@ -6,7 +6,8 @@ local Prototype = {
     --[[  sub tables have to be reassigned on init or ALL new elements will have the SAME tables for access... ]]
     Containers = nil,
     MaxContainerNumber = 0,
-    SubContainers = nil
+    SubContainers = nil,
+    BagButtons = nil
 }
 
 function Prototype:GetType()
@@ -129,6 +130,7 @@ function AddOnTable:CreateBagSet(type)
     bagSet.Type = type
     bagSet.Containers = {}
     bagSet.SubContainers = {}
+    bagSet.BagButtons = {}
     AddOnTable["Sets"][type.Id] = bagSet
     return bagSet
 end

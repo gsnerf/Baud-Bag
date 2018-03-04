@@ -1,38 +1,64 @@
 local AddOnName, AddOnTable = ...
 local Masque
 
-if IsAddOnLoaded("Masque") then
-    Masque = LibStub("Masque", true)
-end
-
-local function ItemSlotCreated(self, bagID, slotID, button)
-    if not IsAddOnLoaded("Masque") or button == nil then
-        return
-    end
-
-    --[[
+local function ItemSlotCreated(self, bagSetType, containerId, subContainerId, slotId, button)
     local buttonData = {
         -- FloatingBG = {...},
-        Icon = _G[button:GetName().."IconTexture"],
-        Cooldown = _G[button:GetName().."Cooldown"],
-        Flash = button.flash,
-        -- Pushed = {...},
-        Normal = _G[button:GetName().."NormalTexture"],
+        Icon = button.icon,
+        Cooldown = button.Cooldown,
+        -- Flash = button.flash,
+        Pushed = button:GetPushedTexture(),
+        Normal = button:GetNormalTexture(),
         -- Disabled = {...},
         -- Checked = {...},
-        Border = button.iconBorder,
+        Border = button.IconBorder,
         -- AutoCastable = {...},
-        -- Highlight = {...},
+        Highlight = button:GetHighlightTexture(),
         -- HotKey = {...},
-        Count = _G[button:GetName().."Count"]
+        Count = button.Count,
         -- Name = {...},
         -- Duration = {...},
         -- Shine = {...},
-    }]]
-    local group = Masque:Group('BaudBag')
-    --group:AddButton(button, buttonData)
-    group:AddButton(button)
-
+    }
+    local group = Masque:Group('BaudBag', bagSetType.Name.." Container "..containerId)
+    group:AddButton(button, buttonData)
 end
 
-hooksecurefunc(BaudBag, "ItemSlot_Created", ItemSlotCreated)
+local function BagSlotCreated(self, bagSetType, bagId, button)
+    local highlightTexture = button:GetHighlightTexture()
+    if (button.HighlightFrame ~= nil) then
+        highlightTexture = button.HighlightFrame.HighlightTexture
+    end
+    local buttonData = {
+        -- FloatingBG = {...},
+        Icon = button.icon,
+        Cooldown = button.Cooldown,
+        -- Flash = button.flash,
+        Pushed = button:GetPushedTexture(),
+        Normal = button:GetNormalTexture(),
+        -- Disabled = {...},
+        -- Checked = {...},
+        Border = button.IconBorder,
+        -- AutoCastable = {...},
+        Highlight = highlightTexture,
+        -- HotKey = {...},
+        Count = button.Count,
+        -- Name = {...},
+        -- Duration = {...},
+        -- Shine = {...},
+    }
+
+    local group = Masque:Group('BaudBag', bagSetType.Name.." Bag Buttons")
+    group:AddButton(button, buttonData)
+end
+
+local function ContainerUpdated(self, bagSetType, containerId)
+    Masque:Group('BaudBag', bagSetType.Name.." Container "..containerId):ReSkin()
+end
+
+if IsAddOnLoaded("Masque") then
+    Masque = LibStub("Masque", true)
+    hooksecurefunc(BaudBag, "ItemSlot_Created", ItemSlotCreated)
+    hooksecurefunc(BaudBag, "BagSlot_Created", BagSlotCreated)
+    hooksecurefunc(BaudBag, "Container_Updated", ContainerUpdated)
+end

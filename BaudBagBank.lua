@@ -1,23 +1,111 @@
-local _;
-local Prefix = "BaudBag";
+local AddOnName, AddOnTable = ...
+local _
+local Prefix = "BaudBag"
+local Localized = BaudBagLocalized;
+
+local EventFuncs = {
+    BANKFRAME_CLOSED = function(self, event, ...)
+        BaudBag_DebugMsg("Bank", "Event BANKFRAME_CLOSED fired");
+        BaudBagFrame.BankOpen = false;
+        BaudBagBankSlotPurchaseButton:Disable();
+        if _G[Prefix.."Container2_1"].AutoOpened then
+            _G[Prefix.."Container2_1"]:Hide();
+        else
+            --Add offline again to bag name
+            local numberOfContainers = table.getn(AddOnTable.Sets[2].Containers)
+            for ContNum = 1, numberOfContainers do
+                AddOnTable.Sets[2].Containers[ContNum]:UpdateName()
+            end
+        end
+        BaudBagAutoOpenSet(1, true);
+    end,
+}
+
+local Func = function(self, event, ...)
+    BaudBag_DebugMsg("Bank", "Event fired", event)
+    
+	-- set bank open marker if it was opend
+    if (event == "BANKFRAME_OPENED") then
+        BaudBagFrame.BankOpen = true
+    end
+    
+    -- everything coming now is only needed if the bank is visible
+    local bankVisible = BBConfig[2].Enabled and (event == "BANKFRAME_OPENED")
+    BaudBagBankBags_UpdateContent(bankVisible)
+    if not bankVisible then
+        return
+    end
+    BaudBagAutoOpenSet(1)
+    BaudBagAutoOpenSet(2)
+end
+EventFuncs.BANKFRAME_OPENED = Func
+EventFuncs.PLAYERBANKBAGSLOTS_CHANGED = Func
+
+--[[ This updates the visual of the given reagent bank item ]]
+Func = function(self, event, ...)
+    local slot = ...;
+    BaudBag_DebugMsg("BankReagent", "Updating Slot", slot);
+
+    -- first basic update
+    local Button = _G["BaudBagSubBag-3Item"..(slot)];
+    BankFrameItemButton_Update(Button);
+
+    ---- now update custom rarity colloring
+    local bagCache = BaudBagGetBagCache(REAGENTBANK_CONTAINER);
+    local Link = GetContainerItemLink(REAGENTBANK_CONTAINER, slot);
+    local Quality = nil;
+
+    -- even though we are in "online" there might be no item on this slot!
+    if Link then
+        _, _, Quality, _, _, _, _, _, _, _ = GetItemInfo(Link);
+        --isNewItem       = C_NewItems.IsNewItem(REAGENTBANK_CONTAINER, slot);
+        --isBattlePayItem = IsBattlePayItem(REAGENTBANK_CONTAINER, slot);
+        bagCache[slot]  = {Link = Link, Count = select(2, GetContainerItemInfo(REAGENTBANK_CONTAINER, slot))};
+    else
+        bagCache[slot] = nil;
+    end
+    
+    local subBagObject = AddOnTable["SubBags"][-3]
+    local rarityColor = BBConfig[2][subBagObject.Frame:GetParent():GetID()].RarityColor
+    subBagObject.Items[slot]:UpdateContent(false)
+    subBagObject.Items[slot]:UpdateCustomRarity(rarityColor)
+end
+EventFuncs.PLAYERREAGENTBANKSLOTS_CHANGED = Func;
+
+Func = function(self, event, ...)
+    _G["BaudBagSubBag-3"]:GetParent().UnlockInfo:Hide();
+	_G["BaudBagSubBag-3"]:GetParent().DepositButton:Enable();
+end
+EventFuncs.REAGENTBANK_PURCHASED = Func;
+
+function BaudBag_RegisterBankEvents(self)
+    for Key, Value in pairs(EventFuncs)do
+        self:RegisterEvent(Key)
+    end
+end
+
+function BaudBag_OnBankEvent(self, event, ...)
+    if EventFuncs[event] then
+        EventFuncs[event](self, event, ...)
+    end
+end
 
 --[[
     This method creates the buttons in the banks BagsFrame (frame that pops out and shows the available bags).
   ]]
 function BaudBagBankBags_Initialize()
     local BagSlot, Texture;
+    local bankSet = AddOnTable["Sets"][2]
     local BBContainer2 = _G[Prefix.."Container2_1BagsFrame"];
 
     -- create BagSlots for regular bags
     for Bag = 1, NUM_BANKBAGSLOTS do
-        -- the slot name before "BankBagX" has to be 10 chars long or else this will HARDCRASH
-        BagSlot = CreateFrame("Button", "BaudBBankBag"..Bag, BBContainer2, "BankItemButtonBagTemplate");
-        BagSlot:SetID(Bag);
-        BagSlot.Bag = Bag + 4;
-        BagSlot:SetPoint("TOPLEFT",		8 + mod(Bag - 1, 2) * 39, -8 - floor((Bag - 1) / 2) * 39);
-        BagSlot:HookScript("OnEnter",	BaudBag_BagSlot_OnEnter);
-        BagSlot:HookScript("OnUpdate",	BaudBag_BagSlot_OnUpdate);
-        BagSlot:HookScript("OnLeave",	BaudBag_BagSlot_OnLeave);
+        local buttonIndex = Bag
+        local subContainerId = Bag + 4
+        local bagButton = AddOnTable:CreateBagButton(bankSet.Type, buttonIndex, subContainerId, BBContainer2, "BankItemButtonBagTemplate")
+        bagButton.Frame:SetID(buttonIndex)
+        bagButton.Frame:SetPoint("TOPLEFT", 8 + mod(Bag - 1, 2) * 39, -8 - floor((Bag - 1) / 2) * 39)
+        bankSet.BagButtons[Bag] = bagButton
 
         -- get cache for the current bank bag
         -- if there is a bag create icon with correct texture etc
@@ -58,11 +146,12 @@ function BaudBagBankBags_Update()
     local Slots, Full = GetNumBankSlots();
     local ReagentsBought = IsReagentBankUnlocked();
     local BagSlot;
+    local bankSet = AddOnTable["Sets"][2]
 
     BaudBag_DebugMsg("Bank", "BankBags: updating");
     
     for Bag = 1, NUM_BANKBAGSLOTS do
-        BagSlot = _G["BaudBBankBag"..Bag];
+        BagSlot = bankSet.BagButtons[Bag].Frame
         
         if (Bag <= Slots) then
             SetItemButtonTextureVertexColor(BagSlot, 1.0, 1.0, 1.0);
@@ -113,7 +202,8 @@ function BaudBagBankBags_UpdateContent(bankVisible)
         BankFrameItemButton_Update(_G[BankItemButtonPrefix..Index])
     end
     for Index = 1, NUM_BANKBAGSLOTS do
-        BankFrameItemButton_Update(_G["BaudBBankBag"..Index])
+        local bankBagButton = AddOnTable["Sets"][2].BagButtons[Index].Frame
+        BankFrameItemButton_Update(bankBagButton)
     end
     for Index = 1, GetContainerNumSlots(REAGENTBANK_CONTAINER) do
         BankFrameItemButton_Update(_G[ReagentBankItemButtonPrefix..Index])

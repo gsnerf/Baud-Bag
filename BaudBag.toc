@@ -17,8 +17,10 @@ Localization.lua
 BaudBagFunctions.lua
 lib\BaseTypes.lua
 lib\BagSet.lua
-lib\Container.lua
+lib\ItemButton.lua
+lib\BagButton.lua
 lib\SubContainer.lua
+lib\Container.lua
 lib\TextureHelper.lua
 lib\Backgrounds\BlizzardBackground.lua
 lib\Backgrounds\SimpleBackground.lua
