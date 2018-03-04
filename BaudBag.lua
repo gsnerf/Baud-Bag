@@ -38,8 +38,10 @@ local function BackpackBagOverview_Initialize()
     BBContainer1:SetHeight(15 + 4 * 30)
 
     for Bag = 1, 4 do
-        local bagIndex = Bag - 1
-        backpackSet.BagButtons[bagIndex] = AddOnTable:CreateBagButton(backpackSet.Type, Bag, bagIndex, BBContainer1, "BagSlotButtonTemplate")
+        local buttonIndex = Bag - 1
+        local bagButton = AddOnTable:CreateBagButton(backpackSet.Type, buttonIndex, Bag, BBContainer1, "BagSlotButtonTemplate")
+        bagButton.Frame:SetPoint("TOPLEFT", 8, -8 - buttonIndex * 30)
+        backpackSet.BagButtons[buttonIndex] = bagButton
     end
 end
 
