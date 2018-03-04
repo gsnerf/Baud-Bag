@@ -95,7 +95,8 @@ local EventFuncs =
                 if (Slot <= NUM_BANKGENERIC_SLOTS) then
                     BankFrameItemButton_UpdateLocked(_G[Prefix.."SubBag-1Item"..Slot]);
                 else
-                    BankFrameItemButton_UpdateLocked(_G["BaudBBankBag"..(Slot-NUM_BANKGENERIC_SLOTS)]);
+                    local bankBagButton = AddOnTable["Sets"][2].BagButtons[Slot-NUM_BANKGENERIC_SLOTS].Frame
+                    BankFrameItemButton_UpdateLocked(bankBagButton)
                 end
             elseif (Bag == REAGENTBANK_CONTAINER) then
                 BankFrameItemButton_UpdateLocked(_G[Prefix.."SubBag-3Item"..Slot]);
@@ -179,7 +180,8 @@ Func = function(self, event, ...)
     if (event == "PLAYERBANKSLOTS_CHANGED") then
         -- bank bag slot
         if (arg1 > NUM_BANKGENERIC_SLOTS) then
-            BankFrameItemButton_Update(_G["BaudBBankBag"..(arg1-NUM_BANKGENERIC_SLOTS)]);
+            local bankBagButton = AddOnTable["Sets"][2].BagButtons[arg1-NUM_BANKGENERIC_SLOTS].Frame
+            BankFrameItemButton_Update(bankBagButton);
             return;
         end
 
@@ -274,8 +276,9 @@ function BaudBagBagsFrame_OnShow(self, event, ...)
             backpackSet.BagButtons[Bag].Frame:SetFrameLevel(Level)
         end
     else
+        local bagSet = AddOnTable["Sets"][2]
         for Bag = 1, NUM_BANKBAGSLOTS do
-            _G["BaudBBankBag"..Bag]:SetFrameLevel(Level);
+            bagSet.BagButtons[Bag].Frame:SetFrameLevel(Level);
         end
         _G["BBReagentsBag"]:SetFrameLevel(Level);
     end

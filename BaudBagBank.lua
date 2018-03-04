@@ -95,18 +95,17 @@ end
   ]]
 function BaudBagBankBags_Initialize()
     local BagSlot, Texture;
+    local bankSet = AddOnTable["Sets"][2]
     local BBContainer2 = _G[Prefix.."Container2_1BagsFrame"];
 
     -- create BagSlots for regular bags
     for Bag = 1, NUM_BANKBAGSLOTS do
-        -- the slot name before "BankBagX" has to be 10 chars long or else this will HARDCRASH
-        BagSlot = CreateFrame("Button", "BaudBBankBag"..Bag, BBContainer2, "BankItemButtonBagTemplate");
-        BagSlot:SetID(Bag);
-        BagSlot.Bag = Bag + 4;
-        BagSlot:SetPoint("TOPLEFT",		8 + mod(Bag - 1, 2) * 39, -8 - floor((Bag - 1) / 2) * 39);
-        BagSlot:HookScript("OnEnter",	BaudBag_BagSlot_OnEnter);
-        BagSlot:HookScript("OnUpdate",	BaudBag_BagSlot_OnUpdate);
-        BagSlot:HookScript("OnLeave",	BaudBag_BagSlot_OnLeave);
+        local buttonIndex = Bag
+        local subContainerId = Bag + 4
+        local bagButton = AddOnTable:CreateBagButton(bankSet.Type, buttonIndex, subContainerId, BBContainer2, "BankItemButtonBagTemplate")
+        bagButton.Frame:SetID(buttonIndex)
+        bagButton.Frame:SetPoint("TOPLEFT", 8 + mod(Bag - 1, 2) * 39, -8 - floor((Bag - 1) / 2) * 39)
+        bankSet.BagButtons[Bag] = bagButton
 
         -- get cache for the current bank bag
         -- if there is a bag create icon with correct texture etc
@@ -147,11 +146,12 @@ function BaudBagBankBags_Update()
     local Slots, Full = GetNumBankSlots();
     local ReagentsBought = IsReagentBankUnlocked();
     local BagSlot;
+    local bankSet = AddOnTable["Sets"][2]
 
     BaudBag_DebugMsg("Bank", "BankBags: updating");
     
     for Bag = 1, NUM_BANKBAGSLOTS do
-        BagSlot = _G["BaudBBankBag"..Bag];
+        BagSlot = bankSet.BagButtons[Bag].Frame
         
         if (Bag <= Slots) then
             SetItemButtonTextureVertexColor(BagSlot, 1.0, 1.0, 1.0);
@@ -202,7 +202,8 @@ function BaudBagBankBags_UpdateContent(bankVisible)
         BankFrameItemButton_Update(_G[BankItemButtonPrefix..Index])
     end
     for Index = 1, NUM_BANKBAGSLOTS do
-        BankFrameItemButton_Update(_G["BaudBBankBag"..Index])
+        local bankBagButton = AddOnTable["Sets"][2].BagButtons[Index].Frame
+        BankFrameItemButton_Update(bankBagButton)
     end
     for Index = 1, GetContainerNumSlots(REAGENTBANK_CONTAINER) do
         BankFrameItemButton_Update(_G[ReagentBankItemButtonPrefix..Index])

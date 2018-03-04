@@ -149,11 +149,11 @@ local function UpdateBackpackHighlight(subContainer)
 end
 
 local function UpdateBankBagHighlight(subContainer)
-    local highlight = _G["BaudBBankBag"..(subContainer.ContainerId-4).."HighlightFrameTexture"]
     local open = subContainer:IsOpen()
     local parent = subContainer.Frame:GetParent()
     local unlockInfo = parent.UnlockInfo
     local depositButton = parent.DepositButton
+    local highlight = nil
 
     unlockInfo:Hide()
 
@@ -168,9 +168,14 @@ local function UpdateBankBagHighlight(subContainer)
             unlockInfo:Hide()
             depositButton:Enable()
         end
+        return
     end
 
     if (subContainer.ContainerId ~= BANK_CONTAINER) then
+        if (highlight == nil) then
+            highlight = AddOnTable["Sets"][2].BagButtons[subContainer.ContainerId-4].Frame.HighlightFrame.HighlightTexture
+        end
+
         if open then
             highlight:Show()
         else
