@@ -44,8 +44,8 @@ function AddOnTable:CreateBagButton(bagSetType, bagId, bagIndex, parentFrame, bu
     bagButton.BagSetType = bagSetType
     bagButton.Bag = bagId
 
-    bagButton.Frame	= CreateFrame("CheckButton", namePrefix..(bagIndex - 1).."Slot", parentFrame, buttonTemplate)
-    bagButton.Frame:SetPoint("TOPLEFT", 8, -8 - (bagIndex - 1) * 30)
+    bagButton.Frame	= CreateFrame("CheckButton", namePrefix..bagIndex.."Slot", parentFrame, buttonTemplate)
+    bagButton.Frame:SetPoint("TOPLEFT", 8, -8 - bagIndex * 30)
     bagButton.Frame:SetFrameStrata("HIGH")
     bagButton.Frame:HookScript("OnEnter",   BagSlot_OnEnter)
     bagButton.Frame:HookScript("OnUpdate",  BagSlot_OnUpdate)

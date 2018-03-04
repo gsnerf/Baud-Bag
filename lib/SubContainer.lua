@@ -10,7 +10,8 @@ local Prototype = {
     FreeSlots = 0,
     HighlightSlots = false,
     Frame = nil,
-    Items = nil
+    Items = nil,
+    BagButton = nil
 }
 
 function Prototype:GetID()
@@ -143,7 +144,7 @@ local function UpdateBackpackHighlight(subContainer)
     else
         local bagId = subContainer.ContainerId -1
         _G["CharacterBag"..bagId.."Slot"]:SetChecked(open)
-        _G["BaudBInveBag"..bagId.."Slot"]:SetChecked(open)
+        AddOnTable["Sets"][1].BagButtons[bagId].Frame:SetChecked(open)
     end
 end
 

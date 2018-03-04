@@ -38,7 +38,8 @@ local function BackpackBagOverview_Initialize()
     BBContainer1:SetHeight(15 + 4 * 30)
 
     for Bag = 1, 4 do
-        backpackSet.BagButtons[Bag] = AddOnTable:CreateBagButton(backpackSet.Type, Bag, Bag, BBContainer1, "BagSlotButtonTemplate", "BaudBInveBag")
+        local bagIndex = Bag - 1
+        backpackSet.BagButtons[bagIndex] = AddOnTable:CreateBagButton(backpackSet.Type, Bag, bagIndex, BBContainer1, "BagSlotButtonTemplate", "BaudBInveBag")
     end
 end
 
@@ -266,8 +267,9 @@ function BaudBagBagsFrame_OnShow(self, event, ...)
     BaudBag_DebugMsg("Bank", "BaudBagBagsFrame is shown, correcting frame layer lvls of childs (frame, targetLevel)", self:GetName(), Level);
     -- Adjust frame level because of Blizzard's screw up
     if (isBags) then
+        local backpackSet = AddOnTable["Sets"][1]
         for Bag = 0, 3 do
-            _G["BaudBInveBag"..Bag.."Slot"]:SetFrameLevel(Level);
+            backpackSet.BagButtons[Bag].Frame:SetFrameLevel(Level)
         end
     else
         for Bag = 1, NUM_BANKBAGSLOTS do
