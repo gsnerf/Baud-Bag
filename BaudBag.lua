@@ -39,7 +39,7 @@ local function BackpackBagOverview_Initialize()
 
     for Bag = 1, 4 do
         local bagIndex = Bag - 1
-        backpackSet.BagButtons[bagIndex] = AddOnTable:CreateBagButton(backpackSet.Type, Bag, bagIndex, BBContainer1, "BagSlotButtonTemplate", "BaudBInveBag")
+        backpackSet.BagButtons[bagIndex] = AddOnTable:CreateBagButton(backpackSet.Type, Bag, bagIndex, BBContainer1, "BagSlotButtonTemplate")
     end
 end
 

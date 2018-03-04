@@ -38,13 +38,17 @@ local function BagSlot_OnLeave(self, event, ...)
 	
 end
 
-function AddOnTable:CreateBagButton(bagSetType, bagId, bagIndex, parentFrame, buttonTemplate, namePrefix)
+function AddOnTable:CreateBagButton(bagSetType, bagId, bagIndex, parentFrame, buttonTemplate)
+    -- Attention:
+    -- "PaperDollFrame" calls GetInventorySlotInfo on the button created here
+    -- For this to work the name bas to be "BagXSlot" with 9 random chars before that
+    -- TODO: check if this is actually needed or if we can somehow break the connection to that!
+    local name = "BBBagSet"..bagSetType.Id.."Bag"..bagIndex.."Slot"
+    
     local bagButton = _G.setmetatable({}, Metatable)
-
     bagButton.BagSetType = bagSetType
     bagButton.Bag = bagId
-
-    bagButton.Frame	= CreateFrame("CheckButton", namePrefix..bagIndex.."Slot", parentFrame, buttonTemplate)
+    bagButton.Frame	= CreateFrame("CheckButton", name, parentFrame, buttonTemplate)
     bagButton.Frame:SetPoint("TOPLEFT", 8, -8 - bagIndex * 30)
     bagButton.Frame:SetFrameStrata("HIGH")
     bagButton.Frame:HookScript("OnEnter",   BagSlot_OnEnter)
