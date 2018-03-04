@@ -1,15 +1,7 @@
 local AddOnName, AddOnTable = ...
 local Masque
 
-if IsAddOnLoaded("Masque") then
-    Masque = LibStub("Masque", true)
-end
-
-local function ItemSlotCreated(self, bagSet, containerId, subContainerId, slotId, button)
-    if not IsAddOnLoaded("Masque") or button == nil then
-        return
-    end
-
+local function ItemSlotCreated(self, bagSetType, containerId, subContainerId, slotId, button)
     local buttonData = {
         -- FloatingBG = {...},
         Icon = button.icon,
@@ -28,17 +20,41 @@ local function ItemSlotCreated(self, bagSet, containerId, subContainerId, slotId
         -- Duration = {...},
         -- Shine = {...},
     }
-    local group = Masque:Group('BaudBag', bagSet.Name.." Container "..containerId)
+    local group = Masque:Group('BaudBag', bagSetType.Name.." Container "..containerId)
     group:AddButton(button, buttonData)
 end
 
-local function ContainerUpdated(self, bagSet, containerId)
-    if not IsAddOnLoaded("Masque") then
-        return
-    end
+local function BagSlotCreated(self, bagSetType, bagId, button)
+    local buttonData = {
+        -- FloatingBG = {...},
+        Icon = button.icon,
+        Cooldown = button.Cooldown,
+        -- Flash = button.flash,
+        Pushed = button:GetPushedTexture(),
+        Normal = button:GetNormalTexture(),
+        -- Disabled = {...},
+        -- Checked = {...},
+        Border = button.IconBorder,
+        -- AutoCastable = {...},
+        Highlight = button:GetHighlightTexture(),
+        -- HotKey = {...},
+        Count = button.Count,
+        -- Name = {...},
+        -- Duration = {...},
+        -- Shine = {...},
+    }
 
-    Masque:Group('BaudBag', bagSet.Name.." Container "..containerId):ReSkin()
+    local group = Masque:Group('BaudBag', bagSetType.Name.." Bag Buttons")
+    group:AddButton(button, buttonData)
 end
 
-hooksecurefunc(BaudBag, "ItemSlot_Created", ItemSlotCreated)
-hooksecurefunc(BaudBag, "Container_Updated", ContainerUpdated)
+local function ContainerUpdated(self, bagSetType, containerId)
+    Masque:Group('BaudBag', bagSetType.Name.." Container "..containerId):ReSkin()
+end
+
+if IsAddOnLoaded("Masque") then
+    Masque = LibStub("Masque", true)
+    hooksecurefunc(BaudBag, "ItemSlot_Created", ItemSlotCreated)
+    hooksecurefunc(BaudBag, "BagSlot_Created", BagSlotCreated)
+    hooksecurefunc(BaudBag, "Container_Updated", ContainerUpdated)
+end
