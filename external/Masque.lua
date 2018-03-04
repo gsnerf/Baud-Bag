@@ -25,6 +25,10 @@ local function ItemSlotCreated(self, bagSetType, containerId, subContainerId, sl
 end
 
 local function BagSlotCreated(self, bagSetType, bagId, button)
+    local highlightTexture = button:GetHighlightTexture()
+    if (button.HighlightFrame ~= nil) then
+        highlightTexture = button.HighlightFrame.HighlightTexture
+    end
     local buttonData = {
         -- FloatingBG = {...},
         Icon = button.icon,
@@ -36,7 +40,7 @@ local function BagSlotCreated(self, bagSetType, bagId, button)
         -- Checked = {...},
         Border = button.IconBorder,
         -- AutoCastable = {...},
-        Highlight = button:GetHighlightTexture(),
+        Highlight = highlightTexture,
         -- HotKey = {...},
         Count = button.Count,
         -- Name = {...},
