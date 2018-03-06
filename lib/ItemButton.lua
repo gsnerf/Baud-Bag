@@ -10,12 +10,19 @@ local Prototype = {
 }
 
 function Prototype:UpdateContent(useCache, slotCache)
-    local name, count, link, quality, texture, isNewItem, isBattlePayItem
+    local texture, count, locked, quality, isReadable, link, isFiltered, hasNoValue, itemID
+    local name, isNewItem, isBattlePayItem
     local cacheEntry = nil
+    
+    -- initialize with default values before possibly overriding later
+    locked = false
+    quality = LE_ITEM_QUALITY_POOR
+    isNewItemm = false
+    isBattlePayItem = false
+    isReadable = false
 
     if not useCache then
-        -- the two params after link are: isFiltered (grayed out by search), hasNoValue (can't be selled)
-        _, count, _, quality, _, _, link, _, _, _ = GetContainerItemInfo(self.Parent.ContainerId, self.SlotIndex)
+        texture, count, locked, quality, isReadable, _, link, isFiltered, hasNoValue, itemID = GetContainerItemInfo(self.Parent.ContainerId, self.SlotIndex)
         
         if link then
             cacheEntry = { Link = link, Count = count }
@@ -26,6 +33,7 @@ function Prototype:UpdateContent(useCache, slotCache)
     elseif slotCache then
         self.Frame.hasItem = nil
         link = slotCache.Link
+        count = slotCache.Count or 0
 
         if link then
             -- regular items ... 
@@ -42,17 +50,24 @@ function Prototype:UpdateContent(useCache, slotCache)
             self.Frame.hasItem = 1
             isNewItem = C_NewItems.IsNewItem(self.Parent.ContainerId, self.SlotIndex)
             isBattlePayItem = IsBattlePayItem(self.Parent.ContainerId, self.SlotIndex)
+
+            -- how to find out if an item is filtered by search here or not?
         end
 
-        SetItemButtonTexture(self.Frame, texture)
-        --SetItemButtonQuality(self.Frame, quality, itemID);
-        SetItemButtonCount(self.Frame, slotCache.Count or 0)
-		--SetItemButtonDesaturated(self.Frame, locked);
+
     end
-
+    
+    SetItemButtonTexture(self.Frame, texture)
+    --SetItemButtonQuality(self.Frame, quality, itemID);
+    SetItemButtonCount(self.Frame, count)
+    SetItemButtonDesaturated(self.Frame, locked);
+    
     self.Quality = quality
-
-    self:UpdateBattlepayOverlay(isBattlePayItem)
+    self:UpdateNewAndBattlepayoverlays(isNewItem, isBattlePayItem)
+    self.Frame.readable = isReadable
+    if (self.Frame.JunkIcon) then
+        self.Frame.JunkIcon:SetShown(quality == LE_ITEM_QUALITY_POOR and not hasNoValue and MerchantFrame:IsShown())
+    end
 
     return link, cacheEntry
 end
@@ -72,24 +87,22 @@ end
 --[[ Updates the rarity for this on basis of the current items quality ]]
 function Prototype:UpdateCustomRarity(showColor)
     local quality = self.Quality
-    local texture = _G[self.Name.."Border"]
 
     if quality and (quality > 1) and showColor then
-        -- default with set option
-        -- texture:SetVertexColor(GetItemQualityColor(Quality))
-        -- alternative rarity coloring
-        if (quality ~=2) and (quality ~= 3) and (quality ~= 4) then
-            texture:SetVertexColor(GetItemQualityColor(quality))
-        elseif (quality == 2) then        --uncommon
-            texture:SetVertexColor(0.1,   1,   0, 0.5)
-        elseif (quality == 3) then        --rare
-            texture:SetVertexColor(  0, 0.4, 0.8, 0.8)
-        elseif (quality == 4) then        --epic
-            texture:SetVertexColor(0.6, 0.2, 0.9, 0.5)
+        -- use alternative rarity coloring
+        if (quality == LE_ITEM_QUALITY_UNCOMMON) then
+            self.Frame.IconBorder:SetVertexColor(0.1,   1,   0, 0.5)
+        elseif (quality == LE_ITEM_QUALITY_RARE) then
+            self.Frame.IconBorder:SetVertexColor(  0, 0.4, 0.8, 0.8)
+        elseif (quality == LE_ITEM_QUALITY_EPIC) then
+            self.Frame.IconBorder:SetVertexColor(0.6, 0.2, 0.9, 0.5)
+        else
+            -- we have no alternative colors for this rarity, just use the default ones
+            self.Frame.IconBorder:SetVertexColor(GetItemQualityColor(quality))
         end
-        texture:Show();
+        self.Frame.IconBorder:Show()
     else
-        texture:Hide();
+        self.Frame.IconBorder:Hide()
     end
 end
 
@@ -110,21 +123,63 @@ function Prototype:UpdateQuestOverlay(containerId)
     end
 end
 
-function Prototype:UpdateBattlepayOverlay(isBattlePayItem)
-    local battlePayTexture = self.Frame.BattlepayItemTexture
-    if (battlePayTexture) then
+function Prototype:UpdateNewAndBattlepayoverlays(isNewItem, isBattlePayItem)
+    local battlepayItemTexture = self.Frame.BattlepayItemTexture
+    local newItemTexture = self.Frame.NewItemTexture
+    local flash = self.Frame.flashAnim
+    local newItemAnim = self.Frame.newitemglowAnim
+
+    if (not newItemTexture or not battlepayItemTexture) then
+        return
+    end
+
+    if (BBConfig.ShowNewItems and isNewItem) then
+        
         if (isBattlePayItem) then
-            battlePayTexture:Show()
+            newItemTexture:Hide()
+            battlepayItemTexture:Show()
         else
-            battlePayTexture:Hide()
+            if (quality and NEW_ITEM_ATLAS_BY_QUALITY[quality]) then
+                newItemTexture:SetAtlas(NEW_ITEM_ATLAS_BY_QUALITY[quality])
+            else
+                newItemTexture:SetAtlas("bags-glow-white")
+            end
+            battlepayItemTexture:Hide()
+            newItemTexture:Show()
+        end
+        if (not flash:IsPlaying() and not newItemAnim:IsPlaying()) then
+            flash:Play()
+            newItemAnim:Play()
+        end
+    else
+        battlepayItemTexture:Hide()
+        newItemTexture:Hide()
+        if (flash:IsPlaying() or newItemAnim:IsPlaying()) then
+            flash:Stop()
+            newItemAnim:Stop()
         end
     end
 end
 
-function Prototype:ShowHighlight()
+function Prototype:UpdateTooltip(subContainerId)
+    if ( self.Frame == GameTooltip:GetOwner() ) then
+        if (GetContainerItemInfo(subContainerId, self.Frame:GetID())) then
+            self.Frame.UpdateTooltip(self.Frame)
+        else
+            GameTooltip:Hide()
+        end
+    end
+end
+
+function Prototype:ShowHighlight(enabled)
     local texture = _G[self.Name.."Border"]
     texture:SetVertexColor(0.5, 0.5, 0, 1)
-    texture:Show()
+    if (enabled) then
+        texture:Show()
+    else
+        texture:Hide()
+    end
+    --self.Frame.NewItemTexture:Show()
 end
 
 local Metatable = { __index = Prototype }
@@ -137,9 +192,11 @@ function AddOnTable:CreateItemButton(subContainer, slotIndex, buttonTemplate)
     itemButton.Parent = subContainer
     itemButton.Frame = CreateFrame("Button", itemButton.Name, subContainer.Frame, buttonTemplate)
     itemButton.Frame:SetID(slotIndex)
+    itemButton.Frame.IconBorder:SetTexture([[Interface\Buttons\UI-ActionButton-Border]])
+
 
     local texture = itemButton.Frame:CreateTexture(itemButton.Name.."Border", "OVERLAY")
-    texture:SetTexture("Interface\\Buttons\\UI-ActionButton-Border")
+    texture:SetTexture([[Interface\Buttons\UI-ActionButton-Border]])
     texture:SetPoint("CENTER")
     texture:SetBlendMode("ADD")
     texture:SetAlpha(0.8)

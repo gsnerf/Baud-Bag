@@ -182,11 +182,6 @@ function Prototype:UpdateSubContainers(col, row)
 
             container:CreateMissingSlots()
 			
-            -- update container contents (special bank containers don't need this, regular bank only when open)
-            if (not BaudBag_IsBankDefaultContainer(container.ContainerId)) and (BaudBagFrame.BankOpen or (container.ContainerId < 5)) then
-                ContainerFrame_Update(container.Frame)
-            end
-
             -- position item slots
             container:UpdateSlotContents()
             col, row = container:UpdateSlotPositions(self.Frame, background, col, row, maxCols, slotLevel)

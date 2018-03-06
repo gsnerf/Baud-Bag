@@ -37,7 +37,7 @@ local function BagSlotCreated(self, bagSetType, bagId, button)
         Pushed = button:GetPushedTexture(),
         Normal = button:GetNormalTexture(),
         -- Disabled = {...},
-        -- Checked = {...},
+        Checked = button:GetCheckedTexture(),
         Border = button.IconBorder,
         -- AutoCastable = {...},
         Highlight = highlightTexture,
