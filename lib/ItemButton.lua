@@ -89,15 +89,16 @@ function Prototype:UpdateCustomRarity(showColor)
     local quality = self.Quality
 
     if quality and (quality > 1) and showColor then
-        -- alternative rarity coloring
-        if (quality ~=2) and (quality ~= 3) and (quality ~= 4) then
-            self.Frame.IconBorder:SetVertexColor(GetItemQualityColor(quality))
-        elseif (quality == 2) then        --uncommon
+        -- use alternative rarity coloring
+        if (quality == LE_ITEM_QUALITY_UNCOMMON) then
             self.Frame.IconBorder:SetVertexColor(0.1,   1,   0, 0.5)
-        elseif (quality == 3) then        --rare
+        elseif (quality == LE_ITEM_QUALITY_RARE) then
             self.Frame.IconBorder:SetVertexColor(  0, 0.4, 0.8, 0.8)
-        elseif (quality == 4) then        --epic
+        elseif (quality == LE_ITEM_QUALITY_EPIC) then
             self.Frame.IconBorder:SetVertexColor(0.6, 0.2, 0.9, 0.5)
+        else
+            -- we have no alternative colors for this rarity, just use the default ones
+            self.Frame.IconBorder:SetVertexColor(GetItemQualityColor(quality))
         end
         self.Frame.IconBorder:Show()
     else
