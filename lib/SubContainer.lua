@@ -74,6 +74,8 @@ function Prototype:UpdateSlotContents()
     for slot = 1, self.Size do
         local itemObject = self.Items[slot]
         local link, newCacheEntry = itemObject:UpdateContent(useCache, bagCache[slot])
+        itemObject:UpdateCustomRarity(showColor)
+        itemObject:ShowHighlight(self.HighlightSlots)
 
         if (isBankBag and not useCache) then
             bagCache[slot] = newCacheEntry
@@ -81,14 +83,6 @@ function Prototype:UpdateSlotContents()
 
         if not link then
             self.FreeSlots = self.FreeSlots + 1
-        end
-
-        -- add rarity coloring
-        itemObject:UpdateCustomRarity(showColor)
-
-        -- highlight the slots to show the connection to the bag
-        if (self.HighlightSlots) then
-            itemObject:ShowHighlight()
         end
 
         AddOnTable:ItemSlot_Updated(self.BagSet, self.Frame:GetParent():GetID(), self.ContainerId, slot, itemObject.Frame)
@@ -130,6 +124,7 @@ function Prototype:UpdateItemOverlays()
             local itemSlotObject = self.Items[Slot]
             ContainerFrame_UpdateCooldown(self.ContainerId, itemSlotObject.Frame)
             itemSlotObject:UpdateQuestOverlay(self.ContainerId)
+            itemSlotObject:UpdateTooltip(self.ContainerId)
         end
     end
 end
