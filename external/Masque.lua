@@ -24,6 +24,10 @@ local function ItemSlotCreated(self, bagSetType, containerId, subContainerId, sl
     group:AddButton(button, buttonData)
 end
 
+local function ContainerUpdated(self, bagSetType, containerId)
+    Masque:Group('BaudBag', bagSetType.Name.." Container "..containerId):ReSkin()
+end
+
 local function BagSlotCreated(self, bagSetType, bagId, button)
     local highlightTexture = button:GetHighlightTexture()
     if (button.HighlightFrame ~= nil) then
@@ -52,13 +56,14 @@ local function BagSlotCreated(self, bagSetType, bagId, button)
     group:AddButton(button, buttonData)
 end
 
-local function ContainerUpdated(self, bagSetType, containerId)
-    Masque:Group('BaudBag', bagSetType.Name.." Container "..containerId):ReSkin()
+local function BagSlotUpdated(self, bagSetType, bagId, button)
+    Masque:Group('BaudBag', bagSetType.Name.." Bag Buttons"):ReSkin()
 end
 
 if IsAddOnLoaded("Masque") then
     Masque = LibStub("Masque", true)
     hooksecurefunc(BaudBag, "ItemSlot_Created", ItemSlotCreated)
     hooksecurefunc(BaudBag, "BagSlot_Created", BagSlotCreated)
+    hooksecurefunc(BaudBag, "BagSlot_Updated", BagSlotUpdated)
     hooksecurefunc(BaudBag, "Container_Updated", ContainerUpdated)
 end

@@ -24,6 +24,7 @@ local function BagSlot_OnUpdate(self, event, ...)
         self.HighlightBagOn	= true
         AddOnTable["SubBags"][self.Bag]:SetSlotHighlighting(true)
     end
+    AddOnTable:BagSlot_Updated(self.BagSetType, self.SubContainerId, self.Frame)
 end
 
 --[[ if the mouse was removed cancel all actions ]]
@@ -55,8 +56,9 @@ function AddOnTable:CreateBagButton(bagSetType, bagIndex, subContainerId, parent
     bagButton.Frame:HookScript("OnLeave",   BagSlot_OnLeave)
     bagButton.Frame.HighlightBag = false
     bagButton.Frame.Bag = subContainerId
+    bagButton.Frame.BagSetType = bagSetType
 
-    AddOnTable:BagSlot_Created(bagSetType, bag, bagButton.Frame)
+    AddOnTable:BagSlot_Created(bagSetType, subContainerId, bagButton.Frame)
 
     return bagButton
 end
