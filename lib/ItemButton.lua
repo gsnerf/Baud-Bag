@@ -192,7 +192,7 @@ function AddOnTable:CreateItemButton(subContainer, slotIndex, buttonTemplate)
     itemButton.Parent = subContainer
     itemButton.Frame = CreateFrame("Button", itemButton.Name, subContainer.Frame, buttonTemplate)
     itemButton.Frame:SetID(slotIndex)
-    itemButton.Frame.IconBorder:SetTexture([[Interface\Buttons\UI-ActionButton-Border]])
+    itemButton.Frame.IconBorder:SetTexture([[Interface\Common\WhiteIconFrame]])
 
 
     local texture = itemButton.Frame:CreateTexture(itemButton.Name.."Border", "OVERLAY")
