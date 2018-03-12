@@ -110,14 +110,24 @@ function Prototype:UpdateQuestOverlay(containerId)
     local questTexture = _G[self.Name.."IconQuestTexture"]
 
     if (questTexture) then
+        local width, height = self.Frame.icon:GetSize()
+        local newWidth = width * 3/4
+        local newHeight = height * 3/4
+        questTexture:SetSize(newWidth, newHeight)
+        questTexture:ClearAllPoints()
+        questTexture:SetPoint("CENTER", self.Frame.icon, "CENTER", -newWidth/3, 0)
+        
         local isQuestItem, questId, isActive = GetContainerItemQuestInfo(containerId, self.SlotIndex)
-        if ( questId and not isActive ) then
-            questTexture:SetTexture(TEXTURE_ITEM_QUEST_BANG)
-            questTexture:Show()
-        elseif ( questId or isQuestItem ) then
-            questTexture:SetTexture(TEXTURE_ITEM_QUEST_BORDER)
-            questTexture:Show()
-        else
+
+        if ( questId ) then
+            self.Frame.IconBorder:SetVertexColor(1, 0.9, 0.4, 0.9)
+            self.Frame.IconBorder:Show()
+            if (not isActive) then
+                questTexture:Show()
+            end
+        end
+
+        if ( not questId or isActive ) then
             questTexture:Hide()
         end
     end
@@ -195,6 +205,11 @@ function AddOnTable:CreateItemButton(subContainer, slotIndex, buttonTemplate)
     itemButton.Frame.IconBorder:SetTexture([[Interface\Buttons\UI-ActionButton-Border]])
     itemButton.Frame.IconBorder:SetSize(70, 70)
     itemButton.Frame.IconBorder:SetBlendMode("ADD")
+    
+    local questTexture = _G[itemButton.Name.."IconQuestTexture"]
+    if (questTexture) then
+        questTexture:SetAtlas("QuestNormal", false)
+    end
     
     local texture = itemButton.Frame:CreateTexture(itemButton.Name.."Border", "OVERLAY")
     texture:SetTexture([[Interface\Buttons\UI-ActionButton-Border]])
