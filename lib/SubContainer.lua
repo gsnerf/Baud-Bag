@@ -87,6 +87,8 @@ function Prototype:UpdateSlotContents()
 
         AddOnTable:ItemSlot_Updated(self.BagSet, self.Frame:GetParent():GetID(), self.ContainerId, slot, itemObject.Frame)
     end
+
+    self:UpdateItemOverlays()
 end
 
 -- returns the adapted col and row values

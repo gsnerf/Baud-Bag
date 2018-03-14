@@ -198,16 +198,13 @@ function BaudBagBankBags_UpdateContent(bankVisible)
     local BankItemButtonPrefix        = Prefix.."SubBag"..BANK_CONTAINER.."Item"
     local ReagentBankItemButtonPrefix = Prefix.."SubBag"..REAGENTBANK_CONTAINER.."Item"
 
-    for Index = 1, NUM_BANKGENERIC_SLOTS do
-        BankFrameItemButton_Update(_G[BankItemButtonPrefix..Index])
-    end
+    AddOnTable.SubBags[BANK_CONTAINER]:UpdateSlotContents()
     for Index = 1, NUM_BANKBAGSLOTS do
         local bankBagButton = AddOnTable["Sets"][2].BagButtons[Index].Frame
         BankFrameItemButton_Update(bankBagButton)
     end
-    for Index = 1, GetContainerNumSlots(REAGENTBANK_CONTAINER) do
-        BankFrameItemButton_Update(_G[ReagentBankItemButtonPrefix..Index])
-    end
+    AddOnTable.SubBags[REAGENTBANK_CONTAINER]:UpdateSlotContents()
+    
     BaudBagBankBags_Update()
     BaudBag_DebugMsg("Bank", "Recording bank bag info.")
     for Bag = 1, NUM_BANKBAGSLOTS do
