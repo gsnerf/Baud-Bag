@@ -88,7 +88,7 @@ function BaudBagBankBags_Initialize()
     -- create BagSlots for regular bags
     for Bag = 1, NUM_BANKBAGSLOTS do
         local buttonIndex = Bag
-        local subContainerId = Bag + 4
+        local subContainerId = Bag + ITEM_INVENTORY_BANK_BAG_OFFSET
         local bagButton = AddOnTable:CreateBagButton(bankSet.Type, buttonIndex, subContainerId, BBContainer2, "BankItemButtonBagTemplate")
         bagButton.Frame:SetID(buttonIndex)
         bagButton.Frame:SetPoint("TOPLEFT", 8 + mod(Bag - 1, 2) * 39, -8 - floor((Bag - 1) / 2) * 39)
@@ -96,14 +96,14 @@ function BaudBagBankBags_Initialize()
 
         -- get cache for the current bank bag
         -- if there is a bag create icon with correct texture etc
-        local bagCache = BaudBagGetBagCache(Bag + 4);
+        local bagCache = BaudBagGetBagCache(subContainerId)
         if (bagCache.BagLink) then
             Texture = GetItemIcon(bagCache.BagLink);
-            SetItemButtonCount(BagSlot, bagCache.BagCount or 0);
+            SetItemButtonCount(bagButton.Frame, bagCache.BagCount or 0);
         else
-            Texture = select(2, GetInventorySlotInfo("Bag"..Bag));
+            Texture = select(2, GetInventorySlotInfo("Bag"..buttonIndex));
         end
-        SetItemButtonTexture(BagSlot, Texture);
+        SetItemButtonTexture(bagButton.Frame, Texture);
     end
 
     -- create BagSlot for reagent bank!
@@ -195,8 +195,10 @@ function BaudBagBankBags_UpdateContent(bankVisible)
     BaudBagBankBags_Update()
     BaudBag_DebugMsg("Bank", "Recording bank bag info.")
     for Bag = 1, NUM_BANKBAGSLOTS do
-        BaudBagGetBagCache(Bag + 4).BagLink  = GetInventoryItemLink("player", 67 + Bag)
-        BaudBagGetBagCache(Bag + 4).BagCount = GetInventoryItemCount("player", 67 + Bag)
+        local bagCache = BaudBagGetBagCache(Bag + ITEM_INVENTORY_BANK_BAG_OFFSET)
+        local inventoryId = BankButtonIDToInvSlotID(Bag, 1)
+        bagCache.BagLink  = GetInventoryItemLink("player", inventoryId)
+        bagCache.BagCount = GetInventoryItemCount("player", inventoryId)
     end
 
     if not bankVisible then
