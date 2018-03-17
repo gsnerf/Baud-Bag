@@ -50,24 +50,11 @@ Func = function(self, event, ...)
     local Button = _G["BaudBagSubBag-3Item"..(slot)];
     BankFrameItemButton_Update(Button);
 
-    ---- now update custom rarity colloring
     local bagCache = BaudBagGetBagCache(REAGENTBANK_CONTAINER);
-    local Link = GetContainerItemLink(REAGENTBANK_CONTAINER, slot);
-    local Quality = nil;
-
-    -- even though we are in "online" there might be no item on this slot!
-    if Link then
-        _, _, Quality, _, _, _, _, _, _, _ = GetItemInfo(Link);
-        --isNewItem       = C_NewItems.IsNewItem(REAGENTBANK_CONTAINER, slot);
-        --isBattlePayItem = IsBattlePayItem(REAGENTBANK_CONTAINER, slot);
-        bagCache[slot]  = {Link = Link, Count = select(2, GetContainerItemInfo(REAGENTBANK_CONTAINER, slot))};
-    else
-        bagCache[slot] = nil;
-    end
-    
     local subBagObject = AddOnTable["SubBags"][-3]
     local rarityColor = BBConfig[2][subBagObject.Frame:GetParent():GetID()].RarityColor
-    subBagObject.Items[slot]:UpdateContent(false)
+
+    bagCache[slot] = subBagObject.Items[slot]:UpdateContent(false)
     subBagObject.Items[slot]:UpdateCustomRarity(rarityColor)
 end
 EventFuncs.PLAYERREAGENTBANKSLOTS_CHANGED = Func;
