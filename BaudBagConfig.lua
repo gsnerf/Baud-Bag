@@ -95,6 +95,8 @@ function BaudBagRestoreCfg()
             end
         end);
     end
+    AddOnTable.Config = BBConfig
+    AddOnTable:Configuration_Loaded()
 end
 
 function ConvertOldConfig()
@@ -128,6 +130,7 @@ function BaudBagSaveCfg()
     BaudBag_DebugMsg("Config", "Saving configuration");
     BaudBag_Cfg = BaudBagCopyTable(BBConfig);
     ReloadConfigDependant();
+    AddOnTable:Configuration_Updated()
 end
 
 function ReloadConfigDependant()
@@ -135,4 +138,16 @@ function ReloadConfigDependant()
     BaudUpdateJoinedBags();
     BaudBagUpdateBagFrames();
     BaudBagOptionsUpdate();
+end
+
+--[[--------------------------------------------------------------------------------
+------------------------ config specific hooks for binding -------------------------
+----------------------------------------------------------------------------------]]
+
+function AddOnTable:Configuration_Loaded()
+    -- just an empty hook for other addons or extensions
+end
+
+function AddOnTable:Configuration_Updated()
+    -- just an empty hook for other addons or extensions
 end
