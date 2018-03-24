@@ -7,6 +7,10 @@ local Prototype = {
     Frame = nil
 }
 
+function Prototype:ApplyBaseSkin()
+
+end
+
 local Metatable = { __index = Prototype }
 
 --[[ if the mouse hovers over the bag slot item the slots belonging to this bag should be shown after a certain time (atm 350ms or 0.35s) ]]
