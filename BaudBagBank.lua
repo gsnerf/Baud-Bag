@@ -50,24 +50,11 @@ Func = function(self, event, ...)
     local Button = _G["BaudBagSubBag-3Item"..(slot)];
     BankFrameItemButton_Update(Button);
 
-    ---- now update custom rarity colloring
     local bagCache = BaudBagGetBagCache(REAGENTBANK_CONTAINER);
-    local Link = GetContainerItemLink(REAGENTBANK_CONTAINER, slot);
-    local Quality = nil;
-
-    -- even though we are in "online" there might be no item on this slot!
-    if Link then
-        _, _, Quality, _, _, _, _, _, _, _ = GetItemInfo(Link);
-        --isNewItem       = C_NewItems.IsNewItem(REAGENTBANK_CONTAINER, slot);
-        --isBattlePayItem = IsBattlePayItem(REAGENTBANK_CONTAINER, slot);
-        bagCache[slot]  = {Link = Link, Count = select(2, GetContainerItemInfo(REAGENTBANK_CONTAINER, slot))};
-    else
-        bagCache[slot] = nil;
-    end
-    
     local subBagObject = AddOnTable["SubBags"][-3]
     local rarityColor = BBConfig[2][subBagObject.Frame:GetParent():GetID()].RarityColor
-    subBagObject.Items[slot]:UpdateContent(false)
+
+    bagCache[slot] = subBagObject.Items[slot]:UpdateContent(false)
     subBagObject.Items[slot]:UpdateCustomRarity(rarityColor)
 end
 EventFuncs.PLAYERREAGENTBANKSLOTS_CHANGED = Func;
@@ -101,7 +88,7 @@ function BaudBagBankBags_Initialize()
     -- create BagSlots for regular bags
     for Bag = 1, NUM_BANKBAGSLOTS do
         local buttonIndex = Bag
-        local subContainerId = Bag + 4
+        local subContainerId = Bag + ITEM_INVENTORY_BANK_BAG_OFFSET
         local bagButton = AddOnTable:CreateBagButton(bankSet.Type, buttonIndex, subContainerId, BBContainer2, "BankItemButtonBagTemplate")
         bagButton.Frame:SetID(buttonIndex)
         bagButton.Frame:SetPoint("TOPLEFT", 8 + mod(Bag - 1, 2) * 39, -8 - floor((Bag - 1) / 2) * 39)
@@ -109,14 +96,14 @@ function BaudBagBankBags_Initialize()
 
         -- get cache for the current bank bag
         -- if there is a bag create icon with correct texture etc
-        local bagCache = BaudBagGetBagCache(Bag + 4);
+        local bagCache = BaudBagGetBagCache(subContainerId)
         if (bagCache.BagLink) then
             Texture = GetItemIcon(bagCache.BagLink);
-            SetItemButtonCount(BagSlot, bagCache.BagCount or 0);
+            SetItemButtonCount(bagButton.Frame, bagCache.BagCount or 0);
         else
-            Texture = select(2, GetInventorySlotInfo("Bag"..Bag));
+            Texture = select(2, GetInventorySlotInfo("Bag"..buttonIndex));
         end
-        SetItemButtonTexture(BagSlot, Texture);
+        SetItemButtonTexture(bagButton.Frame, Texture);
     end
 
     -- create BagSlot for reagent bank!
@@ -208,8 +195,10 @@ function BaudBagBankBags_UpdateContent(bankVisible)
     BaudBagBankBags_Update()
     BaudBag_DebugMsg("Bank", "Recording bank bag info.")
     for Bag = 1, NUM_BANKBAGSLOTS do
-        BaudBagGetBagCache(Bag + 4).BagLink  = GetInventoryItemLink("player", 67 + Bag)
-        BaudBagGetBagCache(Bag + 4).BagCount = GetInventoryItemCount("player", 67 + Bag)
+        local bagCache = BaudBagGetBagCache(Bag + ITEM_INVENTORY_BANK_BAG_OFFSET)
+        local inventoryId = BankButtonIDToInvSlotID(Bag, 1)
+        bagCache.BagLink  = GetInventoryItemLink("player", inventoryId)
+        bagCache.BagCount = GetInventoryItemCount("player", inventoryId)
     end
 
     if not bankVisible then

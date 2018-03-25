@@ -119,10 +119,8 @@ end
 --[[ This only does something when the container is open (so the items are actually visible) ]]
 function Prototype:UpdateItemOverlays()
     if self:IsOpen() then
-        BaudBag_DebugMsg("Bags", "Updating Items of Bag (ContainerId)", self.ContainerId)
-        local itemButton, questTexture
-        local frame = self.Frame
-        for Slot = 1, GetContainerNumSlots(self.ContainerId) do
+        BaudBag_DebugMsg("Bags", "Updating Items of Bag (ContainerId, container name)", self.ContainerId, self.Name)
+        for Slot = 1, self.Size do
             local itemSlotObject = self.Items[Slot]
             ContainerFrame_UpdateCooldown(self.ContainerId, itemSlotObject.Frame)
             itemSlotObject:UpdateQuestOverlay(self.ContainerId)

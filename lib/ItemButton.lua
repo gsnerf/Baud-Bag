@@ -6,7 +6,9 @@ local Prototype = {
     SlotIndex = nil,
     Quality = nil,
     Parent = nil,
-    Frame = nil
+    Frame = nil,
+    BorderFrame = nil,
+    QuestOverlay = nil
 }
 
 function Prototype:UpdateContent(useCache, slotCache)
@@ -192,6 +194,22 @@ function Prototype:ShowHighlight(enabled)
     --self.Frame.NewItemTexture:Show()
 end
 
+function Prototype:ApplyBaseSkin()
+    self.Frame.IconBorder:SetTexture([[Interface\Buttons\UI-ActionButton-Border]])
+    self.Frame.IconBorder:SetSize(70, 70)
+    self.Frame.IconBorder:SetBlendMode("ADD")
+
+    self.BorderFrame:SetTexture([[Interface\Buttons\UI-ActionButton-Border]])
+    self.BorderFrame:SetPoint("CENTER")
+    self.BorderFrame:SetBlendMode("ADD")
+    self.BorderFrame:SetAlpha(0.8)
+    self.BorderFrame:SetSize(70, 70)
+
+    if (self.QuestOverlay) then
+        self.QuestOverlay:SetAtlas("QuestNormal", false)
+    end
+end
+
 local Metatable = { __index = Prototype }
 
 function AddOnTable:CreateItemButton(subContainer, slotIndex, buttonTemplate)
@@ -202,22 +220,13 @@ function AddOnTable:CreateItemButton(subContainer, slotIndex, buttonTemplate)
     itemButton.Parent = subContainer
     itemButton.Frame = CreateFrame("Button", itemButton.Name, subContainer.Frame, buttonTemplate)
     itemButton.Frame:SetID(slotIndex)
-    itemButton.Frame.IconBorder:SetTexture([[Interface\Buttons\UI-ActionButton-Border]])
-    itemButton.Frame.IconBorder:SetSize(70, 70)
-    itemButton.Frame.IconBorder:SetBlendMode("ADD")
     
-    local questTexture = _G[itemButton.Name.."IconQuestTexture"]
-    if (questTexture) then
-        questTexture:SetAtlas("QuestNormal", false)
-    end
+    itemButton.BorderFrame = itemButton.Frame:CreateTexture(itemButton.Name.."Border", "OVERLAY")
+    itemButton.BorderFrame:Hide()
     
-    local texture = itemButton.Frame:CreateTexture(itemButton.Name.."Border", "OVERLAY")
-    texture:SetTexture([[Interface\Buttons\UI-ActionButton-Border]])
-    texture:SetPoint("CENTER")
-    texture:SetBlendMode("ADD")
-    texture:SetAlpha(0.8)
-    texture:SetSize(70, 70)
-    texture:Hide()
+    itemButton.QuestOverlay = _G[itemButton.Name.."IconQuestTexture"]
+    
+    itemButton:ApplyBaseSkin()
     
     return itemButton
 end

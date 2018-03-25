@@ -16,8 +16,9 @@ local SliderBars = {
 };
 
 local GlobalCheckButtons = {
-    {Text=Localized.ShowNewItems,   SavedVar="ShowNewItems", Default=true,  TooltipText=Localized.ShowNewItemsTooltip,      DependsOn=nil},
-    {Text=Localized.SellJunk,       SavedVar="SellJunk",     Default=false, TooltipText=Localized.SellJunkTooltip,          DependsOn=nil}
+    {Text=Localized.ShowNewItems,   SavedVar="ShowNewItems", Default=true,  TooltipText=Localized.ShowNewItemsTooltip,      DependsOn=nil,  CanBeSet=true,                      UnavailableText = "" },
+    {Text=Localized.SellJunk,       SavedVar="SellJunk",     Default=false, TooltipText=Localized.SellJunkTooltip,          DependsOn=nil,  CanBeSet=true,                      UnavailableText = "" },
+    {Text=Localized.UseMasque,      SavedVar="UseMasque",    Default=false, TooltipText=Localized.UseMasqueTooltp,          DependsOn=nil,  CanBeSet=IsAddOnLoaded("Masque"),   UnavailableText = Localized.UseMasqueUnavailable}
 }
 
 local ContainerCheckButtons = {
@@ -95,8 +96,17 @@ function BaudBagOptions_OnEvent(self, event, ...)
     -- localized global checkbox labels
     local GroupGlobal = self.GroupGlobal;
     for Key, Value in ipairs(GlobalCheckButtons) do
-        _G[Prefix.."GroupGlobalCheckButton"..Key.."Text"]:SetText(Value.Text);
-        GroupGlobal["CheckButton"..Key].tooltipText = Value.TooltipText;
+        local checkButton = GroupGlobal["CheckButton"..Key]
+        local checkButtonText = _G[Prefix.."GroupGlobalCheckButton"..Key.."Text"]
+
+        checkButtonText:SetText(Value.Text)
+        checkButton.tooltipText = Value.TooltipText
+
+        if (not Value.CanBeSet) then
+            checkButton:Disable()
+            checkButtonText:SetFontObject("GameFontDisable")
+            checkButtonText:SetText(Value.Text.." ("..Value.UnavailableText..")")
+        end
     end
     
     -- localized checkbox labels
@@ -114,7 +124,11 @@ function BaudBagOptions_OnEvent(self, event, ...)
     end
 	
     -- some slash command settings
-    SlashCmdList[Prefix..'_SLASHCMD'] = function() InterfaceOptionsFrame_OpenToCategory(self); end
+    SlashCmdList[Prefix..'_SLASHCMD'] = function() 
+        -- double call is needed to work around what seems to be a bug in blizzards code...
+        InterfaceOptionsFrame_OpenToCategory(self)
+        InterfaceOptionsFrame_OpenToCategory(self)
+    end
     _G["SLASH_"..Prefix.."_SLASHCMD1"] = '/baudbag';
     _G["SLASH_"..Prefix.."_SLASHCMD2"] = '/bb';
     DEFAULT_CHAT_FRAME:AddMessage(Localized.AddMessage);
