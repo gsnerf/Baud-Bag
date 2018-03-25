@@ -1,8 +1,10 @@
 ﻿=== Changelog ===
 v7.3.4
   - major rework of how item buttons and bag buttons are created and accessed
-  - added support for masque skinning (item buttons in the bags as well as bag buttons in the bag overview)
   - rework of rarity coloring internals (are still expected to look almost the same though)
+  - added support for masque skinning (item buttons in the bags as well as bag buttons in the bag overview)
+  - added possibility to activate/deactivate masque support in options, defaults to off!
+  - worked around quirk in blizzards code that prevented opening the options panel from chat or dropdown menu in the bags on the first try
 v7.3.3
   - added button linking to blizzards authenticator system for people that don't have the extra 4 slots yet ("hidden" in menu drop down)
   - major restructoring of big parts of the addon if you encounter problems please don't hesitate to report!
