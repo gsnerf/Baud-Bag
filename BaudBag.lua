@@ -430,8 +430,10 @@ end
 
 
 local function ShowContainerOptions(self)
-    BaudBagOptionsSelectContainer(DropDownBagSet, DropDownContainer);
-    InterfaceOptionsFrame_OpenToCategory("Baud Bag");
+    BaudBagOptionsSelectContainer(DropDownBagSet, DropDownContainer)
+    -- working around what seems to be a bug in blizzards code, preventing this to work on the first try..
+    InterfaceOptionsFrame_OpenToCategory("Baud Bag")
+    InterfaceOptionsFrame_OpenToCategory("Baud Bag")
 end
 
 --[[ 
