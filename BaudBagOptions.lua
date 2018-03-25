@@ -124,7 +124,11 @@ function BaudBagOptions_OnEvent(self, event, ...)
     end
 	
     -- some slash command settings
-    SlashCmdList[Prefix..'_SLASHCMD'] = function() InterfaceOptionsFrame_OpenToCategory(self); end
+    SlashCmdList[Prefix..'_SLASHCMD'] = function() 
+        -- double call is needed to work around what seems to be a bug in blizzards code...
+        InterfaceOptionsFrame_OpenToCategory(self)
+        InterfaceOptionsFrame_OpenToCategory(self)
+    end
     _G["SLASH_"..Prefix.."_SLASHCMD1"] = '/baudbag';
     _G["SLASH_"..Prefix.."_SLASHCMD2"] = '/bb';
     DEFAULT_CHAT_FRAME:AddMessage(Localized.AddMessage);
