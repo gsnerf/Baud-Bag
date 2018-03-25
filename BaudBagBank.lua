@@ -46,10 +46,6 @@ Func = function(self, event, ...)
     local slot = ...;
     BaudBag_DebugMsg("BankReagent", "Updating Slot", slot);
 
-    -- first basic update
-    local Button = _G["BaudBagSubBag-3Item"..(slot)];
-    BankFrameItemButton_Update(Button);
-
     local bagCache = BaudBagGetBagCache(REAGENTBANK_CONTAINER);
     local subBagObject = AddOnTable["SubBags"][-3]
     local rarityColor = BBConfig[2][subBagObject.Frame:GetParent():GetID()].RarityColor

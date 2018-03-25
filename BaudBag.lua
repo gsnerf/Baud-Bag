@@ -190,7 +190,6 @@ Func = function(self, event, ...)
         if BankBag:GetParent():IsShown() then
             AddOnTable["SubBags"][-1]:UpdateSlotContents()
         end
-        BankFrameItemButton_Update(_G[BankBag:GetName().."Item"..arg1]);
         BagSet = 2;
     else
         BagSet = BaudBag_IsInventory(arg1) and 1 or 2;
