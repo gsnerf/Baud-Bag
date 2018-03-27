@@ -6,6 +6,7 @@ local Prototype = {
     Name = "DefaultContainer",
     Frame = nil,
     SubContainers = nil,
+    BagSet = nil,
     -- the values below aren't used yet
     Columns = 11,
     Icon = "",
@@ -66,12 +67,51 @@ function Prototype:UpdateFromConfig()
     self.Frame.Name:SetText(containerConfig.Name or "")
 end
 
-function Prototype:Render()
-    -- TODO
-end
-
 function Prototype:Update()
-    -- TODO
+    -- initialize bag update
+    self.Frame.Refresh   = false
+    self:UpdateName()
+    local contCfg         = BBConfig[self.Frame.BagSet][self.Id]
+    local numberOfColumns = contCfg.Columns
+    self.Frame.Slots      = 0
+
+    -- calculate sizes in all subbags
+    self:UpdateSize()
+    
+    -- this should only happen when the dev coded some bullshit!
+    if (self.Frame.Slots <= 0) then
+        if self.Frame:IsShown() then
+            DEFAULT_CHAT_FRAME:AddMessage("Container \""..contCfg.Name.."\" has no contents.", 1, 1, 0)
+            self.Frame:Hide()
+        end
+        return
+    end
+
+    -- fix container slot size when only one item row exists
+    if (self.Frame.Slots < numberOfColumns) then
+        numberOfColumns = self.Frame.Slots
+    end
+
+    local column, row = 0, 1
+    --The textured background puts its empty space on the upper left
+    if contCfg.BlankTop then
+        column = numberOfColumns - mod(self.Frame.Slots - 1, numberOfColumns) - 1;
+    end
+
+    -- now go through all sub bags
+    _, row = self:UpdateSubContainers(column, row)
+
+    if (contCfg.Background <= 3) then
+        self.Frame:SetWidth(numberOfColumns * 42 - 5);
+        self.Frame:SetHeight(row * 41 - 4);
+    else
+        self.Frame:SetWidth(numberOfColumns * 39 - 2);
+        self.Frame:SetHeight(row * 39 - 2);
+    end
+
+    self:UpdateBackground()
+    BaudBag_DebugMsg("Bags", "Finished Arranging Container.");
+    AddOnTable:Container_Updated(self.BagSet, self.Id)
 end
 
 function Prototype:UpdateSize()
@@ -142,11 +182,6 @@ function Prototype:UpdateSubContainers(col, row)
 
             container:CreateMissingSlots()
 			
-            -- update container contents (special bank containers don't need this, regular bank only when open)
-            if (not BaudBag_IsBankDefaultContainer(container.ContainerId)) and (BaudBagFrame.BankOpen or (container.ContainerId < 5)) then
-                ContainerFrame_Update(container.Frame)
-            end
-
             -- position item slots
             container:UpdateSlotContents()
             col, row = container:UpdateSlotPositions(self.Frame, background, col, row, maxCols, slotLevel)
@@ -158,8 +193,23 @@ function Prototype:UpdateSubContainers(col, row)
     return col, row
 end
 
-function Prototype:SaveCoordinates()
-    -- TODO
+function Prototype:UpdateBackground()
+    local backgroundId = BBConfig[self.Frame.BagSet][self.Id].Background
+    local backdrop = self.Frame.Backdrop
+    backdrop:SetFrameLevel(self.Frame:GetFrameLevel())
+    -- This shifts the name of the bank frame over to make room for the extra button
+    local shiftName = (self.Frame:GetID() == 1) and 25 or 0
+    
+    local left, right, top, bottom = AddOnTable["Backgrounds"][backgroundId]:Update(self.Frame, backdrop, shiftName)
+    self.Frame.Name:SetPoint("RIGHT", self.Frame:GetName().."MenuButton", "LEFT")
+
+    backdrop:ClearAllPoints()
+    backdrop:SetPoint("TOPLEFT", -left, top)
+    backdrop:SetPoint("BOTTOMRIGHT", right, -bottom)
+    self.Frame:SetHitRectInsets(-left, -right, -top, -bottom)
+    self.Frame.UnlockInfo:ClearAllPoints()
+    self.Frame.UnlockInfo:SetPoint("TOPLEFT", -10, 3)
+    self.Frame.UnlockInfo:SetPoint("BOTTOMRIGHT", 10, -3)
 end
 
 local Metatable = { __index = Prototype }
@@ -179,5 +229,10 @@ function AddOnTable:CreateContainer(bagSetType, bbContainerId)
     frame.Bags = {}
     container.Frame = frame
     container.SubContainers = {}
+    container.BagSet = bagSetType
     return container
+end
+
+function AddOnTable:Container_Updated(bagSet, containerId)
+    -- just an empty hook for other addons
 end

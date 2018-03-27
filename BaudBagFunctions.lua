@@ -14,7 +14,7 @@ local BaudBag_DebugCfg = {
     BagHover       = { Name = "Bag Hover",          Active = false },
     BagOpening     = { Name = "Bag Opening",        Active = false },
     BagBackgrounds = { Name = "Bag Backgrounds",    Active = false },
-    Container      = { Name = "Container",          Active = false  },
+    Container      = { Name = "Container",          Active = false },
 	
     -- everything that has to do with offline capabilities
     Cache       = { Name = "Cache",         Active = false },
@@ -82,7 +82,7 @@ function BaudBag_Vardump(value, depth, key)
             BaudBag_Vardump(tableValue, depth, tableKey);
         end
     elseif (type(value) == 'function' or type(value) == 'thread' or type(value) == 'userdata' or value == nil) then
-        DEFAULT_CHAT_FRAME:AddMessage(GetTime().." BaudBag (vardump): "..spaces..tostring(value));
+        DEFAULT_CHAT_FRAME:AddMessage(GetTime().." BaudBag (vardump): "..spaces..linePrefix..tostring(value));
     else
         DEFAULT_CHAT_FRAME:AddMessage(GetTime().." BaudBag (vardump): "..spaces..linePrefix.."("..type(value)..") "..tostring(value));
     end

@@ -54,7 +54,13 @@ if (Locale=="zhTW") then -- Translator: Isler
     MenuCatGeneral = "General",
     TooltipScanReagent = "Crafting Reagent",
     OptionsGroupGlobal = "Basic Settings",
-    OptionsGroupContainer = "Container Settings"
+    OptionsGroupContainer = "Container Settings",
+    UseMasque = "Enable Masque Support",
+    UseMasqueTooltip = "This will tell Baud Bag to register item buttons with masque, so it can skin those buttons.",
+    UseMasqueUnavailable = "Masque not found",
+    UseMasqueReloadPopupText = "You seem to have enabled or disabled Masque support within Baud Bag. For changes to take effect you will need to reload your ui. Do you want to do that now?",
+    UseMasqueReloadPopupAccept = "yes",
+    UseMasqueReloadPopupDecline = "no"
   };
 elseif (Locale=="zhCN") then  -- Translator: Isler
   BaudBagLocalized = {
@@ -108,7 +114,13 @@ elseif (Locale=="zhCN") then  -- Translator: Isler
     MenuCatGeneral = "General",
     TooltipScanReagent = "Crafting Reagent",
     OptionsGroupGlobal = "Basic Settings",
-    OptionsGroupContainer = "Container Settings"
+    OptionsGroupContainer = "Container Settings",
+    UseMasque = "Enable Masque Support",
+    UseMasqueTooltip = "This will tell Baud Bag to register item buttons with masque, so it can skin those buttons.",
+    UseMasqueUnavailable = "Masque not found",
+    UseMasqueReloadPopupText = "You seem to have enabled or disabled Masque support within Baud Bag. For changes to take effect you will need to reload your ui. Do you want to do that now?",
+    UseMasqueReloadPopupAccept = "yes",
+    UseMasqueReloadPopupDecline = "no"
   };
 elseif (Locale=="frFR") then  -- Translator: Isler
   BaudBagLocalized = {
@@ -161,7 +173,13 @@ elseif (Locale=="frFR") then  -- Translator: Isler
     MenuCatGeneral = "General",
     TooltipScanReagent = "Crafting Reagent",
     OptionsGroupGlobal = "Basic Settings",
-    OptionsGroupContainer = "Container Settings"
+    OptionsGroupContainer = "Container Settings",
+    UseMasque = "Enable Masque Support",
+    UseMasqueTooltip = "This will tell Baud Bag to register item buttons with masque, so it can skin those buttons.",
+    UseMasqueUnavailable = "Masque not found",
+    UseMasqueReloadPopupText = "You seem to have enabled or disabled Masque support within Baud Bag. For changes to take effect you will need to reload your ui. Do you want to do that now?",
+    UseMasqueReloadPopupAccept = "yes",
+    UseMasqueReloadPopupDecline = "no"
   };
 elseif (Locale == "deDE") then -- Translator: Thurmal
   BaudBagLocalized = {
@@ -214,7 +232,13 @@ elseif (Locale == "deDE") then -- Translator: Thurmal
     MenuCatGeneral = "Allgemeines",
     TooltipScanReagent = "Handwerksmaterial",
     OptionsGroupGlobal = "Allgemeines",
-    OptionsGroupContainer = "Taschen-Typ spezifisches"
+    OptionsGroupContainer = "Taschen-Typ spezifisches",
+    UseMasque = "Unterstützung für Masque aktivieren",
+    UseMasqueTooltip = "Bei Aktivierung werden die Gegenstands-Buttons in den taschen bei Masque registriert, so dass man darüber das Aussehen verändern kann.",
+    UseMasqueUnavailable = "Masque wurde nicht gefunden",
+    UseMasqueReloadPopupText = "Scheinbar hast du die Einstellungen für die Masque Unterstützung verändert. Damit die Änderungen wirksam werden muss das UI neugeladen werden, möchtest du das jetzt tun?",
+    UseMasqueReloadPopupAccept = "ja",
+    UseMasqueReloadPopupDecline = "nein"
   };
 elseif (Locale == "koKR") then -- Translator: talkswind
   BaudBagLocalized = {
@@ -267,7 +291,13 @@ elseif (Locale == "koKR") then -- Translator: talkswind
     MenuCatGeneral = "General",
     TooltipScanReagent = "Crafting Reagent",
     OptionsGroupGlobal = "Basic Settings",
-    OptionsGroupContainer = "Container Settings"
+    OptionsGroupContainer = "Container Settings",
+    UseMasque = "Enable Masque Support",
+    UseMasqueTooltip = "This will tell Baud Bag to register item buttons with masque, so it can skin those buttons.",
+    UseMasqueUnavailable = "Masque not found",
+    UseMasqueReloadPopupText = "You seem to have enabled or disabled Masque support within Baud Bag. For changes to take effect you will need to reload your ui. Do you want to do that now?",
+    UseMasqueReloadPopupAccept = "yes",
+    UseMasqueReloadPopupDecline = "no"
   };
 elseif (Locale == "ruRU") then -- Translator: StingerSoft
   BaudBagLocalized = {
@@ -320,7 +350,13 @@ elseif (Locale == "ruRU") then -- Translator: StingerSoft
     MenuCatGeneral = "General",
     TooltipScanReagent = "Crafting Reagent",
     OptionsGroupGlobal = "Basic Settings",
-    OptionsGroupContainer = "Container Settings"
+    OptionsGroupContainer = "Container Settings",
+    UseMasque = "Enable Masque Support",
+    UseMasqueTooltip = "This will tell Baud Bag to register item buttons with masque, so it can skin those buttons.",
+    UseMasqueUnavailable = "Masque not found",
+    UseMasqueReloadPopupText = "You seem to have enabled or disabled Masque support within Baud Bag. For changes to take effect you will need to reload your ui. Do you want to do that now?",
+    UseMasqueReloadPopupAccept = "yes",
+    UseMasqueReloadPopupDecline = "no"
   };
 else --enUS or enUK (default)
   BaudBagLocalized = {
@@ -373,7 +409,13 @@ else --enUS or enUK (default)
     MenuCatGeneral = "General",
     TooltipScanReagent = "Crafting Reagent",
     OptionsGroupGlobal = "Basic Settings",
-    OptionsGroupContainer = "Container Settings"
+    OptionsGroupContainer = "Container Settings",
+    UseMasque = "Enable Masque Support",
+    UseMasqueTooltip = "This will tell Baud Bag to register item buttons with masque, so it can skin those buttons.",
+    UseMasqueUnavailable = "Masque not found",
+    UseMasqueReloadPopupText = "You seem to have enabled or disabled Masque support within Baud Bag. For changes to take effect you will need to reload your ui. Do you want to do that now?",
+    UseMasqueReloadPopupAccept = "yes",
+    UseMasqueReloadPopupDecline = "no"
   };
     -- we now overwrite item values for not translated other languages so it at least works!
     if (Locale == "esES") then
