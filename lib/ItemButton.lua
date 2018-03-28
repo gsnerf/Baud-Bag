@@ -120,8 +120,9 @@ function Prototype:UpdateQuestOverlay(containerId)
         questTexture:SetPoint("CENTER", self.Frame.icon, "CENTER", -newWidth/3, 0)
         
         local isQuestItem, questId, isActive = GetContainerItemQuestInfo(containerId, self.SlotIndex)
+        local isQuestRelated = questId ~= nil or isQuestItem
 
-        if ( questId ) then
+        if ( isQuestRelated ) then
             self.Frame.IconBorder:SetVertexColor(1, 0.9, 0.4, 0.9)
             self.Frame.IconBorder:Show()
             if (not isActive) then
