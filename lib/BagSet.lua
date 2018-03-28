@@ -108,6 +108,15 @@ function Prototype:GetSlotInfo()
     return free, overall
 end
 
+function Prototype:UpdateSlotInfo()
+    local firstContainer = self.Containers[1]
+    if (firstContainer) then
+        firstContainer.Frame.UpdateSlots = nil;
+        local free, overall = self:GetSlotInfo()
+        firstContainer.Frame.FreeSlots:SetText(free.."/"..overall..AddOnTable.Localized.Free)
+    end
+end
+
 function Prototype:ApplyConfiguration(configuration)
 end
 

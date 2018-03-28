@@ -299,7 +299,7 @@ function BaudBagContainer_OnUpdate(self, event, ...)
     end
 
     if (self.UpdateSlots) then
-        BaudBagUpdateFreeSlots(self);
+        AddOnTable["Sets"][self.BagSet]:UpdateSlotInfo()
     end
 
     if (self.FadeStart) then
@@ -336,7 +336,7 @@ function BaudBagContainer_OnShow(self, event, ...)
     BaudBagUpdateContainer(self);
     BaudBagUpdateOpenBagHighlight();
     if (self:GetID() == 1) then
-        BaudBagUpdateFreeSlots(self);
+        AddOnTable["Sets"][self.BagSet]:UpdateSlotInfo()
     end
 	
     -- If there are tokens watched then decide if we should show the bar
@@ -848,13 +848,6 @@ function BaudBagSubBag_OnEvent(self, event, ...)
         return;
     end
     SubBagEvents[event](self, event, ...);
-end
-
--- DEPRECATED: move to BagSet!
-function BaudBagUpdateFreeSlots(Frame)
-    Frame.UpdateSlots = nil;
-    local free, overall = AddOnTable["Sets"][Frame.BagSet]:GetSlotInfo()
-    _G[Frame:GetName().."Slots"]:SetText(free.."/"..overall..Localized.Free)
 end
 
 --This is for the button that toggles the bank bag display
