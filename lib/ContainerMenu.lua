@@ -1,9 +1,13 @@
 local AddOnName, AddOnTable = ...
 local Localized = BaudBagLocalized
 local _
-local Prefix = "BaudBag"
 
 local DropDownContainer, DropDownBagSet
+
+--[[ Referenced in BaudBagContainerDropDown in BaudBag.xml ]]
+function BaudBagContainerDropDown_OnLoad(self, event, ...)
+    UIDropDownMenu_Initialize(self, BaudBagContainerDropDown_Initialize, "MENU")
+end
 
 function BaudBagContainerDropDown_Show(self, event, ...)
     local Container = self:GetParent()
@@ -12,16 +16,12 @@ function BaudBagContainerDropDown_Show(self, event, ...)
     ToggleDropDownMenu(1, nil, BaudBagContainerDropDown, self:GetName(), 0, 0)
 end
 
-
-function BaudBagContainerDropDown_OnLoad(self, event, ...)
-    UIDropDownMenu_Initialize(self, BaudBagContainerDropDown_Initialize, "MENU")
-end
-
 --[[ 
     This initializes the drop down menus for each container.
     Beware that the bank box won't exist yet when this is initialized at first.
   ]]
-  function BaudBagContainerDropDown_Initialize()
+  function BaudBagContainerDropDown_Initialize(dropDown, level, menuList)
+    BaudBag_DebugMsg("MenuDropDown", "initializing with (level, menuList, DropDownBagSet, DropDownContainer)", level, menuList, DropDownBagSet, DropDownContainer)
     local header = { isTitle = true, notCheckable = true }
     local info = {  }
     
@@ -30,7 +30,7 @@ end
     UIDropDownMenu_AddButton(header)
 
     -- bag locking/unlocking
-    info.text = not (DropDownBagSet and BBConfig[DropDownBagSet][DropDownContainer].Locked) and Localized.LockPosition or Localized.UnlockPosition
+    info.text = not (DropDownBagSet and AddOnTable.Config[DropDownBagSet][DropDownContainer].Locked) and Localized.LockPosition or Localized.UnlockPosition
     info.func = ToggleContainerLock
     UIDropDownMenu_AddButton(info)
 
@@ -56,7 +56,7 @@ end
 
     -- 'show bank' option
     -- we only want to show this option on the backpack when the bank is not currently shown
-    if (DropDownBagSet ~= 2) and _G[Prefix.."Container2_1"] and not _G[Prefix.."Container2_1"]:IsShown()then
+    if (DropDownBagSet ~= 2) and _G[AddOnName.."Container2_1"] and not _G[AddOnName.."Container2_1"]:IsShown()then
         info.text = Localized.ShowBank
         info.func = BaudBagToggleBank
         UIDropDownMenu_AddButton(info)
@@ -76,11 +76,12 @@ end
     end
 end
 
-local function ToggleContainerLock(self)
-    BBConfig[DropDownBagSet][DropDownContainer].Locked = not BBConfig[DropDownBagSet][DropDownContainer].Locked
+function ToggleContainerLock(self)
+    BaudBag_DebugMsg("MenuDropDown", "toggeling container lock (DropDownBagSet, DropDownContainer, currentConfig)", DropDownBagSet, DropDownContainer, AddOnTable.Config[DropDownBagSet][DropDownContainer].Locked)
+    AddOnTable.Config[DropDownBagSet][DropDownContainer].Locked = not AddOnTable.Config[DropDownBagSet][DropDownContainer].Locked
 end
 
-local function ShowContainerOptions(self)
+function ShowContainerOptions(self)
     BaudBagOptionsSelectContainer(DropDownBagSet, DropDownContainer)
     -- working around what seems to be a bug in blizzards code, preventing this to work on the first try..
     InterfaceOptionsFrame_OpenToCategory("Baud Bag")
