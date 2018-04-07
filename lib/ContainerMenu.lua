@@ -1,20 +1,20 @@
 local AddOnName, AddOnTable = ...
 local Localized = BaudBagLocalized
 local _
-local Prefix = "BaudBag"; -- this needs to 
+local Prefix = "BaudBag"
 
-local DropDownContainer, DropDownBagSet;
+local DropDownContainer, DropDownBagSet
 
 function BaudBagContainerDropDown_Show(self, event, ...)
-    local Container = self:GetParent();
-    DropDownContainer = Container:GetID();
-    DropDownBagSet = Container.BagSet;
-    ToggleDropDownMenu(1, nil, BaudBagContainerDropDown, self:GetName(), 0, 0);
+    local Container = self:GetParent()
+    DropDownContainer = Container:GetID()
+    DropDownBagSet = Container.BagSet
+    ToggleDropDownMenu(1, nil, BaudBagContainerDropDown, self:GetName(), 0, 0)
 end
 
 
 function BaudBagContainerDropDown_OnLoad(self, event, ...)
-    UIDropDownMenu_Initialize(self, BaudBagContainerDropDown_Initialize, "MENU");
+    UIDropDownMenu_Initialize(self, BaudBagContainerDropDown_Initialize, "MENU")
 end
 
 --[[ 
@@ -22,50 +22,50 @@ end
     Beware that the bank box won't exist yet when this is initialized at first.
   ]]
   function BaudBagContainerDropDown_Initialize()
-    local header = { isTitle = true, notCheckable = true };
-    local info = {  };
+    local header = { isTitle = true, notCheckable = true }
+    local info = {  }
     
     -- category bag specifics
-    header.text = Localized.MenuCatSpecific;
-    UIDropDownMenu_AddButton(header);
+    header.text = Localized.MenuCatSpecific
+    UIDropDownMenu_AddButton(header)
 
     -- bag locking/unlocking
-    info.text = not (DropDownBagSet and BBConfig[DropDownBagSet][DropDownContainer].Locked) and Localized.LockPosition or Localized.UnlockPosition;
-    info.func = ToggleContainerLock;
-    UIDropDownMenu_AddButton(info);
+    info.text = not (DropDownBagSet and BBConfig[DropDownBagSet][DropDownContainer].Locked) and Localized.LockPosition or Localized.UnlockPosition
+    info.func = ToggleContainerLock
+    UIDropDownMenu_AddButton(info)
 
     -- cleanup button first regular
     if (DropDownBagSet == 1) then
-        info.text = BAG_CLEANUP_BAGS;
-        info.func = SortBags;
-        UIDropDownMenu_AddButton(info);
+        info.text = BAG_CLEANUP_BAGS
+        info.func = SortBags
+        UIDropDownMenu_AddButton(info)
     elseif (DropDownContainer and BaudBagFrame.BankOpen) then
         if(_G["BaudBagContainer"..DropDownBagSet.."_"..DropDownContainer].Bags[1]:GetID() == -3) then
-            info.text = BAG_CLEANUP_REAGENT_BANK;
-            info.func = SortReagentBankBags;
+            info.text = BAG_CLEANUP_REAGENT_BANK
+            info.func = SortReagentBankBags
         else
-            info.text = BAG_CLEANUP_BANK;
-            info.func = SortBankBags;
+            info.text = BAG_CLEANUP_BANK
+            info.func = SortBankBags
         end
-        UIDropDownMenu_AddButton(info);
+        UIDropDownMenu_AddButton(info)
     end
 
     -- category general
-    header.text = Localized.MenuCatGeneral;
-    UIDropDownMenu_AddButton(header);
+    header.text = Localized.MenuCatGeneral
+    UIDropDownMenu_AddButton(header)
 
     -- 'show bank' option
     -- we only want to show this option on the backpack when the bank is not currently shown
     if (DropDownBagSet ~= 2) and _G[Prefix.."Container2_1"] and not _G[Prefix.."Container2_1"]:IsShown()then
-        info.text = Localized.ShowBank;
-        info.func = BaudBagToggleBank;
-        UIDropDownMenu_AddButton(info);
+        info.text = Localized.ShowBank
+        info.func = BaudBagToggleBank
+        UIDropDownMenu_AddButton(info)
     end
 
     -- open the options
-    info.text = Localized.Options;
-    info.func = ShowContainerOptions;
-    UIDropDownMenu_AddButton(info);
+    info.text = Localized.Options
+    info.func = ShowContainerOptions
+    UIDropDownMenu_AddButton(info)
 
     -- increase backpack size
     local needToShow = not (IsAccountSecured() and GetContainerNumSlots(1) > BACKPACK_BASE_SIZE)
@@ -77,7 +77,7 @@ end
 end
 
 local function ToggleContainerLock(self)
-    BBConfig[DropDownBagSet][DropDownContainer].Locked = not BBConfig[DropDownBagSet][DropDownContainer].Locked;
+    BBConfig[DropDownBagSet][DropDownContainer].Locked = not BBConfig[DropDownBagSet][DropDownContainer].Locked
 end
 
 local function ShowContainerOptions(self)
