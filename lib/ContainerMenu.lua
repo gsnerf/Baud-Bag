@@ -23,33 +23,33 @@ end
   function BaudBagContainerDropDown_Initialize(dropDown, level, menuList)
     BaudBag_DebugMsg("MenuDropDown", "initializing with (level, menuList, DropDownBagSet, DropDownContainer)", level, menuList, DropDownBagSet, DropDownContainer)
     local header = { isTitle = true, notCheckable = true }
-    local info = {  }
-    
+    local entry = {  }
+
     -- category bag specifics
     header.text = Localized.MenuCatSpecific
     UIDropDownMenu_AddButton(header)
 
     -- bag locking/unlocking
-    info.text = not (DropDownBagSet and AddOnTable.Config[DropDownBagSet][DropDownContainer].Locked) and Localized.LockPosition or Localized.UnlockPosition
-    info.func = ToggleContainerLock
-    UIDropDownMenu_AddButton(info)
+    entry.text = not (DropDownBagSet and AddOnTable.Config[DropDownBagSet][DropDownContainer].Locked) and Localized.LockPosition or Localized.UnlockPosition
+    entry.func = ToggleContainerLock
+    UIDropDownMenu_AddButton(entry)
 
     -- cleanup button first regular
     if (DropDownBagSet == 1) then
-        info.text = BAG_CLEANUP_BAGS
-        info.func = SortBags
-        UIDropDownMenu_AddButton(info)
+        entry.text = BAG_CLEANUP_BAGS
+        entry.func = SortBags
+        UIDropDownMenu_AddButton(entry)
     elseif (DropDownContainer and BaudBagFrame.BankOpen) then
         if(_G["BaudBagContainer"..DropDownBagSet.."_"..DropDownContainer].Bags[1]:GetID() == -3) then
-            info.text = BAG_CLEANUP_REAGENT_BANK
-            info.func = SortReagentBankBags
+            entry.text = BAG_CLEANUP_REAGENT_BANK
+            entry.func = SortReagentBankBags
         else
-            info.text = BAG_CLEANUP_BANK
-            info.func = SortBankBags
+            entry.text = BAG_CLEANUP_BANK
+            entry.func = SortBankBags
         end
-        UIDropDownMenu_AddButton(info)
+        UIDropDownMenu_AddButton(entry)
     end
-
+    
     -- category general
     header.text = Localized.MenuCatGeneral
     UIDropDownMenu_AddButton(header)
@@ -57,22 +57,22 @@ end
     -- 'show bank' option
     -- we only want to show this option on the backpack when the bank is not currently shown
     if (DropDownBagSet ~= 2) and _G[AddOnName.."Container2_1"] and not _G[AddOnName.."Container2_1"]:IsShown()then
-        info.text = Localized.ShowBank
-        info.func = BaudBagToggleBank
-        UIDropDownMenu_AddButton(info)
+        entry.text = Localized.ShowBank
+        entry.func = BaudBagToggleBank
+        UIDropDownMenu_AddButton(entry)
     end
 
     -- open the options
-    info.text = Localized.Options
-    info.func = ShowContainerOptions
-    UIDropDownMenu_AddButton(info)
+    entry.text = Localized.Options
+    entry.func = ShowContainerOptions
+    UIDropDownMenu_AddButton(entry)
 
     -- increase backpack size
     local needToShow = not (IsAccountSecured() and GetContainerNumSlots(1) > BACKPACK_BASE_SIZE)
     if (needToShow) then
-        info.text = BACKPACK_AUTHENTICATOR_INCREASE_SIZE
-        info.func = BaudBag_AddSlotsClick
-        UIDropDownMenu_AddButton(info)
+        entry.text = BACKPACK_AUTHENTICATOR_INCREASE_SIZE
+        entry.func = BaudBag_AddSlotsClick
+        UIDropDownMenu_AddButton(entry)
     end
 end
 
