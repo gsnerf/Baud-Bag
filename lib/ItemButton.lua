@@ -71,6 +71,11 @@ function Prototype:UpdateContent(useCache, slotCache)
         self.Frame.JunkIcon:SetShown(quality == LE_ITEM_QUALITY_POOR and not hasNoValue and MerchantFrame:IsShown())
     end
 
+    -- in case this is a container button we try to use the regular upgrade system (this might be even extended by addons like pawn)
+    if self.Frame.UpgradeIcon then
+        ContainerFrameItemButton_UpdateItemUpgradeIcon(self.Frame)
+    end
+
     return link, cacheEntry
 end
 
