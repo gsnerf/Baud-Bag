@@ -31,7 +31,15 @@ end
 
 --[[ This will be called on first load as well as every configuration change (via options screen) ]]
 function Prototype:RebuildContainers()
-    local function FinishContainer(localContainerObject, localIsOpen)
+    local function FinishContainer(localContainerObject, localIsOpen, maxSubContainerIndex)
+        -- first remove all subcontainers that are not contained anymore
+        local currentSubContainerCount = table.getn(localContainerObject.SubContainers)
+        if (maxSubContainerIndex < currentSubContainerCount) then
+            for i = maxSubContainerIndex, currentSubContainerCount do
+                localContainerObject.SubContainers[i] = nil
+            end
+        end
+        -- now update visibility
         if localIsOpen then
             BaudBag_DebugMsg("Container", "Showing Container (Name)", localContainerObject.Name)
             localContainerObject.Frame:Show()
@@ -39,6 +47,8 @@ function Prototype:RebuildContainers()
             BaudBag_DebugMsg("Container", "Hiding Container (Name)", localContainerObject.Name)
             localContainerObject.Frame:Hide()
         end
+
+        -- and now update complete content
         localContainerObject:Update()
     end
 
@@ -55,7 +65,7 @@ function Prototype:RebuildContainers()
         if (containerNumber == 0) or (bagSetConfig.Joined[index] == false) then
             -- if we aren't opening the first container, make sure the previous one is correctly closed and updated
             if (containerNumber ~= 0) then
-                FinishContainer(containerObject, isOpen)
+                FinishContainer(containerObject, isOpen, subContainerIndex)
                 subContainerIndex = 1
             end
 
@@ -80,7 +90,7 @@ function Prototype:RebuildContainers()
             isOpen = true
         end
     end
-    FinishContainer(containerObject, isOpen)
+    FinishContainer(containerObject, isOpen, subContainerIndex)
 
     -- hide all containers that where created but configured away
     for index = (containerNumber + 1), self.MaxContainerNumber do
