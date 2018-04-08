@@ -52,6 +52,12 @@ function Prototype:RebuildContainers()
         localContainerObject:Update()
     end
 
+    -- we need to remember the open state before rearranging the containers or bags will close while they are expected to be seen
+    local originallyOpen = {}
+    for _, subContainer in pairs(AddOnTable.SubBags) do
+        originallyOpen[subContainer.ContainerId] = subContainer:IsOpen()
+    end
+
     --local bagSetConfig = AddOnTable.Config[self.Type.Id]
     local bagSetConfig = BBConfig[self.Type.Id]
     local containerNumber = 0
@@ -86,7 +92,7 @@ function Prototype:RebuildContainers()
         containerObject.Frame.Bags[subContainerIndex] = subContainer.Frame
         subContainer.Frame:SetParent(containerObject.Frame)
         subContainerIndex = subContainerIndex + 1
-        if subContainer:IsOpen() then
+        if originallyOpen[subContainer.ContainerId] then
             isOpen = true
         end
     end
