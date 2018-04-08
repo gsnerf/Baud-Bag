@@ -712,6 +712,7 @@ local SubBagEvents = {
         -- BAG_UPDATE is the only event called when a bag is added, so if no bag existed before, refresh
         if (self.size > 0) then
             BaudBag_DebugMsg("Bags", "Event BAG_UPDATE fired, calling UpdateSlotContents on subContainer (subContainerId)", arg1);
+            AddOnTable["SubBags"][self:GetID()]:CreateMissingSlots()
             AddOnTable["SubBags"][self:GetID()]:UpdateSlotContents()
         else
             BaudBag_DebugMsg("Bags", "Event BAG_UPDATE fired, refreshing (BagID)", arg1);
