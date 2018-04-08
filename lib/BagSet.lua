@@ -39,8 +39,7 @@ function Prototype:RebuildContainers()
             BaudBag_DebugMsg("Container", "Hiding Container (Name)", localContainerObject.Name)
             localContainerObject.Frame:Hide()
         end
-        -- DEPRECATED this will have to be moved to Container:Update() as soon as it works correctly
-        BaudBagUpdateContainer(localContainerObject.Frame)
+        localContainerObject:Update()
     end
 
     --local bagSetConfig = AddOnTable.Config[self.Type.Id]
