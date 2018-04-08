@@ -11,7 +11,8 @@ local Prototype = {
     HighlightSlots = false,
     Frame = nil,
     Items = nil,
-    BagButton = nil
+    BagButton = nil,
+    FilterType = nil
 }
 
 function Prototype:GetID()
@@ -217,6 +218,37 @@ function Prototype:GetSlotInfo()
         local overallSlots = GetContainerNumSlots(self.ContainerId)
         return freeSlots, overallSlots
     end
+end
+
+function Prototype:GetFilterType()
+    if (not self.FilterType) then
+        local funcToExec
+
+        if (self.BagSet.Id == BagSetType.Backpack.Id) then
+            funcToExec = GetBagSlotFlag
+        end
+        if (self.BagSet.Id == BagSetType.Bank.Id) then
+            funcToExec = GetBankBagSlotFlag
+        end
+
+        for i = LE_BAG_FILTER_FLAG_EQUIPMENT, NUM_LE_BAG_FILTER_FLAGS do
+            if (funcToExec(self.ContainerId, i)) then
+                self.FilterType = i
+            end
+        end
+    end
+
+    return self.FilterType
+end
+
+function Prototype:SetFilterType(type, value)
+    if (self.BagSet.Id == BagSetType.Backpack.Id) then
+        SetBagSlotFlag(self.ContainerId, type, value)
+    end
+    if (self.BagSet.Id == BagSetType.Bank.Id) then
+        SetBankBagSlotFlag(self.ContainerId, type, value)
+    end
+    self.FilterType = nil
 end
 
 local Metatable = { __index = Prototype }

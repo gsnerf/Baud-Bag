@@ -71,6 +71,11 @@ function Prototype:UpdateContent(useCache, slotCache)
         self.Frame.JunkIcon:SetShown(quality == LE_ITEM_QUALITY_POOR and not hasNoValue and MerchantFrame:IsShown())
     end
 
+    -- in case this is a container button we try to use the regular upgrade system (this might be even extended by addons like pawn)
+    if self.Frame.UpgradeIcon then
+        ContainerFrameItemButton_UpdateItemUpgradeIcon(self.Frame)
+    end
+
     return link, cacheEntry
 end
 
@@ -120,8 +125,9 @@ function Prototype:UpdateQuestOverlay(containerId)
         questTexture:SetPoint("CENTER", self.Frame.icon, "CENTER", -newWidth/3, 0)
         
         local isQuestItem, questId, isActive = GetContainerItemQuestInfo(containerId, self.SlotIndex)
+        local isQuestRelated = questId ~= nil or isQuestItem
 
-        if ( questId ) then
+        if ( isQuestRelated ) then
             self.Frame.IconBorder:SetVertexColor(1, 0.9, 0.4, 0.9)
             self.Frame.IconBorder:Show()
             if (not isActive) then

@@ -244,29 +244,29 @@ function BaudBagOptionsBag_OnClick(self, event, ...)
 end
 
 function BaudBagOptionsJoinCheck_OnClick(self, event, ...)
-    PlayCheckBoxSound(self);
+    PlayCheckBoxSound(self)
 
-    BBConfig[SelectedBags].Joined[self:GetID()] = self:GetChecked() and true or false;
-    local ContNum = 2;
+    BBConfig[SelectedBags].Joined[self:GetID()] = self:GetChecked() and true or false
+    local ContNum = 2
     for Bag = 2,(self:GetID()-1) do
         if (BBConfig[SelectedBags].Joined[Bag] == false) then
-            ContNum = ContNum + 1;
+            ContNum = ContNum + 1
         end
     end
     if self:GetChecked() then
-        tremove(BBConfig[SelectedBags], ContNum);
+        tremove(BBConfig[SelectedBags], ContNum)
     else
-        tinsert(BBConfig[SelectedBags], ContNum, BaudBagCopyTable(BBConfig[SelectedBags][ContNum-1]));
+        tinsert(BBConfig[SelectedBags], ContNum, BaudBagCopyTable(BBConfig[SelectedBags][ContNum-1]))
     end
-    BaudBagOptionsUpdate();
-    BaudUpdateJoinedBags();
+    BaudBagOptionsUpdate()
+    BaudUpdateJoinedBags()
 end
 
 function PlayCheckBoxSound(self)
     if (self:GetChecked()) then
-        PlaySound(SOUNDKIT.IG_MAINMENU_OPTION_CHECKBOX_OFF);
+        PlaySound(SOUNDKIT.IG_MAINMENU_OPTION_CHECKBOX_OFF)
     else
-        PlaySound(SOUNDKIT.IG_MAINMENU_OPTION_CHECKBOX_ON);
+        PlaySound(SOUNDKIT.IG_MAINMENU_OPTION_CHECKBOX_ON)
     end
 end
 

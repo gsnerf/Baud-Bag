@@ -206,7 +206,7 @@ function BaudBagBankBags_UpdateContent(bankVisible)
     if BBContainer2_1:IsShown() then
         -- TODO we need direct access to the Container Object here in the future!
         BaudBagUpdateContainer(BBContainer2_1)
-        BaudBagUpdateFreeSlots(BBContainer2_1)
+        AddOnTable["Sets"][2]:UpdateSlotInfo()
     else
         BBContainer2_1.AutoOpened = true
         BBContainer2_1:Show()

@@ -1,4 +1,10 @@
 ﻿=== Changelog ===
+v7.3.5
+  - reworked generation of the containers menu drop downs and their internal handling of clicks
+  - introduced usage of regular containers filter assignment (can be configured through container menu)
+  - fixed quest item highlights to correctly show for items collected for quests
+  - fixed updating item upgrade overlays (this also fixed missing pawn infos on items)
+  - fixed updating of containers after splitting in options (didn't shrink anymore after system rework)
 v7.3.4
   - major rework of how item buttons and bag buttons are created and accessed
   - rework of rarity coloring internals (are still expected to look almost the same though)

@@ -31,7 +31,15 @@ end
 
 --[[ This will be called on first load as well as every configuration change (via options screen) ]]
 function Prototype:RebuildContainers()
-    local function FinishContainer(localContainerObject, localIsOpen)
+    local function FinishContainer(localContainerObject, localIsOpen, maxSubContainerIndex)
+        -- first remove all subcontainers that are not contained anymore
+        local currentSubContainerCount = table.getn(localContainerObject.SubContainers)
+        if (maxSubContainerIndex < currentSubContainerCount) then
+            for i = maxSubContainerIndex, currentSubContainerCount do
+                localContainerObject.SubContainers[i] = nil
+            end
+        end
+        -- now update visibility
         if localIsOpen then
             BaudBag_DebugMsg("Container", "Showing Container (Name)", localContainerObject.Name)
             localContainerObject.Frame:Show()
@@ -39,8 +47,15 @@ function Prototype:RebuildContainers()
             BaudBag_DebugMsg("Container", "Hiding Container (Name)", localContainerObject.Name)
             localContainerObject.Frame:Hide()
         end
-        -- DEPRECATED this will have to be moved to Container:Update() as soon as it works correctly
-        BaudBagUpdateContainer(localContainerObject.Frame)
+
+        -- and now update complete content
+        localContainerObject:Update()
+    end
+
+    -- we need to remember the open state before rearranging the containers or bags will close while they are expected to be seen
+    local originallyOpen = {}
+    for _, subContainer in pairs(AddOnTable.SubBags) do
+        originallyOpen[subContainer.ContainerId] = subContainer:IsOpen()
     end
 
     --local bagSetConfig = AddOnTable.Config[self.Type.Id]
@@ -56,7 +71,7 @@ function Prototype:RebuildContainers()
         if (containerNumber == 0) or (bagSetConfig.Joined[index] == false) then
             -- if we aren't opening the first container, make sure the previous one is correctly closed and updated
             if (containerNumber ~= 0) then
-                FinishContainer(containerObject, isOpen)
+                FinishContainer(containerObject, isOpen, subContainerIndex)
                 subContainerIndex = 1
             end
 
@@ -77,11 +92,11 @@ function Prototype:RebuildContainers()
         containerObject.Frame.Bags[subContainerIndex] = subContainer.Frame
         subContainer.Frame:SetParent(containerObject.Frame)
         subContainerIndex = subContainerIndex + 1
-        if subContainer:IsOpen() then
+        if originallyOpen[subContainer.ContainerId] then
             isOpen = true
         end
     end
-    FinishContainer(containerObject, isOpen)
+    FinishContainer(containerObject, isOpen, subContainerIndex)
 
     -- hide all containers that where created but configured away
     for index = (containerNumber + 1), self.MaxContainerNumber do
@@ -106,6 +121,15 @@ function Prototype:GetSlotInfo()
     end
     
     return free, overall
+end
+
+function Prototype:UpdateSlotInfo()
+    local firstContainer = self.Containers[1]
+    if (firstContainer) then
+        firstContainer.Frame.UpdateSlots = nil;
+        local free, overall = self:GetSlotInfo()
+        firstContainer.Frame.FreeSlots:SetText(free.."/"..overall..AddOnTable.Localized.Free)
+    end
 end
 
 function Prototype:ApplyConfiguration(configuration)

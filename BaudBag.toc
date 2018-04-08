@@ -11,7 +11,7 @@
 ## Title: Baud Bag
 ## Title-zhCN: 背包整合 Baud Bag
 ## Title-zhTW: 背包整合 Baud Bag
-## Version: 7.3.4
+## Version: 7.3.5
 
 Localization.lua
 BaudBagFunctions.lua
@@ -21,6 +21,7 @@ lib\ItemButton.lua
 lib\BagButton.lua
 lib\SubContainer.lua
 lib\Container.lua
+lib\ContainerMenu.lua
 lib\TextureHelper.lua
 lib\Backgrounds\BlizzardBackground.lua
 lib\Backgrounds\SimpleBackground.lua
