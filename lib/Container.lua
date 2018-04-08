@@ -212,6 +212,26 @@ function Prototype:UpdateBackground()
     self.Frame.UnlockInfo:SetPoint("BOTTOMRIGHT", 10, -3)
 end
 
+function Prototype:GetFilterType()
+    local id, container
+    for _, container in pairs(self.SubContainers) do
+        id = container.ContainerId
+        if (id ~= BACKPACK_CONTAINER) and (id ~= BANK_CONTAINER) and (id ~= REAGENTBANK_CONTAINER) then
+            return container:GetFilterType()
+        end
+    end
+
+    return nil
+end
+
+function Prototype:SetFilterType(type, value)
+    for id, container in pairs(self.SubContainers) do
+        if (id ~= BACKPACK_CONTAINER) and (id ~= BANK_CONTAINER) and (id ~= REAGENTBANK_CONTAINER) then
+            container:SetFilterType(type, value)
+        end
+    end
+end
+
 local Metatable = { __index = Prototype }
 
 function AddOnTable:CreateContainer(bagSetType, bbContainerId)

@@ -49,6 +49,10 @@ end
         end
         UIDropDownMenu_AddButton(entry)
     end
+
+    if (DropDownBagSet ~= nil and DropDownContainer ~= nil) then
+        AddFilterOptions(DropDownBagSet, DropDownContainer, header)
+    end
     
     -- category general
     header.text = Localized.MenuCatGeneral
@@ -73,6 +77,54 @@ end
         entry.text = BACKPACK_AUTHENTICATOR_INCREASE_SIZE
         entry.func = BaudBag_AddSlotsClick
         UIDropDownMenu_AddButton(entry)
+    end
+end
+
+function AddFilterOptions(bagSetId, containerId, header)
+    
+    local containerObject = AddOnTable.Sets[bagSetId].Containers[containerId]
+    local frame = containerObject.Frame
+    
+    local numberOfSubContainers = table.getn(containerObject.SubContainers)
+    local firstSubContainerId = containerObject.SubContainers[1].ContainerId
+    if (numberOfSubContainers == 1 and
+        (
+            firstSubContainerId == BACKPACK_CONTAINER
+            or
+            firstSubContainerId == BANK_CONTAINER
+            or
+            firstSubContainerId == REAGENTBANK_CONTAINER
+        )
+    ) then
+        -- the backpack, bank or reagent bank themselves cannot have filters!
+        return
+    end
+
+    header.text = BAG_FILTER_ASSIGN_TO
+    UIDropDownMenu_AddButton(header)
+    
+    local toggleFilter = function(_, type, _, value)
+        value = not value
+        containerObject:SetFilterType(type, value)
+        if (value) then
+            -- todo: optionally show some kind of visualization
+            --frame.FilterIcon.Icon:SetAtlas(BAG_FILTER_ICONS[i])
+            --frame.FilterIcon:Show()
+        else
+            -- todo: hide optional visualization again
+            --frame.FilterIcon:Hide()
+        end
+    end
+
+    local info = UIDropDownMenu_CreateInfo()
+    for i = LE_BAG_FILTER_FLAG_EQUIPMENT, NUM_LE_BAG_FILTER_FLAGS do
+        if ( i ~= LE_BAG_FILTER_FLAG_JUNK ) then
+            info.text = BAG_FILTER_LABELS[i]
+            info.func = toggleFilter
+            info.arg1 = i
+            info.checked = containerObject:GetFilterType() == i
+            UIDropDownMenu_AddButton(info)
+        end
     end
 end
 
