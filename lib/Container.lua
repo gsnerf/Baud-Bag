@@ -195,6 +195,45 @@ function Prototype:SetFilterType(type, value)
     end
 end
 
+function Prototype:GetCleanupIgnore()
+    for _, container in pairs(self.SubContainers) do
+        local id = container.ContainerId
+        if (id == BACKPACK_CONTAINER) then
+            return GetBackpackAutosortDisabled()
+        end
+        if (id == BANK_CONTAINER) then
+            return GetBankAutosortDisabled()
+        end
+        if (self.BagSet.Id == BagSetType.Backpack.Id) then
+            return GetBagSlotFlag(id, LE_BAG_FILTER_FLAG_IGNORE_CLEANUP)
+        end
+        if (self.BagSet.Id == BagSetType.Bank.Id) then
+            return GetBankBagSlotFlag(id - NUM_BAG_SLOTS, LE_BAG_FILTER_FLAG_IGNORE_CLEANUP)
+        end
+
+        -- fallback
+        return false
+    end
+end
+
+function Prototype:SetCleanupIgnore(value)
+    for _, container in pairs(self.SubContainers) do
+        local id = container.ContainerId
+        if (id == BACKPACK_CONTAINER) then
+            SetBackpackAutosortDisabled(value)
+        end
+        if (id == BANK_CONTAINER) then
+            SetBankAutosortDisabled(value)
+        end
+        if (self.BagSet.Id == BagSetType.Backpack.Id and id ~= BACKPACK_CONTAINER) then
+            SetBagSlotFlag(id, LE_BAG_FILTER_FLAG_IGNORE_CLEANUP, value)
+        end
+        if (self.BagSet.Id == BagSetType.Bank.Id and id ~= BANK_CONTAINER) then
+            SetBankBagSlotFlag(id - NUM_BAG_SLOTS, LE_BAG_FILTER_FLAG_IGNORE_CLEANUP, value)
+        end
+    end
+end
+
 local Metatable = { __index = Prototype }
 
 function AddOnTable:CreateContainer(bagSetType, bbContainerId)
