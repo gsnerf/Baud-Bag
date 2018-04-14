@@ -67,17 +67,24 @@ function Prototype:UpdateFromConfig()
     self.Frame.Name:SetText(containerConfig.Name or "")
 end
 
+function Prototype:Rebuild()
+    local _, subContainer
+    local numberOfSlots = 0
+    for _, subContainer in pairs(self.SubContainers) do
+        subContainer:Rebuild()
+        numberOfSlots = numberOfSlots + subContainer.Size
+    end
+    self.Frame.Slots = numberOfSlots
+    self:UpdateBackground()
+end
+
 function Prototype:Update()
     -- initialize bag update
     self.Frame.Refresh   = false
     self:UpdateName()
     local contCfg         = BBConfig[self.Frame.BagSet][self.Id]
     local numberOfColumns = contCfg.Columns
-    self.Frame.Slots      = 0
 
-    -- calculate sizes in all subbags
-    self:UpdateSize()
-    
     -- this should only happen when the dev coded some bullshit!
     if (self.Frame.Slots <= 0) then
         if self.Frame:IsShown() then
@@ -108,59 +115,9 @@ function Prototype:Update()
         self.Frame:SetWidth(numberOfColumns * 39 - 2);
         self.Frame:SetHeight(row * 39 - 2);
     end
-
-    self:UpdateBackground()
+    
     BaudBag_DebugMsg("Bags", "Finished Arranging Container.");
     AddOnTable:Container_Updated(self.BagSet, self.Id)
-end
-
-function Prototype:UpdateSize()
-    local container
-
-    for _, container in pairs(self.SubContainers) do
-    
-        -- prepare bag cache for use
-        local bagCache = BaudBagGetBagCache(container.ContainerId)
-        local size, slot
-
-        -- process inventory, bank only if it is open
-        if (self.Frame.BagSet ~= 2) or BaudBagFrame.BankOpen then
-            size = GetContainerNumSlots(container.ContainerId)
-
-            -- process bank
-            if (self.Frame.BagSet == 2) then
-                -- Clear out excess information if the size of a bag decreases
-                -- TODO move this to cache!
-                if (bagCache.Size > size) then
-                    for slot = size, bagCache.Size do
-                        if bagCache[slot] then
-                            bagCache[slot] = nil
-                        end
-                    end
-                end
-                bagCache.Size = size
-            end
-        else
-            size = bagCache and bagCache.Size or 0
-        end
-
-        -- special treatment for default bank containers, as their data can ALWAYS be retrieved
-        if (BaudBag_IsBankDefaultContainer(container.ContainerId)) then
-            size = GetContainerNumSlots(container.ContainerId)
-        end
-
-        container.Frame.size = size
-        container.Size = size
-        self.Frame.Slots = self.Frame.Slots + size
-
-        -- last but not least update visibility for deposit button of reagent bank
-        if (container.ContainerId == REAGENTBANK_CONTAINER and BaudBagFrame.BankOpen) then
-            self.Frame.DepositButton:Show()
-        else
-            self.Frame.DepositButton:Hide()
-        end
-
-    end
 end
 
 function Prototype:UpdateSubContainers(col, row)
@@ -180,12 +137,17 @@ function Prototype:UpdateSubContainers(col, row)
         else
             BaudBag_DebugMsg("Bags", "Adding (bagName)", container.Name)
 
-            container:CreateMissingSlots()
-			
             -- position item slots
             container:UpdateSlotContents()
             col, row = container:UpdateSlotPositions(self.Frame, background, col, row, maxCols, slotLevel)
             container.Frame:Show()
+
+            -- last but not least update visibility for deposit button of reagent bank
+            if (container.ContainerId == REAGENTBANK_CONTAINER and BaudBagFrame.BankOpen) then
+                self.Frame.DepositButton:Show()
+            else
+                self.Frame.DepositButton:Hide()
+            end
         end
     end
 
@@ -212,6 +174,16 @@ function Prototype:UpdateBackground()
     self.Frame.UnlockInfo:SetPoint("BOTTOMRIGHT", 10, -3)
 end
 
+function Prototype:UpdateFreeSlotsOverview(free, overall)
+    if (self.Frame.FreeSlots == nil) then
+        return
+    end
+
+    self.Frame.UpdateSlots = nil
+    local columns = BBConfig[self.Frame.BagSet][self.Id].Columns
+    self.Frame.FreeSlots:SetText(free.."/"..overall..(columns >= 4 and AddOnTable.Localized.Free or ""))
+end
+
 function Prototype:GetFilterType()
     local id, container
     for _, container in pairs(self.SubContainers) do
@@ -225,9 +197,49 @@ function Prototype:GetFilterType()
 end
 
 function Prototype:SetFilterType(type, value)
-    for id, container in pairs(self.SubContainers) do
+    for _, container in pairs(self.SubContainers) do
+        local id = container.ContainerId
         if (id ~= BACKPACK_CONTAINER) and (id ~= BANK_CONTAINER) and (id ~= REAGENTBANK_CONTAINER) then
             container:SetFilterType(type, value)
+        end
+    end
+end
+
+function Prototype:GetCleanupIgnore()
+    for _, container in pairs(self.SubContainers) do
+        local id = container.ContainerId
+        if (id == BACKPACK_CONTAINER) then
+            return GetBackpackAutosortDisabled()
+        end
+        if (id == BANK_CONTAINER) then
+            return GetBankAutosortDisabled()
+        end
+        if (self.BagSet.Id == BagSetType.Backpack.Id) then
+            return GetBagSlotFlag(id, LE_BAG_FILTER_FLAG_IGNORE_CLEANUP)
+        end
+        if (self.BagSet.Id == BagSetType.Bank.Id) then
+            return GetBankBagSlotFlag(id - NUM_BAG_SLOTS, LE_BAG_FILTER_FLAG_IGNORE_CLEANUP)
+        end
+
+        -- fallback
+        return false
+    end
+end
+
+function Prototype:SetCleanupIgnore(value)
+    for _, container in pairs(self.SubContainers) do
+        local id = container.ContainerId
+        if (id == BACKPACK_CONTAINER) then
+            SetBackpackAutosortDisabled(value)
+        end
+        if (id == BANK_CONTAINER) then
+            SetBankAutosortDisabled(value)
+        end
+        if (self.BagSet.Id == BagSetType.Backpack.Id and id ~= BACKPACK_CONTAINER) then
+            SetBagSlotFlag(id, LE_BAG_FILTER_FLAG_IGNORE_CLEANUP, value)
+        end
+        if (self.BagSet.Id == BagSetType.Bank.Id and id ~= BANK_CONTAINER) then
+            SetBankBagSlotFlag(id - NUM_BAG_SLOTS, LE_BAG_FILTER_FLAG_IGNORE_CLEANUP, value)
         end
     end
 end

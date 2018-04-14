@@ -216,6 +216,11 @@ function Prototype:ApplyBaseSkin()
     end
 end
 
+function Prototype:Hide()
+    -- TODO: determine what exactly can be done to hide the button without actually destroying it (or maybe destroy it?)
+    self.Frame:Hide()
+end
+
 local Metatable = { __index = Prototype }
 
 function AddOnTable:CreateItemButton(subContainer, slotIndex, buttonTemplate)

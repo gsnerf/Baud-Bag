@@ -34,10 +34,20 @@ end
     entry.func = ToggleContainerLock
     UIDropDownMenu_AddButton(entry)
 
+    -- cleanup ignore
+    if (DropDownContainer) then
+        local containerObject = AddOnTable.Sets[DropDownBagSet].Containers[DropDownContainer]
+        entry.text = BAG_FILTER_IGNORE
+        entry.checked = containerObject:GetCleanupIgnore()
+        entry.func = function(_, _, _, value) containerObject:SetCleanupIgnore(not value) end
+        UIDropDownMenu_AddButton(entry)
+    end
+
     -- cleanup button first regular
     if (DropDownBagSet == 1) then
         entry.text = BAG_CLEANUP_BAGS
         entry.func = SortBags
+        entry.checked = false
         UIDropDownMenu_AddButton(entry)
     elseif (DropDownContainer and BaudBagFrame.BankOpen) then
         if(_G["BaudBagContainer"..DropDownBagSet.."_"..DropDownContainer].Bags[1]:GetID() == -3) then
@@ -94,6 +104,8 @@ function AddFilterOptions(bagSetId, containerId, header)
             firstSubContainerId == BANK_CONTAINER
             or
             firstSubContainerId == REAGENTBANK_CONTAINER
+            or
+            IsInventoryItemProfessionBag("player", ContainerIDToInventoryID(firstSubContainerId))
         )
     ) then
         -- the backpack, bank or reagent bank themselves cannot have filters!

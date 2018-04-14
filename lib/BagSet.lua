@@ -49,6 +49,7 @@ function Prototype:RebuildContainers()
         end
 
         -- and now update complete content
+        localContainerObject:Rebuild()
         localContainerObject:Update()
     end
 
@@ -126,9 +127,8 @@ end
 function Prototype:UpdateSlotInfo()
     local firstContainer = self.Containers[1]
     if (firstContainer) then
-        firstContainer.Frame.UpdateSlots = nil;
         local free, overall = self:GetSlotInfo()
-        firstContainer.Frame.FreeSlots:SetText(free.."/"..overall..AddOnTable.Localized.Free)
+        firstContainer:UpdateFreeSlotsOverview(free, overall)
     end
 end
 

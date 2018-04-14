@@ -1,4 +1,10 @@
 ﻿=== Changelog ===
+v7.3.6
+  - introduced cleanup ignore filter for containers, these containers won't be affected by the cleanup operation
+  - fixed container filters to use correct IDs for the target containers
+  - fixed swapping of bags resulting in exceptions and missing items
+  - fixed faulty container rendering when the column configuration was changed
+  - fixed some caching related issues that lead to faulty textures and bagcontents for bank containers when in offline mode
 v7.3.5
   - reworked generation of the containers menu drop downs and their internal handling of clicks
   - introduced usage of regular containers filter assignment (can be configured through container menu)

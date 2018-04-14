@@ -371,7 +371,8 @@ function BaudBagSlider_OnValueChanged(self)
     if (SavedVar == "Scale") then
         BaudUpdateContainerData(SelectedBags, SelectedContainer);
     elseif (SavedVar=="Columns") then
-        BaudBagUpdateContainer(_G["BaudBagContainer"..SelectedBags.."_"..SelectedContainer]);
+        AddOnTable.Sets[SelectedBags].Containers[SelectedContainer]:Rebuild()
+        AddOnTable.Sets[SelectedBags].Containers[SelectedContainer]:Update()
     end
     BackpackTokenFrame_Update();
 end

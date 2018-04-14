@@ -6,13 +6,16 @@ local Prototype = {
     ContainerId = nil,
     Name = "",
     StartColumn = 0,
-    Size = 0,
     FreeSlots = 0,
     HighlightSlots = false,
     Frame = nil,
     Items = nil,
     BagButton = nil,
-    FilterType = nil
+    FilterType = nil,
+    
+    -- theese values might be better of in an own object, we'll see
+    Size = 0,
+    AvailableItemButtons = 0
 }
 
 function Prototype:GetID()
@@ -23,37 +26,75 @@ function Prototype:GetFrame()
     return self.Frame
 end
 
+function Prototype:GetSize()
+    local isBankBag = self.BagSet.Id == BagSetType.Bank.Id
+    local useCache = isBankBag and not BaudBagFrame.BankOpen
+    if useCache then
+        local bagCache = BaudBagGetBagCache(self.ContainerId)
+        return bagCache.Size
+    else
+        return GetContainerNumSlots(self.ContainerId)
+    end
+end
+
 function Prototype:IsOpen()
     -- TODO: is self.Frame:IsShown() really necessary here?
     local parent = self.Frame:GetParent()
     return self.Frame:IsShown() and parent:IsShown() and not parent.Closing;
 end
 
-function Prototype:Render()
-    -- TODO
+function Prototype:GetItemButtonTemplate()
+    -- TODO: this should propably be already known when creating the SubContainer, so better move somewhere earlier!
+    if (self.ContainerId == BANK_CONTAINER) then
+        return "BankItemButtonGenericTemplate"
+    elseif (self.ContainerId == REAGENTBANK_CONTAINER) then
+        return "ReagentBankItemButtonGenericTemplate"
+    else
+        return "ContainerFrameItemButtonTemplate"
+    end
 end
 
-function Prototype:CreateMissingSlots()
-    local frame = self.Frame
-    if (frame.size > (frame.maxSlots or 0)) then
-        for slot = (frame.maxSlots or 0) + 1, frame.size do
-            -- determine type of template for item button
-            local template
-            if (self.ContainerId == BANK_CONTAINER) then
-                template = "BankItemButtonGenericTemplate"
-            elseif (self.ContainerId == REAGENTBANK_CONTAINER) then
-                template = "ReagentBankItemButtonGenericTemplate"
-            else
-                template = "ContainerFrameItemButtonTemplate"
-            end
+function Prototype:Rebuild()
+    local newSize = self:GetSize()
+    local currentSize = self.Size
+    local availableItemButtons = self.AvailableItemButtons
+    local bagCache = BaudBagGetBagCache(self.ContainerId)
+    BaudBag_DebugMsg("BagCreation", "Rebuilding subcontainer content (containerId, currentSize, newSize, availableItemButtons)", self.ContainerId, currentSize, newSize, availableItemButtons)
+    
+    -- create missing slots if necessary
+    if (availableItemButtons < newSize) then
+        local templateToUse = self:GetItemButtonTemplate()
+        for newSlot = availableItemButtons + 1, newSize do
+            local button = AddOnTable:CreateItemButton(self, newSlot, templateToUse)
+            self.Items[newSlot] = button
 
-            local button = AddOnTable:CreateItemButton(self, slot, template)
-            self.Items[slot] = button
-            
-            AddOnTable:ItemSlot_Created(self.BagSet, frame:GetParent():GetID(), self.ContainerId, slot, button.Frame)
+            -- hook for plugins
+            AddOnTable:ItemSlot_Created(self.BagSet, self.Frame:GetParent():GetID(), self.ContainerId, slot, button.Frame)
         end
-        frame.maxSlots = frame.size
+        availableItemButtons = newSize
     end
+
+    -- handle excessive slots when necessary
+    if (newSize < availableItemButtons) then
+        for excessSlot = newSize + 1, availableItemButtons do
+            local excessItemButton = self.Items[excessSlot]
+            excessItemButton:Hide()
+
+            if (bagCache) then
+                bagCache[excessSlot] = nil
+            end
+        end
+    end
+
+    -- remember the new values
+    self.Size = newSize
+    self.AvailableItemButtons = availableItemButtons
+    if (bagCache) then
+        bagCache.Size = newSize
+    end
+
+    -- now update content
+    self:UpdateSlotContents()
 end
 
 function Prototype:UpdateSlotContents()
@@ -64,11 +105,6 @@ function Prototype:UpdateSlotContents()
     
     -- reinit values that might be outdated
     self.FreeSlots = 0
-    if useCache then
-        self.Size = bagCache.Size
-    else
-        self.Size = GetContainerNumSlots(self.ContainerId)
-    end
 
     BaudBag_DebugMsg("Bags", "Updating SubBag (ID, Size, isBagContainer, isBankOpen)", self.ContainerId, self.Size, not isBankBag, BaudBagFrame.BankOpen)
 
@@ -94,25 +130,20 @@ end
 
 -- returns the adapted col and row values
 function Prototype:UpdateSlotPositions(container, background, col, row, maxCols, slotLevel)
-    local frame = self.Frame
     local slot, itemObject
     local buttonWidth = background <= 3 and 42 or 39
     local buttonHeight = background <= 3 and -41 or -39
 
-    for slot = 1, frame.maxSlots do
+    for slot = 1, self.Size do
         itemOject = self.Items[slot]
-        if (slot <= frame.size) then
-            col = col + 1
-            if (col > maxCols) then
-                col = 1
-                row = row + 1
-            end
-            local x = (col-1) * buttonWidth
-            local y = (row-1) * buttonHeight
-            itemOject:UpdatePosition(container, x, y, slotLevel)
-        else
-            itemOject.Frame:Hide()
+        col = col + 1
+        if (col > maxCols) then
+            col = 1
+            row = row + 1
         end
+        local x = (col-1) * buttonWidth
+        local y = (row-1) * buttonHeight
+        itemOject:UpdatePosition(container, x, y, slotLevel)
     end
     return col, row
 end
