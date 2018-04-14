@@ -230,7 +230,7 @@ function BaudBag_OnLoad(self, event, ...)
     local SubBag, Container;
     for BagSet = 1, 2 do
         Container = _G[Prefix.."Container"..BagSet.."_1"];
-        _G[Container:GetName().."Slots"]:SetPoint("RIGHT",Container:GetName().."MoneyFrame","LEFT");
+        Container.FreeSlots:SetPoint("RIGHT",Container:GetName().."MoneyFrame","LEFT");
         Container.BagSet = BagSet;
         Container:SetID(1);
     end
