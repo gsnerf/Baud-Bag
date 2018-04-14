@@ -35,6 +35,9 @@ local Func = function(self, event, ...)
     if not bankVisible then
         return
     end
+    
+    -- make sure current bag inforations are processed
+    AddOnTable.Sets[2]:RebuildContainers()
     BaudBagAutoOpenSet(1)
     BaudBagAutoOpenSet(2)
 end

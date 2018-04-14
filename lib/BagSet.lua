@@ -49,6 +49,7 @@ function Prototype:RebuildContainers()
         end
 
         -- and now update complete content
+        localContainerObject:Rebuild()
         localContainerObject:Update()
     end
 
