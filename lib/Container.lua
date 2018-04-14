@@ -174,6 +174,16 @@ function Prototype:UpdateBackground()
     self.Frame.UnlockInfo:SetPoint("BOTTOMRIGHT", 10, -3)
 end
 
+function Prototype:UpdateFreeSlotsOverview(free, overall)
+    if (self.Frame.FreeSlots == nil) then
+        return
+    end
+
+    self.Frame.UpdateSlots = nil
+    local columns = BBConfig[self.Frame.BagSet][self.Id].Columns
+    self.Frame.FreeSlots:SetText(free.."/"..overall..(columns >= 4 and AddOnTable.Localized.Free or ""))
+end
+
 function Prototype:GetFilterType()
     local id, container
     for _, container in pairs(self.SubContainers) do
