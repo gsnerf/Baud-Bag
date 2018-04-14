@@ -283,7 +283,7 @@
 		</Frames>
 		<Layers>
 			<Layer>
-				<FontString name="$parentSlots" parentKey="FreeSlots" inherits="GameFontNormal" justifyH="LEFT" />
+				<FontString name="$parentSlots" parentKey="FreeSlots" inherits="GameFontNormal" justifyH="LEFT" wordwrap="false" nonSpaceWrap="false" />
 			</Layer>
 		</Layers>
 	</Frame>
