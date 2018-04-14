@@ -187,7 +187,8 @@ function Prototype:GetFilterType()
 end
 
 function Prototype:SetFilterType(type, value)
-    for id, container in pairs(self.SubContainers) do
+    for _, container in pairs(self.SubContainers) do
+        local id = container.ContainerId
         if (id ~= BACKPACK_CONTAINER) and (id ~= BANK_CONTAINER) and (id ~= REAGENTBANK_CONTAINER) then
             container:SetFilterType(type, value)
         end

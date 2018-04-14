@@ -94,6 +94,8 @@ function AddFilterOptions(bagSetId, containerId, header)
             firstSubContainerId == BANK_CONTAINER
             or
             firstSubContainerId == REAGENTBANK_CONTAINER
+            or
+            IsInventoryItemProfessionBag("player", ContainerIDToInventoryID(firstSubContainerId))
         )
     ) then
         -- the backpack, bank or reagent bank themselves cannot have filters!
