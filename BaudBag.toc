@@ -11,7 +11,7 @@
 ## Title: Baud Bag
 ## Title-zhCN: 背包整合 Baud Bag
 ## Title-zhTW: 背包整合 Baud Bag
-## Version: 7.3.6
+## Version: 7.3.7
 
 Localization.lua
 BaudBagFunctions.lua

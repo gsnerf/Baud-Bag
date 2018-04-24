@@ -12,7 +12,7 @@ local EventFuncs = {
             _G[Prefix.."Container2_1"]:Hide();
         else
             --Add offline again to bag name
-            local numberOfContainers = table.getn(AddOnTable.Sets[2].Containers)
+            local numberOfContainers = AddOnTable.Sets[2].ContainerNumber
             for ContNum = 1, numberOfContainers do
                 AddOnTable.Sets[2].Containers[ContNum]:UpdateName()
             end

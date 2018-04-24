@@ -1,6 +1,6 @@
-local _
 local AddOnName, AddOnTable = ...
 local Localized = BaudBagLocalized
+local _
 
 local Prefix = "BaudBag"
 local LastBagID = NUM_BANKBAGSLOTS + NUM_BAG_SLOTS
@@ -133,7 +133,7 @@ function BaudBagSearchFrame_ShowFrame(ParentContainer, Scale, Background)
 end
 
 function BaudBagSearchFrameEditBox_OnTextChanged(self, isUserInput)
-    BaudBag_DebugMsg("Search", "Changed search phrase, researching open bags")
+    BaudBag_DebugMsg("Search", "Changed search phrase, searching open bags")
     local compareString = self:GetText()
 	
     -- check search text for validity
@@ -143,12 +143,13 @@ function BaudBagSearchFrameEditBox_OnTextChanged(self, isUserInput)
     end
 	
     -- go through all bags to find the open ones
-    local SubBag, Frame, Open, ItemButton, Link, Name, Texture
+    local SubBagObject, SubBag, Frame, Open, ItemButton, Link, Name, Texture
     local Status, Result
     local bagCache, slotCache
     for Bag = -3, LastBagID do
         if not (Bag == -2) then
-            SubBag = _G[Prefix.."SubBag"..Bag]
+            SubBagObject = AddOnTable.SubBags[Bag]
+            SubBag = SubBagObject.Frame
             Open	= SubBag:IsShown()and SubBag:GetParent():IsShown() and not SubBag:GetParent().Closing
             bagCache = BaudBagGetBagCache(SubBag:GetID())
 
@@ -157,7 +158,7 @@ function BaudBagSearchFrameEditBox_OnTextChanged(self, isUserInput)
                 BaudBag_DebugMsg("Search", "Bag is open, going through items (BagID)", Bag)
                 BagsSearched[Bag] = true
 
-                for Slot = 1, SubBag.size do
+                for Slot = 1, SubBagObject:GetSize() do
                     ItemButton = _G[SubBag:GetName().."Item"..Slot]
                     slotCache = bagCache and bagCache[Slot] or nil
 
@@ -222,12 +223,13 @@ function BaudBagSearchFrameEditBox_OnTextChanged(self, isUserInput)
 end
 
 local function RemoveSearchHighlights()
-    local SubBag, Frame, Open, ItemButton, Link, Name, Texture
+    local SubBagObject, SubBag, Frame, Open, ItemButton, Link, Name, Texture
     for Bag = -3, LastBagID do
         if not (Bag == -2) then
             if (BagsSearched[Bag]) then
-                SubBag = _G[Prefix.."SubBag"..Bag]
-                for Slot = 1, SubBag.size do
+                SubBagObject = AddOnTable.SubBags[Bag]
+                SubBag = SubBagObject.Frame
+                for Slot = 1, SubBagObject:GetSize() do
                     ItemButton = _G[SubBag:GetName().."Item"..Slot]
                     ItemButton:SetAlpha(1)
                 end

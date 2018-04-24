@@ -3,9 +3,10 @@ local _
 
 local Prototype = {
     Type = nil,
+    MaxContainerNumber = 0,
+    ContainerNumber = 0,
     --[[  sub tables have to be reassigned on init or ALL new elements will have the SAME tables for access... ]]
     Containers = nil,
-    MaxContainerNumber = 0,
     SubContainers = nil,
     BagButtons = nil
 }
@@ -39,6 +40,11 @@ function Prototype:RebuildContainers()
                 localContainerObject.SubContainers[i] = nil
             end
         end
+        
+        -- and now update complete content
+        localContainerObject:Rebuild()
+        localContainerObject:Update()
+        
         -- now update visibility
         if localIsOpen then
             BaudBag_DebugMsg("Container", "Showing Container (Name)", localContainerObject.Name)
@@ -47,10 +53,6 @@ function Prototype:RebuildContainers()
             BaudBag_DebugMsg("Container", "Hiding Container (Name)", localContainerObject.Name)
             localContainerObject.Frame:Hide()
         end
-
-        -- and now update complete content
-        localContainerObject:Rebuild()
-        localContainerObject:Update()
     end
 
     -- we need to remember the open state before rearranging the containers or bags will close while they are expected to be seen
@@ -104,6 +106,7 @@ function Prototype:RebuildContainers()
         self.Containers[index].Frame:Hide();
     end
 
+    self.ContainerNumber = containerNumber
     return containerNumber
 end
 
