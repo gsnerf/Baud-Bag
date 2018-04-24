@@ -3,9 +3,10 @@ local _
 
 local Prototype = {
     Type = nil,
+    MaxContainerNumber = 0,
+    ContainerNumber = 0,
     --[[  sub tables have to be reassigned on init or ALL new elements will have the SAME tables for access... ]]
     Containers = nil,
-    MaxContainerNumber = 0,
     SubContainers = nil,
     BagButtons = nil
 }
@@ -105,6 +106,7 @@ function Prototype:RebuildContainers()
         self.Containers[index].Frame:Hide();
     end
 
+    self.ContainerNumber = containerNumber
     return containerNumber
 end
 
