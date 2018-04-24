@@ -29,7 +29,7 @@ end
 function Prototype:GetSize()
     local isBankBag = self.BagSet.Id == BagSetType.Bank.Id
     local useCache = isBankBag and not BaudBagFrame.BankOpen
-    if useCache then
+    if useCache and (self.ContainerId ~= -3) then
         local bagCache = BaudBagGetBagCache(self.ContainerId)
         return bagCache.Size
     else
