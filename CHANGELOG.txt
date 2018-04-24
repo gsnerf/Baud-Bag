@@ -1,4 +1,7 @@
 ﻿=== Changelog ===
+v7.3.7
+  - fixed searching for items
+  - fixed error on login or (bank)bag open/close 
 v7.3.6
   - introduced cleanup ignore filter for containers, these containers won't be affected by the cleanup operation
   - fixed container filters to use correct IDs for the target containers
