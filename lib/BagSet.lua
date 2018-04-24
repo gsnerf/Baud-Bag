@@ -39,6 +39,11 @@ function Prototype:RebuildContainers()
                 localContainerObject.SubContainers[i] = nil
             end
         end
+        
+        -- and now update complete content
+        localContainerObject:Rebuild()
+        localContainerObject:Update()
+        
         -- now update visibility
         if localIsOpen then
             BaudBag_DebugMsg("Container", "Showing Container (Name)", localContainerObject.Name)
@@ -47,10 +52,6 @@ function Prototype:RebuildContainers()
             BaudBag_DebugMsg("Container", "Hiding Container (Name)", localContainerObject.Name)
             localContainerObject.Frame:Hide()
         end
-
-        -- and now update complete content
-        localContainerObject:Rebuild()
-        localContainerObject:Update()
     end
 
     -- we need to remember the open state before rearranging the containers or bags will close while they are expected to be seen
