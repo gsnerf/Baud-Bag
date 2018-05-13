@@ -75,7 +75,9 @@ function Prototype:Rebuild()
         numberOfSlots = numberOfSlots + subContainer.Size
     end
     self.Frame.Slots = numberOfSlots
-    self:UpdateBackground()
+    if (numberOfSlots > 0) then
+        self:UpdateBackground()
+    end
 end
 
 function Prototype:Update()
@@ -182,6 +184,13 @@ function Prototype:UpdateFreeSlotsOverview(free, overall)
     self.Frame.UpdateSlots = nil
     local columns = BBConfig[self.Frame.BagSet][self.Id].Columns
     self.Frame.FreeSlots:SetText(free.."/"..overall..(columns >= 4 and AddOnTable.Localized.Free or ""))
+end
+
+function Prototype:UpdateBagHighlight()
+    local subContainer
+    for _, subContainer in pairs(self.SubContainers) do
+        subContainer:UpdateOpenBagHighlight()
+    end
 end
 
 function Prototype:GetFilterType()
