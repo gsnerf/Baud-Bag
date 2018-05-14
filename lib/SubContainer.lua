@@ -40,7 +40,7 @@ end
 function Prototype:IsOpen()
     -- TODO: is self.Frame:IsShown() really necessary here?
     local parent = self.Frame:GetParent()
-    return self.Frame:IsShown() and parent:IsShown() and not parent.Closing;
+    return self.Frame:IsShown() and parent:IsShown() and not parent.Closing
 end
 
 function Prototype:GetItemButtonTemplate()
@@ -302,12 +302,12 @@ end
 
 local function EventUpdateFunction(self, event, ...)
     -- only update if the event is for the current bag!
-    local idOfBagToUpdate = ...;
+    local idOfBagToUpdate = ...
     if (self.ContainerId ~= idOfBagToUpdate) then
-        return;
+        return
     end
-    BaudBag_DebugMsg("ItemHandle", "Event fired for subBag, Params[Event, ID]", event, self.ContainerId);
-    self:Update(event, ...);
+    BaudBag_DebugMsg("ItemHandle", "Event fired for subBag, Params[Event, ID]", event, self.ContainerId)
+    self:Update(event, ...)
 end
 
 local Events = {
@@ -326,7 +326,7 @@ end
 -- TODO: don't know if this mixup of object orientation and wow function handly really works like that
 function Prototype:OnEvent(self, event, ...)
     if not self:GetParent():IsShown() or (self:GetID() >= 5) and not BaudBagFrame.BankOpen then
-        return;
+        return
     end
-    Events[event](self, event, ...);
+    Events[event](self, event, ...)
 end

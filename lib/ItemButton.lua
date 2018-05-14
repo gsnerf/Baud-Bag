@@ -60,9 +60,9 @@ function Prototype:UpdateContent(useCache, slotCache)
     end
     
     SetItemButtonTexture(self.Frame, texture)
-    --SetItemButtonQuality(self.Frame, quality, itemID);
+    --SetItemButtonQuality(self.Frame, quality, itemID)
     SetItemButtonCount(self.Frame, count)
-    SetItemButtonDesaturated(self.Frame, locked);
+    SetItemButtonDesaturated(self.Frame, locked)
     
     self.Quality = quality
     self:UpdateNewAndBattlepayoverlays(isNewItem, isBattlePayItem)

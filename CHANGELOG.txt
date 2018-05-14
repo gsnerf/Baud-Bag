@@ -1,4 +1,6 @@
 ﻿=== Changelog ===
+v7.3.8
+  - hardened container update when there are no bags inside to show
 v7.3.7
   - fixed searching for items
   - fixed error on login or (bank)bag open/close 

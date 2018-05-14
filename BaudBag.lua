@@ -332,16 +332,21 @@ function BaudBagContainer_OnShow(self, event, ...)
 	
     -- container seems to not be visible, open and update
     self.FadeStart = GetTime();
-    PlaySound(SOUNDKIT.IG_BACKPACK_OPEN);
-    BaudBagUpdateContainer(self);
-    BaudBagUpdateOpenBagHighlight();
+    PlaySound(SOUNDKIT.IG_BACKPACK_OPEN)
+    local bagSet = AddOnTable["Sets"][self.BagSet]
+    local containerObject = bagSet.Containers[self:GetID()]
+    containerObject:Update()
+    if (containerObject.Frame.Slots > 0) then
+        containerObject:UpdateBagHighlight()
+    end
+
     if (self:GetID() == 1) then
         AddOnTable["Sets"][self.BagSet]:UpdateSlotInfo()
     end
 	
     -- If there are tokens watched then decide if we should show the bar
     if ( ManageBackpackTokenFrame ) then
-        ManageBackpackTokenFrame();
+        ManageBackpackTokenFrame()
     end
 end
 
