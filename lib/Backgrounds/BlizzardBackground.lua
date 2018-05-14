@@ -198,26 +198,26 @@ function Prototype:RenderMoneyFrameBackground(helper, containerFrame, parentName
     renderMoneyFrameOnly = renderMoneyFrameOnly or true
 
     helper.Parent = _G[parentName]
-    helper.File = "Interface\\ContainerFrame\\UI-BackpackBackground.blp";
-    helper.Width, helper.Height = 256, 256;
+    helper.File = "Interface\\ContainerFrame\\UI-BackpackBackground.blp"
+    helper.Width, helper.Height = 256, 256
 
     local targetHeight = containerFrame.MoneyFrame:GetHeight()
     local moneyFrameName = containerFrame.MoneyFrame:GetName()
 
     -- left part of ONLY the yellow border
-    local texture = helper:GetTexturePiece("MoneyLineLeft", 80,84, 228,246, nil, targetHeight);
-    texture:SetPoint("LEFT", parentName.."Left", "RIGHT");
-    texture:SetPoint("TOP", moneyFrameName, "TOP", 0, 0);
+    local texture = helper:GetTexturePiece("MoneyLineLeft", 80,84, 228,246, nil, targetHeight)
+    texture:SetPoint("LEFT", parentName.."Left", "RIGHT")
+    texture:SetPoint("TOP", moneyFrameName, "TOP", 0, 0)
 
     -- right part of ONLY the yellow border
-    texture = helper:GetTexturePiece("MoneyLineRight", 240,244, 228,246, nil, targetHeight);
-    texture:SetPoint("RIGHT", parentName.."Right", "LEFT");
-    texture:SetPoint("TOP", moneyFrameName, "TOP", 0, 0);
+    texture = helper:GetTexturePiece("MoneyLineRight", 240,244, 228,246, nil, targetHeight)
+    texture:SetPoint("RIGHT", parentName.."Right", "LEFT")
+    texture:SetPoint("TOP", moneyFrameName, "TOP", 0, 0)
 
     -- center part of ONLY the yellow border
-    texture = helper:GetTexturePiece("MoneyLineCenter", 85,239, 228,246, nil, targetHeight);
-    texture:SetPoint("LEFT", parentName.."MoneyLineLeft", "RIGHT");
-    texture:SetPoint("RIGHT", parentName.."MoneyLineRight", "LEFT");
+    texture = helper:GetTexturePiece("MoneyLineCenter", 85,239, 228,246, nil, targetHeight)
+    texture:SetPoint("LEFT", parentName.."MoneyLineLeft", "RIGHT")
+    texture:SetPoint("RIGHT", parentName.."MoneyLineRight", "LEFT")
 end
 
 function Prototype:UpdateBagPicture(containerFrame, parentName, backdrop)
@@ -264,11 +264,11 @@ function Prototype:AdjustPositioning(helper, containerFrame, backdrop, shiftName
 end
 
 function Prototype:HideObject(Object)
-    Object = _G[Object];
+    Object = _G[Object]
     if not Object then
-        return;
+        return
     end
-    Object:Hide();
+    Object:Hide()
 end
 
 local Metatable = { __index = Prototype }

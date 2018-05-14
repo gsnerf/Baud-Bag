@@ -1,6 +1,6 @@
 local AddOnName, AddOnTable = ...
 local _
-local Localized	= BaudBagLocalized;
+local Localized	= BaudBagLocalized
 
 function AddOnTable:RegisterDefaultBackgrounds()
     -- blizzard backgrounds

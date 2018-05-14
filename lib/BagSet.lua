@@ -25,8 +25,8 @@ function Prototype:PerformInitialBuild()
 
         -- a little bit of legacy code hopefully not needed at some point in the future
         local subContainerFrame = subContainer.Frame
-        subContainerFrame:SetID(containerId);
-        subContainerFrame:SetParent(AddOnName.."Container"..subContainerFrame.BagSet.."_1");
+        subContainerFrame:SetID(containerId)
+        subContainerFrame:SetParent(AddOnName.."Container"..subContainerFrame.BagSet.."_1")
     end
 end
 

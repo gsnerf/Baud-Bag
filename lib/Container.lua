@@ -104,21 +104,21 @@ function Prototype:Update()
     local column, row = 0, 1
     --The textured background puts its empty space on the upper left
     if contCfg.BlankTop then
-        column = numberOfColumns - mod(self.Frame.Slots - 1, numberOfColumns) - 1;
+        column = numberOfColumns - mod(self.Frame.Slots - 1, numberOfColumns) - 1
     end
 
     -- now go through all sub bags
     _, row = self:UpdateSubContainers(column, row)
 
     if (contCfg.Background <= 3) then
-        self.Frame:SetWidth(numberOfColumns * 42 - 5);
-        self.Frame:SetHeight(row * 41 - 4);
+        self.Frame:SetWidth(numberOfColumns * 42 - 5)
+        self.Frame:SetHeight(row * 41 - 4)
     else
-        self.Frame:SetWidth(numberOfColumns * 39 - 2);
-        self.Frame:SetHeight(row * 39 - 2);
+        self.Frame:SetWidth(numberOfColumns * 39 - 2)
+        self.Frame:SetHeight(row * 39 - 2)
     end
     
-    BaudBag_DebugMsg("Bags", "Finished Arranging Container.");
+    BaudBag_DebugMsg("Bags", "Finished Arranging Container.")
     AddOnTable:Container_Updated(self.BagSet, self.Id)
 end
 
