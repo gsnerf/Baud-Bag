@@ -229,7 +229,7 @@
 					</Button>
 				</Frames>
 				<Scripts>
-					<OnShow function="ReagentBankFrame_UpdateTabBuyingInfo"/>
+					<OnShow function="BBReagentBank_UnlockInfo_Show"/>
 					<OnLoad function="RaiseFrameLevel"/>
 				</Scripts>
 			</Frame>
