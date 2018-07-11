@@ -17,9 +17,9 @@ local function ItemSlotUpdated(self, bagSet, containerId, subContainerId, slotId
             showSellables=true
         }
 
-        CaerdonWardrobe:ProcessItem(itemId, bagId, slotId, button, options)
+        CaerdonWardrobe:ProcessItem(itemId, subContainerId, slotId, button, options)
     else
-		CaerdonWardrobe:ProcessItem(nil, bagId, slotId, button, nil)
+        CaerdonWardrobe:ProcessItem(nil, subContainerId, slotId, button, nil)
     end 
 end
 
