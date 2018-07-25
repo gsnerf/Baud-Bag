@@ -369,7 +369,7 @@ function BaudBagSlider_OnValueChanged(self)
 
     -- cause the appropriate update  -- TODO: move to BaudBagBBConfig save?
     if (SavedVar == "Scale") then
-        BaudUpdateContainerData(SelectedBags, SelectedContainer);
+        AddOnTable.Sets[SelectedBags].Containers[SelectedContainer]:UpdateFromConfig()
     elseif (SavedVar=="Columns") then
         AddOnTable.Sets[SelectedBags].Containers[SelectedContainer]:Rebuild()
         AddOnTable.Sets[SelectedBags].Containers[SelectedContainer]:Update()
