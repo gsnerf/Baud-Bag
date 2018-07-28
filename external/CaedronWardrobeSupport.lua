@@ -10,11 +10,6 @@ local function ProcessItem(bagId, slotId, button)
     if slotId then
         local slot = slotId
  
-        if bag == -1 then
-            bag = "BankFrame"
-            slot = BankButtonIDToInvSlotID(slot)
-        end
-
         local itemId = GetContainerItemID(bagId, slotId)
         if itemId then
             local options = {
