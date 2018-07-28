@@ -216,6 +216,14 @@ function BaudBagBankBags_UpdateContent(bankVisible)
     end
 end
 
+function BBReagentBank_UnlockInfo_Show(self, event, ...)
+    if(not IsReagentBankUnlocked()) then		
+		self:Show();
+		MoneyFrame_Update( self.CostMoneyFrame, GetReagentBankCost());
+	else
+		self:Hide();
+	end
+end
 
 
 --[[ this prepares the visual style of the reagent bag slot ]]

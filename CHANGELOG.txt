@@ -1,4 +1,10 @@
 ﻿=== Changelog ===
+v8.0.2
+  - fixed broken updating of containers after changing the scaling in options
+v8.0.1
+  - fixed faulty supported game version definition in toc
+v8.0.0
+  - fixed recognition of unlocked reagent bank to work with recent interface changes
 v7.3.8
   - hardened container update when there are no bags inside to show
 v7.3.7
