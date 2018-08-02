@@ -35,5 +35,4 @@ BaudBagBank.xml
 frames\BaudBagSearchFrame.xml
 BaudBag.xml
 BaudBagVoidStorage.xml
-external\CaedronWardrobeSupport.lua
 external\Masque.lua
