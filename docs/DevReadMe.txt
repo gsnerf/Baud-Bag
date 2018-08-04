@@ -39,6 +39,7 @@ Config
 	|
 	| [Global options from here on]
 	|-RarityColor (true/false)
+	|-RarityIntensity (0.5-2.5)
 	|-SellJunk (true/false)
 	|-ShowNewItems (true/false)
 	\-UseMasque (true/false)

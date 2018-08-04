@@ -99,6 +99,7 @@ end
 
 function Prototype:UpdateSlotContents()
     local showColor = BBConfig.RarityColor
+    local rarityIntensity = BBConfig.RarityIntensity
     local isBankBag = self.BagSet.Id == BagSetType.Bank.Id
     local bagCache = BaudBagGetBagCache(self.ContainerId)
     local useCache = isBankBag and not BaudBagFrame.BankOpen
@@ -111,7 +112,7 @@ function Prototype:UpdateSlotContents()
     for slot = 1, self.Size do
         local itemObject = self.Items[slot]
         local link, newCacheEntry = itemObject:UpdateContent(useCache, bagCache[slot])
-        itemObject:UpdateCustomRarity(showColor, 1)
+        itemObject:UpdateCustomRarity(showColor, rarityIntensity)
         itemObject:ShowHighlight(self.HighlightSlots)
 
         if (isBankBag and not useCache) then

@@ -1,7 +1,7 @@
 --This file is UTF-8
 local AddOnName, AddOnTable = ...
 local _
-local Locale = GetLocale();
+local Locale = GetLocale()
 
 if (Locale=="zhTW") then -- Translator: Isler
   BaudBagLocalized = {
@@ -19,6 +19,8 @@ if (Locale=="zhTW") then -- Translator: Isler
     BlankOnTopTooltip = "勾選後，剩餘的未使用空間上升到整合背包頂部(開啟背包整合後生效)",
     RarityColoring = "品質邊框",
     RarityColoringTooltip = "勾選後，物品圖示的邊框按品質著色(開啟背包整合後生效)",
+    RarityIntensity = "Rarity Color Intensity - %g",
+    RarityIntensityTooltip = "Set the intensity of the rarity color",
     ShowNewItems = "New Items Highlight",
     ShowNewItemsTooltip = "When enabled, the borders of items will flash to highlight the new item until hovered with the mouse.",
     Columns = "每行列數 - %d",
@@ -61,7 +63,7 @@ if (Locale=="zhTW") then -- Translator: Isler
     UseMasqueReloadPopupText = "You seem to have enabled or disabled Masque support within Baud Bag. For changes to take effect you will need to reload your ui. Do you want to do that now?",
     UseMasqueReloadPopupAccept = "yes",
     UseMasqueReloadPopupDecline = "no"
-  };
+  }
 elseif (Locale=="zhCN") then  -- Translator: Isler
   BaudBagLocalized = {
     StandardBag = "容器",
@@ -79,6 +81,8 @@ elseif (Locale=="zhCN") then  -- Translator: Isler
     BlankOnTopTooltip = "勾选后，剩余的未使用空间上升到整合背包顶部(开启背包整合后生效)",
     RarityColoring = "质量边框",
     RarityColoringTooltip = "勾选后，物品图标的边框按品质着色(开启背包整合后生效)",
+    RarityIntensity = "Rarity Color Intensity - %g",
+    RarityIntensityTooltip = "Set the intensity of the rarity color",
     ShowNewItems = "New Items Highlight",
     ShowNewItemsTooltip = "When enabled, the borders of items will flash to highlight the new item until hovered with the mouse.",
     Columns = "每行列数 - %d",
@@ -121,7 +125,7 @@ elseif (Locale=="zhCN") then  -- Translator: Isler
     UseMasqueReloadPopupText = "You seem to have enabled or disabled Masque support within Baud Bag. For changes to take effect you will need to reload your ui. Do you want to do that now?",
     UseMasqueReloadPopupAccept = "yes",
     UseMasqueReloadPopupDecline = "no"
-  };
+  }
 elseif (Locale=="frFR") then  -- Translator: Isler
   BaudBagLocalized = {
     LockPosition = "Bloque position",
@@ -138,6 +142,8 @@ elseif (Locale=="frFR") then  -- Translator: Isler
     BlankOnTopTooltip = "Quand c'est possible, n'importe quel espace libre sera mis au dessus, au lieu du fond(bas).",
     RarityColoring = "Coloration des objets",
     RarityColoringTooltip = "Quand permis, les bordures de vos objets seront colorées selon leur rareté (vertes, bleu, etc).",
+    RarityIntensity = "Rarity Color Intensity - %g",
+    RarityIntensityTooltip = "Set the intensity of the rarity color",
     ShowNewItems = "New Items Highlight",
     ShowNewItemsTooltip = "When enabled, the borders of items will flash to highlight the new item until hovered with the mouse.",
     Columns = "Colonnes - %d",
@@ -180,7 +186,7 @@ elseif (Locale=="frFR") then  -- Translator: Isler
     UseMasqueReloadPopupText = "You seem to have enabled or disabled Masque support within Baud Bag. For changes to take effect you will need to reload your ui. Do you want to do that now?",
     UseMasqueReloadPopupAccept = "yes",
     UseMasqueReloadPopupDecline = "no"
-  };
+  }
 elseif (Locale == "deDE") then -- Translator: Thurmal
   BaudBagLocalized = {
     LockPosition = "Fenster fixieren",
@@ -197,6 +203,8 @@ elseif (Locale == "deDE") then -- Translator: Thurmal
     BlankOnTopTooltip = "Nicht von Taschenplätzen belegter Platz im Fenster wird oben angezeigt anstatt unten.",
     RarityColoring = "Seltenheitseinfärbung",
     RarityColoringTooltip = "Der Rand von Gegenständen wird entsprechend der Seltenheit eingefärbt (grün, blau, etc).",
+    RarityIntensity = "Intensität - %g",
+    RarityIntensityTooltip = "Verändert die Iintensität der Seltenheitsfärbung. (1 ist Normal)",
     ShowNewItems = "Hervorhebung für neue Items",
     ShowNewItemsTooltip = "Items welche neu im Inventar sind werden durch einen pulsierenden Rand hervorgehoben.",
     Columns = "Spalten - %d",
@@ -239,7 +247,7 @@ elseif (Locale == "deDE") then -- Translator: Thurmal
     UseMasqueReloadPopupText = "Scheinbar hast du die Einstellungen für die Masque Unterstützung verändert. Damit die Änderungen wirksam werden muss das UI neugeladen werden, möchtest du das jetzt tun?",
     UseMasqueReloadPopupAccept = "ja",
     UseMasqueReloadPopupDecline = "nein"
-  };
+  }
 elseif (Locale == "koKR") then -- Translator: talkswind
   BaudBagLocalized = {
 	LockPosition = "위치 잠금",
@@ -256,6 +264,8 @@ elseif (Locale == "koKR") then -- Translator: talkswind
 	BlankOnTopTooltip = "활성화시, 하단 대신에 상단에 약간의 나머지 빈공간을 집어 넣습니다.",
 	RarityColoring = "등급 색 입히기",
 	RarityColoringTooltip = "활성화시, 아이템의 테두리는 그것의 등급(녹색, 청색 등등..)에 걸맞게 색이 입혀집니다.",
+    RarityIntensity = "Rarity Color Intensity - %g",
+    RarityIntensityTooltip = "Set the intensity of the rarity color",
     ShowNewItems = "New Items Highlight",
     ShowNewItemsTooltip = "When enabled, the borders of items will flash to highlight the new item until hovered with the mouse.",
 	Columns = "행 - %d",
@@ -298,7 +308,7 @@ elseif (Locale == "koKR") then -- Translator: talkswind
     UseMasqueReloadPopupText = "You seem to have enabled or disabled Masque support within Baud Bag. For changes to take effect you will need to reload your ui. Do you want to do that now?",
     UseMasqueReloadPopupAccept = "yes",
     UseMasqueReloadPopupDecline = "no"
-  };
+  }
 elseif (Locale == "ruRU") then -- Translator: StingerSoft
   BaudBagLocalized = {
 	LockPosition = "Заблокировать положение",
@@ -315,6 +325,8 @@ elseif (Locale == "ruRU") then -- Translator: StingerSoft
     BlankOnTopTooltip = "Когда включен, любые пустые ячейки будет отсортированы сверху, а не снизу.",
     RarityColoring = "Окрасить согласно качеству",
     RarityColoringTooltip = "Когда включено, окрашивает границы ячеек вещей согласно их качеству (зеленые, синие, и т.п.).",
+    RarityIntensity = "Rarity Color Intensity - %g",
+    RarityIntensityTooltip = "Set the intensity of the rarity color",
     ShowNewItems = "New Items Highlight",
     ShowNewItemsTooltip = "When enabled, the borders of items will flash to highlight the new item until hovered with the mouse.",
     Columns = "Колонки - %d",
@@ -357,7 +369,7 @@ elseif (Locale == "ruRU") then -- Translator: StingerSoft
     UseMasqueReloadPopupText = "You seem to have enabled or disabled Masque support within Baud Bag. For changes to take effect you will need to reload your ui. Do you want to do that now?",
     UseMasqueReloadPopupAccept = "yes",
     UseMasqueReloadPopupDecline = "no"
-  };
+  }
 else --enUS or enUK (default)
   BaudBagLocalized = {
     LockPosition = "Lock Position",
@@ -374,6 +386,8 @@ else --enUS or enUK (default)
     BlankOnTopTooltip = "When enabled, any leftover blank space will be put on the top, instead of the bottom.",
     RarityColoring = "Rarity Coloring",
     RarityColoringTooltip = "When enabled, the borders of items will be colored according to their rarity (green, blue, etc).",
+    RarityIntensity = "Rarity Color Intensity - %g",
+    RarityIntensityTooltip = "Set the intensity of the rarity color",
     ShowNewItems = "New Items Highlight",
     ShowNewItemsTooltip = "When enabled, the borders of items will flash to highlight the new item until hovered with the mouse.",
     Columns = "Columns - %d",
@@ -416,7 +430,7 @@ else --enUS or enUK (default)
     UseMasqueReloadPopupText = "You seem to have enabled or disabled Masque support within Baud Bag. For changes to take effect you will need to reload your ui. Do you want to do that now?",
     UseMasqueReloadPopupAccept = "yes",
     UseMasqueReloadPopupDecline = "no"
-  };
+  }
     -- we now overwrite item values for not translated other languages so it at least works!
     if (Locale == "esES") then
         BaudBagLocalized.TooltipScanReagent = "Crafting Reagent";

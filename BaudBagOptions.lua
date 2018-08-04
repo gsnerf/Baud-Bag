@@ -4,11 +4,17 @@ local _
 local Localized	= BaudBagLocalized;
 local MaxBags   = NUM_BANKBAGSLOTS + 2;
 local Prefix    = "BaudBagOptions";
-local Updating, CfgBackup;
+local Updating  = false
+local CfgBackup
 
 local SelectedBags      = 1;
 local SelectedContainer = 1;
 local SetSize           = {5, NUM_BANKBAGSLOTS + 2};
+
+local GlobalSliderBars = {
+    --{ Text=Localized.RarityIntensity, Low=0.5, High=2.5, Step=0.1, SavedVar="RarityIntensity", Default=1, TooltipText = Localized.RarityIntensityTooltip},
+    { Text=Localized.RarityIntensity, Low=0.5, High=2.5, Step=0.1, SavedVar="RarityIntensity", Default=1, TooltipText=Localized.RarityIntensityTooltip, DependsOn="RarityColor" },
+}
 
 local ContainerSliderBars = {
     {Text=Localized.Columns,	Low="2",	High="40",		Step=1,		SavedVar="Columns",		Default={8,14},		TooltipText = Localized.ColumnsTooltip},
@@ -55,7 +61,7 @@ local TextureNames = {
 --[[ BaudBagOptions frame related events and methods ]]
 function BaudBagOptions_OnLoad(self, event, ...)
     -- the config needs a reference to this
-    BaudBagSetCfgPreReq(ContainerSliderBars, GlobalCheckButtons, ContainerCheckButtons);
+    BaudBagSetCfgPreReq(GlobalSliderBars, ContainerSliderBars, GlobalCheckButtons, ContainerCheckButtons);
     self:RegisterEvent("ADDON_LOADED");
 end
 
@@ -107,6 +113,12 @@ function BaudBagOptions_OnEvent(self, event, ...)
             checkButtonText:SetFontObject("GameFontDisable")
             checkButtonText:SetText(Value.Text.." ("..Value.UnavailableText..")")
         end
+    end
+    for Key, Value in ipairs(GlobalSliderBars) do
+        _G[Prefix.."GroupGlobalSlider"..Key.."Low"]:SetText(Value.Low);
+        _G[Prefix.."GroupGlobalSlider"..Key.."High"]:SetText(Value.High);
+        _G[Prefix.."GroupGlobalSlider"..Key].tooltipText = Value.TooltipText;
+        _G[Prefix.."GroupGlobalSlider"..Key].valueStep = Value.Step;
     end
     
     -- localized checkbox labels
@@ -318,13 +330,11 @@ function BaudBagOptionsCheckButton_OnClick(self, event, ...)
         BBConfig[SavedVar] = self:GetChecked();
 
         if (SavedVar == "RarityColor") then
-            for _, set in pairs(AddOnTable.Sets) do
-                for _, container in pairs(set.Containers) do
-                    if (container.Frame:IsShown()) then
-                        container:Update()
-                    end
+            BaudBagForEachOpenContainer(
+                function (container)
+                    container:Update()
                 end
-            end
+            )
         end
     else
         SavedVar = ContainerCheckButtons[self:GetID()].SavedVar;
@@ -360,31 +370,50 @@ function BaudBagSlider_OnValueChanged(self)
     end               -- ignore recursion for actual event handler
     --[[ END !!!TEMPORARY!!! ]]--
 
-
-    BaudBag_DebugMsg("Options", "Updating value of slider with id "..self:GetID().." to "..self:GetValue());
-
-    -- change appearance
-    _G[self:GetName().."Text"]:SetText(format(ContainerSliderBars[self:GetID()].Text,self:GetValue()));
-
-    -- TODO: find out why this check is necessary
+    -- update description of slider
+    if (self:GetParent() == BaudBagOptions.GroupGlobal) then
+        _G[self:GetName().."Text"]:SetText( format( GlobalSliderBars[self:GetID()].Text, self:GetValue() ) )
+    else
+        _G[self:GetName().."Text"]:SetText( format( ContainerSliderBars[self:GetID()].Text, self:GetValue() ) )
+    end
+    
+    
+    -- events are also called when values are set on load, make sure to not end in an update loop
     if Updating then
-        BaudBag_DebugMsg("Options", "It seems we are already updating, skipping further update...");
-        return;
+        BaudBag_DebugMsg("Options", "It seems we are already updating, skipping further update...")
+        return
     end
+    
+    if (self:GetParent() == BaudBagOptions.GroupGlobal) then
+        BaudBag_DebugMsg("Options", "Updating value of global slider with id "..self:GetID().." to "..self:GetValue())
+        
+        -- save BBConfig entry
+        local SavedVar = GlobalSliderBars[self:GetID()].SavedVar
+        BaudBag_DebugMsg("Options", "The variable associated with this value is "..SavedVar)
+        BBConfig[SavedVar] = self:GetValue()
 
-    -- save BBConfig entry
-    local SavedVar = ContainerSliderBars[self:GetID()].SavedVar;
-    BaudBag_DebugMsg("Options", "The variable associated with this value is "..SavedVar);
-    BBConfig[SelectedBags][SelectedContainer][SavedVar] = self:GetValue();
+        BaudBagForEachOpenContainer(
+            function (container)
+                container:Update()
+            end
+        )
+    else
+        BaudBag_DebugMsg("Options", "Updating value of container slider with id "..self:GetID().." to "..self:GetValue())
 
-    -- cause the appropriate update  -- TODO: move to BaudBagBBConfig save?
-    if (SavedVar == "Scale") then
-        AddOnTable.Sets[SelectedBags].Containers[SelectedContainer]:UpdateFromConfig()
-    elseif (SavedVar=="Columns") then
-        AddOnTable.Sets[SelectedBags].Containers[SelectedContainer]:Rebuild()
-        AddOnTable.Sets[SelectedBags].Containers[SelectedContainer]:Update()
+        -- save BBConfig entry
+        local SavedVar = ContainerSliderBars[self:GetID()].SavedVar
+        BaudBag_DebugMsg("Options", "The variable associated with this value is "..SavedVar)
+        BBConfig[SelectedBags][SelectedContainer][SavedVar] = self:GetValue()
+
+        -- cause the appropriate update  -- TODO: move to BaudBagBBConfig save?
+        if (SavedVar == "Scale") then
+            AddOnTable.Sets[SelectedBags].Containers[SelectedContainer]:UpdateFromConfig()
+        elseif (SavedVar=="Columns") then
+            AddOnTable.Sets[SelectedBags].Containers[SelectedContainer]:Rebuild()
+            AddOnTable.Sets[SelectedBags].Containers[SelectedContainer]:Update()
+        end
+        BackpackTokenFrame_Update();
     end
-    BackpackTokenFrame_Update();
 end
 
 
@@ -405,10 +434,22 @@ function BaudBagOptionsUpdate()
     _G[Prefix.."GroupContainerEnabledCheck"]:SetChecked(BBConfig[SelectedBags].Enabled~=false);
     _G[Prefix.."GroupContainerCloseAllCheck"]:SetChecked(BBConfig[SelectedBags].CloseAll~=false);
 
-    -- load global checkbox values
-    for Key, Value in ipairs(GlobalCheckButtons)do
-        local Button = _G[Prefix.."GroupGlobalCheckButton"..Key];
-        Button:SetChecked(BBConfig[Value.SavedVar]);
+    -- load global checkbox and slider values
+    for Key, Value in ipairs(GlobalCheckButtons) do
+        local Button = _G[Prefix.."GroupGlobalCheckButton"..Key]
+        Button:SetChecked(BBConfig[Value.SavedVar])
+    end
+    for Key, Value in ipairs(GlobalSliderBars) do
+        local slider = _G[Prefix.."GroupGlobalSlider"..Key]
+        slider:SetValue(BBConfig[Value.SavedVar])
+
+        if (Value.DependsOn ~= nil and not BBConfig[Value.DependsOn]) then
+            slider:Disable();
+            slider.Text:SetFontObject("GameFontDisable");
+        else
+            slider:Enable();
+            slider.Text:SetFontObject("GameFontNormal");
+        end
     end
     
     -- load bag specific options (position and show each button that belongs to the current set,

@@ -122,6 +122,16 @@ function BaudBagForEachBag(BagSet, Func)
     end
 end
 
+function BaudBagForEachOpenContainer(Func)
+    for _, set in pairs(AddOnTable.Sets) do
+        for _, container in pairs(set.Containers) do
+            if (container.Frame:IsShown()) then
+                Func(container)
+            end
+        end
+    end
+end
+
 
 function BaudBagCopyTable(Value)
     -- end of possible recursion
