@@ -92,17 +92,17 @@ function Prototype:UpdatePosition(container, x, y, slotLevel)
 end
 
 --[[ Updates the rarity for this on basis of the current items quality ]]
-function Prototype:UpdateCustomRarity(showColor)
+function Prototype:UpdateCustomRarity(showColor, intensity)
     local quality = self.Quality
 
     if quality and (quality > 1) and showColor then
         -- use alternative rarity coloring
         if (quality == LE_ITEM_QUALITY_UNCOMMON) then
-            self.Frame.IconBorder:SetVertexColor(0.1,   1,   0, 0.5)
+            self.Frame.IconBorder:SetVertexColor(0.1,   1,   0, 0.5 * intensity)
         elseif (quality == LE_ITEM_QUALITY_RARE) then
-            self.Frame.IconBorder:SetVertexColor(  0, 0.4, 0.8, 0.8)
+            self.Frame.IconBorder:SetVertexColor(  0, 0.4, 0.8, 0.8 * intensity)
         elseif (quality == LE_ITEM_QUALITY_EPIC) then
-            self.Frame.IconBorder:SetVertexColor(0.6, 0.2, 0.9, 0.5)
+            self.Frame.IconBorder:SetVertexColor(0.6, 0.2, 0.9, 0.5 * intensity)
         else
             -- we have no alternative colors for this rarity, just use the default ones
             self.Frame.IconBorder:SetVertexColor(GetItemQualityColor(quality))

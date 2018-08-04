@@ -111,7 +111,7 @@ function Prototype:UpdateSlotContents()
     for slot = 1, self.Size do
         local itemObject = self.Items[slot]
         local link, newCacheEntry = itemObject:UpdateContent(useCache, bagCache[slot])
-        itemObject:UpdateCustomRarity(showColor)
+        itemObject:UpdateCustomRarity(showColor, 1)
         itemObject:ShowHighlight(self.HighlightSlots)
 
         if (isBankBag and not useCache) then
