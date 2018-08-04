@@ -655,7 +655,7 @@ BagSlotButton_OnClick = function(self, event, ...)
     end
 
 end
- 
+   
 local function IsBagShown(BagId)
     local SubContainer = AddOnTable["SubBags"][BagId]
     BaudBag_DebugMsg("BagOpening", "Got SubContainer", SubContainer)

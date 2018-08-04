@@ -98,7 +98,7 @@ function Prototype:Rebuild()
 end
 
 function Prototype:UpdateSlotContents()
-    local showColor = BBConfig[self.BagSet.Id][self.Frame:GetParent():GetID()].RarityColor
+    local showColor = BBConfig.RarityColor
     local isBankBag = self.BagSet.Id == BagSetType.Bank.Id
     local bagCache = BaudBagGetBagCache(self.ContainerId)
     local useCache = isBankBag and not BaudBagFrame.BankOpen

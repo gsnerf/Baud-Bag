@@ -51,7 +51,7 @@ Func = function(self, event, ...)
 
     local bagCache = BaudBagGetBagCache(REAGENTBANK_CONTAINER)
     local subBagObject = AddOnTable["SubBags"][-3]
-    local rarityColor = BBConfig[2][subBagObject.Frame:GetParent():GetID()].RarityColor
+    local rarityColor = BBConfig[2].RarityColor
 
     bagCache[slot] = subBagObject.Items[slot]:UpdateContent(false)
     subBagObject.Items[slot]:UpdateCustomRarity(rarityColor)

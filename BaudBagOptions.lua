@@ -10,7 +10,7 @@ local SelectedBags      = 1;
 local SelectedContainer = 1;
 local SetSize           = {5, NUM_BANKBAGSLOTS + 2};
 
-local SliderBars = {
+local ContainerSliderBars = {
     {Text=Localized.Columns,	Low="2",	High="40",		Step=1,		SavedVar="Columns",		Default={8,14},		TooltipText = Localized.ColumnsTooltip},
     {Text=Localized.Scale,		Low="50%",	High="200%",	Step=1,		SavedVar="Scale",		Default={100,100},	TooltipText = Localized.ScaleTooltip}
 };
@@ -18,14 +18,14 @@ local SliderBars = {
 local GlobalCheckButtons = {
     {Text=Localized.ShowNewItems,   SavedVar="ShowNewItems", Default=true,  TooltipText=Localized.ShowNewItemsTooltip,      DependsOn=nil,  CanBeSet=true,                      UnavailableText = "" },
     {Text=Localized.SellJunk,       SavedVar="SellJunk",     Default=false, TooltipText=Localized.SellJunkTooltip,          DependsOn=nil,  CanBeSet=true,                      UnavailableText = "" },
-    {Text=Localized.UseMasque,      SavedVar="UseMasque",    Default=false, TooltipText=Localized.UseMasqueTooltp,          DependsOn=nil,  CanBeSet=IsAddOnLoaded("Masque"),   UnavailableText = Localized.UseMasqueUnavailable}
+    {Text=Localized.UseMasque,      SavedVar="UseMasque",    Default=false, TooltipText=Localized.UseMasqueTooltp,          DependsOn=nil,  CanBeSet=IsAddOnLoaded("Masque"),   UnavailableText = Localized.UseMasqueUnavailable},
+    {Text=Localized.RarityColoring, SavedVar="RarityColor",  Default=true,  TooltipText=Localized.RarityColoringTooltip,    DependsOn=nil,  CanBeSet=true,                      UnavailableText = "" },
 }
 
 local ContainerCheckButtons = {
     {Text=Localized.AutoOpen,       SavedVar="AutoOpen",     Default=false, TooltipText=Localized.AutoOpenTooltip,          DependsOn=nil},
     {Text=Localized.AutoClose,      SavedVar="AutoClose",    Default=true,  TooltipText=Localized.AutoCloseTooltip,         DependsOn="AutoOpen"},
     {Text=Localized.BlankOnTop,     SavedVar="BlankTop",     Default=false, TooltipText=Localized.BlankOnTopTooltip,        DependsOn=nil},
-    {Text=Localized.RarityColoring, SavedVar="RarityColor",  Default=true,  TooltipText=Localized.RarityColoringTooltip,    DependsOn=nil}
 };
 
 BaudBagIcons = {
@@ -55,7 +55,7 @@ local TextureNames = {
 --[[ BaudBagOptions frame related events and methods ]]
 function BaudBagOptions_OnLoad(self, event, ...)
     -- the config needs a reference to this
-    BaudBagSetCfgPreReq(SliderBars, GlobalCheckButtons, ContainerCheckButtons);
+    BaudBagSetCfgPreReq(ContainerSliderBars, GlobalCheckButtons, ContainerCheckButtons);
     self:RegisterEvent("ADDON_LOADED");
 end
 
@@ -116,7 +116,7 @@ function BaudBagOptions_OnEvent(self, event, ...)
     end
 
     -- set slider bounds
-    for Key, Value in ipairs(SliderBars) do
+    for Key, Value in ipairs(ContainerSliderBars) do
         _G[Prefix.."GroupContainerSlider"..Key.."Low"]:SetText(Value.Low);
         _G[Prefix.."GroupContainerSlider"..Key.."High"]:SetText(Value.High);
         _G[Prefix.."GroupContainerSlider"..Key].tooltipText = Value.TooltipText;
@@ -316,6 +316,16 @@ function BaudBagOptionsCheckButton_OnClick(self, event, ...)
         SavedVar = GlobalCheckButtons[self:GetID()].SavedVar;
         BaudBag_DebugMsg("Options", "Update global variable: "..SavedVar);
         BBConfig[SavedVar] = self:GetChecked();
+
+        if (SavedVar == "RarityColor") then
+            for _, set in pairs(AddOnTable.Sets) do
+                for _, container in pairs(set.Containers) do
+                    if (container.Frame:IsShown()) then
+                        container:Update()
+                    end
+                end
+            end
+        end
     else
         SavedVar = ContainerCheckButtons[self:GetID()].SavedVar;
         BaudBag_DebugMsg("Options", "Update container variable: "..SavedVar);
@@ -354,7 +364,7 @@ function BaudBagSlider_OnValueChanged(self)
     BaudBag_DebugMsg("Options", "Updating value of slider with id "..self:GetID().." to "..self:GetValue());
 
     -- change appearance
-    _G[self:GetName().."Text"]:SetText(format(SliderBars[self:GetID()].Text,self:GetValue()));
+    _G[self:GetName().."Text"]:SetText(format(ContainerSliderBars[self:GetID()].Text,self:GetValue()));
 
     -- TODO: find out why this check is necessary
     if Updating then
@@ -363,7 +373,7 @@ function BaudBagSlider_OnValueChanged(self)
     end
 
     -- save BBConfig entry
-    local SavedVar = SliderBars[self:GetID()].SavedVar;
+    local SavedVar = ContainerSliderBars[self:GetID()].SavedVar;
     BaudBag_DebugMsg("Options", "The variable associated with this value is "..SavedVar);
     BBConfig[SelectedBags][SelectedContainer][SavedVar] = self:GetValue();
 
@@ -490,7 +500,7 @@ function BaudBagOptionsUpdate()
     UIDropDownMenu_SetSelectedValue(backgroundDropDown, BBConfig[SelectedBags][SelectedContainer].Background);
 
     -- load slider values
-    for Key, Value in ipairs(SliderBars)do
+    for Key, Value in ipairs(ContainerSliderBars)do
         local Slider = _G[Prefix.."GroupContainerSlider"..Key];
         Slider:SetValue(BBConfig[SelectedBags][SelectedContainer][Value.SavedVar]);
     end

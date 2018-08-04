@@ -3,13 +3,13 @@ local _
 
 -- some locally needed variables
 local Localized	= BaudBagLocalized
-local SliderBars, GlobalCheckButtons, ContainerCheckButtons
+local ContainerSliderBars, GlobalCheckButtons, ContainerCheckButtons
 BBConfig = {}
 -- TODO: somehow changes of BBConfig are not getting stored in AddOnTable.Config, propably something to do with resetting BBConfig at later points...
 AddOnTable.Config = BBConfig
 
 function BaudBagSetCfgPreReq(Bars, GlobalButtons, ContainerButtons)
-    SliderBars            = Bars;
+    ContainerSliderBars   = Bars;
     GlobalCheckButtons    = GlobalButtons;
     ContainerCheckButtons = ContainerButtons;
 end
@@ -85,7 +85,7 @@ function BaudBagRestoreCfg()
                     end
                 end
 
-                for Key, Value in ipairs(SliderBars) do
+                for Key, Value in ipairs(ContainerSliderBars) do
                     BBConfig[BagSet][Container][Value.SavedVar] = checkValue(BBConfig[BagSet][Container][Value.SavedVar], "number", Value.Default[BagSet], "- BagSet["..BagSet.."], Bag["..Bag.."], Container["..Container.."] Slider["..Value.SavedVar.."] data damaged or missing, creating now");
                 end
 
