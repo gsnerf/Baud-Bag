@@ -1,4 +1,9 @@
 ﻿=== Changelog ===
+v8.0.3
+  - moved container local option "rarity coloring" to be global (defaults to "on")
+  - added a slider to adapt the intensity of the rarity colors (when rarity coloring is enabled)
+  - fixed typo in sell junk option (thanks to Viscro for the find!)
+  - removed custom support for CaerdonWardrobe as it has build in support for BaudBag now. Thanks Ceardon!
 v8.0.2
   - fixed broken updating of containers after changing the scaling in options
 v8.0.1
