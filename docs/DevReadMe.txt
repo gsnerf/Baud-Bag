@@ -31,10 +31,18 @@ Config
 	|   |-AutoOpen
 	|   |-Name
 	|   |-Locked
-	|   |-Background
-	|   \-RarityColor
+	|   \-Background
 	|
-	\-2 (BagSet)
+	|-2 (BagSet)
+	| |-...
+	| \-...
+	|
+	| [Global options from here on]
+	|-RarityColor (true/false)
+	|-RarityIntensity (0.5-2.5)
+	|-SellJunk (true/false)
+	|-ShowNewItems (true/false)
+	\-UseMasque (true/false)
 
 How do WoW Container-IDs (http://wowprogramming.com/docs/api_types#containerID) work:
 The containers are differentiated into sets by type. The base types are Bags, Bank, Keyring (REMOVED FROM GAME) and Reagent Bank.

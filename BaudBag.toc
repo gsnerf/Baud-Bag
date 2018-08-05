@@ -11,7 +11,7 @@
 ## Title: Baud Bag
 ## Title-zhCN: 背包整合 Baud Bag
 ## Title-zhTW: 背包整合 Baud Bag
-## Version: 8.0.2
+## Version: 8.0.3
 
 Localization.lua
 BaudBagFunctions.lua
@@ -35,5 +35,4 @@ BaudBagBank.xml
 frames\BaudBagSearchFrame.xml
 BaudBag.xml
 BaudBagVoidStorage.xml
-external\CaedronWardrobeSupport.lua
 external\Masque.lua
