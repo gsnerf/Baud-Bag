@@ -21,17 +21,17 @@ local ItemToolTip
 
 local BBFrameFuncs = {
     IsCraftingReagent = function (itemId)
-        ItemToolTip:SetItemByID(itemId);
-        local isReagent = false;
+        ItemToolTip:SetItemByID(itemId)
+        local isReagent = false
         for i = 1, ItemToolTip:NumLines() do
-            local text = _G["BaudBagScanningTooltipTextLeft"..i]:GetText();
+            local text = _G["BaudBagScanningTooltipTextLeft"..i]:GetText()
             if (string.find(text, Localized.TooltipScanReagent)) then
-                isReagent = true;
+                isReagent = true
             end
         end
-        return isReagent;
+        return isReagent
     end
-};
+}
 
 --[[ Local helper methods used in event handling ]]
 local function BackpackBagOverview_Initialize()
@@ -53,94 +53,93 @@ end
 --[[ NON XML EVENT HANDLERS ]]--
 --[[ these are the custom defined BaudBagFrame event handlers attached to a single event type]]--
 
-local EventFuncs =
-    {
-        ADDON_LOADED = function(self, event, ...)
-            -- check if the event was loaded for this addon
-            local arg1 = ...;
-            if (arg1 ~= "BaudBag") then return end;
+local EventFuncs = {
+    ADDON_LOADED = function(self, event, ...)
+        -- check if the event was loaded for this addon
+        local arg1 = ...
+        if (arg1 ~= "BaudBag") then return end
 
-            BaudBag_DebugMsg("Bags", "Event ADDON_LOADED fired");
+        BaudBag_DebugMsg("Bags", "Event ADDON_LOADED fired")
 
-            -- make sure the cache is initialized
-            --BBCache:initialize();
-            BaudBagInitCache();
-            AddOnTable:RegisterDefaultBackgrounds()
+        -- make sure the cache is initialized
+        --BBCache:initialize()
+        BaudBagInitCache()
+        AddOnTable:RegisterDefaultBackgrounds()
 
-            -- the rest of the bank slots are cleared in the next event
-            -- TODO: recheck why this is necessary and if it can be avoided
-            BaudBagBankSlotPurchaseButton:Disable();
-        end,
+        -- the rest of the bank slots are cleared in the next event
+        -- TODO: recheck why this is necessary and if it can be avoided
+        BaudBagBankSlotPurchaseButton:Disable()
+    end,
 
-        PLAYER_LOGIN = function(self, event, ...)
-            if (not BaudBag_DebugLog) then
-                BaudBag_Debug = {};
-            end
-            BaudBag_DebugMsg("Bags", "Event PLAYER_LOGIN fired");
-            
-
-            BackpackBagOverview_Initialize()
-            BaudBagUpdateFromBBConfig();
-            BaudBagBankBags_Initialize();
-            if BBConfig and (BBConfig[2].Enabled == true) then 
-                BaudBag_DebugMsg("Bank", "BaudBag enabled for Bank, disable default bank event");
-                BankFrame:UnregisterEvent("BANKFRAME_OPENED");
-            end
-        end,
-
-        PLAYER_MONEY = function(self, event, ...)
-            BaudBag_DebugMsg("Bags", "Event PLAYER_MONEY fired");
-            BaudBagBankBags_Update();
-        end,
-
-        ITEM_LOCK_CHANGED = function(self, event, ...)
-            local Bag, Slot = ...;
-            BaudBag_DebugMsg("ItemHandle", "Event ITEM_LOCK_CHANGED fired (bag, slot) ", Bag, Slot);
-            if (Bag == BANK_CONTAINER) then
-                if (Slot <= NUM_BANKGENERIC_SLOTS) then
-                    BankFrameItemButton_UpdateLocked(_G[Prefix.."SubBag-1Item"..Slot]);
-                else
-                    local bankBagButton = AddOnTable["Sets"][2].BagButtons[Slot-NUM_BANKGENERIC_SLOTS].Frame
-                    BankFrameItemButton_UpdateLocked(bankBagButton)
-                end
-            elseif (Bag == REAGENTBANK_CONTAINER) then
-                BankFrameItemButton_UpdateLocked(_G[Prefix.."SubBag-3Item"..Slot]);
-            end
-
-            if (Slot ~= nil) then
-                local _, _, locked = GetContainerItemInfo(Bag, Slot);
-                if ((not locked) and BaudBagFrame.ItemLock.Move) then
-                    if (BaudBagFrame.ItemLock.IsReagent and (BaudBag_IsBankContainer(Bag)) and (Bag ~= REAGENTBANK_CONTAINER)) then
-                        BaudBag_FixContainerClickForReagent(Bag, Slot);
-                    end
-                    BaudBagFrame.ItemLock.Move      = false;
-                    BaudBagFrame.ItemLock.IsReagent = false;
-                end
-                BaudBag_DebugMsg("ItemHandle", "Updating ItemLock Info", BaudBagFrame.ItemLock);
-            end
-        end,
-
-        ITEM_PUSH = function(self, event, ...)
-            local BagID, Icon = ...;
-            BaudBag_DebugMsg("ItemHandle", "Received new item", BagID);
-            if (not BBConfig.ShowNewItems) then
-                C_NewItems.ClearAll();
-            end
-        end,
-
-        BAG_UPDATE_COOLDOWN = function(self, event, ...)
-            local BagID = ...;
-            BaudBag_DebugMsg("ItemHandle", "Item is on Cooldown after usage", BagID);
-            BaudBagUpdateOpenBags();
-        end,
-
-        QUEST_ACCEPTED = function(self, event, ...)
-            BaudBagUpdateOpenBags();
-        end,
-        QUEST_REMOVED = function(self, event, ...)
-            BaudBagUpdateOpenBags();
+    PLAYER_LOGIN = function(self, event, ...)
+        if (not BaudBag_DebugLog) then
+            BaudBag_Debug = {}
         end
-    };
+        BaudBag_DebugMsg("Bags", "Event PLAYER_LOGIN fired")
+        
+
+        BackpackBagOverview_Initialize()
+        BaudBagUpdateFromBBConfig()
+        BaudBagBankBags_Initialize()
+        if BBConfig and (BBConfig[2].Enabled == true) then 
+            BaudBag_DebugMsg("Bank", "BaudBag enabled for Bank, disable default bank event")
+            BankFrame:UnregisterEvent("BANKFRAME_OPENED")
+        end
+    end,
+
+    PLAYER_MONEY = function(self, event, ...)
+        BaudBag_DebugMsg("Bags", "Event PLAYER_MONEY fired")
+        BaudBagBankBags_Update()
+    end,
+
+    ITEM_LOCK_CHANGED = function(self, event, ...)
+        local Bag, Slot = ...
+        BaudBag_DebugMsg("ItemHandle", "Event ITEM_LOCK_CHANGED fired (bag, slot) ", Bag, Slot)
+        if (Bag == BANK_CONTAINER) then
+            if (Slot <= NUM_BANKGENERIC_SLOTS) then
+                BankFrameItemButton_UpdateLocked(_G[Prefix.."SubBag-1Item"..Slot])
+            else
+                local bankBagButton = AddOnTable["Sets"][2].BagButtons[Slot-NUM_BANKGENERIC_SLOTS].Frame
+                BankFrameItemButton_UpdateLocked(bankBagButton)
+            end
+        elseif (Bag == REAGENTBANK_CONTAINER) then
+            BankFrameItemButton_UpdateLocked(_G[Prefix.."SubBag-3Item"..Slot])
+        end
+
+        if (Slot ~= nil) then
+            local _, _, locked = GetContainerItemInfo(Bag, Slot)
+            if ((not locked) and BaudBagFrame.ItemLock.Move) then
+                if (BaudBagFrame.ItemLock.IsReagent and (BaudBag_IsBankContainer(Bag)) and (Bag ~= REAGENTBANK_CONTAINER)) then
+                    BaudBag_FixContainerClickForReagent(Bag, Slot)
+                end
+                BaudBagFrame.ItemLock.Move      = false
+                BaudBagFrame.ItemLock.IsReagent = false
+            end
+            BaudBag_DebugMsg("ItemHandle", "Updating ItemLock Info", BaudBagFrame.ItemLock)
+        end
+    end,
+
+    ITEM_PUSH = function(self, event, ...)
+        local BagID, Icon = ...
+        BaudBag_DebugMsg("ItemHandle", "Received new item", BagID)
+        if (not BBConfig.ShowNewItems) then
+            C_NewItems.ClearAll()
+        end
+    end,
+
+    BAG_UPDATE_COOLDOWN = function(self, event, ...)
+        local BagID = ...
+        BaudBag_DebugMsg("ItemHandle", "Item is on Cooldown after usage", BagID)
+        BaudBagUpdateOpenBags()
+    end,
+
+    QUEST_ACCEPTED = function(self, event, ...)
+        BaudBagUpdateOpenBags()
+    end,
+    QUEST_REMOVED = function(self, event, ...)
+        BaudBagUpdateOpenBags()
+    end
+}
 
 --[[ here come functions that will be hooked up to multiple events ]]--
 Func = function(self, event, ...)
