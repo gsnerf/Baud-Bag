@@ -1,18 +1,23 @@
-﻿--[[ defining variables for the events ]]--
+﻿-- addon defaults
 local AddOnName, AddOnTable = ...
-local Localized = BaudBagLocalized;
+local Localized = BaudBagLocalized
+local _
 
-local Prefix = "BaudBag";
-local NumCont = {};
-local FadeTime = 0.2;
-local BagsReady;
-local _;
-local ItemToolTip;
-
-_G[AddOnName] = AddOnTable;
+-- necessary globals
+_G[AddOnName] = AddOnTable
 AddOnTable["Sets"] = {}
 AddOnTable["SubBags"] = {}
 AddOnTable["Backgrounds"] = {}
+
+-- -> possibly move this to default config?
+local FadeTime = 0.2
+
+-- this is supposed to be deprecated and should be removed in the future this does not have to be global
+local Prefix = "BaudBag" -- this should be identical to "AddOnName"
+local NumCont = {}
+local BagsReady
+local ItemToolTip
+
 
 local BBFrameFuncs = {
     IsCraftingReagent = function (itemId)
@@ -36,7 +41,7 @@ local function BackpackBagOverview_Initialize()
     local BBContainer1 = _G[Prefix.."Container1_1BagsFrame"]
     BBContainer1:SetWidth(15 + 30)
     BBContainer1:SetHeight(15 + 4 * 30)
-
+    
     for Bag = 1, 4 do
         local buttonIndex = Bag - 1
         local bagButton = AddOnTable:CreateBagButton(backpackSet.Type, buttonIndex, Bag, BBContainer1, "BagSlotButtonTemplate")
