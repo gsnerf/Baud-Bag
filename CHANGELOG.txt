@@ -1,4 +1,6 @@
 ﻿=== Changelog ===
+v8.0.4
+  - reworked how to hook into the original token system to avoid tainting the main menu (currently means: max 3 tokens selectable for viewing in the backpack :/)
 v8.0.3
   - moved container local option "rarity coloring" to be global (defaults to "on")
   - added a slider to adapt the intensity of the rarity colors (when rarity coloring is enabled)

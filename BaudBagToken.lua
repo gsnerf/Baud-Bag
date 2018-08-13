@@ -22,23 +22,25 @@ local function calculateScaleFix(TokenFrame)
     return scaleFix
 end
 
-local pre_BackpackTokenFrame_Update = BackpackTokenFrame_Update;
-BackpackTokenFrame_Update = function()
+-- local pre_BackpackTokenFrame_Update = BackpackTokenFrame_Update;
+local TokenFrame_Update = function()
     BaudBag_DebugMsg("Token", "Update was called on TokenFrame");
     -- make sure the old is called when BaudBag is disabled for the backpack
     if (BBConfig and BBConfig[1].Enabled == false) then
-        BaudBag_DebugMsg("Token", "BaudBag disabled for Backpack, calling original!");
-        MAX_WATCHED_TOKENS = MAX_WATCHED_TOKENS_ORIG;
-        return pre_BackpackTokenFrame_Update();
+        --BaudBag_DebugMsg("Token", "BaudBag disabled for Backpack, calling original!");
+        --MAX_WATCHED_TOKENS = MAX_WATCHED_TOKENS_ORIG;
+        --return pre_BackpackTokenFrame_Update();
+        BaudBag_DebugMsg("Token", "BaudBag disabled for Backpack, skipping!");
+        return
     end
 	
-    -- get the token frame and reset to default values (will be updated bellow)
+    -- get the token frame and reset to default values (will be updated below)
     local TokenFrame = _G["BaudBagContainer1_1TokenFrame"];
     TokenFrame.shouldShow = 0;
     TokenFrame.numWatchedTokens = 0;
 
     -- do whatever the original does but for our own frame
-    MAX_WATCHED_TOKENS = MAX_WATCHED_TOKENS_BAUD_BAG;
+    --MAX_WATCHED_TOKENS = MAX_WATCHED_TOKENS_BAUD_BAG; -- this HAS to be done to allow more than 3 selections in the management window
     local watchButton;
     local name, count, icon;
     local digits, countSize;
@@ -93,6 +95,7 @@ BackpackTokenFrame_Update = function()
         end
     end
 end
+hooksecurefunc("BackpackTokenFrame_Update", TokenFrame_Update)
 
 
 local pre_GetNumWatchedTokens = GetNumWatchedTokens;
@@ -125,8 +128,9 @@ BackpackTokenFrame_IsShown = function()
 end
 
 
-local pre_ManageBackpackTokenFrame = ManageBackpackTokenFrame;
-ManageBackpackTokenFrame = function(backpack)
+--local pre_ManageBackpackTokenFrame = ManageBackpackTokenFrame;
+--ManageBackpackTokenFrame = function(backpack)
+local ManageTokenFrame = function(backpack)
     BaudBag_DebugMsg("Token", "Manage was called on TokenFrame");
     -- make sure the old is called when baudbag is disabled for the bagpack
     if (BBConfig and BBConfig[1].Enabled == false) then
@@ -148,19 +152,7 @@ ManageBackpackTokenFrame = function(backpack)
         BaudBagUpdateContainer(Backpack);
     end
 end
-
-local pre_BackpackTokenButton_OnClick = BackpackTokenButton_OnClick;
-BackpackTokenButton_OnClick = function(self, button) 
-
-    -- make sure the old is called when baudbag is disabled for the bagpack
-    if (BBConfig and BBConfig[1].Enabled == false) then
-        pre_BackpackTokenButton_OnClick(self, button);
-    end
-	
-    if ( IsModifiedClick("CHATLINK") ) then
-        ChatEdit_InsertLink(select(2, GetItemInfo(self.itemID))); 
-    end
-end
+hooksecurefunc("ManageBackpackTokenFrame", ManageTokenFrame)
 
 function BaudBagTokenFrame_RenderBackgrounds(Container, Parent)
     BaudBag_DebugMsg("Token", "Showing Token Frame for Container (Name, ID)'", Container:GetName(), Container:GetID());
