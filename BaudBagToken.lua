@@ -132,10 +132,9 @@ end
 --ManageBackpackTokenFrame = function(backpack)
 local ManageTokenFrame = function(backpack)
     BaudBag_DebugMsg("Token", "Manage was called on TokenFrame");
-    -- make sure the old is called when baudbag is disabled for the bagpack
     if (BBConfig and BBConfig[1].Enabled == false) then
-        BaudBag_DebugMsg("Token", "BaudBag disabled for Backpack, calling original!");
-        return pre_ManageBackpackTokenFrame(backpack);
+        BaudBag_DebugMsg("Token", "BaudBag disabled for Backpack, ignoring!");
+        return
     end
 	
     -- get references to all frames needed for the management
