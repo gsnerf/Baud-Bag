@@ -192,6 +192,12 @@ function BaudBagBankBags_UpdateContent(bankVisible)
     AddOnTable.SubBags[REAGENTBANK_CONTAINER]:UpdateSlotContents()
     
     BaudBagBankBags_Update()
+    
+    if not bankVisible then
+        BaudBag_DebugMsg("Bank", "Bankframe does not really seem to be open or event was not BANKFRAME_OPENED. Stepping over actually opening the Bankframes")
+        return
+    end
+
     BaudBag_DebugMsg("Bank", "Recording bank bag info.")
     for Bag = 1, NUM_BANKBAGSLOTS do
         local bagCache = AddOnTable.Cache:GetBagCache(Bag + ITEM_INVENTORY_BANK_BAG_OFFSET)
@@ -199,12 +205,7 @@ function BaudBagBankBags_UpdateContent(bankVisible)
         bagCache.BagLink  = GetInventoryItemLink("player", inventoryId)
         bagCache.BagCount = GetInventoryItemCount("player", inventoryId)
     end
-
-    if not bankVisible then
-        BaudBag_DebugMsg("Bank", "Bankframe does not really seem to be open or event was not BANKFRAME_OPENED. Stepping over actually opening the Bankframes")
-        return
-    end
-
+    
     local BBContainer2_1 = _G[Prefix.."Container2_1"]
     if BBContainer2_1:IsShown() then
         -- TODO we need direct access to the Container Object here in the future!
