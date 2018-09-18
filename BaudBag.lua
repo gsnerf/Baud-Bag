@@ -606,7 +606,7 @@ function BaudBag_OnModifiedClick(self, button)
         StackSplitFrame:Hide()
     end
 
-    local slotCache = BaudBagGetBagCache(self:GetParent():GetID())[self:GetID()]
+    local slotCache = AddOnTable.Cache:GetBagCache(self:GetParent():GetID())[self:GetID()]
     if slotCache then
         HandleModifiedItemClick(slotCache.Link)
     end

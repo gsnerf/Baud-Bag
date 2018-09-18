@@ -480,7 +480,7 @@ function BaudBagOptionsUpdate()
             end
 			
             -- try to find out which bag texture to use
-            local bagCache = BaudBagGetBagCache(Bag);
+            local bagCache = AddOnTable.Cache:GetBagCache(Bag);
             if BaudBagIcons[Bag]then
                 Texture = BaudBagIcons[Bag];
             elseif(SelectedBags == 1)then

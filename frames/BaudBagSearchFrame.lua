@@ -151,7 +151,7 @@ function BaudBagSearchFrameEditBox_OnTextChanged(self, isUserInput)
             SubBagObject = AddOnTable.SubBags[Bag]
             SubBag = SubBagObject.Frame
             Open	= SubBag:IsShown()and SubBag:GetParent():IsShown() and not SubBag:GetParent().Closing
-            bagCache = BaudBagGetBagCache(SubBag:GetID())
+            bagCache = AddOnTable.Cache:GetBagCache(SubBag:GetID())
 
             -- if the bag is open go through its items and compare the itemname
             if (Open) then

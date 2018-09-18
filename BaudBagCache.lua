@@ -32,6 +32,21 @@ end
 
 
 --[[
+    Access to a (bank) bags cache content. It is expected that all calls are valid
+    so this method makes sure to return a valid cache object.
+]]
+function CacheMixin:GetBagCache(bag)
+    -- make sure the requested cache is initialized.
+    --if (self:UsesCache(bag) and type(self.Bank[bag]) ~= "table") then
+    if (type(self.Bank[bag]) ~= "table") then
+        DebugMsg("[GetBagCache] Bag: "..bag..", cache entry type: "..type(self.Bank[bag]), self.Bank)
+        self.Bank[bag] = {Size = 0}
+    end
+    return self.Bank[bag]
+end
+
+
+--[[
     This function initializes the cache if it does not already exist. Needs to be called in ADDON_LOADED event!
 ]]
 function AddOnTable:InitCache()
@@ -68,20 +83,6 @@ function AddOnTable:InitCache()
     initialized = true
 end
 
---[[
-Access to a (bank) bags cache content. It is expected that all calls are valid
-so this method makes sure to return a valid cache object.
-]]
-function BaudBagGetBagCache(Bag)
-    -- make sure the requested cache is initialized.
-    --if (BaudBagUseCache(Bag) and type(BaudBag_Cache.Bank[Bag]) ~= "table") then
-    if (type(BaudBag_Cache.Bank[Bag]) ~= "table") then
-        BaudBag_DebugMsg("Cache", "[GetBagCache] Bag: "..Bag..", cache entry type: "..type(BaudBag_Cache.Bank[Bag]), BaudBag_Cache.Bank)
-        BaudBag_Cache.Bank[Bag] = {Size = 0}
-    end
-    return BaudBag_Cache.Bank[Bag]
-end
-
 function BaudBagGetVoidCache()
     return BaudBag_Cache.Void
 end
@@ -99,7 +100,7 @@ function BaudBagShowCachedTooltip(self, event, ...)
     end
     
     -- show tooltip for a bag
-    local bagCache = BaudBagGetBagCache(bagId)
+    local bagCache = AddOnTable.Cache:GetBagCache(bagId)
     if self.isBag then
         if (not bagCache) then
             BaudBag_DebugMsg("Tooltip", "[ShowCachedTooltip] Could not show cache for bag as there is no cache entry [bagId]", bagId)
