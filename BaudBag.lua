@@ -506,14 +506,6 @@ hooksecurefunc("BackpackButton_OnClick", function(self)
     self:SetChecked(IsBagShown(0))
 end)
 
---self is hooked to be able to replace the original bank box with this one
-local pre_BankFrame_OnEvent = BankFrame_OnEvent
-BankFrame_OnEvent = function(self, event, ...)
-    if BBConfig and(BBConfig[2].Enabled == false) then
-        return pre_BankFrame_OnEvent(self, event, ...)
-    end
-end
-
 --[[ custom defined BaudBagSubBag event handlers ]]--
 local SubBagEvents = {
     BAG_UPDATE = function(self, event, ...)
