@@ -350,6 +350,7 @@ function BaudBagContainer_OnShow(self, event, ...)
     end
 	
     -- If there are tokens watched then decide if we should show the bar
+    -- [TAINT] can be problematic, but doesn't have to be
     if ( ManageBackpackTokenFrame ) then
         ManageBackpackTokenFrame()
     end
@@ -379,6 +380,7 @@ function BaudBagContainer_OnHide(self, event, ...)
     ]]--
     if (self:GetID() == 1) and (BBConfig[self.BagSet].Enabled) and (BBConfig[self.BagSet].CloseAll) then
         if (self.BagSet == 2) and BaudBagFrame.BankOpen then
+            -- [TAINT] can be problematic, but doesn't have to be
             CloseBankFrame()
         end
         BaudBagCloseBagSet(self.BagSet)
