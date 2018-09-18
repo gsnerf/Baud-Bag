@@ -18,7 +18,7 @@ local BaudBag_DebugCfg = {
     MenuDropDown   = { Name = "Menu DropDown",      Active = false },
 	
     -- everything that has to do with offline capabilities
-    Cache       = { Name = "Cache",         Active = false },
+    Cache       = { Name = "Cache",         Active = true },
     Bank        = { Name = "Bank",          Active = false },
     BankReagent = { Name = "Reagent Bank",  Active = false },
     VoidStorage = { Name = "Void Storage",  Active = false },

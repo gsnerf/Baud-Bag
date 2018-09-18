@@ -14,11 +14,22 @@ local AddOnName, AddOnTable = ...
 local _
 local initialized = false
 
-local CacheMixin = {}
-
 local function DebugMsg(message, ...)
     BaudBag_DebugMsg("Cache", message, ...)
 end
+
+local CacheMixin = {}
+
+--[[ 
+    This returns a boolean value wether the data of the chosen bag is cached or not.
+    At the moment only: bag == bankbag
+]]
+function CacheMixin:UsesCache(Bag)
+    local usesCache = (BBConfig[2].Enabled and ((Bag < 0) or (Bag >= 5)) and (not BaudBagFrame.BankOpen))
+    DebugMsg("[UseCache] Bag: "..Bag..", Enabled: "..(BBConfig[2].Enabled and "true" or "false")..", bank open: "..(BaudBagFrame.BankOpen and "true" or "false"), usesCache)
+    return usesCache
+end
+
 
 --[[
     This function initializes the cache if it does not already exist. Needs to be called in ADDON_LOADED event!
@@ -57,16 +68,6 @@ function AddOnTable:InitCache()
     initialized = true
 end
 
---[[ 
-This returns a boolean value wether the data of the chosen bag is cached or not.
-At the moment only: bag == bankbag
-]]
-function BaudBagUseCache(Bag)
-    local useCache = (BBConfig[2].Enabled and ((Bag < 0) or (Bag >= 5)) and (not BaudBagFrame.BankOpen))
-    BaudBag_DebugMsg("Cache", "[UseCache] Bag: "..Bag..", Enabled: "..(BBConfig[2].Enabled and "true" or "false")..", bank open: "..(BaudBagFrame.BankOpen and "true" or "false"), useCache)
-    return useCache
-end
-
 --[[
 Access to a (bank) bags cache content. It is expected that all calls are valid
 so this method makes sure to return a valid cache object.
@@ -93,7 +94,7 @@ function BaudBagShowCachedTooltip(self, event, ...)
     local bagId = (self.isBag) and self.Bag or self:GetParent():GetID()
     local slotId = (not self.isBag) and self:GetID() or nil
 
-    if (not BaudBagUseCache(bagId)) then
+    if (not AddOnTable.Cache:UsesCache(bagId)) then
         return
     end
     

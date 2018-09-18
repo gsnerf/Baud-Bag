@@ -227,7 +227,7 @@ end
 
 function Prototype:GetSlotInfo()
     BaudBag_DebugMsg("Bags", "Counting free slots for container (id)", self.ContainerId)
-    local useCache = BaudBagUseCache(self.ContainerId)
+    local useCache = AddOnTable.Cache:UsesCache(self.ContainerId)
 
     if useCache then
         local cache = BaudBagGetBagCache(self.ContainerId)

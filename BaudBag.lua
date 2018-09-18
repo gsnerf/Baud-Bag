@@ -598,7 +598,7 @@ function BaudBagUpdateContainer(Container)
 end
 
 function BaudBag_OnModifiedClick(self, button)
-    if (not BaudBagUseCache(self:GetParent():GetID())) then
+    if (not AddOnTable.Cache:UsesCache(self:GetParent():GetID())) then
         return
     end
 
