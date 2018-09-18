@@ -1,10 +1,7 @@
-﻿local _
-local Prefix = "BaudBag"
---[[
-
-    The cache can be accessed through BaudBag_Cache.
+﻿--[[
+    The cache can be accessed through AddOnTable.Cache and is persisted through the saved variable BaudBag_Cache.
     It has the following structure (values are initial and may be overwritten):
-	
+    
     BaudBag_Cache = {
         "Void" = {}
         "Bank" = {
@@ -13,58 +10,52 @@ local Prefix = "BaudBag"
         }
     }
 ]]
+local AddOnName, AddOnTable = ...
+local _
+local initialized = false
 
---[[ EXPERIMENTAL
+local CacheMixin = {}
 
-BBCache = {}
-
-function BBCache:initialize()
-    BaudBag_DebugMsg("Cache", "[initialize] initializing BaudBag_Cache with object methods")
-    setmetatable(BaudBag_Cache, self)
-    self.__index = self
+local function DebugMsg(message, ...)
+    BaudBag_DebugMsg("Cache", message, ...)
 end
 
-function BBCache:test()
-     BaudBag_DebugMsg("Cache", "[test] TEST")
-end
-
-function BBCache:getBankBag(bagId)
-    
-end ]]
-
---[[ 
-This function initializes the cache if it does not already exist.
-Needs to be called in ADDON_LOADED event!
+--[[
+    This function initializes the cache if it does not already exist. Needs to be called in ADDON_LOADED event!
 ]]
-function BaudBagInitCache()
-    BaudBag_DebugMsg("Cache", "initalizing cache")
-
-    -- init cache as a whole
-    if (type(BaudBag_Cache) ~= "table") then
-        BaudBag_DebugMsg("Cache", "no cache found, creating new one")
-        BaudBag_Cache = {}
+function AddOnTable:InitCache()
+    -- this method is currently called twice (because of ... reasons ...)
+    if initialized then
+        return
     end
 
-    ---- init cache for bankbox (not the additional bags in the bank)
-    --if (type(BaudBag_Cache[-1]) ~= "table") then
-    --	BaudBag_DebugMsg("Cache", "no bank cache found, creating new one")
-    --	BaudBag_Cache[-1] = {Size = NUM_BANKGENERIC_SLOTS}
-    --end
+    DebugMsg("initalizing cache")
+
+    -- we might have a saved cache
+    if (type(BaudBag_Cache) ~= "table") then
+        DebugMsg("no cache found, creating new one")
+        BaudBag_Cache = {}
+    end
+    BaudBag_Cache = Mixin(BaudBag_Cache, CacheMixin)
+    AddOnTable.Cache = BaudBag_Cache
 
     -- init bank cache
     if (type(BaudBag_Cache.Bank) ~= "table") then
+        DebugMsg("bank cache missing or broken, creating new one")
         -- wrapper for everything bank specific
         BaudBag_Cache.Bank = {}
         -- the bank box (not the additional bags in the bank)
-        BaudBag_Cache.Bank[-1] = {Size = NUM_BANKGENERIC_SLOTS}
+        BaudBag_Cache.Bank[-1] = { Size = NUM_BANKGENERIC_SLOTS }
     end
 	
     -- init void cache
     if (type(BaudBag_Cache.Void) ~= "table") then
+        DebugMsg("void cache missing or broken, creating new one")
         BaudBag_Cache.Void = {}
     end
-end
 
+    initialized = true
+end
 
 --[[ 
 This returns a boolean value wether the data of the chosen bag is cached or not.

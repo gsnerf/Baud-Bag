@@ -61,8 +61,7 @@ local EventFuncs = {
         BaudBag_DebugMsg("Bags", "Event ADDON_LOADED fired")
 
         -- make sure the cache is initialized
-        --BBCache:initialize()
-        BaudBagInitCache()
+        AddOnTable:InitCache()
         AddOnTable:RegisterDefaultBackgrounds()
 
         -- the rest of the bank slots are cleared in the next event

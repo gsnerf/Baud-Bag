@@ -73,7 +73,7 @@ function BaudBagOptions_OnEvent(self, event, ...)
     if ((event ~= "ADDON_LOADED") or (arg1 ~= "BaudBag")) then return; end
 
     -- make sure there is a BBConfig and a cache
-    BaudBagInitCache();
+    AddOnTable:InitCache()
     BaudBagRestoreCfg();
     ConvertOldConfig();
     CfgBackup	= BaudBagCopyTable(BBConfig);
