@@ -193,6 +193,7 @@ function BaudBagOptions_OnCancel(self, event, ...)
     BaudBag_DebugMsg("Options", "'Cancel' pressed, reset to last BBConfig.");
     BBConfig = CfgBackup;
     ReloadConfigDependant();
+    BaudBagOptionsUpdate()
 end
 
 
@@ -573,3 +574,5 @@ function BaudBagOptionsSelectContainer(BagSet, Container)
     SelectedContainer = Container;
     BaudBagOptionsUpdate();
 end
+
+hooksecurefunc(AddOnTable, "Configuration_Updated", function(self) BaudBagOptionsUpdate() end)
