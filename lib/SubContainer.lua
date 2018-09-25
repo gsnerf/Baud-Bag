@@ -30,7 +30,7 @@ function Prototype:GetSize()
     local isBankBag = self.BagSet.Id == BagSetType.Bank.Id
     local useCache = isBankBag and not BaudBagFrame.BankOpen
     if useCache and (self.ContainerId ~= -3) then
-        local bagCache = BaudBagGetBagCache(self.ContainerId)
+        local bagCache = AddOnTable.Cache:GetBagCache(self.ContainerId)
         return bagCache.Size
     else
         return GetContainerNumSlots(self.ContainerId)
@@ -58,7 +58,7 @@ function Prototype:Rebuild()
     local newSize = self:GetSize()
     local currentSize = self.Size
     local availableItemButtons = self.AvailableItemButtons
-    local bagCache = BaudBagGetBagCache(self.ContainerId)
+    local bagCache = AddOnTable.Cache:GetBagCache(self.ContainerId)
     BaudBag_DebugMsg("BagCreation", "Rebuilding subcontainer content (containerId, currentSize, newSize, availableItemButtons)", self.ContainerId, currentSize, newSize, availableItemButtons)
     
     -- create missing slots if necessary
@@ -101,7 +101,7 @@ function Prototype:UpdateSlotContents()
     local showColor = BBConfig.RarityColor
     local rarityIntensity = BBConfig.RarityIntensity
     local isBankBag = self.BagSet.Id == BagSetType.Bank.Id
-    local bagCache = BaudBagGetBagCache(self.ContainerId)
+    local bagCache = AddOnTable.Cache:GetBagCache(self.ContainerId)
     local useCache = isBankBag and not BaudBagFrame.BankOpen
     
     -- reinit values that might be outdated
@@ -227,10 +227,10 @@ end
 
 function Prototype:GetSlotInfo()
     BaudBag_DebugMsg("Bags", "Counting free slots for container (id)", self.ContainerId)
-    local useCache = BaudBagUseCache(self.ContainerId)
+    local useCache = AddOnTable.Cache:UsesCache(self.ContainerId)
 
     if useCache then
-        local cache = BaudBagGetBagCache(self.ContainerId)
+        local cache = AddOnTable.Cache:GetBagCache(self.ContainerId)
 
         -- if we don't have a hit in the cache make sure to return values that make sense
         local link = cache.BagLink

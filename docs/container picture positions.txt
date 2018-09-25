@@ -1,0 +1,53 @@
+﻿position calculation for graphics/pictures
+
+in game position information = %-values of overall width and height
+
+Example picture: 256x512 pixel:
+pos = target pixel / overall pixel
+width pixel range of 50-100 = 50/512 to 100/512 = 0.09765625 to 0.1953125
+height pixel range of 50-100 = 50/256 to 100/256 = 0.1953125 to 0.390625
+
+=> pixel 0 = pos 0.0, pixel on the far right = 1.0
+
+Interface\ContainerFrame\UI-Bag-Components (256x512)
+
+background_top (256x512):
+	left: 64 = 25% = 0.25
+	right: 0 = 0
+	top: 0 = 0
+	bottom: 0 = 0
+
+background_middle_1 (256x512):
+	left: 64 = 25% = 0.25
+	right: 0 = 0
+	top: 180 = 0,3515625
+	bottom: 436 = 0,8515625
+
+background_middle_2 (256x256):
+	rest = background_middle_1
+
+background_bottom (256x10)	
+	left: 64 = 25% = 0.25
+	right: 0 = 0
+	top: 169 = 0,330078125
+	bottom: 179 = 0,349609378
+	
+item_slot (42)
+	left: 162 = 0.6328125
+	right: 204 = 0.796875
+	top: 216 = 0.421875
+	bottom: 258 = 0.50390625
+	
+blank_bottom (Xx19)
+	left: 116 = 0.453125
+	right: 244 = 0.953125
+	top: 30 = 0.05859375
+	bottom: 45 = 0.087890625
+	
+Interface\ContainerFrame\UI-Bag-1Slot (128x128)
+	
+background_1_slot (99x74)
+	left: 0 = 0
+	right: 99 = 0,7734375
+	top: 0 = 0
+	bottom: 74 = 0,578125

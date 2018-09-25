@@ -233,7 +233,7 @@ function Prototype:UpdateBagPicture(containerFrame, parentName, backdrop)
     
     local icon
     local bagID = containerFrame.Bags[1]:GetID()
-    local bagCache = BaudBagGetBagCache(bagID)
+    local bagCache = AddOnTable.Cache:GetBagCache(bagID)
     if (bagID <= 0) then
         icon = BaudBagIcons[bagID]
     elseif (containerFrame.BagSet == 2) and not BaudBagFrame.BankOpen and bagCache.BagLink then

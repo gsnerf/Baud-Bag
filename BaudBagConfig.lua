@@ -141,7 +141,6 @@ function ReloadConfigDependant()
     BaudBag_DebugMsg("Config", "Reloading configuration depending objects");
     BaudUpdateJoinedBags();
     BaudBagUpdateBagFrames();
-    BaudBagOptionsUpdate();
 end
 
 --[[--------------------------------------------------------------------------------

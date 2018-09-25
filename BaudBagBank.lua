@@ -49,7 +49,7 @@ Func = function(self, event, ...)
     local slot = ...
     BaudBag_DebugMsg("BankReagent", "Updating Slot", slot)
 
-    local bagCache = BaudBagGetBagCache(REAGENTBANK_CONTAINER)
+    local bagCache = AddOnTable.Cache:GetBagCache(REAGENTBANK_CONTAINER)
     local subBagObject = AddOnTable["SubBags"][-3]
     local rarityColor = BBConfig[2].RarityColor
 
@@ -95,7 +95,7 @@ function BaudBagBankBags_Initialize()
 
         -- get cache for the current bank bag
         -- if there is a bag create icon with correct texture etc
-        local bagCache = BaudBagGetBagCache(subContainerId)
+        local bagCache = AddOnTable.Cache:GetBagCache(subContainerId)
         if (bagCache.BagLink) then
             Texture = GetItemIcon(bagCache.BagLink)
             SetItemButtonCount(bagButton.Frame, bagCache.BagCount or 0)
@@ -192,19 +192,20 @@ function BaudBagBankBags_UpdateContent(bankVisible)
     AddOnTable.SubBags[REAGENTBANK_CONTAINER]:UpdateSlotContents()
     
     BaudBagBankBags_Update()
-    BaudBag_DebugMsg("Bank", "Recording bank bag info.")
-    for Bag = 1, NUM_BANKBAGSLOTS do
-        local bagCache = BaudBagGetBagCache(Bag + ITEM_INVENTORY_BANK_BAG_OFFSET)
-        local inventoryId = BankButtonIDToInvSlotID(Bag, 1)
-        bagCache.BagLink  = GetInventoryItemLink("player", inventoryId)
-        bagCache.BagCount = GetInventoryItemCount("player", inventoryId)
-    end
-
+    
     if not bankVisible then
         BaudBag_DebugMsg("Bank", "Bankframe does not really seem to be open or event was not BANKFRAME_OPENED. Stepping over actually opening the Bankframes")
         return
     end
 
+    BaudBag_DebugMsg("Bank", "Recording bank bag info.")
+    for Bag = 1, NUM_BANKBAGSLOTS do
+        local bagCache = AddOnTable.Cache:GetBagCache(Bag + ITEM_INVENTORY_BANK_BAG_OFFSET)
+        local inventoryId = BankButtonIDToInvSlotID(Bag, 1)
+        bagCache.BagLink  = GetInventoryItemLink("player", inventoryId)
+        bagCache.BagCount = GetInventoryItemCount("player", inventoryId)
+    end
+    
     local BBContainer2_1 = _G[Prefix.."Container2_1"]
     if BBContainer2_1:IsShown() then
         -- TODO we need direct access to the Container Object here in the future!

@@ -73,7 +73,7 @@ function BaudBagOptions_OnEvent(self, event, ...)
     if ((event ~= "ADDON_LOADED") or (arg1 ~= "BaudBag")) then return; end
 
     -- make sure there is a BBConfig and a cache
-    BaudBagInitCache();
+    AddOnTable:InitCache()
     BaudBagRestoreCfg();
     ConvertOldConfig();
     CfgBackup	= BaudBagCopyTable(BBConfig);
@@ -193,6 +193,7 @@ function BaudBagOptions_OnCancel(self, event, ...)
     BaudBag_DebugMsg("Options", "'Cancel' pressed, reset to last BBConfig.");
     BBConfig = CfgBackup;
     ReloadConfigDependant();
+    BaudBagOptionsUpdate()
 end
 
 
@@ -480,7 +481,7 @@ function BaudBagOptionsUpdate()
             end
 			
             -- try to find out which bag texture to use
-            local bagCache = BaudBagGetBagCache(Bag);
+            local bagCache = AddOnTable.Cache:GetBagCache(Bag);
             if BaudBagIcons[Bag]then
                 Texture = BaudBagIcons[Bag];
             elseif(SelectedBags == 1)then
@@ -573,3 +574,5 @@ function BaudBagOptionsSelectContainer(BagSet, Container)
     SelectedContainer = Container;
     BaudBagOptionsUpdate();
 end
+
+hooksecurefunc(AddOnTable, "Configuration_Updated", function(self) BaudBagOptionsUpdate() end)
