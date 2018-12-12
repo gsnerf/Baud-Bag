@@ -186,8 +186,7 @@ local function UpdateBankBagHighlight(subContainer)
     unlockInfo:Hide()
 
     if (subContainer.ContainerId == REAGENTBANK_CONTAINER) then
-        highlight = _G["BBReagentsBagHighlightFrameTexture"]
-
+        _G["BBReagentsBag"]:SetChecked(open)
         if (not IsReagentBankUnlocked()) then
             unlockInfo:Show()
             depositButton:Disable()
@@ -200,15 +199,7 @@ local function UpdateBankBagHighlight(subContainer)
     end
 
     if (subContainer.ContainerId ~= BANK_CONTAINER) then
-        if (highlight == nil) then
-            highlight = AddOnTable["Sets"][2].BagButtons[subContainer.ContainerId-4].Frame.HighlightFrame.HighlightTexture
-        end
-
-        if open then
-            highlight:Show()
-        else
-            highlight:Hide()
-        end
+        AddOnTable["Sets"][2].BagButtons[subContainer.ContainerId-4].Frame:SetChecked(open)
     end
 end
 
