@@ -1,4 +1,6 @@
 ﻿=== Changelog ===
+v8.1.0
+  - adapted to changes in BankItemButtonBagTemplate
 v8.0.5
   - fixed a bug in updating tokens when inventory is deactivated for baudbag
   - fixed a bug in cache handling causing the bags in the bank to be shown wrongly in "offline" mode
