@@ -66,6 +66,7 @@ function Prototype:UpdateContent(useCache, slotCache)
     
     self.Quality = quality
     self:UpdateNewAndBattlepayoverlays(isNewItem, isBattlePayItem)
+    self:UpdateItemOverlay(itemID)
     self.Frame.readable = isReadable
     if (self.Frame.JunkIcon) then
         self.Frame.JunkIcon:SetShown(quality == LE_ITEM_QUALITY_POOR and not hasNoValue and MerchantFrame:IsShown())
@@ -139,6 +140,15 @@ function Prototype:UpdateQuestOverlay(containerId)
             questTexture:Hide()
         end
     end
+end
+
+function Prototype:UpdateItemOverlay(itemID)
+        if itemID and C_AzeriteEmpoweredItem.IsAzeriteEmpoweredItemByID(itemID) then
+            self.Frame.IconOverlay:SetAtlas([[AzeriteIconFrame]]);
+            self.Frame.IconOverlay:Show();
+        else
+            self.Frame.IconOverlay:Hide();
+        end
 end
 
 function Prototype:UpdateNewAndBattlepayoverlays(isNewItem, isBattlePayItem)
