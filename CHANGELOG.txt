@@ -1,4 +1,7 @@
 ﻿=== Changelog ===
+v8.1.1
+  - fixed item overlay handling to match blizzard defaults again
+  - updated toc to post 8.1.0 interface version changes
 v8.1.0
   - adapted to changes in BankItemButtonBagTemplate
 v8.0.5
