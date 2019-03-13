@@ -2,6 +2,11 @@
 	<Script file="BaudBagBank.lua" />
 
     <ItemButton name="ReagentBankSlotTemplate" virtual="true">
+        <Layers>
+            <Layer level="OVERLAY">
+                <Texture parentKey="SlotHighlightTexture" alphaMode="ADD" file="Interface\Buttons\CheckButtonHilight" setAllPoints="true" hidden="true"/>
+            </Layer>
+        </Layers>
         <Frames>
             <Cooldown name="$parentCooldown" parentKey="Cooldown" inherits="CooldownFrameTemplate"/>
         </Frames>
@@ -15,7 +20,6 @@
             </OnLeave>
             <OnClick function="ReagentBankSlotButton_OnClick"/>
         </Scripts>
-        <CheckedTexture alphaMode="ADD" file="Interface\Buttons\CheckButtonHilight"/>
     </ItemButton>
 
 </Ui>

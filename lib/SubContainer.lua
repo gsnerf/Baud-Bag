@@ -168,11 +168,20 @@ local function UpdateBackpackHighlight(subContainer)
     subContainer.Frame:GetParent().UnlockInfo:Hide()
 
     if (subContainer.ContainerId == BACKPACK_CONTAINER) then
-        MainMenuBarBackpackButton:SetMatchesSearch(open)
+        if (open) then
+            MainMenuBarBackpackButton.SlotHighlightTexture:Show()
+        else
+            MainMenuBarBackpackButton.SlotHighlightTexture:Hide()
+        end
     else
         local bagId = subContainer.ContainerId -1
-        _G["CharacterBag"..bagId.."Slot"]:SetMatchesSearch(open)
-        AddOnTable["Sets"][1].BagButtons[bagId].Frame:SetMatchesSearch(open)
+        if (open) then
+            _G["CharacterBag"..bagId.."Slot"].SlotHighlightTexture:Show()
+            AddOnTable["Sets"][1].BagButtons[bagId].Frame.SlotHighlightTexture:Show()
+        else
+            _G["CharacterBag"..bagId.."Slot"].SlotHighlightTexture:Hide()
+            AddOnTable["Sets"][1].BagButtons[bagId].Frame.SlotHighlightTexture:Hide()
+        end
     end
 end
 
@@ -186,7 +195,11 @@ local function UpdateBankBagHighlight(subContainer)
     unlockInfo:Hide()
 
     if (subContainer.ContainerId == REAGENTBANK_CONTAINER) then
-        _G["BBReagentsBag"]:SetMatchesSearch(open)
+        if (open)   then
+            _G["BBReagentsBag"].SlotHighlightTexture:Show()
+        else
+            _G["BBReagentsBag"].SlotHighlightTexture:Hide()
+        end
         if (not IsReagentBankUnlocked()) then
             unlockInfo:Show()
             depositButton:Disable()
@@ -199,7 +212,12 @@ local function UpdateBankBagHighlight(subContainer)
     end
 
     if (subContainer.ContainerId ~= BANK_CONTAINER) then
-        AddOnTable["Sets"][2].BagButtons[subContainer.ContainerId-4].Frame:SetMatchesSearch(open)
+        local button = AddOnTable["Sets"][2].BagButtons[subContainer.ContainerId-4].Frame
+        if (open) then
+            button.SlotHighlightTexture:Show()
+        else
+            button.SlotHighlightTexture:Hide()
+        end
     end
 end
 

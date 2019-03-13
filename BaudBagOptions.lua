@@ -50,16 +50,6 @@ local TextureNames = {
     Localized.Transparent2
 };
 
-BaudBagOptionsBagMixin = {}
-
-function BaudBagOptionsBagMixin:GetItemContextMatchResult()
-    if (self.IsSelected) then
-        return ItemButtonUtil.ItemContextMatchResult.Match
-    else
-        return ItemButtonUtil.ItemContextMatchResult.Mismatch
-    end
-end
-
 --[[
     Needed functions:
     - option window loaded => set all basic control settings and add dynamic components
@@ -526,7 +516,11 @@ function BaudBagOptionsUpdate()
     for Bag = 1, MaxBags do
         Container	= _G[Prefix.."Container"..Bag];
         Button		= _G[Prefix.."Bag"..Bag];
-        Button.IsSelected = Button:GetID()==SelectedContainer
+        if (Button:GetID()==SelectedContainer) then
+            Button.SlotHighlightTexture:Show()
+        else
+            Button.SlotHighlightTexture:Hide()
+        end
         if(Bag <= ContNum)then
             if(Bag==SelectedContainer)then
                 Container:SetBackdropColor(1,1,0);
