@@ -1,4 +1,6 @@
 ﻿=== Changelog ===
+v8.1.2
+  - fixed calls to outdated ItemButtonTemplate and replaced with new ItemButton
 v8.1.1
   - fixed item overlay handling to match blizzard defaults again
   - updated toc to post 8.1.0 interface version changes

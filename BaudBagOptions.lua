@@ -153,7 +153,7 @@ function BaudBagOptions_OnEvent(self, event, ...)
       ]]
     local Button, Container, Check;
     for Bag = 1, MaxBags do
-        Button		= CreateFrame("CheckButton",    Prefix.."Bag"..Bag,         BaudBagOptions.GroupContainer.BagFrame, Prefix.."BagTemplate");
+        Button		= CreateFrame("ItemButton",    Prefix.."Bag"..Bag,         BaudBagOptions.GroupContainer.BagFrame, Prefix.."BagTemplate");
         Container	= CreateFrame("Frame",          Prefix.."Container"..Bag,   BaudBagOptions.GroupContainer.BagFrame, Prefix.."ContainerTemplate");
         if (Bag == 1) then
             -- first bag only has a container
@@ -516,7 +516,11 @@ function BaudBagOptionsUpdate()
     for Bag = 1, MaxBags do
         Container	= _G[Prefix.."Container"..Bag];
         Button		= _G[Prefix.."Bag"..Bag];
-        Button:SetChecked(Button:GetID()==SelectedContainer);
+        if (Button:GetID()==SelectedContainer) then
+            Button.SlotHighlightTexture:Show()
+        else
+            Button.SlotHighlightTexture:Hide()
+        end
         if(Bag <= ContNum)then
             if(Bag==SelectedContainer)then
                 Container:SetBackdropColor(1,1,0);

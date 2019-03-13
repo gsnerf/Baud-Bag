@@ -36,13 +36,17 @@
 	<!-- TEMPLATES FOR DYNAMICALLY GENERATED VISUAL ELEMENTS (see lua file) -->
 
 	<!-- This represents a clickable (check) Bag Button which will select the current container for options -->
-	<CheckButton name="BaudBagOptionsBagTemplate" inherits="ItemButtonTemplate" virtual="true">
+	<ItemButton name="BaudBagOptionsBagTemplate" virtual="true">
 		<Size x="37" y="37" />
-		<CheckedTexture alphaMode="ADD" file="Interface\Buttons\CheckButtonHilight" />
+		<Layers>
+            <Layer level="OVERLAY">
+                <Texture parentKey="SlotHighlightTexture" alphaMode="ADD" file="Interface\Buttons\CheckButtonHilight" setAllPoints="true" hidden="true"/>
+            </Layer>
+        </Layers>
 		<Scripts>
 			<OnClick function="BaudBagOptionsBag_OnClick" />
 		</Scripts>
-	</CheckButton>
+	</ItemButton>
 
 	<!-- this is the visual representation of a container in which bags are joined (border around the joined bags) -->
 	<Frame name="BaudBagOptionsContainerTemplate" virtual="true">
