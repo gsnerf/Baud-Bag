@@ -493,7 +493,7 @@ local function UpdateThisHighlight(self)
     if BBConfig and (BBConfig[1].Enabled == false) then
         return
     end
-    self:SetChecked(IsBagShown(self:GetID() - CharacterBag0Slot:GetID() + 1))
+    self:SetMatchesSearch(IsBagShown(self:GetID() - CharacterBag0Slot:GetID() + 1))
 end
 
 --These function hooks override the bag button highlight changes that Blizzard does
@@ -504,7 +504,7 @@ hooksecurefunc("BackpackButton_OnClick", function(self)
     if BBConfig and(BBConfig[1].Enabled == false)then
         return
     end
-    self:SetChecked(IsBagShown(0))
+    self:SetMatchesSearch(IsBagShown(0))
 end)
 
 --[[ custom defined BaudBagSubBag event handlers ]]--

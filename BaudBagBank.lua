@@ -106,7 +106,7 @@ function BaudBagBankBags_Initialize()
     end
 
     -- create BagSlot for reagent bank!
-    BagSlot = CreateFrame("CheckButton", "BBReagentsBag", BBContainer2, "ReagentBankSlotTemplate")
+    BagSlot = CreateFrame("ItemButton", "BBReagentsBag", BBContainer2, "ReagentBankSlotTemplate")
     BagSlot:SetID(-3)
     BagSlot.Bag = -3
     BagSlot:SetPoint("TOPLEFT", 8 + mod(NUM_BANKBAGSLOTS, 2) * 39, -8 - floor(NUM_BANKBAGSLOTS / 2) * 39)

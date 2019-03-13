@@ -1,7 +1,7 @@
 <Ui xmlns="http://www.blizzard.com/wow/ui/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
 	<Script file="BaudBagBank.lua" />
 
-    <CheckButton name="ReagentBankSlotTemplate" inherits="ItemButtonTemplate" virtual="true">
+    <ItemButton name="ReagentBankSlotTemplate" virtual="true">
         <Frames>
             <Cooldown name="$parentCooldown" parentKey="Cooldown" inherits="CooldownFrameTemplate"/>
         </Frames>
@@ -16,6 +16,6 @@
             <OnClick function="ReagentBankSlotButton_OnClick"/>
         </Scripts>
         <CheckedTexture alphaMode="ADD" file="Interface\Buttons\CheckButtonHilight"/>
-    </CheckButton>
+    </ItemButton>
 
 </Ui>

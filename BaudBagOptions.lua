@@ -50,6 +50,16 @@ local TextureNames = {
     Localized.Transparent2
 };
 
+BaudBagOptionsBagMixin = {}
+
+function BaudBagOptionsBagMixin:GetItemContextMatchResult()
+    if (self.IsSelected) then
+        return ItemButtonUtil.ItemContextMatchResult.Match
+    else
+        return ItemButtonUtil.ItemContextMatchResult.Mismatch
+    end
+end
+
 --[[
     Needed functions:
     - option window loaded => set all basic control settings and add dynamic components
@@ -153,7 +163,7 @@ function BaudBagOptions_OnEvent(self, event, ...)
       ]]
     local Button, Container, Check;
     for Bag = 1, MaxBags do
-        Button		= CreateFrame("CheckButton",    Prefix.."Bag"..Bag,         BaudBagOptions.GroupContainer.BagFrame, Prefix.."BagTemplate");
+        Button		= CreateFrame("ItemButton",    Prefix.."Bag"..Bag,         BaudBagOptions.GroupContainer.BagFrame, Prefix.."BagTemplate");
         Container	= CreateFrame("Frame",          Prefix.."Container"..Bag,   BaudBagOptions.GroupContainer.BagFrame, Prefix.."ContainerTemplate");
         if (Bag == 1) then
             -- first bag only has a container
@@ -516,7 +526,7 @@ function BaudBagOptionsUpdate()
     for Bag = 1, MaxBags do
         Container	= _G[Prefix.."Container"..Bag];
         Button		= _G[Prefix.."Bag"..Bag];
-        Button:SetChecked(Button:GetID()==SelectedContainer);
+        Button.IsSelected = Button:GetID()==SelectedContainer
         if(Bag <= ContNum)then
             if(Bag==SelectedContainer)then
                 Container:SetBackdropColor(1,1,0);

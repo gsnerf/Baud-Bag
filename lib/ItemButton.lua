@@ -239,7 +239,7 @@ function AddOnTable:CreateItemButton(subContainer, slotIndex, buttonTemplate)
     itemButton.Name = subContainer.Name.."Item"..slotIndex
     itemButton.SlotIndex = slotIndex
     itemButton.Parent = subContainer
-    itemButton.Frame = CreateFrame("Button", itemButton.Name, subContainer.Frame, buttonTemplate)
+    itemButton.Frame = CreateFrame("ItemButton", itemButton.Name, subContainer.Frame, buttonTemplate)
     itemButton.Frame:SetID(slotIndex)
     
     itemButton.BorderFrame = itemButton.Frame:CreateTexture(itemButton.Name.."Border", "OVERLAY")
