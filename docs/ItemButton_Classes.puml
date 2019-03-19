@@ -1,0 +1,203 @@
+@startuml
+class ItemButton << WoW, intrinsic >> {
+    .. parentKey ..
+    icon: Texture
+    Count: FontString
+    searchOverlay: Texture
+    ItemContextOverlay: Texture
+    IconBorder: Texture
+    IconOverlay: Texture
+    .. with absolute name ..
+    Stock: FontString
+    NormalTexture: NormalTexture
+    --
+    PostOnLoad()
+    PostOnShow()
+    PostOnHide()
+    RegisterCallback()
+    UnregisterCallback()
+    SetMatchesSearch(matchesSearch: MatchesSearchType)
+    GetMatchesSearch()
+    UpdateItemContextMatching()
+    UpdateItemContextOverlay()
+}
+
+class ItemButtonTemplate << WoW, utility methods >> {
+    .. default ItemButton helper methods ..
+    SetItemButtonCount(button: ItemButton, count: number, abbreviate: boolean)
+    SetItemButtonStock(button: ItemButton, numInStock: number)
+    SetItemButtonTexture(button: ItemButton, texture: Texture)
+    SetItemButtonTextureVertexColor(button: ItemButton, r: number, g: number, b: number)
+    SetItemButtonDesaturated(button: ItemButton, desaturated: boolean)
+    SetItemButtonNormalTextureVertexColor(button: ItemButton, r: number, g: number, b: number)
+    SetItemButtonQuality(button: ItemButton, quality: ItemQuality, itemIDOrLink: ItemID, suppressOverlays: boolean)
+    HandleModifiedItemClicl(link)
+    .. methods for specialized ItemButton instances ..
+    SetItemButtonNameFrameVertexColor(button: ItemButton, r: number, g: number, b: number)
+    SetItemButtonSlotVertexColor(button: ItemButton, r: number, g: number, b: number)
+}
+
+class ReagentBankSlotTemplate << BaudBag, virtual >> {
+    .. with parentKey ..
+    SlotHighlightTexture: Texture
+    Cooldown: Cooldown
+    --
+    ReagentBankSlotButton_OnLoad()
+    ReagentBankSlotButton_OnEvent()
+    ReagentBankSlotButton_OnEnter()
+    OnLeave()
+    ReagentBankSlotButton_OnClick()
+}
+
+class BaudBagOptionsBagTemplate << BaudBag, virtual >> {
+    SlotHighlightTexture: Texture
+    BaudBagOptionsBag_OnClick()
+}
+
+class BankItemButtonGenericTemplate << WoW, virtual >> {
+    .. with parentkey ..
+    IconQuestTexture : Texture
+    Cooldown : Cooldown
+    --
+    BankFrameItemButton_OnLoad()
+    BankFrameItemButton_OnEnter()
+    OnLeave()
+    OnClick()
+    BankFrameItemButtonGeneric_OnClick(button: String)
+    BankFrameItemButtonGeneric_OnModifiedClick(button: String)
+    OnDragStart()
+    OnReceiveDrag()
+}
+
+class BankItemButtonBagTemplate << WoW, virtual >> {
+    .. with parentKey ..
+    SlotHighlightTexture: Texture
+    Cooldown: Cooldown
+    --
+    BankFrameBagButton_OnLoad()
+    BankFrameBagButton_OnEvent()
+    BankFrameItemButton_OnEnter()
+    OnLeave()
+    OnClick()
+    BankFrameItemButtonBag_Pickup(button: String)
+    BankFrameItemButtonBag_OnClick(button: String)
+}
+
+class BagSlotButtonTemplate << WoW, virtual >> {
+    .. with parentKey ..
+    SlotHighlightTexture: Texture
+    --
+    BagSlotButton_OnLoad()
+    BagSlotButton_OnEvent()
+    OnShow()
+    OnHide()
+    OnClick()
+    BagSlotButton_OnClick(button: string)
+    BagSlotButton_OnModifiedClick(button: string)
+    OnDragStart()
+    BagSlotButton_OnDrag(button: string)
+    OnReceiveDrag()
+    BagSlotButton_OnEnter()
+    OnLeave()
+}
+
+class ReagentBankItemButtonGenericTemplate << WoW, virtual >> {
+    ReagentBankFrameItemButton_OnLoad()
+}
+
+class ContainerFrameItemButtonTemplate << WoW, virtual >> {
+    .. with parentKey ..
+    newitemglowAnim: AnimationGroup
+    flashAnim: AnimationGroup
+    UpgradeIcon: Texture
+    BagStaticBottom: Texture
+    BagStaticTop: Texture
+    flash: Texture
+    NewItemTexture: Texture
+    BattlepayItemTexture: Texture
+    ExtendedSlot: Texture
+    ExtendedOverlay: Texture
+    ExtendedOverlay2: Texture
+    JunkIcon: Texture
+    .. with absolute name ..
+    IconQuestTexture: Texture
+    Cooldown: Cooldown
+    --
+    OnClick()
+    ContainerFrameItemButton_OnClick(button: String)
+    ContainerFrameItemButton_OnModifiedClick(button: String)
+    ContainerFrameItemButton_OnLoad()
+    ContainerFrameItemButton_OnEnter()
+    ContainerFrameItemButton_OnLeave()
+    OnHide()
+    OnDragStart()
+    OnReceiveDrag()
+    ContainerFrameItemButton_OnDrag(button: String)
+}
+
+class BBItemButton << wrapper >> {
+    .. wrapper fields ..
+    Name: string
+    SlotIndex: number
+    Quality: number
+    Parent: table
+    Frame: ItemButton
+    BorderFrame: Texture
+    QuestOverlay: Texture
+    --
+    UpdateContent(useCache: boolean, slotCache: table)
+    UpdatePosition(container: Frame, x: number, y: number, slotLevel: number)
+    UpdateCustomRarity(showColor: boolean, intensity: number)
+    UpdateQuestOverlay(containerId)
+    UpdateItemOverlay(itemID)
+    UpdateNewAndBattlepayoverlays(isNewItem: boolean, isBattlePayItem: boolean)
+    UpdateTooltip(subContainerId: number)
+    ShowHighlight(enabled: boolean)
+    ApplyBaseSkin()
+    Hide()
+}
+
+class BagButton << BaudBag, wrapper >> {
+    BagSetType: BagSetType
+    SubContainerId: number
+    Frame: ItemButton
+    BagSlot_OnEnter()
+    BagSlot_OnUpdate()
+    BagSlot_OnLeave()
+    ApplyBaseSkin()
+}
+
+class AddOnTable {
+    .. creation methods ..
+    CreateItemButton(subContainer: Frame, slotIndex: number, buttonTemplate: string)
+    CreateBagButton(bagSetType: BagSetType, bagIndex: number, subContainerId: number, parentFrame: Frame, buttomTemplate: string)
+    .. hooks ..
+    ItemSlot_Created(bagSet: BagSetType, containerId: number, subContainerId: number, slotId: number, button: ItemButton)
+    ItemSlot_Updated(bagSet: BagSetType, containerId: number, subContainerId: number, slotId: number, button: ItemButton)
+    BagSlot_Created(bagSetType: BagSetType, bag: number, button: ItemButton)
+    BagSlot_Updated(bagSetType: BagSetType, bag: number, button: ItemButton)
+}
+
+AddOnTable --> BBItemButton
+AddOnTable --> BagButton
+
+BBItemButton *-- ContainerFrameItemButtonTemplate
+BBItemButton *-- BankItemButtonGenericTemplate
+BBItemButton *-- ReagentBankItemButtonGenericTemplate
+
+BagButton *-- BankItemButtonBagTemplate
+BagButton *-- BagSlotButtonTemplate
+
+ReagentBankItemButtonGenericTemplate --|> BankItemButtonGenericTemplate
+
+ReagentBankSlotTemplate --|> ItemButton
+BaudBagOptionsBagTemplate --|> ItemButton
+BankItemButtonGenericTemplate --|> ItemButton
+BankItemButtonBagTemplate --|> ItemButton
+ContainerFrameItemButtonTemplate --|> ItemButton
+BagSlotButtonTemplate --|> ItemButton
+
+ItemButtonTemplate -> ItemButton
+
+
+@enduml
