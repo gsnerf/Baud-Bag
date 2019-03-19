@@ -181,9 +181,9 @@ class AddOnTable {
 AddOnTable --> BBItemButton
 AddOnTable --> BagButton
 
-BBItemButton *-- ContainerFrameItemButtonTemplate
-BBItemButton *-- BankItemButtonGenericTemplate
-BBItemButton *-- ReagentBankItemButtonGenericTemplate
+BBItemButton --> ContainerFrameItemButtonTemplate: mixin
+BBItemButton --> BankItemButtonGenericTemplate: mixin
+BBItemButton --> ReagentBankItemButtonGenericTemplate:  mixin
 
 BagButton *-- BankItemButtonBagTemplate
 BagButton *-- BagSlotButtonTemplate
