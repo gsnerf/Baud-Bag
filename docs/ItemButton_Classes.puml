@@ -133,6 +133,7 @@ class ContainerFrameItemButtonTemplate << WoW, virtual >> {
     OnDragStart()
     OnReceiveDrag()
     ContainerFrameItemButton_OnDrag(button: String)
+    UpdateTooltip()
 }
 
 class BBItemButton << wrapper >> {
@@ -151,7 +152,7 @@ class BBItemButton << wrapper >> {
     UpdateQuestOverlay(containerId)
     UpdateItemOverlay(itemID)
     UpdateNewAndBattlepayoverlays(isNewItem: boolean, isBattlePayItem: boolean)
-    UpdateTooltip(subContainerId: number)
+    UpdateTooltipInternal(subContainerId: number)
     ShowHighlight(enabled: boolean)
     ApplyBaseSkin()
     Hide()
