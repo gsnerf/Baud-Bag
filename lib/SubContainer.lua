@@ -157,7 +157,7 @@ function Prototype:UpdateItemOverlays()
             local itemSlotObject = self.Items[Slot]
             ContainerFrame_UpdateCooldown(self.ContainerId, itemSlotObject)
             itemSlotObject:UpdateQuestOverlay(self.ContainerId)
-            itemSlotObject:UpdateTooltip(self.ContainerId)
+            itemSlotObject:UpdateTooltipInternal(self.ContainerId)
         end
     end
 end

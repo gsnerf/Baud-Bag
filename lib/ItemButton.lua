@@ -188,7 +188,7 @@ function Prototype:UpdateNewAndBattlepayoverlays(isNewItem, isBattlePayItem)
     end
 end
 
-function Prototype:UpdateTooltip(subContainerId)
+function Prototype:UpdateTooltipInternal(subContainerId)
     if ( self == GameTooltip:GetOwner() ) then
         if (GetContainerItemInfo(subContainerId, self:GetID())) then
             self.UpdateTooltip(self)
