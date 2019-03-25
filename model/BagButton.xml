@@ -28,7 +28,7 @@
 	</ItemButton>
 
 
-    <ItemButton name="BagSlotButtonTemplate" mixin="BagSlotMixin" inherits="ItemAnimTemplate" virtual="true">
+    <!--ItemButton name="BagSlotButtonTemplate" mixin="BagSlotMixin" inherits="ItemAnimTemplate" virtual="true">
 		<Size x="30" y="30"/>
 		<Layers>
 			<Layer level="OVERLAY">
@@ -63,5 +63,5 @@
 				ResetCursor();
 			</OnLeave>
 		</Scripts>
-	</ItemButton>
-</UI>
+	</ItemButton-->
+</Ui>

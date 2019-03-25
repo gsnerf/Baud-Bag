@@ -116,9 +116,9 @@ end
 function BagButtonMixin:OnClick( button )
     if ( IsModifiedClick( "PICKUPITEM" ) ) then
         self:Pickup()
-    else if ( IsModifiedClick( "OPENALLBAGS" ) ) then
+    elseif ( IsModifiedClick( "OPENALLBAGS" ) ) then
         if ( GetInventoryItemTexture("player", self:GetID()) ) then
-			ToggleAllBags();
+			ToggleAllBags()
 		end
     else
         self:PutItemInBag()
