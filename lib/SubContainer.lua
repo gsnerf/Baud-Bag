@@ -69,7 +69,7 @@ function Prototype:Rebuild()
             self.Items[newSlot] = button
 
             -- hook for plugins
-            AddOnTable:ItemSlot_Created(self.BagSet, self.Frame:GetParent():GetID(), self.ContainerId, slot, button.Frame)
+            AddOnTable:ItemSlot_Created(self.BagSet, self.Frame:GetParent():GetID(), self.ContainerId, slot, button)
         end
         availableItemButtons = newSize
     end
@@ -123,7 +123,7 @@ function Prototype:UpdateSlotContents()
             self.FreeSlots = self.FreeSlots + 1
         end
 
-        AddOnTable:ItemSlot_Updated(self.BagSet, self.Frame:GetParent():GetID(), self.ContainerId, slot, itemObject.Frame)
+        AddOnTable:ItemSlot_Updated(self.BagSet, self.Frame:GetParent():GetID(), self.ContainerId, slot, itemObject)
     end
 
     self:UpdateItemOverlays()
@@ -155,9 +155,9 @@ function Prototype:UpdateItemOverlays()
         BaudBag_DebugMsg("Bags", "Updating Items of Bag (ContainerId, container name)", self.ContainerId, self.Name)
         for Slot = 1, self.Size do
             local itemSlotObject = self.Items[Slot]
-            ContainerFrame_UpdateCooldown(self.ContainerId, itemSlotObject.Frame)
+            ContainerFrame_UpdateCooldown(self.ContainerId, itemSlotObject)
             itemSlotObject:UpdateQuestOverlay(self.ContainerId)
-            itemSlotObject:UpdateTooltip(self.ContainerId)
+            itemSlotObject:UpdateTooltipInternal(self.ContainerId)
         end
     end
 end

@@ -149,7 +149,7 @@ Func = function(self, event, ...)
             function(Bag, Index)
                 for Slot = 1, GetContainerNumSlots(Bag) do
                     local quality = select(4, GetContainerItemInfo(Bag, Slot))
-                    if (quality and quality <= 0) then
+                    if (quality and quality == 0) then
                         BaudBag_DebugMsg("Junk", "Found junk (Container, Slot)", Bag, Slot)
                         UseContainerItem(Bag, Slot)
                     end

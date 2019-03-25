@@ -1,0 +1,67 @@
+<Ui xmlns="http://www.blizzard.com/wow/ui/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.blizzard.com/wow/ui/ ..\..\FrameXML\UI.xsd">
+    <Script file="BagButton.lua" />
+
+    <ItemButton name="BagButton" mixin="BagButtonMixin" intrinsic="true">
+		<KeyValues>
+			<KeyValue key="IsBankContainer" value="false" />
+			<KeyValue key="IsInventoryContainer" value="false" />
+		</KeyValues>
+		<Layers>
+			<Layer level="OVERLAY">
+				<Texture parentKey="SlotHighlightTexture" alphaMode="ADD" file="Interface\Buttons\CheckButtonHilight" setAllPoints="true" hidden="true"/>
+			</Layer>
+		</Layers>
+		<Frames>
+			<Cooldown parentKey="Cooldown" inherits="CooldownFrameTemplate"/>
+		</Frames>
+		<Scripts>
+			<OnLoad  method="OnLoad" />
+			<OnEvent method="OnEvent" />
+			<OnShow  method="OnShow" />
+			<OnHide  method="OnHide" />
+			<OnEnter method="OnEnter" />
+			<OnLeave method="OnLeave" />
+			<OnClick method="OnClick" />
+	        <OnDragStart   method="OnDragStart" />
+			<OnReceiveDrag method="OnReceiveDrag" />
+		</Scripts>
+	</ItemButton>
+
+
+    <ItemButton name="BagSlotButtonTemplate" mixin="BagSlotMixin" inherits="ItemAnimTemplate" virtual="true">
+		<Size x="30" y="30"/>
+		<Layers>
+			<Layer level="OVERLAY">
+				<Texture parentKey="SlotHighlightTexture" alphaMode="ADD" file="Interface\Buttons\CheckButtonHilight" setAllPoints="true" hidden="true"/>
+			</Layer>
+		</Layers>
+		<Scripts>
+			<OnShow>
+				PaperDollItemSlotButton_OnShow(self, true);
+			</OnShow>
+			<OnHide>
+				PaperDollItemSlotButton_OnHide(self);
+			</OnHide>
+			<OnClick>
+				if ( IsModifiedClick() ) then
+					BagSlotButton_OnModifiedClick(self, button);
+				else
+					BagSlotButton_OnClick(self, button);
+				end
+			</OnClick>
+			<OnDragStart>
+				BagSlotButton_OnDrag(self, button);
+			</OnDragStart>
+			<OnReceiveDrag>
+				BagSlotButton_OnClick(self);
+			</OnReceiveDrag>
+			<OnEnter>
+				BagSlotButton_OnEnter(self, motion);
+			</OnEnter>
+			<OnLeave>
+				GameTooltip:Hide();
+				ResetCursor();
+			</OnLeave>
+		</Scripts>
+	</ItemButton>
+</UI>

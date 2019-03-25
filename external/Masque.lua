@@ -14,7 +14,7 @@ local function RegisterItemButton(groupName, button)
         Pushed = button:GetPushedTexture(),
         Normal = button:GetNormalTexture(),
         Border = button.IconBorder,
-        Highlight = button:GetHighlightTexture(),
+        Highlight = button.SlotHighlightTexture,
         Count = button.Count,
     }
     Masque:Group('BaudBag', groupName):AddButton(button, buttonData)
@@ -30,7 +30,7 @@ local function RegisterBagButton(groupName, button)
         Cooldown = button.Cooldown,
         Pushed = button:GetPushedTexture(),
         Normal = button:GetNormalTexture(),
-        Checked = button:GetCheckedTexture(),
+        Checked = button.SlotHighlightTexture,
         Border = button.IconBorder,
         Highlight = highlightTexture,
         Count = button.Count,
