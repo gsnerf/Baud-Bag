@@ -20,6 +20,7 @@
 			<OnShow  method="OnShow" />
 			<OnHide  method="OnHide" />
 			<OnEnter method="OnEnter" />
+			<OnUpdate method="OnUpdate" />
 			<OnLeave method="OnLeave" />
 			<OnClick method="OnClick" />
 	        <OnDragStart   method="OnDragStart" />
