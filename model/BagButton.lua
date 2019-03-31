@@ -1,5 +1,10 @@
 BagButtonMixin = {}
 
+function BagButtonMixin:Initialize()
+    self.IsBankContainer = self.BagSetType == BagSetType.Bank
+    self.IsInventoryContainer = self.BagSetType == BagSetType.Backpack
+end
+
 function BagButtonMixin:GetItemContextMatchResult()
 	return ItemButtonUtil.GetItemContextMatchResultForContainer( self:GetBagID() )
 end
@@ -19,11 +24,11 @@ function BagButtonMixin:GetBagID()
 end
 
 function BagButtonMixin:GetInventorySlotID()
-    if (self.BagSetType == BagSetType.Backpack) then
+    if (self.IsInventoryContainer) then
         return self:GetID()
     end
 
-    if (self.BagSetType == BagSetType.Bank) then
+    if (self.IsBankContainer) then
         
         --[[ for reagent related BagButtons ]]
         if (self.SubContainerId == REAGENTBANK_CONTAINER) then
