@@ -15,20 +15,21 @@
 			<Cooldown parentKey="Cooldown" inherits="CooldownFrameTemplate"/>
 		</Frames>
 		<Scripts>
-			<OnLoad  method="OnLoad" />
-			<OnEvent method="OnEvent" />
-			<OnShow  method="OnShow" />
-			<OnHide  method="OnHide" />
-			<OnEnter method="OnEnter" />
-			<OnLeave method="OnLeave" />
-			<OnClick method="OnClick" />
-	        <OnDragStart   method="OnDragStart" />
-			<OnReceiveDrag method="OnReceiveDrag" />
+			<OnLoad  method="OnLoad" intrinsicOrder="precall" />
+			<OnEvent method="OnEvent" intrinsicOrder="precall" />
+			<OnShow  method="OnShow" intrinsicOrder="precall" />
+			<OnHide  method="OnHide" intrinsicOrder="precall" />
+			<OnEnter method="OnEnter" intrinsicOrder="precall" />
+			<OnUpdate method="OnUpdate" intrinsicOrder="precall" />
+			<OnLeave method="OnLeave" intrinsicOrder="precall" />
+			<OnClick method="OnClick" intrinsicOrder="precall" />
+	        <OnDragStart   method="OnDragStart" intrinsicOrder="precall" />
+			<OnReceiveDrag method="OnReceiveDrag" intrinsicOrder="precall" />
 		</Scripts>
 	</ItemButton>
 
 
-    <ItemButton name="BagSlotButtonTemplate" mixin="BagSlotMixin" inherits="ItemAnimTemplate" virtual="true">
+    <!--ItemButton name="BagSlotButtonTemplate" mixin="BagSlotMixin" inherits="ItemAnimTemplate" virtual="true">
 		<Size x="30" y="30"/>
 		<Layers>
 			<Layer level="OVERLAY">
@@ -63,5 +64,5 @@
 				ResetCursor();
 			</OnLeave>
 		</Scripts>
-	</ItemButton>
-</UI>
+	</ItemButton-->
+</Ui>

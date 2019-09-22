@@ -1,5 +1,10 @@
 BagButtonMixin = {}
 
+function BagButtonMixin:Initialize()
+    self.IsBankContainer = self.BagSetType == BagSetType.Bank
+    self.IsInventoryContainer = self.BagSetType == BagSetType.Backpack
+end
+
 function BagButtonMixin:GetItemContextMatchResult()
 	return ItemButtonUtil.GetItemContextMatchResultForContainer( self:GetBagID() )
 end
@@ -19,15 +24,20 @@ function BagButtonMixin:GetBagID()
 end
 
 function BagButtonMixin:GetInventorySlotID()
-    --[[ for container related BagButtons
-    return self:GetID()
-    ]]
-    --[[ for bank related BagButtons
-    return BankButtonIDToInvSlotID( self:GetID(), true )
-    ]]
-    --[[ for reagent related BagButtons
-    return ReagentBankButtonIDToInvSlotID( self:GetID() )
-    ]]
+    if (self.IsInventoryContainer) then
+        return self:GetID()
+    end
+
+    if (self.IsBankContainer) then
+        
+        --[[ for reagent related BagButtons ]]
+        if (self.SubContainerId == REAGENTBANK_CONTAINER) then
+            return ReagentBankButtonIDToInvSlotID( self:GetID() )
+        end
+    
+        --[[ for bank related BagButtons ]]
+        return BankButtonIDToInvSlotID( self:GetID(), true )
+    end
 end
 
 function BagButtonMixin:UpdateTooltip()
@@ -105,20 +115,44 @@ function BagButtonMixin:OnEnter()
 	end
 
 	GameTooltip:Show()
-	CursorUpdate( self )
+    CursorUpdate( self )
+    
+    -- BaudBag specifics
+    BaudBag_DebugMsg("BagHover", "Mouse is hovering above item")
+    self.HighlightBag		= true
+    self.HighlightBagOn		= false
+    self.HighlightBagCount	= GetTime() + 0.35
+end
+
+--[[ determine if and how long the mouse was hovering and change bag according ]]
+function BagButtonMixin:OnUpdate()
+    if (self.HighlightBag and (not self.HighlightBagOn) and GetTime() >= self.HighlightBagCount) then
+        BaudBag_DebugMsg("BagHover", "showing item (itemName)", self:GetName())
+        self.HighlightBagOn	= true
+        AddOnTable["SubBags"][self.Bag]:SetSlotHighlighting(true)
+    end
+    AddOnTable:BagSlot_Updated(self.BagSetType, self.SubContainerId, self.Frame)
 end
 
 function BagButtonMixin:OnLeave()
     GameTooltip_Hide()
     ResetCursor()
+
+    BaudBag_DebugMsg("BagHover", "Mouse not hovering above item anymore")
+    self.HighlightBag		= false
+	
+    if (self.HighlightBagOn) then
+        self.HighlightBagOn	= false
+        AddOnTable["SubBags"][self.Bag]:SetSlotHighlighting(false)
+    end
 end
 
 function BagButtonMixin:OnClick( button )
     if ( IsModifiedClick( "PICKUPITEM" ) ) then
         self:Pickup()
-    else if ( IsModifiedClick( "OPENALLBAGS" ) ) then
+    elseif ( IsModifiedClick( "OPENALLBAGS" ) ) then
         if ( GetInventoryItemTexture("player", self:GetID()) ) then
-			ToggleAllBags();
+			ToggleAllBags()
 		end
     else
         self:PutItemInBag()
