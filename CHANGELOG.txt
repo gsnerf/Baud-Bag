@@ -1,4 +1,7 @@
 ﻿=== Changelog ===
+v8.2.0
+  - updated some internals to work better than before
+  - updated TOC version to patch 8.2
 v8.1.3
   - updated Masque support to not throw errors
   - adapted "Sell Junk" code to not do anything if quality retrieval returns error values (hopefully fixes the "sell all items" bug)
