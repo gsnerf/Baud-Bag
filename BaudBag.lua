@@ -166,7 +166,6 @@ Func = function(self, event, ...)
 end
 EventFuncs.MAIL_SHOW = Func
 EventFuncs.AUCTION_HOUSE_SHOW = Func
-EventFuncs.SCRAPPING_MACHINE_SHOW = Func
 
 Func = function(self, event, ...)
     BaudBag_DebugMsg("Bags", "Event fired", event)
@@ -175,7 +174,6 @@ end
 EventFuncs.MERCHANT_CLOSED = Func
 EventFuncs.MAIL_CLOSED = Func
 EventFuncs.AUCTION_HOUSE_CLOSED = Func
-EventFuncs.SCRAPPING_MACHINE_CLOSE = Func
 
 Func = function(self, event, ...)
     BaudBag_DebugMsg("Bags", "Event fired (event, source)", event, self:GetName())
@@ -215,7 +213,6 @@ EventFuncs.PLAYERBANKSLOTS_CHANGED = Func
 function BaudBag_OnLoad(self, event, ...)
     BINDING_HEADER_BaudBag					= "Baud Bag"
     BINDING_NAME_BaudBagToggleBank			= "Toggle Bank"
-    BINDING_NAME_BaudBagToggleVoidStorage	= "Show Void Storage"
 
     BaudBag_DebugMsg("Bags", "OnLoad was called")
 
