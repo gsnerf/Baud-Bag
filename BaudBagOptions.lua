@@ -284,12 +284,12 @@ function PlayCheckBoxSound(self)
 end
 
 --[[ Name TextBox functions ]]
-function BaudBagOptionsNameEditBox_OnTextChanged()
-    if Updating then
-        return;
+function BaudBagOptionsNameEditBox_OnTextChanged(self, wasUserInput)
+    if Updating or not wasUserInput then
+        return
     end
-    -- BBConfig[SelectedBags][SelectedContainer].Name = _G[Prefix.."NameEditBox"]:GetText();
-    BBConfig[SelectedBags][SelectedContainer].Name = BaudBagOptions.GroupContainer.NameInput:GetText();
+
+    BBConfig[SelectedBags][SelectedContainer].Name = BaudBagOptions.GroupContainer.NameInput:GetText()
     AddOnTable["Sets"][SelectedBags].Containers[SelectedContainer]:UpdateName() -- TODO: move to BaudBagBBConfig save?
 end
 
