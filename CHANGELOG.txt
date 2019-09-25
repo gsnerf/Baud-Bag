@@ -1,4 +1,7 @@
 ﻿=== Changelog ===
+v8.2.1
+  - fixed options window to not try to update the name of a container if the name was not entered by a user
+  - updated TOC version to patch 8.2.5
 v8.2.0
   - updated some internals to work better than before
   - updated TOC version to patch 8.2
