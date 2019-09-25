@@ -1,6 +1,7 @@
 ## Author: Thurmal (Author), Suddendeath2000 (Former Author), Baudzila (Original Author)
 ## DefaultState: Enabled
-## Interface: 80200
+## Interface: 80205
+## Globe: check-classic
 ## LoadOnDemand: 0
 ## Dependencies: Blizzard_VoidStorageUI
 ## OptionalDeps: CaedronWardrobe, Masque
@@ -11,7 +12,7 @@
 ## Title: Baud Bag
 ## Title-zhCN: 背包整合 Baud Bag
 ## Title-zhTW: 背包整合 Baud Bag
-## Version: 8.2.0
+## Version: 8.2.1
 
 Localization.lua
 BaudBagFunctions.lua
