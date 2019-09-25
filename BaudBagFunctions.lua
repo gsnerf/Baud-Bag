@@ -20,8 +20,6 @@ local BaudBag_DebugCfg = {
     -- everything that has to do with offline capabilities
     Cache       = { Name = "Cache",         Active = false },
     Bank        = { Name = "Bank",          Active = false },
-    BankReagent = { Name = "Reagent Bank",  Active = false },
-    VoidStorage = { Name = "Void Storage",  Active = false },
 
     -- additional functionality
     Token       = { Name = "Token",     Active = false },
@@ -117,8 +115,6 @@ function BaudBagForEachBag(BagSet, Func)
         for Bag = 1, NUM_BANKBAGSLOTS do
             Func(Bag + 4, Bag + 1);
         end
-        -- reagent bank
-        Func(-3, NUM_BANKBAGSLOTS + 2);
     end
 end
 
@@ -212,7 +208,7 @@ end
         -1 == BANK_CONTAINER
   ]]
 function BaudBag_IsBankDefaultContainer(bagId)
-    return (bagId == BANK_CONTAINER or bagId == REAGENTBANK_CONTAINER);
+    return (bagId == BANK_CONTAINER);
 end
 
 --[[

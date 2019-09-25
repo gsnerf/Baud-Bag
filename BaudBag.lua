@@ -100,16 +100,11 @@ local EventFuncs = {
                 local bankBagButton = AddOnTable["Sets"][2].BagButtons[Slot-NUM_BANKGENERIC_SLOTS].Frame
                 BankFrameItemButton_UpdateLocked(bankBagButton)
             end
-        elseif (Bag == REAGENTBANK_CONTAINER) then
-            BankFrameItemButton_UpdateLocked(_G[Prefix.."SubBag-3Item"..Slot])
         end
 
         if (Slot ~= nil) then
             local _, _, locked = GetContainerItemInfo(Bag, Slot)
             if ((not locked) and BaudBagFrame.ItemLock.Move) then
-                if (BaudBagFrame.ItemLock.IsReagent and (BaudBag_IsBankContainer(Bag)) and (Bag ~= REAGENTBANK_CONTAINER)) then
-                    BaudBag_FixContainerClickForReagent(Bag, Slot)
-                end
                 BaudBagFrame.ItemLock.Move      = false
                 BaudBagFrame.ItemLock.IsReagent = false
             end
@@ -690,62 +685,6 @@ function BaudBag_ContainerFrameItemButton_OnClick(self, button)
         if (targetReagentBank) then
             BaudBagFrame.ItemLock.Move      = true
             BaudBagFrame.ItemLock.IsReagent = true
-        end
-    end
-end
-
-function BaudBag_FixContainerClickForReagent(Bag, Slot)
-    -- determine if there is another item with the same item in the reagent bank
-    local _, count, _, _, _, _, link = GetContainerItemInfo(Bag, Slot)
-    local maxSize = select(8, GetItemInfo(link))
-    local targetSlots = {}
-    local emptySlots = GetContainerFreeSlots(REAGENTBANK_CONTAINER)
-    for i = 1, GetContainerNumSlots(REAGENTBANK_CONTAINER) do
-        local _, targetCount, _, _, _, _, targbcetLink = GetContainerItemInfo(REAGENTBANK_CONTAINER, i)
-        if (link == targetLink) then
-            local target    = {}
-            target.count    = targetCount
-            target.slot     = i
-            table.insert(targetSlots, target)
-        end
-    end
-
-    BaudBag_DebugMsg("ItemHandle", "fixing reagent bank entry (Bag, Slot, targetSlots, emptySlots)", Bag, Slot, targetSlots, emptySlots)
-
-    -- if there already is a stack of the same item try to join the stacks
-    for Key, Value in pairs(targetSlots) do
-        BaudBag_DebugMsg("ItemHandle", "there already seem to be items of the same type in the reagent bank", Value)
-        
-        -- only do something if there are still items to put somewhere (split)
-        if (count > 0) then
-            -- determine if there is enough space to put everything inside
-            local space = maxSize - Value.count
-            BaudBag_DebugMsg("ItemHandle", "The current stack has this amount of (space)", space)
-            if (space > 0) then
-                if (space < count) then
-                    -- doesn't seem so, split and go on
-                    SplitContainerItem(Bag, Slot, space)
-                    PickupContainerItem(REAGENTBANK_CONTAINER, Value.slot)
-                    count = count - space
-                else
-                    -- seems so: put everything there
-                    PickupContainerItem(Bag, Slot)
-                    PickupContainerItem(REAGENTBANK_CONTAINER, Value.slot)
-                    count = 0
-                end
-            end
-        end
-    end
-
-    BaudBag_DebugMsg("ItemHandle", "joining complete (leftItemCount)", count)
-    
-    -- either join didn't work or there's just something left over, we now put the rest in the first empty slot
-    if (count > 0) then
-        for Key, Value in pairs(emptySlots) do
-            BaudBag_DebugMsg("ItemHandle", "putting rest stack into reagent bank slot (restStack)", Value)
-            PickupContainerItem(Bag, Slot)
-            PickupContainerItem(REAGENTBANK_CONTAINER, Value)
-            return
         end
     end
 end

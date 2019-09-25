@@ -145,11 +145,7 @@ function Prototype:UpdateSubContainers(col, row)
             container.Frame:Show()
 
             -- last but not least update visibility for deposit button of reagent bank
-            if (container.ContainerId == REAGENTBANK_CONTAINER and BaudBagFrame.BankOpen) then
-                self.Frame.DepositButton:Show()
-            else
-                self.Frame.DepositButton:Hide()
-            end
+            self.Frame.DepositButton:Hide()
         end
     end
 
@@ -197,7 +193,7 @@ function Prototype:GetFilterType()
     local id, container
     for _, container in pairs(self.SubContainers) do
         id = container.ContainerId
-        if (id ~= BACKPACK_CONTAINER) and (id ~= BANK_CONTAINER) and (id ~= REAGENTBANK_CONTAINER) then
+        if (id ~= BACKPACK_CONTAINER) and (id ~= BANK_CONTAINER) then
             return container:GetFilterType()
         end
     end
@@ -208,7 +204,7 @@ end
 function Prototype:SetFilterType(type, value)
     for _, container in pairs(self.SubContainers) do
         local id = container.ContainerId
-        if (id ~= BACKPACK_CONTAINER) and (id ~= BANK_CONTAINER) and (id ~= REAGENTBANK_CONTAINER) then
+        if (id ~= BACKPACK_CONTAINER) and (id ~= BANK_CONTAINER) then
             container:SetFilterType(type, value)
         end
     end

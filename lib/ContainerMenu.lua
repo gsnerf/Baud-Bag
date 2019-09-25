@@ -50,13 +50,8 @@ end
         entry.checked = false
         UIDropDownMenu_AddButton(entry)
     elseif (DropDownContainer and BaudBagFrame.BankOpen) then
-        if(_G["BaudBagContainer"..DropDownBagSet.."_"..DropDownContainer].Bags[1]:GetID() == -3) then
-            entry.text = BAG_CLEANUP_REAGENT_BANK
-            entry.func = SortReagentBankBags
-        else
-            entry.text = BAG_CLEANUP_BANK
-            entry.func = SortBankBags
-        end
+        entry.text = BAG_CLEANUP_BANK
+        entry.func = SortBankBags
         UIDropDownMenu_AddButton(entry)
     end
 
@@ -103,12 +98,10 @@ function AddFilterOptions(bagSetId, containerId, header)
             or
             firstSubContainerId == BANK_CONTAINER
             or
-            firstSubContainerId == REAGENTBANK_CONTAINER
-            or
             IsInventoryItemProfessionBag("player", ContainerIDToInventoryID(firstSubContainerId))
         )
     ) then
-        -- the backpack, bank or reagent bank themselves cannot have filters!
+        -- the backpack or bank themselves cannot have filters!
         return
     end
 

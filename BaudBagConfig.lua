@@ -73,9 +73,6 @@ function BaudBagRestoreCfg()
                 if not BBConfig[BagSet][Container].Name then
                     BaudBag_DebugMsg("Config", "- BagSet["..BagSet.."], Bag["..Bag.."], Container["..Container.."] container name missing, creating now");
                     BBConfig[BagSet][Container].Name = UnitName("player")..Localized.Of..((BagSet==1) and Localized.Inventory or Localized.BankBox);
-                    if (Bag == REAGENTBANK_CONTAINER) then
-                        BBConfig[BagSet][Container].Name = UnitName("player")..Localized.Of..Localized.ReagentBankBox;
-                    end
                 end
 
                 if (type(BBConfig[BagSet][Container].Background) ~= "number") then

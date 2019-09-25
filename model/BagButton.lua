@@ -29,13 +29,6 @@ function BagButtonMixin:GetInventorySlotID()
     end
 
     if (self.IsBankContainer) then
-        
-        --[[ for reagent related BagButtons ]]
-        if (self.SubContainerId == REAGENTBANK_CONTAINER) then
-            return ReagentBankButtonIDToInvSlotID( self:GetID() )
-        end
-    
-        --[[ for bank related BagButtons ]]
         return BankButtonIDToInvSlotID( self:GetID(), true )
     end
 end

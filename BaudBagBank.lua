@@ -44,26 +44,6 @@ end
 EventFuncs.BANKFRAME_OPENED = Func
 EventFuncs.PLAYERBANKBAGSLOTS_CHANGED = Func
 
---[[ This updates the visual of the given reagent bank item ]]
-Func = function(self, event, ...)
-    local slot = ...
-    BaudBag_DebugMsg("BankReagent", "Updating Slot", slot)
-
-    local bagCache = AddOnTable.Cache:GetBagCache(REAGENTBANK_CONTAINER)
-    local subBagObject = AddOnTable["SubBags"][-3]
-    local rarityColor = BBConfig[2].RarityColor
-
-    bagCache[slot] = subBagObject.Items[slot]:UpdateContent(false)
-    subBagObject.Items[slot]:UpdateCustomRarity(rarityColor)
-end
-EventFuncs.PLAYERREAGENTBANKSLOTS_CHANGED = Func
-
-Func = function(self, event, ...)
-    _G["BaudBagSubBag-3"]:GetParent().UnlockInfo:Hide()
-	_G["BaudBagSubBag-3"]:GetParent().DepositButton:Enable()
-end
-EventFuncs.REAGENTBANK_PURCHASED = Func
-
 function BaudBag_RegisterBankEvents(self)
     for Key, Value in pairs(EventFuncs)do
         self:RegisterEvent(Key)
@@ -105,15 +85,6 @@ function BaudBagBankBags_Initialize()
         SetItemButtonTexture(bagButton.Frame, Texture)
     end
 
-    -- create BagSlot for reagent bank!
-    BagSlot = CreateFrame("ItemButton", "BBReagentsBag", BBContainer2, "ReagentBankSlotTemplate")
-    BagSlot:SetID(-3)
-    BagSlot.Bag = -3
-    BagSlot:SetPoint("TOPLEFT", 8 + mod(NUM_BANKBAGSLOTS, 2) * 39, -8 - floor(NUM_BANKBAGSLOTS / 2) * 39)
-    BagSlot:HookScript("OnEnter",	BaudBag_BagSlot_OnEnter)
-    BagSlot:HookScript("OnUpdate",	BaudBag_BagSlot_OnUpdate)
-    BagSlot:HookScript("OnLeave",	BaudBag_BagSlot_OnLeave)
-
     BBContainer2:SetWidth(91)
     --Height changes depending if there is a purchase button
     BBContainer2.Height = 13 + ceil(NUM_BANKBAGSLOTS / 2) * 39
@@ -130,7 +101,6 @@ end
 function BaudBagBankBags_Update()
     local Purchase = BaudBagBankSlotPurchaseFrame
     local Slots, Full = GetNumBankSlots()
-    local ReagentsBought = IsReagentBankUnlocked()
     local BagSlot
     local bankSet = AddOnTable["Sets"][2]
 
@@ -147,7 +117,6 @@ function BaudBagBankBags_Update()
             BagSlot.tooltipText = BANK_BAG_PURCHASE
         end
     end
-    -- TODO similarily check if reagent bank is already bought and change vertex color accordingly!
     
     local BBContainer2 = _G[Prefix.."Container2_1BagsFrame"]
     
@@ -182,14 +151,12 @@ function BaudBagBankBags_UpdateContent(bankVisible)
     BaudBagBankSlotPurchaseButton:Enable()
 
     local BankItemButtonPrefix        = Prefix.."SubBag"..BANK_CONTAINER.."Item"
-    local ReagentBankItemButtonPrefix = Prefix.."SubBag"..REAGENTBANK_CONTAINER.."Item"
 
     AddOnTable.SubBags[BANK_CONTAINER]:UpdateSlotContents()
     for Index = 1, NUM_BANKBAGSLOTS do
         local bankBagButton = AddOnTable["Sets"][2].BagButtons[Index].Frame
         BankFrameItemButton_Update(bankBagButton)
     end
-    AddOnTable.SubBags[REAGENTBANK_CONTAINER]:UpdateSlotContents()
     
     BaudBagBankBags_Update()
     
@@ -216,47 +183,6 @@ function BaudBagBankBags_UpdateContent(bankVisible)
         BBContainer2_1:Show()
     end
 end
-
-function BBReagentBank_UnlockInfo_Show(self, event, ...)
-    if(not IsReagentBankUnlocked()) then		
-		self:Show();
-		MoneyFrame_Update( self.CostMoneyFrame, GetReagentBankCost());
-	else
-		self:Hide();
-	end
-end
-
-
---[[ this prepares the visual style of the reagent bag slot ]]
-function ReagentBankSlotButton_OnLoad(self, event, ...)
-    -- for the time beeing we use the texture of manastorms duplicator for the reagent bank button
-    local _, _, _, _, _, _, _, _, _, texture, _ = GetItemInfo(118938)
-    BaudBag_DebugMsg("BankReagent", "[SlotButton_OnLoad] Updating texture of reagent bank slot")
-    SetItemButtonTexture(self, texture)
-end
-
-function ReagentBankSlotButton_OnEvent(self, event, ...)
-    BaudBag_DebugMsg("BankReagent", "[SlotButton_OnEvent] called event "..event)
-end
-
-function ReagentBankSlotButton_OnEnter(self, event, ...)
-    BaudBag_DebugMsg("BankReagent", "[SlotButton_OnEnter] Hovering over bank slot, showing tooltip")
-    GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
-    GameTooltip:SetText(REAGENT_BANK)
-end
-
-function ReagentBankSlotButton_OnClick(self, event, ...)
-    BaudBag_DebugMsg("BankReagent", "[SlotButton_OnClick] trying to show reagent bank")
-    -- trying to determine container for reagent bank
-    local RBankContainer = _G[Prefix.."SubBag-3"]:GetParent()
-    if (RBankContainer:IsShown()) then
-        RBankContainer:Hide()
-    else
-        RBankContainer:Show()
-    end
-end
-
-
 
 
 function BaudBagToggleBank(self)

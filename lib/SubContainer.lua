@@ -47,8 +47,6 @@ function Prototype:GetItemButtonTemplate()
     -- TODO: this should propably be already known when creating the SubContainer, so better move somewhere earlier!
     if (self.ContainerId == BANK_CONTAINER) then
         return "BankItemButtonGenericTemplate"
-    elseif (self.ContainerId == REAGENTBANK_CONTAINER) then
-        return "ReagentBankItemButtonGenericTemplate"
     else
         return "ContainerFrameItemButtonTemplate"
     end
@@ -193,23 +191,6 @@ local function UpdateBankBagHighlight(subContainer)
     local highlight = nil
 
     unlockInfo:Hide()
-
-    if (subContainer.ContainerId == REAGENTBANK_CONTAINER) then
-        if (open)   then
-            _G["BBReagentsBag"].SlotHighlightTexture:Show()
-        else
-            _G["BBReagentsBag"].SlotHighlightTexture:Hide()
-        end
-        if (not IsReagentBankUnlocked()) then
-            unlockInfo:Show()
-            depositButton:Disable()
-            MoneyFrame_Update( unlockInfo.CostMoneyFrame, GetReagentBankCost() )
-        else
-            unlockInfo:Hide()
-            depositButton:Enable()
-        end
-        return
-    end
 
     if (subContainer.ContainerId ~= BANK_CONTAINER) then
         local button = AddOnTable["Sets"][2].BagButtons[subContainer.ContainerId-4].Frame
