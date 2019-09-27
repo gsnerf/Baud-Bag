@@ -263,7 +263,7 @@ function AddOnTable:CreateContainer(bagSetType, bbContainerId)
     local frame = _G[container.Name]
     if (frame == nil) then
         BaudBag_DebugMsg("Container", "Frame for container does not yet exist, creating new Frame (name)", name)
-        frame = CreateFrame("Frame", container.Name, UIParent, "BaudBagContainerTemplate")
+        frame = CreateFrame("Frame", container.Name, BaudBagFrame, "BaudBagContainerTemplate")
     end
     frame:SetID(bbContainerId)
     frame.BagSet = bagSetType.Id
