@@ -45,6 +45,8 @@ local function BackpackBagOverview_Initialize()
         local buttonIndex = Bag - 1
         local bagButton = AddOnTable:CreateBagButton(backpackSet.Type, buttonIndex, Bag, BBContainer1, "BagSlotButtonTemplate")
         bagButton.Frame:SetPoint("TOPLEFT", 8, -8 - buttonIndex * 30)
+        bagButton.Frame:SetSize(30, 30)
+        _G[bagButton.Frame:GetName().."NormalTexture"]:SetSize(48,48)
         backpackSet.BagButtons[buttonIndex] = bagButton
     end
 end
