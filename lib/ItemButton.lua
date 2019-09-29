@@ -70,12 +70,7 @@ function Prototype:UpdateContent(useCache, slotCache)
     if (self.JunkIcon) then
         self.JunkIcon:SetShown(quality == LE_ITEM_QUALITY_POOR and not hasNoValue and MerchantFrame:IsShown())
     end
-
-    -- in case this is a container button we try to use the regular upgrade system (this might be even extended by addons like pawn)
-    if self.UpgradeIcon then
-        ContainerFrameItemButton_UpdateItemUpgradeIcon(self)
-    end
-
+    
     return link, cacheEntry
 end
 
@@ -117,7 +112,8 @@ function Prototype:UpdateQuestOverlay(containerId)
     local questTexture = _G[self.Name.."IconQuestTexture"]
 
     if (questTexture) then
-        local width, height = self.icon:GetSize()
+        questTexture:Hide()
+        --[[local width, height = self.icon:GetSize()
         local newWidth = width * 3/4
         local newHeight = height * 3/4
         questTexture:SetSize(newWidth, newHeight)
@@ -137,17 +133,12 @@ function Prototype:UpdateQuestOverlay(containerId)
 
         if ( not questId or isActive ) then
             questTexture:Hide()
-        end
+        end]]
     end
 end
 
 function Prototype:UpdateItemOverlay(itemID)
-        if itemID and C_AzeriteEmpoweredItem.IsAzeriteEmpoweredItemByID(itemID) then
-            self.IconOverlay:SetAtlas([[AzeriteIconFrame]]);
-            self.IconOverlay:Show();
-        else
-            self.IconOverlay:Hide();
-        end
+        self.IconOverlay:Hide();
 end
 
 function Prototype:UpdateNewAndBattlepayoverlays(isNewItem, isBattlePayItem)
