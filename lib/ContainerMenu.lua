@@ -35,7 +35,7 @@ end
     UIDropDownMenu_AddButton(entry)
 
     -- cleanup ignore
-    if (DropDownContainer) then
+    --[[if (DropDownContainer) then
         local containerObject = AddOnTable.Sets[DropDownBagSet].Containers[DropDownContainer]
         entry.text = BAG_FILTER_IGNORE
         entry.checked = containerObject:GetCleanupIgnore()
@@ -57,7 +57,7 @@ end
 
     if (DropDownBagSet ~= nil and DropDownContainer ~= nil) then
         AddFilterOptions(DropDownBagSet, DropDownContainer, header)
-    end
+    end]]
     
     -- category general
     header.text = Localized.MenuCatGeneral
