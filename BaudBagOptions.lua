@@ -413,7 +413,6 @@ function BaudBagSlider_OnValueChanged(self)
             AddOnTable.Sets[SelectedBags].Containers[SelectedContainer]:Rebuild()
             AddOnTable.Sets[SelectedBags].Containers[SelectedContainer]:Update()
         end
-        BackpackTokenFrame_Update();
     end
 end
 

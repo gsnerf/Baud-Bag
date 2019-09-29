@@ -275,7 +275,6 @@ function BaudBagBagsFrame_OnShow(self, event, ...)
         for Bag = 1, NUM_BANKBAGSLOTS do
             bagSet.BagButtons[Bag].Frame:SetFrameLevel(Level)
         end
-        _G["BBReagentsBag"]:SetFrameLevel(Level)
     end
 end
 

@@ -1,25 +1,3 @@
 <Ui xmlns="http://www.blizzard.com/wow/ui/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
 	<Script file="BaudBagBank.lua" />
-
-    <ItemButton name="ReagentBankSlotTemplate" virtual="true">
-        <Layers>
-            <Layer level="OVERLAY">
-                <Texture parentKey="SlotHighlightTexture" alphaMode="ADD" file="Interface\Buttons\CheckButtonHilight" setAllPoints="true" hidden="true"/>
-            </Layer>
-        </Layers>
-        <Frames>
-            <Cooldown name="$parentCooldown" parentKey="Cooldown" inherits="CooldownFrameTemplate"/>
-        </Frames>
-        <Scripts>
-            <OnLoad function="ReagentBankSlotButton_OnLoad"/>
-            <OnEvent function="ReagentBankSlotButton_OnEvent"/>
-            <OnEnter function="ReagentBankSlotButton_OnEnter"/>
-            <OnLeave>
-                GameTooltip_Hide();
-                ResetCursor();
-            </OnLeave>
-            <OnClick function="ReagentBankSlotButton_OnClick"/>
-        </Scripts>
-    </ItemButton>
-
 </Ui>

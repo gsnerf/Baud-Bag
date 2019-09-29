@@ -167,9 +167,6 @@ function Prototype:UpdateBackground()
     backdrop:SetPoint("TOPLEFT", -left, top)
     backdrop:SetPoint("BOTTOMRIGHT", right, -bottom)
     self.Frame:SetHitRectInsets(-left, -right, -top, -bottom)
-    self.Frame.UnlockInfo:ClearAllPoints()
-    self.Frame.UnlockInfo:SetPoint("TOPLEFT", -10, 3)
-    self.Frame.UnlockInfo:SetPoint("BOTTOMRIGHT", 10, -3)
 end
 
 function Prototype:UpdateFreeSlotsOverview(free, overall)
