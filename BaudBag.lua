@@ -386,11 +386,6 @@ function BaudBagContainer_OnHide(self, event, ...)
     end
 
     self:Show()
-
-    -- make sure the search field is closed (and therefor the items are update) before the bag is
-    BaudBagSearchFrame_CheckClose(self)
-
-    -- TODO: if the bag is closed and there is a search running clear the items inside the bag from the search marks!
 end
 
 

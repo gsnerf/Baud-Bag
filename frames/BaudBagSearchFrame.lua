@@ -16,6 +16,7 @@ function BaudBagSearchFrame_ShowFrame(ParentContainer, Scale, Background)
 	
     -- remember the element the search frame is attached to
     SearchFrame.AttachedTo = ParentContainer:GetName()
+    SearchFrame:SetParent(ParentContainer)
 	
     -- draw the background depending on the containers background
     --Backdrop:SetFrameLevel(SearchFrame:GetFrameLevel());
@@ -114,6 +115,7 @@ function BaudBagSearchFrame_ShowFrame(ParentContainer, Scale, Background)
     SearchFrame:SetHitRectInsets(-Left, -Right, -Top, -Bottom)
 	
     -- position the frame above the calling container
+    SearchFrame:ClearAllPoints()
     SearchFrame:SetPoint("BOTTOMLEFT", ParentContainer, "TOPLEFT", 0, BagSearchHeightOffset)
     SearchFrame:SetPoint("RIGHT", ParentContainer, "RIGHT")
     SearchFrame:SetHeight(BagSearchHeight)
