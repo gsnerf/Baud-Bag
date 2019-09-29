@@ -162,43 +162,25 @@ end
 
 local function UpdateBackpackHighlight(subContainer)
     local open = subContainer:IsOpen()
-    -- needed in this case???
-    subContainer.Frame:GetParent().UnlockInfo:Hide()
 
     if (subContainer.ContainerId == BACKPACK_CONTAINER) then
-        if (open) then
-            MainMenuBarBackpackButton.SlotHighlightTexture:Show()
-        else
-            MainMenuBarBackpackButton.SlotHighlightTexture:Hide()
-        end
+        MainMenuBarBackpackButton:SetChecked(open)
     else
         local bagId = subContainer.ContainerId -1
-        if (open) then
-            _G["CharacterBag"..bagId.."Slot"].SlotHighlightTexture:Show()
-            AddOnTable["Sets"][1].BagButtons[bagId].Frame.SlotHighlightTexture:Show()
-        else
-            _G["CharacterBag"..bagId.."Slot"].SlotHighlightTexture:Hide()
-            AddOnTable["Sets"][1].BagButtons[bagId].Frame.SlotHighlightTexture:Hide()
-        end
+        _G["CharacterBag"..bagId.."Slot"]:SetChecked(open)
+        AddOnTable["Sets"][1].BagButtons[bagId].Frame:SetChecked(open)
     end
 end
 
 local function UpdateBankBagHighlight(subContainer)
     local open = subContainer:IsOpen()
     local parent = subContainer.Frame:GetParent()
-    local unlockInfo = parent.UnlockInfo
     local depositButton = parent.DepositButton
     local highlight = nil
 
-    unlockInfo:Hide()
-
     if (subContainer.ContainerId ~= BANK_CONTAINER) then
         local button = AddOnTable["Sets"][2].BagButtons[subContainer.ContainerId-4].Frame
-        if (open) then
-            button.SlotHighlightTexture:Show()
-        else
-            button.SlotHighlightTexture:Hide()
-        end
+        button:SetChecked(open)
     end
 end
 

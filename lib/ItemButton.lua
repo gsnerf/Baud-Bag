@@ -230,7 +230,7 @@ local Metatable = { __index = Prototype }
 function AddOnTable:CreateItemButton(subContainer, slotIndex, buttonTemplate)
     local name = subContainer.Name.."Item"..slotIndex
 
-    local itemButton = CreateFrame("ItemButton", name, subContainer.Frame, buttonTemplate)
+    local itemButton = CreateFrame("Button", name, subContainer.Frame, buttonTemplate)
     itemButton:SetID(slotIndex)
     itemButton = Mixin(itemButton, Prototype)
 

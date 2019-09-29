@@ -53,7 +53,7 @@ function AddOnTable:CreateBagButton(bagSetType, bagIndex, subContainerId, parent
     local bagButton = _G.setmetatable({}, Metatable)
     bagButton.BagSetType = bagSetType
     bagButton.SubContainerId = subContainerId
-    bagButton.Frame	= CreateFrame("ItemButton", name, parentFrame, buttonTemplate)
+    bagButton.Frame	= CreateFrame("CheckButton", name, parentFrame, buttonTemplate)
     bagButton.Frame:SetFrameStrata("HIGH")
     bagButton.Frame:HookScript("OnEnter",   BagSlot_OnEnter)
     bagButton.Frame:HookScript("OnUpdate",  BagSlot_OnUpdate)
