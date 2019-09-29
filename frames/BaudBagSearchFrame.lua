@@ -146,7 +146,7 @@ function BaudBagSearchFrameEditBox_OnTextChanged(self, isUserInput)
     local SubBagObject, SubBag, Frame, Open, ItemButton, Link, Name, Texture
     local Status, Result
     local bagCache, slotCache
-    for Bag = -3, LastBagID do
+    for Bag = -2, LastBagID do
         if not (Bag == -2) then
             SubBagObject = AddOnTable.SubBags[Bag]
             SubBag = SubBagObject.Frame
