@@ -275,11 +275,6 @@
 					<AbsDimension x="206" y="20" />
 				</Size>
 			</Frame>
-			<Frame name="$parentTokenFrame" parentKey="TokenFrame" inherits="BaudBagTokenFrameTemplate" hidden="true">
-				<Size>
-					<AbsDimension x="206" y="20" />
-				</Size>
-			</Frame>
 		</Frames>
 		<Layers>
 			<Layer>
