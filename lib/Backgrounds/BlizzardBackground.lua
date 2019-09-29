@@ -183,15 +183,9 @@ end
 
 --[[ this returns the bottom offset to add to the bottom variable ]]
 function Prototype:AddBottomInfoBar(helper, containerFrame, bottom, parentName)
-    if (BackpackTokenFrame_IsShown() == 1 and containerFrame:GetName() == "BaudBagContainer1_1") then
-        self:RenderMoneyFrameBackground(helper, containerFrame, parentName, false)
-        BaudBagTokenFrame_RenderBackgrounds(containerFrame, parentName)
-        return 43
-    else
-        -- make sure the window gets big enough and the correct texture is chosen
-        self:RenderMoneyFrameBackground(helper, containerFrame, parentName)
-        return 21
-    end
+    -- make sure the window gets big enough and the correct texture is chosen
+    self:RenderMoneyFrameBackground(helper, containerFrame, parentName)
+    return 21
 end
 
 function Prototype:RenderMoneyFrameBackground(helper, containerFrame, parentName, renderMoneyFrameOnly)
@@ -251,15 +245,8 @@ function Prototype:AdjustPositioning(helper, containerFrame, backdrop, shiftName
     containerFrame.CloseButton:SetPoint("TOPRIGHT", backdrop, "TOPRIGHT", 3, 3)
     helper.Parent:Show()
     if (containerFrame:GetID() == 1) then
-        if (BackpackTokenFrame_IsShown() == 1 and containerFrame:GetName() == "BaudBagContainer1_1") then
-            containerFrame.TokenFrame:SetPoint("BOTTOMLEFT",  backdrop, "BOTTOMLEFT", 0, 6)
-            containerFrame.TokenFrame:SetPoint("BOTTOMRIGHT", backdrop, "BOTTOMRIGHT", 0, 6)
-            containerFrame.MoneyFrame:SetPoint("BOTTOMRIGHT", containerFrame.TokenFrame, "TOPRIGHT", 0, -1)
-            containerFrame.FreeSlots:SetPoint("BOTTOMLEFT",   containerFrame.TokenFrame, "TOPLEFT", 0, 4)
-        else
-            containerFrame.FreeSlots:SetPoint("BOTTOMLEFT",   backdrop, "BOTTOMLEFT", 12, 7)
-            containerFrame.MoneyFrame:SetPoint("BOTTOMRIGHT", backdrop, "BOTTOMRIGHT", 0, 3)
-        end
+        containerFrame.FreeSlots:SetPoint("BOTTOMLEFT",   backdrop, "BOTTOMLEFT", 12, 7)
+        containerFrame.MoneyFrame:SetPoint("BOTTOMRIGHT", backdrop, "BOTTOMRIGHT", 0, 3)
     end
 end
 
