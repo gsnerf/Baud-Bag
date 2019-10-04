@@ -11,11 +11,10 @@
 ## Title: Baud Bag
 ## Title-zhCN: 背包整合 Baud Bag
 ## Title-zhTW: 背包整合 Baud Bag
-## Version: 1.13.0_beta_1
+## Version: 1.13.0
 
 Localization.lua
 BaudBagFunctions.lua
-model\BagButton.xml
 lib\BaseTypes.lua
 lib\BagSet.lua
 lib\ItemButton.lua

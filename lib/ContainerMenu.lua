@@ -34,31 +34,6 @@ end
     entry.func = ToggleContainerLock
     UIDropDownMenu_AddButton(entry)
 
-    -- cleanup ignore
-    --[[if (DropDownContainer) then
-        local containerObject = AddOnTable.Sets[DropDownBagSet].Containers[DropDownContainer]
-        entry.text = BAG_FILTER_IGNORE
-        entry.checked = containerObject:GetCleanupIgnore()
-        entry.func = function(_, _, _, value) containerObject:SetCleanupIgnore(not value) end
-        UIDropDownMenu_AddButton(entry)
-    end
-
-    -- cleanup button first regular
-    if (DropDownBagSet == 1) then
-        entry.text = BAG_CLEANUP_BAGS
-        entry.func = SortBags
-        entry.checked = false
-        UIDropDownMenu_AddButton(entry)
-    elseif (DropDownContainer and BaudBagFrame.BankOpen) then
-        entry.text = BAG_CLEANUP_BANK
-        entry.func = SortBankBags
-        UIDropDownMenu_AddButton(entry)
-    end
-
-    if (DropDownBagSet ~= nil and DropDownContainer ~= nil) then
-        AddFilterOptions(DropDownBagSet, DropDownContainer, header)
-    end]]
-    
     -- category general
     header.text = Localized.MenuCatGeneral
     UIDropDownMenu_AddButton(header)
@@ -82,54 +57,6 @@ end
         entry.text = BACKPACK_AUTHENTICATOR_INCREASE_SIZE
         entry.func = BaudBag_AddSlotsClick
         UIDropDownMenu_AddButton(entry)
-    end
-end
-
-function AddFilterOptions(bagSetId, containerId, header)
-    
-    local containerObject = AddOnTable.Sets[bagSetId].Containers[containerId]
-    local frame = containerObject.Frame
-    
-    local numberOfSubContainers = table.getn(containerObject.SubContainers)
-    local firstSubContainerId = containerObject.SubContainers[1].ContainerId
-    if (numberOfSubContainers == 1 and
-        (
-            firstSubContainerId == BACKPACK_CONTAINER
-            or
-            firstSubContainerId == BANK_CONTAINER
-            or
-            IsInventoryItemProfessionBag("player", ContainerIDToInventoryID(firstSubContainerId))
-        )
-    ) then
-        -- the backpack or bank themselves cannot have filters!
-        return
-    end
-
-    header.text = BAG_FILTER_ASSIGN_TO
-    UIDropDownMenu_AddButton(header)
-    
-    local toggleFilter = function(_, type, _, value)
-        value = not value
-        containerObject:SetFilterType(type, value)
-        if (value) then
-            -- todo: optionally show some kind of visualization
-            --frame.FilterIcon.Icon:SetAtlas(BAG_FILTER_ICONS[i])
-            --frame.FilterIcon:Show()
-        else
-            -- todo: hide optional visualization again
-            --frame.FilterIcon:Hide()
-        end
-    end
-
-    local info = UIDropDownMenu_CreateInfo()
-    for i = LE_BAG_FILTER_FLAG_EQUIPMENT, NUM_LE_BAG_FILTER_FLAGS do
-        if ( i ~= LE_BAG_FILTER_FLAG_JUNK ) then
-            info.text = BAG_FILTER_LABELS[i]
-            info.func = toggleFilter
-            info.arg1 = i
-            info.checked = containerObject:GetFilterType() == i
-            UIDropDownMenu_AddButton(info)
-        end
     end
 end
 

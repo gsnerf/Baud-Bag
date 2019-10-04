@@ -1,4 +1,12 @@
 ﻿=== Changelog ===
+v1.13.0
+  - removed stuff not available in classic like:
+    - reagent bank
+    - tokens
+    - quest icon overlay
+    - azerite item overlay
+    - wow internal automatic sorting of items into bags by type
+  - reworked usage of ItemButton to use CheckButton again (welcome back dark ages...)
 v8.2.1
   - fixed options window to not try to update the name of a container if the name was not entered by a user
   - updated TOC version to patch 8.2.5
