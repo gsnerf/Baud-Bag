@@ -42,52 +42,51 @@ local TokenFrame_Update = function()
     -- do whatever the original does but for our own frame
     --MAX_WATCHED_TOKENS = MAX_WATCHED_TOKENS_BAUD_BAG -- this HAS to be done to allow more than 3 selections in the management window
     local watchButton
-    local name, count, icon
     local digits, countSize
     local usedWidth = 0
     local digitWidth = 8 + calculateScaleFix(TokenFrame)
     for i=1, MAX_WATCHED_TOKENS do
-        name, count, icon, itemID = GetBackpackCurrencyInfo(i)
+        local currencyInfo = C_CurrencyInfo.GetBackpackCurrencyInfo(i)
         watchButton = _G[TokenFrame:GetName().."Token"..i]
 
         -- Update watched tokens
-        if ( name ) then
+        if ( currencyInfo ) then
             BaudBag_DebugMsg("Token", "Update: Token "..i.." found")
 			
             -- set icon
-            watchButton.icon:SetTexture(icon)
+            watchButton.icon:SetTexture(currencyInfo.iconFileID)
 			
-            -- and count
-            if ( count <= 99999 ) then
-                watchButton.count:SetText(count)
+            -- and quantity
+            if ( currencyInfo.quantity <= 99999 ) then
+                watchButton.count:SetText(currencyInfo.count)
             else
                 watchButton.count:SetText("*")
             end
 			
             -- update width based on text to show
-            digits = string.len(tostring(count))
-            BaudBag_DebugMsg("Token", "number of digits in currency '"..name.."': "..digits)
+            digits = string.len(tostring(currencyInfo.quantity))
+            BaudBag_DebugMsg("Token", "number of digits in currency '"..currencyInfo.name.."': "..digits)
             countSize = digits * digitWidth + math.floor(6 / digits)
             watchButton.count:SetWidth(countSize)
-            -- 12 (icon width) + 1 (space between count & icon) + count width + 5 (space to the left)
+            -- 12 (icon width) + 1 (space between quantity & icon) + quantity width + 5 (space to the left)
             watchButton:SetWidth(18 + countSize)
 
             -- recalc used width now
             usedWidth = usedWidth + watchButton:GetWidth()
-            BaudBag_DebugMsg("Token", "used width after currency '"..name.."': "..usedWidth.." space available: "..TokenFrame:GetWidth())
+            BaudBag_DebugMsg("Token", "used width after currency '"..currencyInfo.name.."': "..usedWidth.." space available: "..TokenFrame:GetWidth())
 			
             -- make only visible if there is enough space 
             watchButton:Hide()
             if (usedWidth < TokenFrame:GetWidth()) then
                 watchButton:Show()
-                watchButton.itemID = itemID
+                watchButton.currentyTypesID = currencyInfo.currentyTypesID
                 TokenFrame.shouldShow = 1
                 TokenFrame.numWatchedTokens = i
             end
         else
             BaudBag_DebugMsg("Token", "Update: Token "..i.." NOT found")
             watchButton:Hide()
-            watchButton.itemID = nil
+            watchButton.currentyTypesID = nil
             if ( i == 1 ) then
                 BaudBag_DebugMsg("Token", "Update: Token 1 => hiding backpack")
                 TokenFrame.shouldShow = 0
