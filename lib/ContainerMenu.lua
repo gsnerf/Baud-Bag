@@ -155,5 +155,4 @@ end
 -- new backpack slots stuff
 function BaudBag_AddSlotsClick()
     StaticPopup_Show("BACKPACK_INCREASE_SIZE")
-    ContainerFrame_SetBackpackForceExtended(true)
 end
