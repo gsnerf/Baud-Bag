@@ -24,7 +24,7 @@
 			<Anchor point="CENTER" />
 		</Anchors>
 		<Frames>
-			<Frame name="$parentBackdrop" parentKey="Backdrop">
+			<Frame name="$parentBackdrop" parentKey="Backdrop" inherits="BackdropTemplate">
 				<Frames>
 					<Frame name="$parentTextures" parentKey="Textures" setAllPoints="true" />
 				</Frames>
