@@ -5,7 +5,7 @@
 		<Size x="50" y="12" />
 		<Layers>
 			<Layer level="ARTWORK">
-				<Texture name="$parentIcon" parentKey="icon">
+				<Texture parentKey="Icon">
 					<Size x="12" y="12" />
 					<Anchors>
 						<Anchor point="TOPRIGHT">
@@ -13,10 +13,10 @@
 						</Anchor>
 					</Anchors>
 				</Texture>
-				<FontString name="$parentCount" inherits="GameFontHighlightSmall" justifyH="RIGHT" parentKey="count">
+				<FontString parentKey="Quantity" inherits="GameFontHighlightSmall" justifyH="RIGHT">
 					<Size x="38" y="10"/>
 					<Anchors>
-						<Anchor point="RIGHT" relativeTo="$parentIcon" relativePoint="LEFT">
+						<Anchor point="RIGHT" relativeKey="$parent.Icon" relativePoint="LEFT">
 							<Offset x="-1" y="-1"/>
 						</Anchor>
 					</Anchors>
@@ -33,7 +33,7 @@
 			</OnLeave>
 			<OnClick>
 				if ( IsModifiedClick("CHATLINK") ) then
-					HandleModifiedItemClick(GetCurrencyLink(self.currencyID))
+					HandleModifiedItemClick(C_CurrencyInfo.GetCurrencyLink(self.currencyType, self.amount))
 				end
 			</OnClick>
 		</Scripts>
@@ -44,37 +44,37 @@
 			<AbsDimension y="32"/>
 		</Size>
 		<Frames>
-			<Button name="$parentToken1" inherits="BaudBagTokenTemplate" id="1">
+			<Button parentKey="Token1" inherits="BaudBagTokenTemplate" id="1">
 				<Anchors>
 					<Anchor point="RIGHT">
 						<Offset x="-13" y="0"/>
 					</Anchor>
 				</Anchors>
 			</Button>
-			<Button name="$parentToken2" inherits="BaudBagTokenTemplate" id="2">
+			<Button parentKey="Token2" inherits="BaudBagTokenTemplate" id="2">
 				<Anchors>
-					<Anchor point="RIGHT" relativeTo="$parentToken1" relativePoint="LEFT">
+					<Anchor point="RIGHT" relativeKey="$parent.Token1" relativePoint="LEFT">
 						<Offset x="-2" y="0"/>
 					</Anchor>
 				</Anchors>
 			</Button>
-			<Button name="$parentToken3" inherits="BaudBagTokenTemplate" id="3">
+			<Button parentKey="Token3" inherits="BaudBagTokenTemplate" id="3">
 				<Anchors>
-					<Anchor point="RIGHT" relativeTo="$parentToken2" relativePoint="LEFT">
+					<Anchor point="RIGHT" relativeKey="$parent.Token2" relativePoint="LEFT">
 						<Offset x="-2" y="0"/>
 					</Anchor>
 				</Anchors>
 			</Button>
-			<Button name="$parentToken4" inherits="BaudBagTokenTemplate" id="4">
+			<Button parentKey="Token4" inherits="BaudBagTokenTemplate" id="4">
 				<Anchors>
-					<Anchor point="RIGHT" relativeTo="$parentToken3" relativePoint="LEFT">
+					<Anchor point="RIGHT" relativeKey="$parent.Token3" relativePoint="LEFT">
 						<Offset x="-2" y="0"/>
 					</Anchor>
 				</Anchors>
 			</Button>
-			<Button name="$parentToken5" inherits="BaudBagTokenTemplate" id="5">
+			<Button parentKey="Token5" inherits="BaudBagTokenTemplate" id="5">
 				<Anchors>
-					<Anchor point="RIGHT" relativeTo="$parentToken4" relativePoint="LEFT">
+					<Anchor point="RIGHT" relativeKey="$parent.Token4" relativePoint="LEFT">
 						<Offset x="-2" y="0"/>
 					</Anchor>
 				</Anchors>

@@ -47,27 +47,27 @@ local TokenFrame_Update = function()
     local digitWidth = 8 + calculateScaleFix(TokenFrame)
     for i=1, MAX_WATCHED_TOKENS do
         local currencyInfo = C_CurrencyInfo.GetBackpackCurrencyInfo(i)
-        watchButton = _G[TokenFrame:GetName().."Token"..i]
+        watchButton = TokenFrame["Token"..i]
 
         -- Update watched tokens
         if ( currencyInfo ) then
             BaudBag_DebugMsg("Token", "Update: Token "..i.." found")
 			
             -- set icon
-            watchButton.icon:SetTexture(currencyInfo.iconFileID)
+            watchButton.Icon:SetTexture(currencyInfo.iconFileID)
 			
             -- and quantity
             if ( currencyInfo.quantity <= 99999 ) then
-                watchButton.count:SetText(currencyInfo.count)
+                watchButton.Quantity:SetText(currencyInfo.quantity)
             else
-                watchButton.count:SetText("*")
+                watchButton.Quantity:SetText("*")
             end
 			
             -- update width based on text to show
             digits = string.len(tostring(currencyInfo.quantity))
             BaudBag_DebugMsg("Token", "number of digits in currency '"..currencyInfo.name.."': "..digits)
             countSize = digits * digitWidth + math.floor(6 / digits)
-            watchButton.count:SetWidth(countSize)
+            watchButton.Quantity:SetWidth(countSize)
             -- 12 (icon width) + 1 (space between quantity & icon) + quantity width + 5 (space to the left)
             watchButton:SetWidth(18 + countSize)
 
@@ -79,14 +79,16 @@ local TokenFrame_Update = function()
             watchButton:Hide()
             if (usedWidth < TokenFrame:GetWidth()) then
                 watchButton:Show()
-                watchButton.currentyTypesID = currencyInfo.currentyTypesID
+                watchButton.currencyType = currencyInfo.currencyTypesID
+                watchButton.amount = currencyInfo.quantity
                 TokenFrame.shouldShow = 1
                 TokenFrame.numWatchedTokens = i
             end
         else
             BaudBag_DebugMsg("Token", "Update: Token "..i.." NOT found")
             watchButton:Hide()
-            watchButton.currentyTypesID = nil
+            watchButton.currencyType = nil
+            watchButton.amount = 0
             if ( i == 1 ) then
                 BaudBag_DebugMsg("Token", "Update: Token 1 => hiding backpack")
                 TokenFrame.shouldShow = 0
