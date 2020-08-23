@@ -107,7 +107,7 @@ function BaudBagShowCachedTooltip(self, event, ...)
             return
         end
         
-        BaudBag_DebugMsg("Tooltip", "[ShowCachedTooltip] Showing cache for bag [bagId, cacheEntry]", bagId, bagCache)
+        BaudBag_DebugMsg("Tooltip", "[ShowCachedTooltip] Showing cache for bag [bagId, cacheEntry]", bagId, bagCache.BagLink)
         ShowHyperlink(self, bagCache.BagLink)
         BaudBagModifyBagTooltip(bagId)
         return
@@ -119,10 +119,36 @@ function BaudBagShowCachedTooltip(self, event, ...)
         BaudBag_DebugMsg("Tooltip", "[ShowCachedTooltip] Cannot show cache for item because there is no cache entry [bagId, slotId]", bagId, slotId)
         return
     end
-    BaudBag_DebugMsg("Tooltip", "[ShowCachedTooltip] Showing cached item info [bagId, slotId, cachEntry]", bagId, slotId, slotCache)
+    BaudBag_DebugMsg("Tooltip", "[ShowCachedTooltip] Showing cached item info [bagId, slotId, cachEntry]", bagId, slotId, slotCache.Link)
     ShowHyperlink(self, slotCache.Link)
 end
 
+function BaudBagUpdateCachedTooltip(tooltip, bagId, slotId)
+    if (not AddOnTable.Cache:UsesCache(bagId)) then
+        return
+    end
+
+    BaudBag_DebugMsg("Tooltip", "[UpdateCachedTooltip] Updating tooltip with cache for bagID: "..bagId.." and itemID: "..slotId)
+    
+    local bagCache = AddOnTable.Cache:GetBagCache(bagId)
+    if (not bagCache) then
+        BaudBag_DebugMsg("Tooltip", "[UpdateCachedTooltip] Could not show cache for bag as there is no cache entry [bagId]", bagId)
+        return
+    end
+
+    local slotCache = bagCache[slotId]
+    if not slotCache then
+        BaudBag_DebugMsg("Tooltip", "[UpdateCachedTooltip] Cannot show cache for item because there is no cache entry [bagId, slotId]", bagId, slotId)
+        return
+    end
+
+    local ItemString = strmatch(slotCache.Link or "","(item[%d:%-]+)");
+    if not ItemString then
+        return;
+    end
+    GameTooltip:SetHyperlink(ItemString);
+end
+
 --[[ hook cached tooltip to item enter events ]]
-hooksecurefunc("ContainerFrameItemButton_OnEnter", BaudBagShowCachedTooltip)
 hooksecurefunc("BankFrameItemButton_OnEnter", BaudBagShowCachedTooltip)
+hooksecurefunc(GameTooltip, "SetBagItem", BaudBagUpdateCachedTooltip)
