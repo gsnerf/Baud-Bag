@@ -142,11 +142,11 @@ function BaudBagUpdateCachedTooltip(tooltip, bagId, slotId)
         return
     end
 
-    local ItemString = strmatch(slotCache.Link or "","(item[%d:%-]+)");
+    local ItemString = strmatch(slotCache.Link or "","(item[%d:%-]+)")
     if not ItemString then
         return;
     end
-    GameTooltip:SetHyperlink(ItemString);
+    GameTooltip:SetHyperlink(ItemString)
 end
 
 --[[ hook cached tooltip to item enter events ]]
