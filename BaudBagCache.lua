@@ -109,6 +109,7 @@ function BaudBagShowCachedTooltip(self, event, ...)
         
         BaudBag_DebugMsg("Tooltip", "[ShowCachedTooltip] Showing cache for bag [bagId, cacheEntry]", bagId, bagCache)
         ShowHyperlink(self, bagCache.BagLink)
+        BaudBagModifyBagTooltip(bagId)
         return
     end
 
