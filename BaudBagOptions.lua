@@ -104,15 +104,14 @@ function BaudBagOptions_OnEvent(self, event, ...)
     self.GroupContainer.BackgroundSelection.Label:SetText(Localized.Background);
     self.GroupContainer.EnabledCheck.tooltipText  = Localized.EnabledTooltip;
     self.GroupContainer.CloseAllCheck.tooltipText = Localized.CloseAllTooltip;
-    BaudBagOptionsGroupContainerEnabledCheckText:SetText(Localized.Enabled);
-    BaudBagOptionsGroupContainerCloseAllCheckText:SetText(Localized.CloseAll);
+    _G[self.GroupContainer.EnabledCheck:GetName().."Text"]:SetText(Localized.Enabled)
+    _G[self.GroupContainer.CloseAllCheck:GetName().."Text"]:SetText(Localized.CloseAll)
     self.GroupContainer.EnabledCheck:SetHitRectInsets(0, -BaudBagOptionsGroupContainerEnabledCheckText:GetWidth()-10, 0, 0);
     self.GroupContainer.CloseAllCheck:SetHitRectInsets(0, -BaudBagOptionsGroupContainerCloseAllCheckText:GetWidth()-10, 0, 0);
 
     -- localized global checkbox labels
-    local GroupGlobal = self.GroupGlobal;
     for Key, Value in ipairs(GlobalCheckButtons) do
-        local checkButton = GroupGlobal["CheckButton"..Key]
+        local checkButton = self.GroupGlobal["CheckButton"..Key]
         local checkButtonText = _G[Prefix.."GroupGlobalCheckButton"..Key.."Text"]
 
         checkButtonText:SetText(Value.Text)
@@ -125,24 +124,27 @@ function BaudBagOptions_OnEvent(self, event, ...)
         end
     end
     for Key, Value in ipairs(GlobalSliderBars) do
-        _G[Prefix.."GroupGlobalSlider"..Key.."Low"]:SetText(Value.Low);
-        _G[Prefix.."GroupGlobalSlider"..Key.."High"]:SetText(Value.High);
-        _G[Prefix.."GroupGlobalSlider"..Key].tooltipText = Value.TooltipText;
-        _G[Prefix.."GroupGlobalSlider"..Key].valueStep = Value.Step;
+        local slider = self.GroupGlobal["Slider"..Key]
+        slider.Low:SetText(Value.Low)
+        slider.High:SetText(Value.High)
+        slider.tooltipText = Value.TooltipText
+        slider.valueStep = Value.Step
     end
     
     -- localized checkbox labels
     for Key, Value in ipairs(ContainerCheckButtons) do
-        _G[Prefix.."GroupContainerCheckButton"..Key.."Text"]:SetText(Value.Text);
-        _G[Prefix.."GroupContainerCheckButton"..Key].tooltipText = Value.TooltipText;
+        local checkButton = self.GroupContainer["CheckButton"..Key]
+        _G[checkButton:GetName().."Text"]:SetText(Value.Text);
+        checkButton.tooltipText = Value.TooltipText;
     end
 
     -- set slider bounds
     for Key, Value in ipairs(ContainerSliderBars) do
-        _G[Prefix.."GroupContainerSlider"..Key.."Low"]:SetText(Value.Low);
-        _G[Prefix.."GroupContainerSlider"..Key.."High"]:SetText(Value.High);
-        _G[Prefix.."GroupContainerSlider"..Key].tooltipText = Value.TooltipText;
-        _G[Prefix.."GroupContainerSlider"..Key].valueStep = Value.Step;
+        local slider = self.GroupContainer["Slider"..Key]
+        slider.Low:SetText(Value.Low)
+        slider.High:SetText(Value.High)
+        slider.tooltipText = Value.TooltipText
+        slider.valueStep = Value.Step
     end
 	
     -- some slash command settings
@@ -383,9 +385,11 @@ function BaudBagSlider_OnValueChanged(self)
 
     -- update description of slider
     if (self:GetParent() == BaudBagOptions.GroupGlobal) then
-        _G[self:GetName().."Text"]:SetText( format( GlobalSliderBars[self:GetID()].Text, self:GetValue() ) )
+        local sliderText = BaudBagOptions.GroupGlobal["Slider"..self:GetID()].Text
+        sliderText:SetText( format( GlobalSliderBars[self:GetID()].Text, self:GetValue() ) )
     else
-        _G[self:GetName().."Text"]:SetText( format( ContainerSliderBars[self:GetID()].Text, self:GetValue() ) )
+        local sliderText = BaudBagOptions.GroupContainer["Slider"..self:GetID()].Text
+        sliderText:SetText( format( ContainerSliderBars[self:GetID()].Text, self:GetValue() ) )
     end
     
     
@@ -442,16 +446,17 @@ function BaudBagOptionsUpdate()
 
     -- is the box enabled
     --_G[Prefix.."GroupGlobalSellJunkCheck"]:SetChecked(BBConfig.SellJunk == true);
-    _G[Prefix.."GroupContainerEnabledCheck"]:SetChecked(BBConfig[SelectedBags].Enabled~=false);
-    _G[Prefix.."GroupContainerCloseAllCheck"]:SetChecked(BBConfig[SelectedBags].CloseAll~=false);
+    --BaudBagOptions.GroupGlobal.SellJunkCheck:SetChecked(BBConfig.SellJunk == true);
+    BaudBagOptions.GroupContainer.EnabledCheck:SetChecked(BBConfig[SelectedBags].Enabled~=false);
+    BaudBagOptions.GroupContainer.CloseAllCheck:SetChecked(BBConfig[SelectedBags].CloseAll~=false);
 
     -- load global checkbox and slider values
     for Key, Value in ipairs(GlobalCheckButtons) do
-        local Button = _G[Prefix.."GroupGlobalCheckButton"..Key]
+        local Button = BaudBagOptions.GroupGlobal["CheckButton"..Key]
         Button:SetChecked(BBConfig[Value.SavedVar])
     end
     for Key, Value in ipairs(GlobalSliderBars) do
-        local slider = _G[Prefix.."GroupGlobalSlider"..Key]
+        local slider = BaudBagOptions.GroupGlobal["Slider"..Key]
         slider:SetValue(BBConfig[Value.SavedVar])
 
         if (Value.DependsOn ~= nil and not BBConfig[Value.DependsOn]) then
@@ -557,20 +562,20 @@ function BaudBagOptionsUpdate()
 
     -- load slider values
     for Key, Value in ipairs(ContainerSliderBars)do
-        local Slider = _G[Prefix.."GroupContainerSlider"..Key];
+        local Slider = BaudBagOptions.GroupContainer["Slider"..Key]
         Slider:SetValue(BBConfig[SelectedBags][SelectedContainer][Value.SavedVar]);
     end
 
     -- load checkbox values
     for Key, Value in ipairs(ContainerCheckButtons)do
-        local Button = _G[Prefix.."GroupContainerCheckButton"..Key];
+        local Button = BaudBagOptions.GroupContainer["CheckButton"..Key]
         Button:SetChecked(BBConfig[SelectedBags][SelectedContainer][Value.SavedVar]);
     end
 	
     -- load checkbox enabled
     for Key, Value in ipairs(ContainerCheckButtons) do
-        local Button = _G[Prefix.."GroupContainerCheckButton"..Key];
-        local ButtonText = _G[Prefix.."GroupContainerCheckButton"..Key.."Text"];
+        local Button = BaudBagOptions.GroupContainer["CheckButton"..Key]
+        local ButtonText = _G[Button:GetName().."Text"]
         if (Value.DependsOn ~= nil and not BBConfig[SelectedBags][SelectedContainer][Value.DependsOn]) then
             Button:Disable();
             ButtonText:SetFontObject("GameFontDisable");

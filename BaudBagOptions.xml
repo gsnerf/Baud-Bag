@@ -7,21 +7,13 @@
 		<Size y="18" />
 		<Layers>
 			<Layer level="BACKGROUND">
-				<FontString name="$parentTitle" parentKey="Label" inherits="GameFontNormal" justifyH="LEFT">
+				<FontString parentKey="Label" inherits="GameFontNormal" justifyH="LEFT">
 					<Anchors>
 						<Anchor point="TOPLEFT" x="10" />
 						<Anchor point="BOTTOM" />
 					</Anchors>
 				</FontString>
-				<!--Texture name="$parentLeft" parentKey="Left" file="Interface\Tooltips\UI-Tooltip-Border">
-					<Size y="8" />
-					<Anchors>
-						<Anchor point="LEFT" x="10" y="0" />
-						<Anchor point="RIGHT" relativeKey="$parent.Label" relativePoint="LEFT" x="-5" y="0" />
-					</Anchors>
-					<TexCoords left="0.81" right="0.94" top="0.5" bottom="1"/>
-				</Texture-->
-				<Texture name="$parentRight" parentKey="Right" file="Interface\Tooltips\UI-Tooltip-Border">
+				<Texture parentKey="Right" file="Interface\Tooltips\UI-Tooltip-Border">
 					<Size y="8" />
 					<Anchors>
 						<Anchor point="LEFT" relativeKey="$parent.Label" relativePoint="RIGHT" x="5" y="0" />
@@ -92,14 +84,14 @@
 	<Frame name="BaudBagOptions">
 		<Layers>
 			<Layer level="ARTWORK">
-				<FontString name="$parentTitle" parentKey="Title" inherits="GameFontNormalLarge">
+				<FontString parentKey="Title" inherits="GameFontNormalLarge">
 					<Anchors>
 						<Anchor point="TOPLEFT" x="10" y="-10" />
 					</Anchors>
 				</FontString>
 				<FontString name="$parentVersionText" parentKey="Version" inherits="GameFontNormalSmall">
 					<Anchors>
-						<Anchor point="BOTTOMLEFT" relativeTo="$parentTitle" relativePoint="BOTTOMRIGHT" x="5" y="1" />
+						<Anchor point="BOTTOMLEFT" relativeKey="$parent.Title" relativePoint="BOTTOMRIGHT" x="5" y="1" />
 					</Anchors>
 				</FontString>
 			</Layer>
@@ -114,7 +106,7 @@
 				<Size y="180" />
 
 				<Frames>
-					<Frame name="$parentHeader" parentKey="Header" inherits="BaudBagGroupHeaderTemplate">
+					<Frame parentKey="Header" inherits="BaudBagGroupHeaderTemplate">
 						<Anchors>
 							<Anchor point="TOPLEFT" />
 							<Anchor point="RIGHT" />
@@ -151,9 +143,9 @@
 						</Anchors>
 					</CheckButton>
 
-					<Slider name="$parentSlider1" minValue="0.5" maxValue="2.5" valueStep="0.1" inherits="BaudBagOptionsSliderTemplate" id="1">
+					<Slider parentKey="Slider1" minValue="0.5" maxValue="2.5" valueStep="0.1" inherits="BaudBagOptionsSliderTemplate" id="1">
 						<Anchors>
-							<Anchor point="TOPLEFT" relativeTo="$parentCheckButton4" relativePoint="TOPRIGHT" x="175" y="-20" />
+							<Anchor point="TOPLEFT" relativeKey="$parent.CheckButton4" relativePoint="TOPRIGHT" x="175" y="-20" />
 						</Anchors>
 					</Slider>
 
@@ -168,7 +160,7 @@
 				<Size y="200" />
 
 				<Frames>
-					<Frame name="$parentHeader" parentKey="Header" inherits="BaudBagGroupHeaderTemplate">
+					<Frame parentKey="Header" inherits="BaudBagGroupHeaderTemplate">
 						<Anchors>
 							<Anchor point="TOPLEFT" />
 							<Anchor point="RIGHT" />
@@ -180,7 +172,7 @@
 						</Scripts>
 					</Frame>
 
-					<Frame name="$parentSetDropDown" parentKey="SetSelection" inherits="UIDropDownMenuTemplate" enableMouse="true">
+					<Frame parentKey="SetSelection" inherits="UIDropDownMenuTemplate" enableMouse="true">
 						<Anchors>
 							<Anchor point="TOPLEFT" relativeKey="$parent.Header" relativePoint="BOTTOMLEFT" y="-25" />
 						</Anchors>
@@ -198,7 +190,7 @@
 
 					<CheckButton name="$parentEnabledCheck" parentKey="EnabledCheck" inherits="OptionsCheckButtonTemplate" id="Enabled">
 						<Anchors>
-							<Anchor point="TOPLEFT" relativeTo="$parentSetDropDown" relativePoint="TOPRIGHT" x="5" y="-2" />
+							<Anchor point="TOPLEFT" relativeKey="$parent.SetSelection" relativePoint="TOPRIGHT" x="5" y="-2" />
 						</Anchors>
 						<Scripts>
 							<OnClick function="BaudBagEnabledCheck_OnClick" />
@@ -207,7 +199,7 @@
 
 					<CheckButton name="$parentCloseAllCheck" parentKey="CloseAllCheck" inherits="OptionsCheckButtonTemplate" id="CloseAll">
 						<Anchors>
-							<Anchor point="TOPLEFT" relativeTo="$parentEnabledCheckText" relativePoint="TOPRIGHT" x="10" y="6" />
+							<Anchor point="TOPLEFT" relativeKey="$parentEnabledCheckText" relativePoint="TOPRIGHT" x="10" y="6" />
 						</Anchors>
 						<Scripts>
 							<OnClick function="BaudBagCloseAllCheck_OnClick" />
@@ -215,7 +207,7 @@
 					</CheckButton>
 
 					<!-- THIS is where the bag icons are getting auto-generated on init! -->
-					<Frame name="$parentBagFrame" parentKey="BagFrame">
+					<Frame parentKey="BagFrame">
 						<Anchors>
 							<Anchor point="TOP" relativeKey="$parent.SetSelection" relativePoint="BOTTOM" y="-10" />
 							<Anchor point="LEFT" />
@@ -224,16 +216,16 @@
 						<Size y="80" />
 					</Frame>
 
-					<EditBox name="$parentNameEditBox" inherits="InputBoxTemplate" parentKey="NameInput" letters="40" autoFocus="false">
+					<EditBox inherits="InputBoxTemplate" parentKey="NameInput" letters="40" autoFocus="false">
 						<Size x="200" y="16" />
 						<Anchors>
 							<Anchor point="TOPLEFT" relativeKey="$parent.BagFrame" relativePoint="BOTTOMLEFT" x="40" y="-20" />
 						</Anchors>
 						<Layers>
 							<Layer level="ARTWORK">
-								<FontString name="$parentText" parentKey="Text" inherits="GameFontNormalSmall">
+								<FontString parentKey="Text" inherits="GameFontNormalSmall">
 									<Anchors>
-										<Anchor point="BOTTOMLEFT" relativeTo="$parent" relativePoint="TOPLEFT" x="-5" y="5" />
+										<Anchor point="BOTTOMLEFT" relativeKey="$parent" relativePoint="TOPLEFT" x="-5" y="5" />
 									</Anchors>
 								</FontString>
 							</Layer>
@@ -246,14 +238,14 @@
 						</Scripts>
 					</EditBox>
 
-					<Frame name="$parentBackgroundDropDown" inherits="UIDropDownMenuTemplate" parentKey="BackgroundSelection" enableMouse="true">
+					<Frame inherits="UIDropDownMenuTemplate" parentKey="BackgroundSelection" enableMouse="true">
 						<Size x="160" y="25" />
 						<Anchors>
-							<Anchor point="LEFT" relativeTo="$parentNameEditBox" relativePoint="RIGHT" x="5" y="-2" />
+							<Anchor point="LEFT" relativeKey="$parent.NameInput" relativePoint="RIGHT" x="5" y="-2" />
 						</Anchors>
 						<Layers>
 							<Layer level="BACKGROUND">
-								<FontString name="$parentLabel" parentKey="Label" inherits="GameFontNormalSmall">
+								<FontString parentKey="Label" inherits="GameFontNormalSmall">
 									<Anchors>
 										<Anchor point="BOTTOMLEFT" relativePoint="TOPLEFT" x="16" y="1" />
 									</Anchors>
@@ -262,32 +254,32 @@
 						</Layers>
 					</Frame>
 
-					<CheckButton name="$parentCheckButton1" inherits="BaudBagOptionsCheckButtonTemplate" id="1">
+					<CheckButton name="$parentCheckButton1" parentKey="CheckButton1" inherits="BaudBagOptionsCheckButtonTemplate" id="1">
 						<Anchors>
-							<Anchor point="TOPLEFT" relativeTo="$parentBackgroundDropDown" relativePoint="BOTTOMLEFT" x="20" y="-7" />
+							<Anchor point="TOPLEFT" relativeKey="$parent.BackgroundSelection" relativePoint="BOTTOMLEFT" x="20" y="-7" />
 						</Anchors>
 					</CheckButton>
 
-					<CheckButton name="$parentCheckButton2" inherits="BaudBagOptionsCheckButtonTemplate" id="2">
+					<CheckButton name="$parentCheckButton2" parentKey="CheckButton2" inherits="BaudBagOptionsCheckButtonTemplate" id="2">
 						<Anchors>
-							<Anchor point="TOPLEFT" relativeTo="$parentCheckButton1" relativePoint="BOTTOMLEFT" x="0" y="8" />
+							<Anchor point="TOPLEFT" relativeKey="$parent.CheckButton1" relativePoint="BOTTOMLEFT" x="0" y="8" />
 						</Anchors>
 					</CheckButton>
 
-					<CheckButton name="$parentCheckButton3" inherits="BaudBagOptionsCheckButtonTemplate" id="3">
+					<CheckButton name="$parentCheckButton3" parentKey="CheckButton3" inherits="BaudBagOptionsCheckButtonTemplate" id="3">
 						<Anchors>
-							<Anchor point="TOPLEFT" relativeTo="$parentCheckButton2" relativePoint="BOTTOMLEFT" x="0" y="8" />
+							<Anchor point="TOPLEFT" relativeKey="$parent.CheckButton2" relativePoint="BOTTOMLEFT" x="0" y="8" />
 						</Anchors>
 					</CheckButton>
 
-					<Slider name="$parentSlider1" minValue="2" maxValue="20" valueStep="1" inherits="BaudBagOptionsSliderTemplate" id="1">
+					<Slider parentKey="Slider1" minValue="2" maxValue="20" valueStep="1" inherits="BaudBagOptionsSliderTemplate" id="1">
 						<Anchors>
-							<Anchor point="TOPLEFT" relativeTo="$parentNameEditBox" relativePoint="BOTTOMLEFT" x="-2" y="-22" />
+							<Anchor point="TOPLEFT" relativeKey="$parent.NameInput" relativePoint="BOTTOMLEFT" x="-2" y="-22" />
 						</Anchors>
 					</Slider>
-					<Slider name="$parentSlider2" minValue="50" maxValue="200" valueStep="1" inherits="BaudBagOptionsSliderTemplate" id="2">
+					<Slider parentKey="Slider2" minValue="50" maxValue="200" valueStep="1" inherits="BaudBagOptionsSliderTemplate" id="2">
 						<Anchors>
-							<Anchor point="TOP" relativeTo="$parentSlider1" relativePoint="BOTTOM" y="-15" />
+							<Anchor point="TOP" relativeKey="$parent.Slider1" relativePoint="BOTTOM" y="-15" />
 						</Anchors>
 					</Slider>
 				</Frames>
