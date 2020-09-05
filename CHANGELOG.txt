@@ -1,4 +1,12 @@
 ﻿=== Changelog ===
+v9.0.1
+  - updated addon code to work with WoW 9.0.1 interface API:
+    - new backdrop system
+    - constants to enums replacements
+    - new currency/token API
+  - fixed a number of tooltip related issues (especially for offline bank items) and made sure to provide the same tooltip view for all items
+  - fixed faulty check for authenticator usage (to show that you could get more backpack slots if authenticated)
+  - reworked how localization is executed in the addon
 v8.2.2
   - fixed search frame throwing errors on open
   - hopefully fixed sporadic bug preventing container movement
