@@ -14,7 +14,14 @@
 ## Title-zhTW: 背包整合 Baud Bag
 ## Version: 9.0.0-DEV
 
-Localization.lua
+# english has to be the first locale!
+localization\Localization.en.lua
+localization\Localization.de.lua
+localization\Localization.fr.lua
+localization\Localization.ko.lua
+localization\Localization.ru.lua
+localization\Localization.zhCN.lua
+localization\Localization.zhTW.lua
 BaudBagFunctions.lua
 model\BagButton.xml
 lib\BaseTypes.lua

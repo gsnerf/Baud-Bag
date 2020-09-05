@@ -1,6 +1,6 @@
 local AddOnName, AddOnTable = ...
 local _
-local Localized = AddOnTable["Localized"]
+local Localized = AddOnTable.Localized
 
 -- Definition
 BagSetType = {

@@ -1,7 +1,7 @@
 local AddOnName, AddOnTable = ...
 local _
 
-local Localized = BaudBagLocalized
+local Localized = AddOnTable.Localized
 local MaxBags   = NUM_BANKBAGSLOTS + 2
 local Prefix    = "BaudBagOptions"
 local Updating  = false
@@ -72,6 +72,9 @@ function BaudBagOptions_OnLoad(self, event, ...)
     -- the config needs a reference to this
     BaudBagSetCfgPreReq(GlobalSliderBars, ContainerSliderBars, GlobalCheckButtons, ContainerCheckButtons)
     self:RegisterEvent("ADDON_LOADED")
+
+    self.GroupGlobal.Header.Label:SetText(Localized.OptionsGroupGlobal)
+    self.GroupContainer.Header.Label:SetText(Localized.OptionsGroupContainer)
 end
 
 --[[ All actual processing needs to be done after we are sure we have a config to load from! ]]

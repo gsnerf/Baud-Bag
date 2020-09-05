@@ -66,11 +66,7 @@
 				</HighlightTexture>
 				<Scripts>
 					<OnClick function="BaudBagSearchButton_Click" />
-					<OnEnter>
-						GameTooltip:SetOwner(self);
-						GameTooltip:SetText(BaudBagLocalized.SearchBagTooltip);
-						GameTooltip:Show();
-					</OnEnter>
+					<OnEnter function="BaudBagSearchButton_Enter" />
 					<OnLeave function="GameTooltip_Hide"/>
 				</Scripts>
 			</Button>
