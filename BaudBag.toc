@@ -1,6 +1,6 @@
 ## Author: Thurmal (Author), Suddendeath2000 (Former Author), Baudzila (Original Author)
 ## DefaultState: Enabled
-## Interface: 80205
+## Interface: 90001
 ## Globe: check-classic
 ## LoadOnDemand: 0
 ## Dependencies: Blizzard_VoidStorageUI
@@ -12,9 +12,16 @@
 ## Title: Baud Bag
 ## Title-zhCN: 背包整合 Baud Bag
 ## Title-zhTW: 背包整合 Baud Bag
-## Version: 8.2.2
+## Version: 9.0.1
 
-Localization.lua
+# english has to be the first locale!
+localization\Localization.en.lua
+localization\Localization.de.lua
+localization\Localization.fr.lua
+localization\Localization.ko.lua
+localization\Localization.ru.lua
+localization\Localization.zhCN.lua
+localization\Localization.zhTW.lua
 BaudBagFunctions.lua
 model\BagButton.xml
 lib\BaseTypes.lua

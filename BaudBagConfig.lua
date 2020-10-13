@@ -2,7 +2,7 @@
 local _
 
 -- some locally needed variables
-local Localized	= BaudBagLocalized
+local Localized	= AddOnTable.Localized
 local GlobalSliderBars, ContainerSliderBars, GlobalCheckButtons, ContainerCheckButtons
 BBConfig = {}
 -- TODO: somehow changes of BBConfig are not getting stored in AddOnTable.Config, propably something to do with resetting BBConfig at later points...

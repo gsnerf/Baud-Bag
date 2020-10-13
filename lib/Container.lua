@@ -27,7 +27,7 @@ function Prototype:UpdateName()
     local targetColor = NORMAL_FONT_COLOR
 
     if ((self.Frame.BagSet == 2) and (not BaudBagFrame.BankOpen)) then
-        targetName = containerConfig.Name..AddOnTable["Localized"].Offline
+        targetName = containerConfig.Name..AddOnTable.Localized.Offline
         targetColor = RED_FONT_COLOR
     end
 

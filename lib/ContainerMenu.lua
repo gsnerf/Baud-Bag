@@ -1,8 +1,11 @@
 local AddOnName, AddOnTable = ...
-local Localized = BaudBagLocalized
+local Localized = AddOnTable.Localized
 local _
 
 local DropDownContainer, DropDownBagSet
+
+--[[ please mind, that this is a COPY of a local variable from FrameXML\ContainerFrame.lua... hold it in sync, because constants are (seemingly) evil... ]]
+local BACKPACK_BASE_SIZE = 16;
 
 --[[ Referenced in BaudBagContainerDropDown in BaudBag.xml ]]
 function BaudBagContainerDropDown_OnLoad(self, event, ...)
@@ -82,7 +85,7 @@ end
     UIDropDownMenu_AddButton(entry)
 
     -- increase backpack size
-    local needToShow = not (IsAccountSecured() and GetContainerNumSlots(1) > BACKPACK_BASE_SIZE)
+    local needToShow = not (IsAccountSecured() and GetContainerNumSlots(BACKPACK_CONTAINER) > BACKPACK_BASE_SIZE)
     if (needToShow) then
         entry.text = BACKPACK_AUTHENTICATOR_INCREASE_SIZE
         entry.func = BaudBag_AddSlotsClick
@@ -155,5 +158,4 @@ end
 -- new backpack slots stuff
 function BaudBag_AddSlotsClick()
     StaticPopup_Show("BACKPACK_INCREASE_SIZE")
-    ContainerFrame_SetBackpackForceExtended(true)
 end

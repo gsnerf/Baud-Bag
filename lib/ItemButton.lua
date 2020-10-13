@@ -17,7 +17,7 @@ function Prototype:UpdateContent(useCache, slotCache)
     
     -- initialize with default values before possibly overriding later
     locked = false
-    quality = LE_ITEM_QUALITY_POOR
+    quality = Enum.ItemQuality.Poor
     isNewItemm = false
     isBattlePayItem = false
     isReadable = false
@@ -68,7 +68,7 @@ function Prototype:UpdateContent(useCache, slotCache)
     self:UpdateItemOverlay(itemID)
     self.readable = isReadable
     if (self.JunkIcon) then
-        self.JunkIcon:SetShown(quality == LE_ITEM_QUALITY_POOR and not hasNoValue and MerchantFrame:IsShown())
+        self.JunkIcon:SetShown(quality == Enum.ItemQuality.Poor and not hasNoValue and MerchantFrame:IsShown())
     end
 
     -- in case this is a container button we try to use the regular upgrade system (this might be even extended by addons like pawn)
@@ -97,11 +97,11 @@ function Prototype:UpdateCustomRarity(showColor, intensity)
 
     if quality and (quality > 1) and showColor then
         -- use alternative rarity coloring
-        if (quality == LE_ITEM_QUALITY_UNCOMMON) then
+        if (quality == Enum.ItemQuality.Uncommon) then
             self.IconBorder:SetVertexColor(0.1,   1,   0, 0.5 * intensity)
-        elseif (quality == LE_ITEM_QUALITY_RARE) then
+        elseif (quality == Enum.ItemQuality.Rare) then
             self.IconBorder:SetVertexColor(  0, 0.4, 0.8, 0.8 * intensity)
-        elseif (quality == LE_ITEM_QUALITY_EPIC) then
+        elseif (quality == Enum.ItemQuality.Epic) then
             self.IconBorder:SetVertexColor(0.6, 0.2, 0.9, 0.5 * intensity)
         else
             -- we have no alternative colors for this rarity, just use the default ones

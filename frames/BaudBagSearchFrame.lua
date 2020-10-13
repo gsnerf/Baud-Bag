@@ -1,5 +1,5 @@
 local AddOnName, AddOnTable = ...
-local Localized = BaudBagLocalized
+local Localized = AddOnTable.Localized
 local _
 
 local Prefix = "BaudBag"

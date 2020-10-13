@@ -1,7 +1,7 @@
 local AddOnName, AddOnTable = ...
 local _
 local Prefix = "BaudBag"
-local Localized = BaudBagLocalized
+local Localized = AddOnTable.Localized
 
 local EventFuncs = {
     BANKFRAME_CLOSED = function(self, event, ...)

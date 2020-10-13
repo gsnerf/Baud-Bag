@@ -1,6 +1,6 @@
 ﻿-- addon defaults
 local AddOnName, AddOnTable = ...
-local Localized = BaudBagLocalized
+local Localized = AddOnTable.Localized
 local _
 
 -- necessary globals
@@ -643,6 +643,12 @@ function BaudBagSearchButton_Click(self, event, ...)
     local Background	= BBConfig[Container.BagSet][Container:GetID()].Background
     
     BaudBagSearchFrame_ShowFrame(Container, Scale, Background)
+end
+
+function BaudBagSearchButton_Enter(self, event, ...)
+    GameTooltip:SetOwner(self)
+    GameTooltip:SetText(Localized.SearchBagTooltip)
+    GameTooltip:Show()
 end
 
 --[[ if the mouse hovers over the bag slot item the slots belonging to this bag should be shown after a certain time (atm 350ms or 0.35s) ]]

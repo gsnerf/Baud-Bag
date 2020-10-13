@@ -1,5 +1,5 @@
 local AddOnName, AddOnTable = ...
-local Localized = BaudBagLocalized
+local Localized = AddOnTable.Localized
 local Masque
 local useMasque = false
 local staticPopupName = "BaudBag_Masque_Reload"
