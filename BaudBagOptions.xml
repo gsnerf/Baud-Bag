@@ -189,7 +189,7 @@
 
 					<CheckButton name="$parentCloseAllCheck" parentKey="CloseAllCheck" inherits="OptionsCheckButtonTemplate" id="CloseAll">
 						<Anchors>
-							<Anchor point="TOPLEFT" relativeKey="$parentEnabledCheckText" relativePoint="TOPRIGHT" x="10" y="6" />
+							<Anchor point="TOPLEFT" relativeTo="$parentEnabledCheckText" relativePoint="TOPRIGHT" x="10" y="6" />
 						</Anchors>
 						<Scripts>
 							<OnClick function="BaudBagCloseAllCheck_OnClick" />
