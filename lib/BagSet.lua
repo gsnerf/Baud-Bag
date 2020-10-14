@@ -36,7 +36,7 @@ function Prototype:RebuildContainers()
         -- first remove all subcontainers that are not contained anymore
         local currentSubContainerCount = table.getn(localContainerObject.SubContainers)
         if (maxSubContainerIndex < currentSubContainerCount) then
-            for i = maxSubContainerIndex, currentSubContainerCount do
+            for i = maxSubContainerIndex + 1, currentSubContainerCount do
                 localContainerObject.SubContainers[i] = nil
             end
         end
@@ -74,7 +74,7 @@ function Prototype:RebuildContainers()
         if (containerNumber == 0) or (bagSetConfig.Joined[index] == false) then
             -- if we aren't opening the first container, make sure the previous one is correctly closed and updated
             if (containerNumber ~= 0) then
-                FinishContainer(containerObject, isOpen, subContainerIndex)
+                FinishContainer(containerObject, isOpen, subContainerIndex - 1)
                 subContainerIndex = 1
             end
 
