@@ -13,12 +13,31 @@ end
 
 local Metatable = { __index = Prototype }
 
+local function BagSlot_UpdateTooltip(self, event, ...)
+    local bagId = (self.isBag) and self.Bag or self:GetParent():GetID()
+    if (not BagSetType.Bank.IsSubContainerOf(bagId)) then
+        BaudBag_DebugMsg("Tooltip", "[BagButton:UpdateTooltip] bagId does not support cache, passing on to BagSlotButton_OnEnter [bagId]", bagId)
+        BagSlotButton_OnEnter(self)
+        return
+    end
+
+    local bagCache = AddOnTable.Cache:GetBagCache(bagId)
+    GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
+    BaudBag_DebugMsg("Tooltip", "[BagButton:UpdateTooltip] Showing cached item info [bagId, cacheEntry]", bagId, bagCache.BagLink)
+    ShowHyperlink(self, bagCache.BagLink)
+    GameTooltip:Show()
+    BaudBagModifyBagTooltip(bagId)
+    CursorUpdate(self)
+end
+
 --[[ if the mouse hovers over the bag slot item the slots belonging to this bag should be shown after a certain time (atm 350ms or 0.35s) ]]
 local function BagSlot_OnEnter(self, event, ...)
     BaudBag_DebugMsg("BagHover", "Mouse is hovering above item")
     self.HighlightBag		= true
     self.HighlightBagOn		= false
     self.HighlightBagCount	= GetTime() + 0.35
+
+    BagSlot_UpdateTooltip(self, event, ...)
 end
 
 --[[ determine if and how long the mouse was hovering and change bag according ]]
@@ -55,10 +74,11 @@ function AddOnTable:CreateBagButton(bagSetType, bagIndex, subContainerId, parent
     bagButton.SubContainerId = subContainerId
     bagButton.Frame	= CreateFrame("ItemButton", name, parentFrame, buttonTemplate)
     bagButton.Frame:SetFrameStrata("HIGH")
-    bagButton.Frame:HookScript("OnEnter",   BagSlot_OnEnter)
+    bagButton.Frame:SetScript("OnEnter",   BagSlot_OnEnter)
     bagButton.Frame:HookScript("OnUpdate",  BagSlot_OnUpdate)
     bagButton.Frame:HookScript("OnLeave",   BagSlot_OnLeave)
     bagButton.Frame.HighlightBag = false
+    bagButton.Frame.UpdateTooltip = BagSlot_UpdateTooltip
     bagButton.Frame.Bag = subContainerId
     bagButton.Frame.BagSetType = bagSetType
 

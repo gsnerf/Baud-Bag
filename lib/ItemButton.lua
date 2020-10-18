@@ -198,6 +198,34 @@ function Prototype:UpdateTooltipInternal(subContainerId)
     end
 end
 
+function Prototype:UpdateTooltip()
+    BaudBag_DebugMsg("Tooltip", "[ItemButton:UpdateTooltip] Updating tooltip for item button "..self:GetName())
+    if (self.Parent.BagSet.Id == BagSetType.Bank.Id) then
+        BaudBag_DebugMsg("Tooltip", "[ItemButton:UpdateTooltip] This button is part of the bank bags... reading from cache")
+        local bagId = (self.isBag) and self.Bag or self:GetParent():GetID()
+        local slotId = (not self.isBag) and self:GetID() or nil
+        self:UpdateTooltipFromCache(bagId, slotId)
+    else
+        ContainerFrameItemButton_OnUpdate(self)
+    end
+end
+
+function Prototype:UpdateTooltipFromCache(bagId, slotId)
+    GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
+
+    local bagCache = AddOnTable.Cache:GetBagCache(bagId)
+    local slotCache = bagCache[slotId]
+    if not slotCache then
+        BaudBag_DebugMsg("Tooltip", "[ItemButton:UpdateTooltipFromCache] Cannot show cache for item because there is no cache entry [bagId, slotId]", bagId, slotId)
+        GameTooltip:Hide()
+        return
+    end
+    BaudBag_DebugMsg("Tooltip", "[ItemButton:UpdateTooltipFromCache] Showing cached item info [bagId, slotId, cachEntry]", bagId, slotId, slotCache.Link)
+    ShowHyperlink(self, slotCache.Link)
+    GameTooltip:Show()
+    CursorUpdate(self)
+end
+
 function Prototype:ShowHighlight(enabled)
     local texture = _G[self.Name.."Border"]
     texture:SetVertexColor(0.5, 0.5, 0, 1)
@@ -231,12 +259,13 @@ function AddOnTable:CreateItemButton(subContainer, slotIndex, buttonTemplate)
     local itemButton = CreateFrame("ItemButton", name, subContainer.Frame, buttonTemplate)
     itemButton:SetID(slotIndex)
     itemButton = Mixin(itemButton, Prototype)
-
+    
     itemButton.Name = name
     itemButton.SlotIndex = slotIndex
     itemButton.Parent = subContainer
     itemButton.BorderFrame = itemButton:CreateTexture(itemButton.Name.."Border", "OVERLAY")
     itemButton.BorderFrame:Hide()
+    itemButton:SetScript("OnEnter", itemButton.UpdateTooltip)
     
     itemButton.QuestOverlay = _G[itemButton.Name.."IconQuestTexture"]
     

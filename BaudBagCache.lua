@@ -90,39 +90,6 @@ end
 
 --[[ ####################################### ToolTip stuff ####################################### ]]
 
---[[ Show the ToolTip for a cached item ]]
-function BaudBagShowCachedTooltip(self, event, ...)
-    local bagId = (self.isBag) and self.Bag or self:GetParent():GetID()
-    local slotId = (not self.isBag) and self:GetID() or nil
-
-    if (not AddOnTable.Cache:UsesCache(bagId)) then
-        return
-    end
-    
-    -- show tooltip for a bag
-    local bagCache = AddOnTable.Cache:GetBagCache(bagId)
-    if self.isBag then
-        if (not bagCache) then
-            BaudBag_DebugMsg("Tooltip", "[ShowCachedTooltip] Could not show cache for bag as there is no cache entry [bagId]", bagId)
-            return
-        end
-        
-        BaudBag_DebugMsg("Tooltip", "[ShowCachedTooltip] Showing cache for bag [bagId, cacheEntry]", bagId, bagCache.BagLink)
-        ShowHyperlink(self, bagCache.BagLink)
-        BaudBagModifyBagTooltip(bagId)
-        return
-    end
-
-    -- show tooltip for an item inside a bag
-    local slotCache = bagCache[slotId]
-    if not slotCache then
-        BaudBag_DebugMsg("Tooltip", "[ShowCachedTooltip] Cannot show cache for item because there is no cache entry [bagId, slotId]", bagId, slotId)
-        return
-    end
-    BaudBag_DebugMsg("Tooltip", "[ShowCachedTooltip] Showing cached item info [bagId, slotId, cachEntry]", bagId, slotId, slotCache.Link)
-    ShowHyperlink(self, slotCache.Link)
-end
-
 function BaudBagUpdateCachedTooltip(tooltip, bagId, slotId)
     if (not AddOnTable.Cache:UsesCache(bagId)) then
         return
@@ -150,5 +117,4 @@ function BaudBagUpdateCachedTooltip(tooltip, bagId, slotId)
 end
 
 --[[ hook cached tooltip to item enter events ]]
-hooksecurefunc("BankFrameItemButton_OnEnter", BaudBagShowCachedTooltip)
 hooksecurefunc(GameTooltip, "SetBagItem", BaudBagUpdateCachedTooltip)
