@@ -2,6 +2,14 @@ local _
 local AddOnName, AddOnTable = ...
 
 BaudBag_BagButtonMixin = {
+    --[[
+        the BagButton frame is supposed to contain:
+        - BagSetType = BagSetType.Bank/BagSetType.Backpack
+        - IsBankContainer = true/false
+        - IsInventoryContainer = true/false
+        - SubContainerId = <wow bag id>
+        - isBag = 1 [originally from ItemButton?]
+    ]]
 }
 
 function BaudBag_BagButtonMixin:Initialize()
@@ -45,7 +53,19 @@ function BaudBag_BagButtonMixin:GetInventorySlotID()
 end
 
 function BaudBag_BagButtonMixin:UpdateTooltip()
-    self:OnEnter()
+    if (self.IsInventoryContainer) then
+        BaudBag_DebugMsg("Tooltip", "[BagButton:UpdateTooltip] bag belongs to inventory, forwarding to BagSlotButton_OnEnter [bagId]", self.SubContainerId)
+        BagSlotButton_OnEnter(self)
+        return
+    end
+
+    local bagCache = AddOnTable.Cache:GetBagCache(self.SubContainerId)
+    GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
+    BaudBag_DebugMsg("Tooltip", "[BagButton:UpdateTooltip] Showing cached item info [bagId, cacheEntry]", self.SubContainerId, bagCache.BagLink)
+    ShowHyperlink(self, bagCache.BagLink)
+    GameTooltip:Show()
+    BaudBagModifyBagTooltip(self.SubContainerId)
+    CursorUpdate(self)
 end
 
 function BaudBag_BagButtonMixin:Pickup()
@@ -74,6 +94,11 @@ function BaudBag_BagButtonMixin:OnLoad()
 
     ItemAnim_OnLoad( self )
     PaperDollItemSlotButton_OnLoad( self )
+
+    -- initialize size
+    _G[self:GetName().."NormalTexture"]:SetWidth(50);
+	_G[self:GetName().."NormalTexture"]:SetHeight(50);
+    self.IconBorder:SetSize(30, 30);
 end
 
 function BaudBag_BagButtonMixin:OnEvent( event, ... )
@@ -96,36 +121,12 @@ function BaudBag_BagButtonMixin:OnHide()
 end
 
 function BaudBag_BagButtonMixin:OnEnter()
-	GameTooltip:SetOwner( self, "ANCHOR_RIGHT" )
-
-	local hasItem, hasCooldown, repairCost, speciesID, level, breedQuality, maxHealth, power, speed, name = GameTooltip:SetInventoryItem( "player", self:GetInventorySlotID() )
-	if ( speciesID and speciesID > 0 ) then
-		BattlePetToolTip_Show( speciesID, level, breedQuality, maxHealth, power, speed, name )
-		CursorUpdate( self )
-		return
-	end
-
-    if ( not IsInventoryItemProfessionBag( "player", self:GetInventorySlotID() ) ) then
-        for i = LE_BAG_FILTER_FLAG_EQUIPMENT, NUM_LE_BAG_FILTER_FLAGS do
-            if ( GetBankBagSlotFlag( self:GetID(), i ) ) then
-                GameTooltip:AddLine( BAG_FILTER_ASSIGNED_TO:format( BAG_FILTER_LABELS[i] ) )
-                break
-            end
-        end
-    end
-
-	if ( not hasItem ) then
-        GameTooltip:SetText( self.tooltipText )
-	end
-
-	GameTooltip:Show()
-    CursorUpdate( self )
-    
-    -- BaudBag specifics
-    BaudBag_DebugMsg("BagHover", "Mouse is hovering above item")
+    BaudBag_DebugMsg("BagHover", "Mouse is hovering above item, initializing highlight")
     self.HighlightBag		= true
     self.HighlightBagOn		= false
     self.HighlightBagCount	= GetTime() + 0.35
+
+    self:UpdateTooltip()
 end
 
 --[[ determine if and how long the mouse was hovering and change bag according ]]
@@ -133,7 +134,7 @@ function BaudBag_BagButtonMixin:OnUpdate()
     if (self.HighlightBag and (not self.HighlightBagOn) and GetTime() >= self.HighlightBagCount) then
         BaudBag_DebugMsg("BagHover", "showing item (itemName)", self:GetName())
         self.HighlightBagOn	= true
-        AddOnTable["SubBags"][self.Bag]:SetSlotHighlighting(true)
+        AddOnTable["SubBags"][self.SubContainerId]:SetSlotHighlighting(true)
     end
     AddOnTable:BagSlot_Updated(self.BagSetType, self.SubContainerId, self.Frame)
 end
@@ -147,7 +148,7 @@ function BaudBag_BagButtonMixin:OnLeave()
 	
     if (self.HighlightBagOn) then
         self.HighlightBagOn	= false
-        AddOnTable["SubBags"][self.Bag]:SetSlotHighlighting(false)
+        AddOnTable["SubBags"][self.SubContainerId]:SetSlotHighlighting(false)
     end
 end
 
