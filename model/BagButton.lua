@@ -1,15 +1,19 @@
-BagButtonMixin = {}
+local _
+local AddOnName, AddOnTable = ...
 
-function BagButtonMixin:Initialize()
+BaudBag_BagButtonMixin = {
+}
+
+function BaudBag_BagButtonMixin:Initialize()
     self.IsBankContainer = self.BagSetType == BagSetType.Bank
     self.IsInventoryContainer = self.BagSetType == BagSetType.Backpack
 end
 
-function BagButtonMixin:GetItemContextMatchResult()
+function BaudBag_BagButtonMixin:GetItemContextMatchResult()
 	return ItemButtonUtil.GetItemContextMatchResultForContainer( self:GetBagID() )
 end
 
-function BagButtonMixin:GetBagID()
+function BaudBag_BagButtonMixin:GetBagID()
     if ( self.IsInventoryContainer ) then
         if ( self:GetID() == 0 ) then
             return 0
@@ -23,7 +27,7 @@ function BagButtonMixin:GetBagID()
     end
 end
 
-function BagButtonMixin:GetInventorySlotID()
+function BaudBag_BagButtonMixin:GetInventorySlotID()
     if (self.IsInventoryContainer) then
         return self:GetID()
     end
@@ -40,16 +44,16 @@ function BagButtonMixin:GetInventorySlotID()
     end
 end
 
-function BagButtonMixin:UpdateTooltip()
+function BaudBag_BagButtonMixin:UpdateTooltip()
     self:OnEnter()
 end
 
-function BagButtonMixin:Pickup()
+function BaudBag_BagButtonMixin:Pickup()
 	local inventoryID = self:GetInventorySlotID()
 	PickupBagFromSlot( inventoryID )
 end
 
-function BagButtonMixin:PutItemInBag() 
+function BaudBag_BagButtonMixin:PutItemInBag() 
 	local inventoryID = self:GetInventorySlotID()
 	local hadItem = PutItemInBag(inventoryID)
     
@@ -61,7 +65,7 @@ function BagButtonMixin:PutItemInBag()
 	end
 end
 
-function BagButtonMixin:OnLoad()
+function BaudBag_BagButtonMixin:OnLoad()
 	self.isBag = 1
     self:RegisterEvent( "BAG_UPDATE_DELAYED" )
     self:RegisterEvent( "INVENTORY_SEARCH_UPDATE" )
@@ -72,7 +76,7 @@ function BagButtonMixin:OnLoad()
     PaperDollItemSlotButton_OnLoad( self )
 end
 
-function BagButtonMixin:OnEvent( event, ... )
+function BaudBag_BagButtonMixin:OnEvent( event, ... )
     ItemAnim_OnEvent( self, event, ... )
 	if ( event == "BAG_UPDATE_DELAYED" ) then
 		PaperDollItemSlotButton_Update( self )
@@ -83,15 +87,15 @@ function BagButtonMixin:OnEvent( event, ... )
 	end
 end
 
-function BagButtonMixin:OnShow()
+function BaudBag_BagButtonMixin:OnShow()
     PaperDollItemSlotButton_OnShow(self, true)
 end
 
-function BagButtonMixin:OnHide()
+function BaudBag_BagButtonMixin:OnHide()
     PaperDollItemSlotButton_OnHide(self)
 end
 
-function BagButtonMixin:OnEnter()
+function BaudBag_BagButtonMixin:OnEnter()
 	GameTooltip:SetOwner( self, "ANCHOR_RIGHT" )
 
 	local hasItem, hasCooldown, repairCost, speciesID, level, breedQuality, maxHealth, power, speed, name = GameTooltip:SetInventoryItem( "player", self:GetInventorySlotID() )
@@ -125,7 +129,7 @@ function BagButtonMixin:OnEnter()
 end
 
 --[[ determine if and how long the mouse was hovering and change bag according ]]
-function BagButtonMixin:OnUpdate()
+function BaudBag_BagButtonMixin:OnUpdate()
     if (self.HighlightBag and (not self.HighlightBagOn) and GetTime() >= self.HighlightBagCount) then
         BaudBag_DebugMsg("BagHover", "showing item (itemName)", self:GetName())
         self.HighlightBagOn	= true
@@ -134,7 +138,7 @@ function BagButtonMixin:OnUpdate()
     AddOnTable:BagSlot_Updated(self.BagSetType, self.SubContainerId, self.Frame)
 end
 
-function BagButtonMixin:OnLeave()
+function BaudBag_BagButtonMixin:OnLeave()
     GameTooltip_Hide()
     ResetCursor()
 
@@ -147,7 +151,7 @@ function BagButtonMixin:OnLeave()
     end
 end
 
-function BagButtonMixin:OnClick( button )
+function BaudBag_BagButtonMixin:OnClick( button )
     if ( IsModifiedClick( "PICKUPITEM" ) ) then
         self:Pickup()
     elseif ( IsModifiedClick( "OPENALLBAGS" ) ) then
@@ -159,10 +163,10 @@ function BagButtonMixin:OnClick( button )
     end
 end
 
-function BagButtonMixin:OnDragStart()
+function BaudBag_BagButtonMixin:OnDragStart()
     self:Pickup()
 end
 
-function BagButtonMixin:OnReceiveDrag()
+function BaudBag_BagButtonMixin:OnReceiveDrag()
     self:PutItemInBag()
 end
