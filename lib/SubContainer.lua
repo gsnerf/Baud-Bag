@@ -45,10 +45,11 @@ end
 
 function Prototype:GetItemButtonTemplate()
     -- TODO: this should propably be already known when creating the SubContainer, so better move somewhere earlier!
-    if (self.ContainerId == BANK_CONTAINER) then
-        return "BankItemButtonGenericTemplate"
-    elseif (self.ContainerId == REAGENTBANK_CONTAINER) then
+    
+    if (self.ContainerId == REAGENTBANK_CONTAINER) then
         return "ReagentBankItemButtonGenericTemplate"
+    elseif (self.BagSet.Id == BagSetType.Bank.Id) then
+        return "BankItemButtonGenericTemplate"
     else
         return "ContainerFrameItemButtonTemplate"
     end
