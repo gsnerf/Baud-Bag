@@ -225,16 +225,12 @@ function Prototype:ApplyBaseSkin()
     end
 end
 
-local Metatable = { __index = Prototype }
-
 function AddOnTable:CreateItemButton(subContainer, slotIndex, buttonTemplate)
     local name = subContainer.Name.."Item"..slotIndex
 
     local itemButton = CreateFrame("ItemButton", name, subContainer.Frame, buttonTemplate)
     itemButton:SetID(slotIndex)
     itemButton = Mixin(itemButton, Prototype)
-
-    --local itemButton = _G.setmetatable({}, Metatable)
 
     itemButton.Name = name
     itemButton.SlotIndex = slotIndex

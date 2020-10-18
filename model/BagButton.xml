@@ -27,42 +27,4 @@
 			<OnReceiveDrag method="OnReceiveDrag" intrinsicOrder="precall" />
 		</Scripts>
 	</ItemButton>
-
-
-    <!--ItemButton name="BagSlotButtonTemplate" mixin="BagSlotMixin" inherits="ItemAnimTemplate" virtual="true">
-		<Size x="30" y="30"/>
-		<Layers>
-			<Layer level="OVERLAY">
-				<Texture parentKey="SlotHighlightTexture" alphaMode="ADD" file="Interface\Buttons\CheckButtonHilight" setAllPoints="true" hidden="true"/>
-			</Layer>
-		</Layers>
-		<Scripts>
-			<OnShow>
-				PaperDollItemSlotButton_OnShow(self, true);
-			</OnShow>
-			<OnHide>
-				PaperDollItemSlotButton_OnHide(self);
-			</OnHide>
-			<OnClick>
-				if ( IsModifiedClick() ) then
-					BagSlotButton_OnModifiedClick(self, button);
-				else
-					BagSlotButton_OnClick(self, button);
-				end
-			</OnClick>
-			<OnDragStart>
-				BagSlotButton_OnDrag(self, button);
-			</OnDragStart>
-			<OnReceiveDrag>
-				BagSlotButton_OnClick(self);
-			</OnReceiveDrag>
-			<OnEnter>
-				BagSlotButton_OnEnter(self, motion);
-			</OnEnter>
-			<OnLeave>
-				GameTooltip:Hide();
-				ResetCursor();
-			</OnLeave>
-		</Scripts>
-	</ItemButton-->
 </Ui>
