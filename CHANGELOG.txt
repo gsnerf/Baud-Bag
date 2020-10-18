@@ -1,4 +1,10 @@
 ﻿=== Changelog ===
+v9.0.2
+  - fixed "Close All" button positioning in options panel
+  - fixed updating of container background after changing the style in the options panel
+    - workaround was to reload the ui after changing
+  - fixed updating the bags after de-joining the bags int he optinos panel
+    - workaround was to reload the ui after changing
 v9.0.1
   - updated addon code to work with WoW 9.0.1 interface API:
     - new backdrop system
