@@ -262,7 +262,7 @@
 						</Anchors>
 					</CheckButton>
 
-					<Slider parentKey="Slider1" minValue="2" maxValue="20" valueStep="1" inherits="BaudBagOptionsSliderTemplate" id="1">
+					<Slider parentKey="Slider1" minValue="2" maxValue="40" valueStep="1" inherits="BaudBagOptionsSliderTemplate" id="1">
 						<Anchors>
 							<Anchor point="TOPLEFT" relativeKey="$parent.NameInput" relativePoint="BOTTOMLEFT" x="-2" y="-22" />
 						</Anchors>
