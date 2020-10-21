@@ -198,3 +198,11 @@ function AddOnTable:CreateNewBagButton(bagSetType, bagIndex, subContainerId, par
 
     return bagButton
 end
+
+function AddOnTable:BagSlot_Created(bagSetType, bag, button)
+    -- just an empty hook for other addons
+end
+
+function AddOnTable:BagSlot_Updated(bagSetType, bag, button)
+    -- just an empty hook for other addons
+end
