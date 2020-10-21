@@ -172,7 +172,7 @@ function BaudBag_BagButtonMixin:OnReceiveDrag()
     self:PutItemInBag()
 end
 
-function AddOnTable:CreateNewBagButton(bagSetType, bagIndex, subContainerId, parentFrame)
+function AddOnTable:CreateBagButton(bagSetType, bagIndex, subContainerId, parentFrame)
     -- Attention:
     -- "PaperDollFrame" calls GetInventorySlotInfo on the button created here
     -- For this to work the name bas to be "BagXSlot" with 9 random chars before that

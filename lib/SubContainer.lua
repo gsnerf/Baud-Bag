@@ -178,10 +178,10 @@ local function UpdateBackpackHighlight(subContainer)
         local bagId = subContainer.ContainerId -1
         if (open) then
             _G["CharacterBag"..bagId.."Slot"].SlotHighlightTexture:Show()
-            AddOnTable["Sets"][1].BagButtons[bagId].Frame.SlotHighlightTexture:Show()
+            AddOnTable["Sets"][1].BagButtons[bagId].SlotHighlightTexture:Show()
         else
             _G["CharacterBag"..bagId.."Slot"].SlotHighlightTexture:Hide()
-            AddOnTable["Sets"][1].BagButtons[bagId].Frame.SlotHighlightTexture:Hide()
+            AddOnTable["Sets"][1].BagButtons[bagId].SlotHighlightTexture:Hide()
         end
     end
 end
@@ -213,7 +213,7 @@ local function UpdateBankBagHighlight(subContainer)
     end
 
     if (subContainer.ContainerId ~= BANK_CONTAINER) then
-        local button = AddOnTable["Sets"][2].BagButtons[subContainer.ContainerId-4].Frame
+        local button = AddOnTable["Sets"][2].BagButtons[subContainer.ContainerId-4]
         if (open) then
             button.SlotHighlightTexture:Show()
         else

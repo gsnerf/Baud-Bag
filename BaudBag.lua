@@ -43,8 +43,8 @@ local function BackpackBagOverview_Initialize()
     
     for Bag = 1, 4 do
         local buttonIndex = Bag - 1
-        local bagButton = AddOnTable:CreateBagButton(backpackSet.Type, buttonIndex, Bag, BBContainer1, "BagSlotButtonTemplate")
-        bagButton.Frame:SetPoint("TOPLEFT", 8, -8 - buttonIndex * 30)
+        local bagButton = AddOnTable:CreateBagButton(backpackSet.Type, buttonIndex, Bag, BBContainer1)
+        bagButton:SetPoint("TOPLEFT", 8, -8 - buttonIndex * 30)
         backpackSet.BagButtons[buttonIndex] = bagButton
     end
 end
@@ -97,7 +97,7 @@ local EventFuncs = {
             if (Slot <= NUM_BANKGENERIC_SLOTS) then
                 BankFrameItemButton_UpdateLocked(_G[Prefix.."SubBag-1Item"..Slot])
             else
-                local bankBagButton = AddOnTable["Sets"][2].BagButtons[Slot-NUM_BANKGENERIC_SLOTS].Frame
+                local bankBagButton = AddOnTable["Sets"][2].BagButtons[Slot-NUM_BANKGENERIC_SLOTS]
                 BankFrameItemButton_UpdateLocked(bankBagButton)
             end
         elseif (Bag == REAGENTBANK_CONTAINER) then
@@ -184,7 +184,7 @@ Func = function(self, event, ...)
     if (event == "PLAYERBANKSLOTS_CHANGED") then
         -- bank bag slot
         if (arg1 > NUM_BANKGENERIC_SLOTS) then
-            local bankBagButton = AddOnTable["Sets"][2].BagButtons[arg1-NUM_BANKGENERIC_SLOTS].Frame
+            local bankBagButton = AddOnTable["Sets"][2].BagButtons[arg1-NUM_BANKGENERIC_SLOTS]
             BankFrameItemButton_Update(bankBagButton)
             return
         end
@@ -276,12 +276,12 @@ function BaudBagBagsFrame_OnShow(self, event, ...)
     if (isBags) then
         local backpackSet = AddOnTable["Sets"][1]
         for Bag = 0, 3 do
-            backpackSet.BagButtons[Bag].Frame:SetFrameLevel(Level)
+            backpackSet.BagButtons[Bag]:SetFrameLevel(Level)
         end
     else
         local bagSet = AddOnTable["Sets"][2]
         for Bag = 1, NUM_BANKBAGSLOTS do
-            bagSet.BagButtons[Bag].Frame:SetFrameLevel(Level)
+            bagSet.BagButtons[Bag]:SetFrameLevel(Level)
         end
         _G["BBReagentsBag"]:SetFrameLevel(Level)
     end

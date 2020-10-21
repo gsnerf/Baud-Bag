@@ -27,7 +27,6 @@ lib\BaseTypes.lua
 lib\BagSet.lua
 lib\buttons\BagButton.xml
 lib\ItemButton.lua
-lib\BagButton.lua
 lib\SubContainer.lua
 lib\Container.lua
 lib\ContainerMenu.lua
