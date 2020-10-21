@@ -23,9 +23,9 @@ localization\Localization.ru.lua
 localization\Localization.zhCN.lua
 localization\Localization.zhTW.lua
 BaudBagFunctions.lua
-model\BagButton.xml
 lib\BaseTypes.lua
 lib\BagSet.lua
+lib\buttons\BagButton.xml
 lib\ItemButton.lua
 lib\BagButton.lua
 lib\SubContainer.lua
