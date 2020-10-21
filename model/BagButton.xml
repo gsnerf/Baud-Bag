@@ -1,22 +1,22 @@
 <Ui xmlns="http://www.blizzard.com/wow/ui/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.blizzard.com/wow/ui/ ..\..\FrameXML\UI.xsd">
     <Script file="BagButton.lua" />
 
-    <ItemButton name="BaudBag_BagButton" mixin="BaudBag_BagButtonMixin" virtual="true">
+    <ItemButton name="BaudBag_BagButton" mixin="BaudBag_BagButtonMixin" inherits="ItemAnimTemplate" virtual="true">
 		<KeyValues>
+			<KeyValue key="isBag" value="1" type="number" />
 			<KeyValue key="IsBankContainer" value="false" type="boolean" />
 			<KeyValue key="IsInventoryContainer" value="false" type="boolean" />
 			<KeyValue key="HighlightBag" value="false" type="boolean" />
 			<KeyValue key="HighlightBagOn" value="false" type="boolean" />
 			<KeyValue key="showMatchHighlight" value="false" type="boolean" />
 		</KeyValues>
-		<Size x="30" y="30" />
 		<Layers>
 			<Layer level="OVERLAY">
 				<Texture parentKey="SlotHighlightTexture" alphaMode="ADD" file="Interface\Buttons\CheckButtonHilight" setAllPoints="true" hidden="true"/>
 			</Layer>
 		</Layers>
 		<Frames>
-			<Cooldown parentKey="Cooldown" inherits="CooldownFrameTemplate"/>
+			<Cooldown parentKey="Cooldown" inherits="CooldownFrameTemplate" hidden="true" />
 		</Frames>
 		<Scripts>
 			<OnLoad  method="OnLoad" intrinsicOrder="precall" />

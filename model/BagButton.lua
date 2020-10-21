@@ -8,6 +8,7 @@ BaudBag_BagButtonMixin = {
         - IsBankContainer = true/false
         - IsInventoryContainer = true/false
         - SubContainerId = <wow bag id>
+        - Bag = SubContainerId
         - isBag = 1 [originally from ItemButton?]
     ]]
 }
@@ -15,6 +16,14 @@ BaudBag_BagButtonMixin = {
 function BaudBag_BagButtonMixin:Initialize()
     self.IsBankContainer = self.BagSetType == BagSetType.Bank
     self.IsInventoryContainer = self.BagSetType == BagSetType.Backpack
+
+    ItemAnim_OnLoad( self )
+    if (self.IsInventoryContainer) then
+        PaperDollItemSlotButton_OnLoad( self )
+    elseif (self.IsBankContainer) then
+        local bagCache = AddOnTable.Cache:GetBagCache(self.SubContainerId)
+        self:SetItem(bagCache.BagLink)
+    end
 end
 
 function BaudBag_BagButtonMixin:GetItemContextMatchResult()
@@ -35,7 +44,7 @@ function BaudBag_BagButtonMixin:GetBagID()
     end
 end
 
-function BaudBag_BagButtonMixin:GetInventorySlotID()
+function BaudBag_BagButtonMixin:GetInventorySlot()
     if (self.IsInventoryContainer) then
         return self:GetID()
     end
@@ -48,7 +57,7 @@ function BaudBag_BagButtonMixin:GetInventorySlotID()
         end
     
         --[[ for bank related BagButtons ]]
-        return BankButtonIDToInvSlotID( self:GetID(), true )
+        return BankButtonIDToInvSlotID( self:GetID(), 1 )
     end
 end
 
@@ -69,12 +78,12 @@ function BaudBag_BagButtonMixin:UpdateTooltip()
 end
 
 function BaudBag_BagButtonMixin:Pickup()
-	local inventoryID = self:GetInventorySlotID()
+	local inventoryID = self:GetInventorySlot()
 	PickupBagFromSlot( inventoryID )
 end
 
 function BaudBag_BagButtonMixin:PutItemInBag() 
-	local inventoryID = self:GetInventorySlotID()
+	local inventoryID = self:GetInventorySlot()
 	local hadItem = PutItemInBag(inventoryID)
     
     local id = self:GetID()
@@ -86,40 +95,29 @@ function BaudBag_BagButtonMixin:PutItemInBag()
 end
 
 function BaudBag_BagButtonMixin:OnLoad()
-	self.isBag = 1
     self:RegisterEvent( "BAG_UPDATE_DELAYED" )
     self:RegisterEvent( "INVENTORY_SEARCH_UPDATE" )
 	self:RegisterForDrag( "LeftButton" )
     self:RegisterForClicks( "LeftButtonUp", "RightButtonUp" )
-
-    ItemAnim_OnLoad( self )
-    PaperDollItemSlotButton_OnLoad( self )
-
-    -- initialize size
-    _G[self:GetName().."NormalTexture"]:SetWidth(50);
-	_G[self:GetName().."NormalTexture"]:SetHeight(50);
-    self.IconBorder:SetSize(30, 30);
 end
 
 function BaudBag_BagButtonMixin:OnEvent( event, ... )
     ItemAnim_OnEvent( self, event, ... )
-	if ( event == "BAG_UPDATE_DELAYED" ) then
-		PaperDollItemSlotButton_Update( self )
-	elseif ( event == "INVENTORY_SEARCH_UPDATE" ) then
-        self:SetMatchesSearch( not IsContainerFiltered( self:GetBagID() ) )
-	else
-		PaperDollItemSlotButton_OnEvent( self, event, ... )
-	end
 end
 
 function BaudBag_BagButtonMixin:OnShow()
-    PaperDollItemSlotButton_OnShow(self, true)
+    if (self.IsInventoryContainer) then
+        PaperDollItemSlotButton_OnShow(self, true)
+    end
 end
 
 function BaudBag_BagButtonMixin:OnHide()
-    PaperDollItemSlotButton_OnHide(self)
+    if (self.IsInventoryContainer) then
+        PaperDollItemSlotButton_OnHide(self)
+    end
 end
 
+--[[ if the mouse hovers over the bag slot item the slots belonging to this bag should be shown after a certain time (atm 350ms or 0.35s) ]]
 function BaudBag_BagButtonMixin:OnEnter()
     BaudBag_DebugMsg("BagHover", "Mouse is hovering above item, initializing highlight")
     self.HighlightBag		= true
@@ -139,6 +137,7 @@ function BaudBag_BagButtonMixin:OnUpdate()
     AddOnTable:BagSlot_Updated(self.BagSetType, self.SubContainerId, self.Frame)
 end
 
+--[[ if the mouse was removed cancel all actions ]]
 function BaudBag_BagButtonMixin:OnLeave()
     GameTooltip_Hide()
     ResetCursor()
@@ -154,6 +153,7 @@ end
 
 function BaudBag_BagButtonMixin:OnClick( button )
     if ( IsModifiedClick( "PICKUPITEM" ) ) then
+        -- TODO: this might only be allowed when this is called from bank items
         self:Pickup()
     elseif ( IsModifiedClick( "OPENALLBAGS" ) ) then
         if ( GetInventoryItemTexture("player", self:GetID()) ) then
@@ -170,4 +170,31 @@ end
 
 function BaudBag_BagButtonMixin:OnReceiveDrag()
     self:PutItemInBag()
+end
+
+function AddOnTable:CreateNewBagButton(bagSetType, bagIndex, subContainerId, parentFrame)
+    -- Attention:
+    -- "PaperDollFrame" calls GetInventorySlotInfo on the button created here
+    -- For this to work the name bas to be "BagXSlot" with 9 random chars before that
+    -- TODO: check if this is actually needed or if we can somehow break the connection to that!
+    local name = "BBBagSet"..bagSetType.Id.."Bag"..bagIndex.."Slot"
+    
+    local bagButton = CreateFrame("ItemButton", name, parentFrame, "BaudBag_BagButton")
+    bagButton.BagSetType = bagSetType
+    bagButton.Bag = subContainerId
+    bagButton.SubContainerId = subContainerId
+    bagButton:SetFrameStrata("HIGH")
+    bagButton:Initialize()
+    
+    -- initialize size
+    if (bagSetType == BagSetType.Backpack) then
+        bagButton:SetSize(30, 30)
+        bagButton.IconBorder:SetSize(30, 30)
+        _G[bagButton:GetName().."NormalTexture"]:SetWidth(50)
+        _G[bagButton:GetName().."NormalTexture"]:SetHeight(50)
+    end
+    
+    AddOnTable:BagSlot_Created(bagSetType, subContainerId, bagButton.Frame)
+
+    return bagButton
 end
