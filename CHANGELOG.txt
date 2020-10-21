@@ -1,4 +1,8 @@
 ﻿=== Changelog ===
+v9.0.3
+  - reworked tooltip handling to provide a consistent behavior across backpack, bank and offline bank
+  - reworked bag button implementation to be less different between backpack and bank and not need multiple internal indirections
+  - Fixed faulty min/max value definition for column slider in the options [#145]
 v9.0.2
   - fixed "Close All" button positioning in options panel
   - fixed updating of container background after changing the style in the options panel
