@@ -12,7 +12,7 @@
 ## Title: Baud Bag
 ## Title-zhCN: 背包整合 Baud Bag
 ## Title-zhTW: 背包整合 Baud Bag
-## Version: 9.0.2
+## Version: 9.0.3
 
 # english has to be the first locale!
 localization\Localization.en.lua
@@ -23,11 +23,10 @@ localization\Localization.ru.lua
 localization\Localization.zhCN.lua
 localization\Localization.zhTW.lua
 BaudBagFunctions.lua
-model\BagButton.xml
 lib\BaseTypes.lua
 lib\BagSet.lua
+lib\buttons\BagButton.xml
 lib\ItemButton.lua
-lib\BagButton.lua
 lib\SubContainer.lua
 lib\Container.lua
 lib\ContainerMenu.lua

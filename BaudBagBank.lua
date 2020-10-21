@@ -88,21 +88,10 @@ function BaudBagBankBags_Initialize()
     for Bag = 1, NUM_BANKBAGSLOTS do
         local buttonIndex = Bag
         local subContainerId = Bag + ITEM_INVENTORY_BANK_BAG_OFFSET
-        local bagButton = AddOnTable:CreateBagButton(bankSet.Type, buttonIndex, subContainerId, BBContainer2, "BankItemButtonBagTemplate")
-        bagButton.Frame:SetID(buttonIndex)
-        bagButton.Frame:SetPoint("TOPLEFT", 8 + mod(Bag - 1, 2) * 39, -8 - floor((Bag - 1) / 2) * 39)
+        local bagButton = AddOnTable:CreateBagButton(bankSet.Type, buttonIndex, subContainerId, BBContainer2)
+        bagButton:SetID(buttonIndex)
+        bagButton:SetPoint("TOPLEFT", 8 + mod(Bag - 1, 2) * 39, -8 - floor((Bag - 1) / 2) * 39)
         bankSet.BagButtons[Bag] = bagButton
-
-        -- get cache for the current bank bag
-        -- if there is a bag create icon with correct texture etc
-        local bagCache = AddOnTable.Cache:GetBagCache(subContainerId)
-        if (bagCache.BagLink) then
-            Texture = GetItemIcon(bagCache.BagLink)
-            SetItemButtonCount(bagButton.Frame, bagCache.BagCount or 0)
-        else
-            Texture = select(2, GetInventorySlotInfo("Bag"..buttonIndex))
-        end
-        SetItemButtonTexture(bagButton.Frame, Texture)
     end
 
     -- create BagSlot for reagent bank!
@@ -137,7 +126,7 @@ function BaudBagBankBags_Update()
     BaudBag_DebugMsg("Bank", "BankBags: updating")
     
     for Bag = 1, NUM_BANKBAGSLOTS do
-        BagSlot = bankSet.BagButtons[Bag].Frame
+        BagSlot = bankSet.BagButtons[Bag]
         
         if (Bag <= Slots) then
             SetItemButtonTextureVertexColor(BagSlot, 1.0, 1.0, 1.0)
@@ -186,7 +175,7 @@ function BaudBagBankBags_UpdateContent(bankVisible)
 
     AddOnTable.SubBags[BANK_CONTAINER]:UpdateSlotContents()
     for Index = 1, NUM_BANKBAGSLOTS do
-        local bankBagButton = AddOnTable["Sets"][2].BagButtons[Index].Frame
+        local bankBagButton = AddOnTable["Sets"][2].BagButtons[Index]
         BankFrameItemButton_Update(bankBagButton)
     end
     AddOnTable.SubBags[REAGENTBANK_CONTAINER]:UpdateSlotContents()
