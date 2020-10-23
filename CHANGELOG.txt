@@ -1,4 +1,8 @@
 ﻿=== Changelog ===
+v9.0.4
+  - fixed tooltip sometimes disappearing prematurely
+  - fixed tooltip on battlepets in bank not working [#147]
+  - fixed broken masque support [#146]
 v9.0.3
   - reworked tooltip handling to provide a consistent behavior across backpack, bank and offline bank
   - reworked bag button implementation to be less different between backpack and bank and not need multiple internal indirections

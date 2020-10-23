@@ -71,7 +71,7 @@ function BaudBag_BagButtonMixin:UpdateTooltip()
     local bagCache = AddOnTable.Cache:GetBagCache(self.SubContainerId)
     GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
     BaudBag_DebugMsg("Tooltip", "[BagButton:UpdateTooltip] Showing cached item info [bagId, cacheEntry]", self.SubContainerId, bagCache.BagLink)
-    ShowHyperlink(self, bagCache.BagLink)
+    AddOnTable.Functions.ShowLinkTooltip(self, bagCache.BagLink)
     GameTooltip:Show()
     BaudBagModifyBagTooltip(self.SubContainerId)
     CursorUpdate(self)
@@ -194,7 +194,7 @@ function AddOnTable:CreateBagButton(bagSetType, bagIndex, subContainerId, parent
         _G[bagButton:GetName().."NormalTexture"]:SetHeight(50)
     end
     
-    AddOnTable:BagSlot_Created(bagSetType, subContainerId, bagButton.Frame)
+    AddOnTable:BagSlot_Created(bagSetType, subContainerId, bagButton)
 
     return bagButton
 end
