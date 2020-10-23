@@ -147,17 +147,19 @@ end
 
 
 function ShowHyperlink(Owner, Link)
-    local ItemString = strmatch(Link or "","(item[%d:%-]+)");
-    if not ItemString then
-        return;
-    end
     if(Owner:GetRight() >= (GetScreenWidth() / 2))then
-        GameTooltip:SetOwner(Owner, "ANCHOR_LEFT");
+        GameTooltip:SetAnchorType("ANCHOR_LEFT")
     else
-        GameTooltip:SetOwner(Owner, "ANCHOR_RIGHT");
+        GameTooltip:SetAnchorType("ANCHOR_RIGHT")
     end
-    GameTooltip:SetHyperlink(ItemString);
-    return true;
+    if (LinkUtil.IsLinkType(Link, "item")) then
+        GameTooltip:SetHyperlink(Link)
+    elseif (LinkUtil.IsLinkType(Link, "battlepet")) then
+        BattlePetToolTip_ShowLink(Link)
+    else
+        return false
+    end
+    return true
 end
 
 function BaudBag_InitTexturePiece(Texture, File, Width, Height, MinX, MaxX, MinY, MaxY, Layer)
