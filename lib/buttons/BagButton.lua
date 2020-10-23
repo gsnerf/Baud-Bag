@@ -194,7 +194,7 @@ function AddOnTable:CreateBagButton(bagSetType, bagIndex, subContainerId, parent
         _G[bagButton:GetName().."NormalTexture"]:SetHeight(50)
     end
     
-    AddOnTable:BagSlot_Created(bagSetType, subContainerId, bagButton.Frame)
+    AddOnTable:BagSlot_Created(bagSetType, subContainerId, bagButton)
 
     return bagButton
 end
