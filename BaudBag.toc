@@ -25,7 +25,6 @@ localization\Localization.zhTW.lua
 BaudBagFunctions.lua
 lib\BaseTypes.lua
 lib\BagSet.lua
-lib\ItemButton.lua
 lib\SubContainer.lua
 lib\Container.lua
 lib\ContainerMenu.lua
@@ -34,6 +33,7 @@ lib\Backgrounds\BlizzardBackground.lua
 lib\Backgrounds\SimpleBackground.lua
 lib\Backgrounds\BackgroundRegistration.lua
 widgets\buttons\BagButton.xml
+widgets\buttons\ItemButton.lua
 BaudBagConfig.lua
 BaudBagCache.lua
 BaudBagToolTips.lua
