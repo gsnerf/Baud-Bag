@@ -221,7 +221,7 @@ function Prototype:UpdateTooltipFromCache(bagId, slotId)
         return
     end
     BaudBag_DebugMsg("Tooltip", "[ItemButton:UpdateTooltipFromCache] Showing cached item info [bagId, slotId, cachEntry]", bagId, slotId, slotCache.Link)
-    ShowHyperlink(self, slotCache.Link)
+    AddOnTable.Functions.ShowLinkTooltip(self, slotCache.Link)
     GameTooltip:Show()
     CursorUpdate(self)
 end

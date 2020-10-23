@@ -1,6 +1,8 @@
 ﻿local _
 local AddOnName, AddOnTable = ...
 
+AddOnTable.Functions = {}
+
 local BaudBag_DebugCfg = {
     
     -- everything that has to do with configuration or configuring
@@ -146,16 +148,16 @@ function BaudBagCopyTable(Value)
 end
 
 
-function ShowHyperlink(Owner, Link)
-    if(Owner:GetRight() >= (GetScreenWidth() / 2))then
+AddOnTable.Functions.ShowLinkTooltip = function(self, link)
+    if (self:GetRight() >= (GetScreenWidth() / 2)) then
         GameTooltip:SetAnchorType("ANCHOR_LEFT")
     else
         GameTooltip:SetAnchorType("ANCHOR_RIGHT")
     end
-    if (LinkUtil.IsLinkType(Link, "item")) then
-        GameTooltip:SetHyperlink(Link)
-    elseif (LinkUtil.IsLinkType(Link, "battlepet")) then
-        BattlePetToolTip_ShowLink(Link)
+    if ( LinkUtil.IsLinkType(link, "item") ) then
+        GameTooltip:SetHyperlink(link)
+    elseif (LinkUtil.IsLinkType(link, "battlepet")) then
+        BattlePetToolTip_ShowLink(link)
     else
         return false
     end
