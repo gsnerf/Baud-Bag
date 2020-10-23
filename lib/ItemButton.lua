@@ -188,16 +188,6 @@ function Prototype:UpdateNewAndBattlepayoverlays(isNewItem, isBattlePayItem)
     end
 end
 
-function Prototype:UpdateTooltipInternal(subContainerId)
-    if ( self == GameTooltip:GetOwner() ) then
-        if (GetContainerItemInfo(subContainerId, self:GetID())) then
-            self.UpdateTooltip(self)
-        else
-            GameTooltip:Hide()
-        end
-    end
-end
-
 function Prototype:UpdateTooltip()
     BaudBag_DebugMsg("Tooltip", "[ItemButton:UpdateTooltip] Updating tooltip for item button "..self:GetName())
     if (self.Parent.BagSet.Id == BagSetType.Bank.Id) then
