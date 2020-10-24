@@ -19,7 +19,7 @@ function BaudBagSearchFrame_ShowFrame(ParentContainer, Scale, Background)
     SearchFrame:SetParent(ParentContainer)
 	
     -- draw the background depending on the containers background
-    --Backdrop:SetFrameLevel(SearchFrame:GetFrameLevel());
+    Backdrop:SetFrameLevel(SearchFrame:GetFrameLevel());
     local Left, Right, Top, Bottom
 	
     -- these are the default blizz-frames
