@@ -6,9 +6,7 @@
 		<Anchors>
 			<Anchor Point="CENTER" />
 		</Anchors>
-		<Size>
-			<AbsDimension y="20" />
-		</Size>
+		<Size x="0" y="20" />
 		<Frames>
 			<Frame name="$parentBackdrop" parentKey="Backdrop" inherits="BackdropTemplate">
 				<Frames>
@@ -16,7 +14,7 @@
 				</Frames>
 			</Frame>
 			
-			<Button name="$parentCloseButton" parentKey="CloseButton" inherits="UIPanelCloseButton">
+			<Button parentKey="CloseButton" inherits="UIPanelCloseButton">
 				<Anchors>
 					<Anchor point="TOPRIGHT" />
 				</Anchors>
@@ -27,13 +25,11 @@
 				</Scripts>
 			</Button>
 
-			<EditBox name="$parentEditBox" parentKey="EditBox" inherits="InputBoxTemplate" autoFocus="false">
-				<Size>
-					<AbsDimension y="12" />
-				</Size>
+			<EditBox parentKey="EditBox" inherits="InputBoxTemplate" autoFocus="false">
+				<Size x="0" y="12" />
 				<Anchors>
 					<Anchor point="TOPLEFT" x="-1" y="18" />
-					<Anchor point="RIGHT" relativeTo="$parentCloseButton" relativePoint="LEFT" x="2" />
+					<Anchor point="RIGHT" relativeKey="$parent.CloseButton" relativePoint="LEFT" x="2" />
 				</Anchors>
 				<Scripts>
 					<OnTextChanged function="BaudBagSearchFrameEditBox_OnTextChanged" />
