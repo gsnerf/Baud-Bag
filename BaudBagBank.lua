@@ -53,7 +53,8 @@ Func = function(self, event, ...)
     local subBagObject = AddOnTable["SubBags"][-3]
     local rarityColor = BBConfig[2].RarityColor
 
-    bagCache[slot] = subBagObject.Items[slot]:UpdateContent(false)
+    local _, newCacheEntry  = subBagObject.Items[slot]:UpdateContent(false)
+    bagCache[slot] = newCacheEntry
     subBagObject.Items[slot]:UpdateCustomRarity(rarityColor)
 end
 EventFuncs.PLAYERREAGENTBANKSLOTS_CHANGED = Func
