@@ -1,4 +1,9 @@
 ﻿=== Changelog ===
+v9.0.5
+  - fixed tooltip for empty bag slots [#148]
+  - fixed search field edit box appearing behind background on first open
+  - finished button code refactor
+  - started search frame refactor
 v9.0.4
   - fixed tooltip sometimes disappearing prematurely
   - fixed tooltip on battlepets in bank not working [#147]
