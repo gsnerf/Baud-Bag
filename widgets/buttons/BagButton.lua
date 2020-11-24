@@ -20,6 +20,8 @@ function BaudBag_BagButtonMixin:Initialize()
     ItemAnim_OnLoad( self )
     if (self.IsInventoryContainer) then
         PaperDollItemSlotButton_OnLoad( self )
+        -- as the PaperDollItemSlotButton_OnLoad method called just now overwrites the UpdateTooltip function, we have to reset it here...
+        self.UpdateTooltip = BaudBag_BagButtonMixin.UpdateTooltip
     elseif (self.IsBankContainer) then
         local bagCache = AddOnTable.Cache:GetBagCache(self.SubContainerId)
         self:SetItem(bagCache.BagLink)
@@ -69,12 +71,14 @@ function BaudBag_BagButtonMixin:UpdateTooltip()
     end
 
     local bagCache = AddOnTable.Cache:GetBagCache(self.SubContainerId)
-    GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
-    BaudBag_DebugMsg("Tooltip", "[BagButton:UpdateTooltip] Showing cached item info [bagId, cacheEntry]", self.SubContainerId, bagCache.BagLink)
-    AddOnTable.Functions.ShowLinkTooltip(self, bagCache.BagLink)
-    GameTooltip:Show()
-    BaudBagModifyBagTooltip(self.SubContainerId)
-    CursorUpdate(self)
+    if (bagCache.BagLink) then
+        GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
+        BaudBag_DebugMsg("Tooltip", "[BagButton:UpdateTooltip] Showing cached item info [bagId, cacheEntry]", self.SubContainerId, bagCache.BagLink)
+        AddOnTable.Functions.ShowLinkTooltip(self, bagCache.BagLink)
+        GameTooltip:Show()
+        BaudBagModifyBagTooltip(self.SubContainerId)
+        CursorUpdate(self)
+    end
 end
 
 function BaudBag_BagButtonMixin:Pickup()
