@@ -19,7 +19,7 @@ function BaudBagSearchFrame_ShowFrame(ParentContainer, Scale, Background)
     SearchFrame:SetParent(ParentContainer)
 	
     -- draw the background depending on the containers background
-    --Backdrop:SetFrameLevel(SearchFrame:GetFrameLevel());
+    Backdrop:SetFrameLevel(SearchFrame:GetFrameLevel());
     local Left, Right, Top, Bottom
 	
     -- these are the default blizz-frames
@@ -27,7 +27,7 @@ function BaudBagSearchFrame_ShowFrame(ParentContainer, Scale, Background)
 
         Left, Right, Top, Bottom	= 10, 10, 25, 7
         BagSearchHeightOffset		= 22
-        local Parent = Backdrop:GetName().."Textures"
+        local Parent = Backdrop.Textures:GetName()
         local Texture
 		
         -- initialize texture helper
@@ -130,8 +130,8 @@ function BaudBagSearchFrame_ShowFrame(ParentContainer, Scale, Background)
     SearchFrame:SetScale(Scale)
 	
     -- finally show it
-    BaudBagSearchFrame:Show()
-    BaudBagSearchFrameEditBox:SetFocus()
+    SearchFrame:Show()
+    EditBox:SetFocus()
 end
 
 function BaudBagSearchFrameEditBox_OnTextChanged(self, isUserInput)
