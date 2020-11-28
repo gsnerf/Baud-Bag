@@ -137,7 +137,10 @@ function BaudBagBankBags_Update()
             BagSlot.tooltipText = BANK_BAG_PURCHASE
         end
     end
-    -- TODO similarily check if reagent bank is already bought and change vertex color accordingly!
+    if (not ReagentsBought) then
+        BagSlot = bankSet.BagButtons[REAGENTBANK_CONTAINER]
+        SetItemButtonTextureVertexColor(BagSlot, 1.0, 0.1, 0.1)
+    end
     
     local BBContainer2 = _G[Prefix.."Container2_1BagsFrame"]
     
