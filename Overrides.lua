@@ -107,6 +107,12 @@ OpenAllBags = function(frame)
         return
     end
 
+    -- last but not least: the auction house is doing strange stuff lately, so if the call is originating from auction house and the bags where auto opened, ignore the call
+    if (frame ~=nil and frame:GetName() == "AuctionHouseFrame" and BBConfig[1][1].AutoOpen) then
+        BaudBag_DebugMsg("BagOpening", "[OpenAllBags] found auction house call on auto opened bags, stopping now!")
+        return
+    end
+
     local Container, AnyShown
     for Bag = 0, 4 do
         BaudBag_DebugMsg("BagOpening", "[OpenAllBags] analyzing bag (ID)", Bag)
@@ -125,6 +131,12 @@ CloseAllBags = function(frame)
     -- failsafe check as opening mail or merchant seems to instantly call OpenAllBags instead of the bags registering for the events...
     if (frame ~= nil and (frame:GetName() == "MailFrame" or frame:GetName() == "MerchantFrame")) then
         BaudBag_DebugMsg("BagOpening", "[CloseAllBags] found merchant or mail call, stopping now!")
+        return
+    end
+
+    -- last but not least: the auction house is doing strange stuff lately, so if the call is originating from auction house and the bags where auto opened, ignore the call
+    if (frame ~=nil and frame:GetName() == "AuctionHouseFrame" and BBConfig[1][1].AutoOpen) then
+        BaudBag_DebugMsg("BagOpening", "[CloseAllBags] found auction house call on auto opened bags, stopping now!")
         return
     end
 
