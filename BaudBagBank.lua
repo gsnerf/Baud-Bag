@@ -220,7 +220,7 @@ end
 --[[ this prepares the visual style of the reagent bag slot ]]
 function ReagentBankSlotButton_OnLoad(self, event, ...)
     -- for the time beeing we use the texture of manastorms duplicator for the reagent bank button
-    local _, _, _, _, _, _, _, _, _, texture, _ = GetItemInfo(118938)
+    local texture = C_Item.GetItemIconByID(118938)
     BaudBag_DebugMsg("BankReagent", "[SlotButton_OnLoad] Updating texture of reagent bank slot")
     SetItemButtonTexture(self, texture)
 end
