@@ -137,7 +137,10 @@ function BaudBagBankBags_Update()
             BagSlot.tooltipText = BANK_BAG_PURCHASE
         end
     end
-    -- TODO similarily check if reagent bank is already bought and change vertex color accordingly!
+    if (not ReagentsBought) then
+        BagSlot = bankSet.BagButtons[REAGENTBANK_CONTAINER]
+        SetItemButtonTextureVertexColor(BagSlot, 1.0, 0.1, 0.1)
+    end
     
     local BBContainer2 = _G[Prefix.."Container2_1BagsFrame"]
     
@@ -220,7 +223,7 @@ end
 --[[ this prepares the visual style of the reagent bag slot ]]
 function ReagentBankSlotButton_OnLoad(self, event, ...)
     -- for the time beeing we use the texture of manastorms duplicator for the reagent bank button
-    local _, _, _, _, _, _, _, _, _, texture, _ = GetItemInfo(118938)
+    local texture = C_Item.GetItemIconByID(118938)
     BaudBag_DebugMsg("BankReagent", "[SlotButton_OnLoad] Updating texture of reagent bank slot")
     SetItemButtonTexture(self, texture)
 end
