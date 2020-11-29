@@ -1,4 +1,7 @@
 ﻿=== Changelog ===
+v9.0.6
+  - fixed AutoOpen function in conjunction with auction house [#149]
+  - adapted retrieval of reagent bank icon to hopefully constantly be visible
 v9.0.5
   - fixed tooltip for empty bag slots [#148]
   - fixed search field edit box appearing behind background on first open
