@@ -50,6 +50,16 @@ local TextureNames = {
     Localized.Transparent2
 };
 
+BACKDROP_BB_OPTIONS_CONTAINER = {
+	bgFile = "Interface\\DialogFrame\\UI-DialogBox-Background",
+	edgeFile = "Interface\\Tooltips\\UI-Tooltip-Border",
+	tile = true,
+	tileEdge = true,
+	tileSize = 16,
+	edgeSize = 16,
+	insets = { left = 5, right = 5, top = 5, bottom = 5 },
+}
+
 --[[
     Needed functions:
     - option window loaded => set all basic control settings and add dynamic components
