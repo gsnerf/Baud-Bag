@@ -177,37 +177,81 @@ EventFuncs.MAIL_CLOSED = Func
 EventFuncs.AUCTION_HOUSE_CLOSED = Func
 EventFuncs.SCRAPPING_MACHINE_CLOSE = Func
 
+local collectedBagEvents = {}
 Func = function(self, event, ...)
     BaudBag_DebugMsg("Bags", "Event fired (event, source)", event, self:GetName())
-    local arg1 = ...
+
+    -- this is the ID of the affected container as known to WoW
+    local bagId = ...
+    if bagId ~= -2 then
+        if collectedBagEvents[bagId] == nil then
+            collectedBagEvents[bagId] = {}
+        end
+        table.insert(collectedBagEvents[bagId], event)
+    end
+
+    -- old stuff, for compatibility until the stuff above works as expected
     -- if there are new bank slots the whole view has to be updated
     if (event == "PLAYERBANKSLOTS_CHANGED") then
         -- bank bag slot
-        if (arg1 > NUM_BANKGENERIC_SLOTS) then
-            local bankBagButton = AddOnTable["Sets"][2].BagButtons[arg1-NUM_BANKGENERIC_SLOTS]
+        if (bagId > NUM_BANKGENERIC_SLOTS) then
+            local bankBagButton = AddOnTable["Sets"][2].BagButtons[bagId-NUM_BANKGENERIC_SLOTS]
             BankFrameItemButton_Update(bankBagButton)
             return
         end
 
-        -- if the main bank bag is visible make sure the content of the sub-bags is also shown  
+        -- if the main bank bag is visible make sure the content of the sub-bags is also shown
         local BankBag = _G[Prefix.."SubBag-1"]
         if BankBag:GetParent():IsShown() then
             AddOnTable["SubBags"][-1]:UpdateSlotContents()
         end
-        BagSet = 2
-    else
-        BagSet = BaudBag_IsInventory(arg1) and 1 or 2
+        local Container = _G[Prefix.."Container2_1"]
+        if not Container:IsShown() then
+            return
+        end
+        Container.UpdateSlots = true
     end
-    local Container = _G[Prefix.."Container"..BagSet.."_1"]
-    if not Container:IsShown() then
-        return
-    end
-    Container.UpdateSlots = true
 end
 EventFuncs.BAG_OPEN = Func
 EventFuncs.BAG_UPDATE = Func
 EventFuncs.BAG_CLOSED = Func
 EventFuncs.PLAYERBANKSLOTS_CHANGED = Func
+
+Func = function(self, event, ...)
+    BaudBag_DebugMsg("Bags", "BAG_UPDATE_DELAYED (collectedBagEvents)", collectedBagEvents)
+    -- collect information on last action
+    local affectedContainerCount = 0
+    local bankAffected = false
+    local bagsAffected = false
+    for bagId, _ in pairs(collectedBagEvents) do
+        affectedContainerCount = affectedContainerCount + 1
+        if bagId >= 0 and bagId <= 4 then
+            bagsAffected = true
+        elseif bagId == -3 or bagId == -1 or bagId > 4 then
+            bankAffected = true
+        end
+    end
+
+    -- full rebuild if it seems the bags could have been swapped/added/removed
+    if affectedContainerCount > 1 then
+        if bagsAffected then
+            AddOnTable.Sets[1]:RebuildContainers()
+        end
+        if bankAffected then
+            AddOnTable.Sets[2]:RebuildContainers()
+        end
+    else
+        -- single bag update otherwise
+        for bagId, _ in pairs(collectedBagEvents) do
+            --AddOnTable["SubBags"][bagId]:Rebuild()
+            AddOnTable["SubBags"][bagId]:UpdateSlotContents()
+        end
+    end
+
+    -- reset collected data for next action
+    collectedBagEvents = {}
+end
+EventFuncs.BAG_UPDATE_DELAYED = Func
 --[[ END OF NON XML EVENT HANDLERS ]]--
 
 
@@ -511,30 +555,7 @@ hooksecurefunc("BackpackButton_OnClick", function(self)
 end)
 
 --[[ custom defined BaudBagSubBag event handlers ]]--
-local SubBagEvents = {
-    BAG_UPDATE = function(self, event, ...)
-        -- only update if this bag needs to be updated
-        local arg1 = ...
-        if (self:GetID() ~= arg1) then
-            return
-        end
-
-        -- BAG_UPDATE is the only event called when a bag is added or swapped
-        BaudBag_DebugMsg("Bags", "Event BAG_UPDATE fired, calling Rebuild on subContainer (subContainerId)", arg1)
-        AddOnTable["SubBags"][self:GetID()]:Rebuild()
-    end,
-
-    BAG_CLOSED = function(self, event, ...)
-        local arg1 = ...
-        if (self:GetID() ~= arg1) then
-            return
-        end
-        -- self event occurs when bags are swapped too, but updated information is not immediately
-        -- available to the addon, so the bag must be updated later.
-        BaudBag_DebugMsg("Bags", "Event BAG_CLOSED fired, refreshing (BagID)", arg1)
-        self:GetParent().Refresh = true
-    end
-}
+local SubBagEvents = {}
 
 local Func = function(self, event, ...)
     -- only update if the lock is for this bag!
