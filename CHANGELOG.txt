@@ -1,4 +1,7 @@
 ﻿=== Changelog ===
+v2.5.0
+  - Reworked backdrop handling to work with TBC
+  - Reworked bag update event handling to correctly work when adding/removing/swapping bags.
 v1.13.0
   - removed stuff not available in classic like:
     - reagent bank
