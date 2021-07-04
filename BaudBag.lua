@@ -236,10 +236,15 @@ Func = function(self, event, ...)
     if affectedContainerCount > 1 then
         if bagsAffected then
             AddOnTable.Sets[1]:RebuildContainers()
+            for _, button in ipairs(AddOnTable.Sets[1].BagButtons) do
+                button:Hide()
+                button:Show()
+            end
         end
         if bankAffected then
             AddOnTable.Sets[2]:RebuildContainers()
         end
+        BaudBagUpdateOpenBagHighlight()
     else
         -- single bag update otherwise
         for bagId, _ in pairs(collectedBagEvents) do
