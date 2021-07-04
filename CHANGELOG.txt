@@ -1,4 +1,9 @@
 ﻿=== Changelog ===
+v9.1.0
+  - fixed adding/removing/swapping bags and
+    - not correctly updating bag contents
+    - not correctly updating the bag button icon
+    - not correctly updating the open bag highlight
 v9.0.6
   - fixed AutoOpen function in conjunction with auction house [#149]
   - adapted retrieval of reagent bank icon to hopefully constantly be visible
