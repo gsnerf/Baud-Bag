@@ -86,11 +86,11 @@ function BaudBag_BagButtonMixin:Pickup()
 	PickupBagFromSlot( inventoryID )
 end
 
-function BaudBag_BagButtonMixin:PutItemInBag() 
+function BaudBag_BagButtonMixin:PutItemInBag()
+    local hadItem = CursorHasItem()
 	local inventoryID = self:GetInventorySlot()
-	local hadItem = PutItemInBag(inventoryID)
-    
-    local id = self:GetID()
+	PutItemInBag(inventoryID)
+
     local translatedID = self:GetBagID()
 
 	if ( not hadItem ) then
