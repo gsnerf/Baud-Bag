@@ -1,0 +1,37 @@
+## Author: Thurmal (Author), Suddendeath2000 (Former Author), Baudzila (Original Author)
+## DefaultState: Enabled
+## Interface: 30400
+## Globe: check-classic
+## LoadOnDemand: 0
+## OptionalDeps: CaedronWardrobe, Masque
+## Notes: Allows you to combine bags as well as customize their display.
+## Notes-zhCN: 以整合方式显示你的背包和银行|N本地化:Isler
+## Notes-zhTW: 以整合方式顯示你的背包和銀行|N本地化:Isler
+## SavedVariablesPerCharacter: BaudBag_Cfg,BaudBag_Cache,BaudBag_Debug
+## Title: Baud Bag
+## Title-zhCN: 背包整合 Baud Bag
+## Title-zhTW: 背包整合 Baud Bag
+## Version: 3.4.0
+
+Localization.lua
+BaudBagFunctions.lua
+lib\BaseTypes.lua
+lib\BagSet.lua
+lib\ItemButton.lua
+lib\BagButton.lua
+lib\SubContainer.lua
+lib\Container.lua
+lib\ContainerMenu.lua
+lib\TextureHelper.lua
+lib\Backgrounds\BlizzardBackground.lua
+lib\Backgrounds\SimpleBackground.lua
+lib\Backgrounds\BackgroundRegistration.lua
+BaudBagConfig.lua
+BaudBagCache.lua
+BaudBagToolTips.lua
+BaudBagOptions.xml
+BaudBagBank.xml
+frames\BaudBagSearchFrame.xml
+Overrides.lua
+BaudBag.xml
+external\Masque.lua
