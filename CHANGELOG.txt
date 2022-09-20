@@ -1,4 +1,6 @@
 ﻿=== Changelog ===
+v3.4.0
+  - merged the different classic versions into one
 v2.5.0
   - Reworked backdrop handling to work with TBC
   - Reworked bag update event handling to correctly work when adding/removing/swapping bags.
