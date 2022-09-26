@@ -278,6 +278,7 @@ function BaudBag_OnLoad(self, event, ...)
         self:RegisterEvent(Key)
     end
     BaudBag_RegisterBankEvents(self)
+    AddOnTable.Functions.RegisterEvents(self)
 
     -- the first container from each set (inventory/bank) is different and is created in the XML
     local SubBag, Container
@@ -314,6 +315,7 @@ function BaudBag_OnEvent(self, event, ...)
     if EventFuncs[event] then
         EventFuncs[event](self, event, ...)
     end
+    AddOnTable.Functions.OnEvent(self, event, ...)
 end
 
 -- this just makes sure the bags will be visible at the correct layer position when opened
