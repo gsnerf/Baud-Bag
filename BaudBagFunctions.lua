@@ -55,6 +55,7 @@ function BaudBag_DebugMsg(type, msg, ...)
         table.insert(BaudBag_Debug, GetTime().." BaudBag ("..BaudBag_DebugCfg[type].Name.."): "..msg);
     end
 end
+AddOnTable.Functions.DebugMessage = BaudBag_DebugMsg
 
 function BaudBag_Vardump(value, depth, key)
     local linePrefix = "";
@@ -90,6 +91,7 @@ function BaudBag_Vardump(value, depth, key)
         DEFAULT_CHAT_FRAME:AddMessage(GetTime().." BaudBag (vardump): "..spaces..linePrefix.."("..type(value)..") "..tostring(value));
     end
 end
+AddOnTable.Functions.Vardump = BaudBag_Vardump
 
 
 --[[
@@ -123,6 +125,7 @@ function BaudBagForEachBag(BagSet, Func)
         Func(-3, NUM_BANKBAGSLOTS + 2);
     end
 end
+AddOnTable.Functions.ForEachBag = BaudBagForEachBag
 
 function BaudBagForEachOpenContainer(Func)
     for _, set in pairs(AddOnTable.Sets) do
@@ -133,6 +136,7 @@ function BaudBagForEachOpenContainer(Func)
         end
     end
 end
+AddOnTable.Functions.ForEachOpenContainer = BaudBagForEachOpenContainer
 
 
 function BaudBagCopyTable(Value)
@@ -146,6 +150,7 @@ function BaudBagCopyTable(Value)
     table.foreach(Value, function(k,v) Table[k] = BaudBagCopyTable(v) end);
     return Table;
 end
+AddOnTable.Functions.CopyTable = BaudBagCopyTable
 
 
 AddOnTable.Functions.ShowLinkTooltip = function(self, link)
@@ -174,6 +179,7 @@ function BaudBag_InitTexturePiece(Texture, File, Width, Height, MinX, MaxX, MinY
     Texture:SetDrawLayer(Layer);
     Texture:Show();
 end
+AddOnTable.Functions.InitTexturePiece = BaudBag_InitTexturePiece
 
 --[[ this function determines if the given bag is currently handled by baudbag or not ]]--
 function BaudBag_BagHandledByBaudBag(id)
@@ -196,6 +202,7 @@ function BaudBag_BagHandledByBaudBag(id)
       ]]
     return (BaudBag_IsBankContainer(id) and BBConfig[2].Enabled) or (BaudBag_IsInventory(id) and BBConfig[1].Enabled);
 end
+AddOnTable.Functions.BagHandledByBaudBag = BaudBag_BagHandledByBaudBag
 
 --[[
     These Bag IDs belong to the bank container:
@@ -209,6 +216,7 @@ end
 function BaudBag_IsBankContainer(bagId)
     return BaudBag_IsBankDefaultContainer(bagId) or (bagId > ITEM_INVENTORY_BANK_BAG_OFFSET and bagId <= ITEM_INVENTORY_BANK_BAG_OFFSET + NUM_BANKBAGSLOTS);
 end
+AddOnTable.Functions.IsBankContainer = BaudBag_IsBankContainer
 
 --[[
     These are the bank containers that need a special treatment in contrast to "regular" bags:
@@ -218,6 +226,7 @@ end
 function BaudBag_IsBankDefaultContainer(bagId)
     return (bagId == BANK_CONTAINER or bagId == REAGENTBANK_CONTAINER);
 end
+AddOnTable.Functions.IsDefaultContainer = BaudBag_IsBankDefaultContainer
 
 --[[
     These IDs belong to the inventory containers:
@@ -227,3 +236,4 @@ end
 function BaudBag_IsInventory(bagId)
     return (bagId >= BACKPACK_CONTAINER and bagId <= BACKPACK_CONTAINER + NUM_BAG_SLOTS);
 end
+AddOnTable.Functions.IsInventory = BaudBag_IsInventory
