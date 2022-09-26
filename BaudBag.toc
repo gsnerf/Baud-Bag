@@ -39,7 +39,8 @@ BaudBagCache.lua
 BaudBagToolTips.lua
 BaudBagOptions.xml
 BaudBagToken.xml
-BaudBagBank.xml
+BaudBagBank.lua
+ReagentBank.xml
 frames\BaudBagSearchFrame.xml
 Overrides.lua
 BaudBag.xml
