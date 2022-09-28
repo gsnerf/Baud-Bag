@@ -3,6 +3,8 @@ local _
 local Funcs = AddOnTable.Functions
 local Events = AddOnTable.Events
 
+AddOnTable.State.ReagentBankSupported = true
+
 --[[ This updates the visual of the given reagent bank item ]]
 Func = function(self, event, ...)
     local slot = ...

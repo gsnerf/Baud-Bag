@@ -2,6 +2,9 @@
 local AddOnName, AddOnTable = ...
 
 AddOnTable.Functions = {}
+AddOnTable.State = {
+    ReagentBankSupported = false
+}
 
 local BaudBag_DebugCfg = {
     
@@ -122,7 +125,9 @@ function BaudBagForEachBag(BagSet, Func)
             Func(Bag + 4, Bag + 1);
         end
         -- reagent bank
-        Func(-3, NUM_BANKBAGSLOTS + 2);
+        if (AddOnTable.State.ReagentBankSupported) then
+            Func(-3, NUM_BANKBAGSLOTS + 2);
+        end
     end
 end
 AddOnTable.Functions.ForEachBag = BaudBagForEachBag
@@ -224,7 +229,9 @@ AddOnTable.Functions.IsBankContainer = BaudBag_IsBankContainer
         -1 == BANK_CONTAINER
   ]]
 function BaudBag_IsBankDefaultContainer(bagId)
-    return (bagId == BANK_CONTAINER or bagId == REAGENTBANK_CONTAINER);
+    -- replacing REAGENTBANK_CONTAINER constant with it's value (-3) as we aren't sure that this code is run on retail
+    local ReagentBankContainer = -3
+    return (bagId == BANK_CONTAINER or bagId == ReagentBankContainer);
 end
 AddOnTable.Functions.IsDefaultContainer = BaudBag_IsBankDefaultContainer
 
