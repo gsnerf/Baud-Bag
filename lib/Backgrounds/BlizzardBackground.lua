@@ -236,7 +236,7 @@ function Prototype:UpdateBagPicture(containerFrame, parentName, backdrop)
     local bagCache = AddOnTable.Cache:GetBagCache(bagID)
     if (bagID <= 0) then
         icon = BaudBagIcons[bagID]
-    elseif (containerFrame.BagSet == 2) and not BaudBagFrame.BankOpen and bagCache.BagLink then
+    elseif (containerFrame.BagSet == 2) and not AddOnTable.State.BankOpen and bagCache.BagLink then
         icon = GetItemIcon(bagCache.BagLink)
     else
         icon = GetInventoryItemTexture("player", ContainerIDToInventoryID(bagID))

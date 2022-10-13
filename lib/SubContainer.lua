@@ -28,7 +28,7 @@ end
 
 function Prototype:GetSize()
     local isBankBag = self.BagSet.Id == BagSetType.Bank.Id
-    local useCache = isBankBag and not BaudBagFrame.BankOpen
+    local useCache = isBankBag and not AddOnTable.State.BankOpen
     if useCache and (self.ContainerId ~= -3) then
         local bagCache = AddOnTable.Cache:GetBagCache(self.ContainerId)
         return bagCache.Size
@@ -103,12 +103,12 @@ function Prototype:UpdateSlotContents()
     local rarityIntensity = BBConfig.RarityIntensity
     local isBankBag = self.BagSet.Id == BagSetType.Bank.Id
     local bagCache = AddOnTable.Cache:GetBagCache(self.ContainerId)
-    local useCache = isBankBag and not BaudBagFrame.BankOpen
+    local useCache = isBankBag and not AddOnTable.State.BankOpen
     
     -- reinit values that might be outdated
     self.FreeSlots = 0
 
-    BaudBag_DebugMsg("Bags", "Updating SubBag (ID, Size, isBagContainer, isBankOpen)", self.ContainerId, self.Size, not isBankBag, BaudBagFrame.BankOpen)
+    BaudBag_DebugMsg("Bags", "Updating SubBag (ID, Size, isBagContainer, isBankOpen)", self.ContainerId, self.Size, not isBankBag, AddOnTable.State.BankOpen)
 
     for slot = 1, self.Size do
         local itemObject = self.Items[slot]
@@ -335,7 +335,7 @@ end
 
 -- TODO: don't know if this mixup of object orientation and wow function handly really works like that
 function Prototype:OnEvent(self, event, ...)
-    if not self:GetParent():IsShown() or (self:GetID() >= 5) and not BaudBagFrame.BankOpen then
+    if not self:GetParent():IsShown() or (self:GetID() >= 5) and not AddOnTable.State.BankOpen then
         return
     end
     Events[event](self, event, ...)

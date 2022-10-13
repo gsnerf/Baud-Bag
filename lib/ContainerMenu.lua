@@ -52,7 +52,7 @@ end
         entry.func = SortBags
         entry.checked = false
         UIDropDownMenu_AddButton(entry)
-    elseif (DropDownContainer and BaudBagFrame.BankOpen) then
+    elseif (DropDownContainer and AddOnTable.State.BankOpen) then
         if(_G["BaudBagContainer"..DropDownBagSet.."_"..DropDownContainer].Bags[1]:GetID() == -3) then
             entry.text = BAG_CLEANUP_REAGENT_BANK
             entry.func = SortReagentBankBags

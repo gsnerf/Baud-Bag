@@ -3,7 +3,14 @@ local AddOnName, AddOnTable = ...
 
 AddOnTable.Functions = {}
 AddOnTable.State = {
-    ReagentBankSupported = false
+    -- switches, intended for differentiation of functions between addon versions (classic/retail, etc.)
+    ReagentBankSupported = false,
+    -- runtime state
+    ItemLock = {
+        Move = false,
+        IsReagent = false
+    },
+    BankOpen = false
 }
 
 local ItemToolTip

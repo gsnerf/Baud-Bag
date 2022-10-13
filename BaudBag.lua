@@ -90,14 +90,15 @@ local EventFuncs = {
 
         if (Slot ~= nil) then
             local _, _, locked = GetContainerItemInfo(Bag, Slot)
-            if ((not locked) and BaudBagFrame.ItemLock.Move) then
-                if (BaudBagFrame.ItemLock.IsReagent and (BaudBag_IsBankContainer(Bag)) and (Bag ~= REAGENTBANK_CONTAINER)) then
+            local itemLock = AddOnTable.State.ItemLock
+            if ((not locked) and itemLock.Move) then
+                if (itemLock.IsReagent and (BaudBag_IsBankContainer(Bag)) and (Bag ~= REAGENTBANK_CONTAINER)) then
                     BaudBag_FixContainerClickForReagent(Bag, Slot)
                 end
-                BaudBagFrame.ItemLock.Move      = false
-                BaudBagFrame.ItemLock.IsReagent = false
+                itemLock.Move      = false
+                itemLock.IsReagent = false
             end
-            BaudBag_DebugMsg("ItemHandle", "Updating ItemLock Info", BaudBagFrame.ItemLock)
+            BaudBag_DebugMsg("ItemHandle", "Updating ItemLock Info", itemLock.ItemLock)
         end
     end,
 
@@ -254,11 +255,6 @@ function BaudBag_OnLoad(self, event, ...)
 
     AddOnTable.Functions.InitFunctions()
 
-    -- init item lock info
-    BaudBagFrame.ItemLock           = {}
-    BaudBagFrame.ItemLock.Move      = false
-    BaudBagFrame.ItemLock.IsReagent = false
-
     -- register for global events (actually handled in OnEvent function)
     for Key, Value in pairs(EventFuncs)do
         self:RegisterEvent(Key)
@@ -406,7 +402,7 @@ function BaudBagContainer_OnHide(self, event, ...)
     (first the bag set so the "offline" title doesn't show up before closing and then the bank to disconnect)
     ]]--
     if (self:GetID() == 1) and (BBConfig[self.BagSet].Enabled) and (BBConfig[self.BagSet].CloseAll) then
-        if (self.BagSet == 2) and BaudBagFrame.BankOpen then
+        if (self.BagSet == 2) and AddOnTable.State.BankOpen then
             -- [TAINT] can be problematic, but doesn't have to be
             CloseBankFrame()
         end
@@ -567,7 +563,7 @@ end
 
 
 function BaudBagSubBag_OnEvent(self, event, ...)
-    if not self:GetParent():IsShown() or BaudBag_IsBankDefaultContainer(Bag) or (self:GetID() >= 5) and not BaudBagFrame.BankOpen then
+    if not self:GetParent():IsShown() or BaudBag_IsBankDefaultContainer(Bag) or (self:GetID() >= 5) and not AddOnTable.State.BankOpen then
         return
     end
     SubBagEvents[event](self, event, ...)
@@ -687,7 +683,7 @@ end
 
 function BaudBag_ContainerFrameItemButton_OnClick(self, button)
     BaudBag_DebugMsg("ItemHandle", "OnClick called (button, bag)", button, self:GetParent():GetID())
-    if (button ~= "LeftButton" and BaudBagFrame.BankOpen) then
+    if (button ~= "LeftButton" and AddOnTable.State.BankOpen) then
         local itemId = GetContainerItemID(self:GetParent():GetID(), self:GetID())
         local isReagent = (itemId and AddOnTable.Functions.IsCraftingReagent(itemId))
         local sourceIsBank = BaudBag_IsBankContainer(self:GetParent():GetID())
@@ -697,8 +693,8 @@ function BaudBag_ContainerFrameItemButton_OnClick(self, button)
 
         -- remember to start a move operation when item was placed in bank by wow!
         if (targetReagentBank) then
-            BaudBagFrame.ItemLock.Move      = true
-            BaudBagFrame.ItemLock.IsReagent = true
+            AddOnTable.State.ItemLock.Move      = true
+            AddOnTable.State.ItemLock.IsReagent = true
         end
     end
 end

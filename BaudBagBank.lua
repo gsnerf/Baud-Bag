@@ -6,7 +6,7 @@ local Localized = AddOnTable.Localized
 local EventFuncs = {
     BANKFRAME_CLOSED = function(self, event, ...)
         BaudBag_DebugMsg("Bank", "Event BANKFRAME_CLOSED fired")
-        BaudBagFrame.BankOpen = false
+        AddOnTable.State.BankOpen = false
         BaudBagBankSlotPurchaseButton:Disable()
         if _G[Prefix.."Container2_1"].AutoOpened then
             _G[Prefix.."Container2_1"]:Hide()
@@ -26,7 +26,7 @@ local Func = function(self, event, ...)
     
 	-- set bank open marker if it was opend
     if (event == "BANKFRAME_OPENED") then
-        BaudBagFrame.BankOpen = true
+        AddOnTable.State.BankOpen = true
     end
     
     -- everything coming now is only needed if the bank is visible

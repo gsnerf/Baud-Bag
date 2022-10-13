@@ -25,8 +25,8 @@ local CacheMixin = {}
     At the moment only: bag == bankbag
 ]]
 function CacheMixin:UsesCache(Bag)
-    local usesCache = (BBConfig[2].Enabled and ((Bag < 0) or (Bag >= 5)) and (not BaudBagFrame.BankOpen))
-    DebugMsg("[UseCache] Bag: "..Bag..", Enabled: "..(BBConfig[2].Enabled and "true" or "false")..", bank open: "..(BaudBagFrame.BankOpen and "true" or "false"), usesCache)
+    local usesCache = (BBConfig[2].Enabled and ((Bag < 0) or (Bag >= 5)) and (not AddOnTable.State.BankOpen))
+    DebugMsg("[UseCache] Bag: "..Bag..", Enabled: "..(BBConfig[2].Enabled and "true" or "false")..", bank open: "..(AddOnTable.State.BankOpen and "true" or "false"), usesCache)
     return usesCache
 end
 

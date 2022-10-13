@@ -26,7 +26,7 @@ function Prototype:UpdateName()
     local targetName = containerConfig.Name or ""
     local targetColor = NORMAL_FONT_COLOR
 
-    if ((self.Frame.BagSet == 2) and (not BaudBagFrame.BankOpen)) then
+    if ((self.Frame.BagSet == 2) and (not AddOnTable.State.BankOpen)) then
         targetName = containerConfig.Name..AddOnTable.Localized.Offline
         targetColor = RED_FONT_COLOR
     end
@@ -145,7 +145,7 @@ function Prototype:UpdateSubContainers(col, row)
             container.Frame:Show()
 
             -- last but not least update visibility for deposit button of reagent bank
-            if (container.ContainerId == REAGENTBANK_CONTAINER and BaudBagFrame.BankOpen) then
+            if (container.ContainerId == REAGENTBANK_CONTAINER and AddOnTable.State.BankOpen) then
                 self.Frame.DepositButton:Show()
             else
                 self.Frame.DepositButton:Hide()
