@@ -15,22 +15,6 @@ local FadeTime = 0.2
 -- this is supposed to be deprecated and should be removed in the future this does not have to be global
 local Prefix = "BaudBag" -- this should be identical to "AddOnName"
 local NumCont = {}
-local ItemToolTip
-
-
-local BBFrameFuncs = {
-    IsCraftingReagent = function (itemId)
-        ItemToolTip:SetItemByID(itemId)
-        local isReagent = false
-        for i = 1, ItemToolTip:NumLines() do
-            local text = _G["BaudBagScanningTooltipTextLeft"..i]:GetText()
-            if (string.find(text, Localized.TooltipScanReagent)) then
-                isReagent = true
-            end
-        end
-        return isReagent
-    end
-}
 
 --[[ Local helper methods used in event handling ]]
 local function BackpackBagOverview_Initialize()
@@ -268,6 +252,8 @@ function BaudBag_OnLoad(self, event, ...)
 
     BaudBag_DebugMsg("Bags", "OnLoad was called")
 
+    AddOnTable.Functions.InitFunctions()
+
     -- init item lock info
     BaudBagFrame.ItemLock           = {}
     BaudBagFrame.ItemLock.Move      = false
@@ -297,15 +283,6 @@ function BaudBag_OnLoad(self, event, ...)
     BaudBag_DebugMsg("Bags", "Creating sub bags")
     BackpackSet:PerformInitialBuild()
     BankSet:PerformInitialBuild()
-
-    -- create tooltip for parsing exactly once!
-    ItemToolTip = CreateFrame("GameTooltip", "BaudBagScanningTooltip", nil, "GameTooltipTemplate")
-    ItemToolTip:SetOwner( WorldFrame, "ANCHOR_NONE" )
-
-    -- now make sure all functions that are supposed to be part of the frame are hooked to the frame, now we know that it is there!
-    for Key, Value in pairs(BBFrameFuncs) do
-        BaudBagFrame[Key] = Value
-    end
 end
 
 
@@ -712,7 +689,7 @@ function BaudBag_ContainerFrameItemButton_OnClick(self, button)
     BaudBag_DebugMsg("ItemHandle", "OnClick called (button, bag)", button, self:GetParent():GetID())
     if (button ~= "LeftButton" and BaudBagFrame.BankOpen) then
         local itemId = GetContainerItemID(self:GetParent():GetID(), self:GetID())
-        local isReagent = (itemId and BaudBagFrame.IsCraftingReagent(itemId))
+        local isReagent = (itemId and AddOnTable.Functions.IsCraftingReagent(itemId))
         local sourceIsBank = BaudBag_IsBankContainer(self:GetParent():GetID())
         local targetReagentBank = IsReagentBankUnlocked() and isReagent
         

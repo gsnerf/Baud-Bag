@@ -6,6 +6,8 @@ AddOnTable.State = {
     ReagentBankSupported = false
 }
 
+local ItemToolTip
+
 local BaudBag_DebugCfg = {
     
     -- everything that has to do with configuration or configuring
@@ -244,3 +246,20 @@ function BaudBag_IsInventory(bagId)
     return (bagId >= BACKPACK_CONTAINER and bagId <= BACKPACK_CONTAINER + NUM_BAG_SLOTS);
 end
 AddOnTable.Functions.IsInventory = BaudBag_IsInventory
+
+AddOnTable.Functions.InitFunctions = function()
+    ItemToolTip = CreateFrame("GameTooltip", "BaudBagScanningTooltip", nil, "GameTooltipTemplate")
+    ItemToolTip:SetOwner( WorldFrame, "ANCHOR_NONE" )
+end
+
+AddOnTable.Functions.IsCraftingReagent = function (itemId)
+    ItemToolTip:SetItemByID(itemId)
+    local isReagent = false
+    for i = 1, ItemToolTip:NumLines() do
+        local text = _G["BaudBagScanningTooltipTextLeft"..i]:GetText()
+        if (string.find(text, Localized.TooltipScanReagent)) then
+            isReagent = true
+        end
+    end
+    return isReagent
+end
