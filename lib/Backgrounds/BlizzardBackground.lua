@@ -166,7 +166,7 @@ function Prototype:ImproveCornerGaps(helper, containerFrame, parentName, blanks,
     self:HideObject(parentName.."Corner")
     if (blanks > 0) then
         local slot = blanksOnTop and (numberOfColumns + 1) or (containerFrame.Slots - numberOfColumns)
-        BaudBag_DebugMsg("BagBackgrounds", "There are blanks to show (affectedSlot, BlankTop, Container.Slots, Cols)", slot, blanksOnTop, containerFrame.Slots, numberOfColumns)
+        AddOnTable.Functions.DebugMessage("BagBackgrounds", "There are blanks to show (affectedSlot, BlankTop, Container.Slots, Cols)", slot, blanksOnTop, containerFrame.Slots, numberOfColumns)
         if (slot >= 1) or (slot <= containerFrame.Slots) then
             if not blanksOnTop then
                 local texture = helper:GetTexturePiece("Corner", 154, 164, 248, 258, nil, nil, "OVERLAY")
@@ -181,7 +181,7 @@ end
 
 --[[ this returns the bottom offset to add to the bottom variable ]]
 function Prototype:AddBottomInfoBar(helper, containerFrame, bottom, parentName)
-    if (BackpackTokenFrame_IsShown() == 1 and containerFrame:GetName() == "BaudBagContainer1_1") then
+    if (containerFrame.TokenFrame.shouldShow == 1 and containerFrame:GetName() == "BaudBagContainer1_1") then
         self:RenderMoneyFrameBackground(helper, containerFrame, parentName, false)
         BaudBagTokenFrame_RenderBackgrounds(containerFrame, parentName)
         return 43
@@ -249,7 +249,7 @@ function Prototype:AdjustPositioning(helper, containerFrame, backdrop, shiftName
     containerFrame.CloseButton:SetPoint("TOPRIGHT", backdrop, "TOPRIGHT", 3, 3)
     helper.Parent:Show()
     if (containerFrame:GetID() == 1) then
-        if (BackpackTokenFrame_IsShown() == 1 and containerFrame:GetName() == "BaudBagContainer1_1") then
+        if (containerFrame.TokenFrame.shouldShow == 1 and containerFrame:GetName() == "BaudBagContainer1_1") then
             containerFrame.TokenFrame:SetPoint("BOTTOMLEFT",  backdrop, "BOTTOMLEFT", 0, 6)
             containerFrame.TokenFrame:SetPoint("BOTTOMRIGHT", backdrop, "BOTTOMRIGHT", 0, 6)
             containerFrame.MoneyFrame:SetPoint("BOTTOMRIGHT", containerFrame.TokenFrame, "TOPRIGHT", 0, -1)
