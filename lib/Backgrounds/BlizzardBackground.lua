@@ -28,9 +28,7 @@ function Prototype:Update(containerFrame, backdrop, shiftName)
         top = top + 18
     end
 
-    
-    local Parent = backdrop.Textures:GetName()
-    local Texture
+    local ParentTextureName = backdrop.Textures:GetName()
 
     -- initialize texture helper
     local helper = AddOnTable:GetTextureHelper()
@@ -43,15 +41,15 @@ function Prototype:Update(containerFrame, backdrop, shiftName)
     -- --------------------------
     -- create new textures now
     -- --------------------------
-    self:CreateBorderTextures(helper, blanksOnTop, Parent)
-    self:FillBlanks(helper, blanks, blanksOnTop, Parent, containerFrame)
+    self:CreateBorderTextures(helper, blanksOnTop, ParentTextureName)
+    self:FillBlanks(helper, blanks, blanksOnTop, ParentTextureName, containerFrame)
     self:CreateSlotBackgrounds(helper, containerFrame, cols, startColumn)
-    self:ImproveCornerGaps(helper, containerFrame, Parent, blanks, blanksOnTop, cols)
+    self:ImproveCornerGaps(helper, containerFrame, ParentTextureName, blanks, blanksOnTop, cols)
     if (containerFrame:GetID() == 1) then
-        local bottomOffset = self:AddBottomInfoBar(helper, containerFrame, bottom, Parent)
+        local bottomOffset = self:AddBottomInfoBar(helper, containerFrame, bottom, ParentTextureName)
         bottom = bottom + bottomOffset
     end
-    self:UpdateBagPicture(containerFrame, Parent, backdrop)
+    self:UpdateBagPicture(containerFrame, ParentTextureName, backdrop)
     self:AdjustPositioning(helper, containerFrame, backdrop, shiftName)
 
     return self.Insets.Left, self.Insets.Right, top, bottom
@@ -152,7 +150,7 @@ function Prototype:CreateSlotBackgrounds(helper, containerFrame, numberOfColumns
         local texture = helper:GetTexturePiece("Slot"..slot, 118, 164, 213, 258, nil, nil, "BORDER")
         texture:SetPoint("TOPLEFT", containerFrame, "TOPLEFT", (currentColumn - 1) * 42 + offsetX - 3, (row - 1) * -41 + 2 - offsetY)
     end
-    
+
     -- adapt to increased container size
     if (containerFrame.Slots > (helper.Parent.Slots or -1)) then
         helper.Parent.Slots = containerFrame.Slots
@@ -230,7 +228,7 @@ function Prototype:UpdateBagPicture(containerFrame, parentName, backdrop)
         texture:SetPoint("TOPLEFT", parentName.."TopLeft", "TOPLEFT", 3, -3)
         texture:SetDrawLayer("BACKGROUND")
     end
-    
+
     local icon
     local bagID = containerFrame.Bags[1]:GetID()
     local bagCache = AddOnTable.Cache:GetBagCache(bagID)
@@ -241,7 +239,7 @@ function Prototype:UpdateBagPicture(containerFrame, parentName, backdrop)
     else
         icon = GetInventoryItemTexture("player", ContainerIDToInventoryID(bagID))
     end
-    
+
     SetPortraitToTexture(texture, icon or "Interface\\Icons\\INV_Misc_QuestionMark")
     backdrop:SetBackdrop(nil)
 end
@@ -279,7 +277,7 @@ function AddOnTable:CreateBlizzardBackground(id, name, file)
     background.Name = name
     background.Insets = { Left = 10, Right = 10, Top = 25, Bottom = 7 }
     background.File = file
-    
+
     AddOnTable["Backgrounds"][id] = background
-    return bagSet
+    return background
 end

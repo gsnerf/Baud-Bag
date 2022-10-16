@@ -48,7 +48,7 @@ function AddOnTable:CreateSimpleBackground(id, name, insets, backdrop, color)
     background.Insets = insets
     background.Backdrop = backdrop
     background.BackdropColor = color
-    
+
     AddOnTable["Backgrounds"][id] = background
-    return bagSet
+    return background
 end
