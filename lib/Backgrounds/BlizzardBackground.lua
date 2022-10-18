@@ -183,7 +183,7 @@ end
 function Prototype:AddBottomInfoBar(helper, containerFrame, bottom, parentName)
     if (containerFrame.TokenFrame.shouldShow == 1 and containerFrame:GetName() == "BaudBagContainer1_1") then
         self:RenderMoneyFrameBackground(helper, containerFrame, parentName, false)
-        BaudBagTokenFrame_RenderBackgrounds(containerFrame, parentName)
+        containerFrame.TokenFrame:RenderBackground(parentName)
         return 43
     else
         -- make sure the window gets big enough and the correct texture is chosen

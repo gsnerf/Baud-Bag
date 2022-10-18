@@ -22,7 +22,6 @@ local function calculateScaleFix(TokenFrame)
     return scaleFix
 end
 
--- local pre_BackpackTokenFrame_Update = BackpackTokenFrame_Update
 local TokenFrame_Update = function()
     BaudBag_DebugMsg("Token", "Update was called on TokenFrame")
     -- make sure the old is called when BaudBag is disabled for the backpack
@@ -152,31 +151,6 @@ local ManageTokenFrame = function(backpack)
 end
 hooksecurefunc("ManageBackpackTokenFrame", ManageTokenFrame)
 
-function BaudBagTokenFrame_RenderBackgrounds(Container, Parent)
-    BaudBag_DebugMsg("Token", "Showing Token Frame for Container (Name, ID)'", Container:GetName(), Container:GetID())
-    
-    -- init texture helper
-    local helper = AddOnTable:GetTextureHelper()
-    helper.Parent = _G[Parent]
-    helper.File = "Interface\\ContainerFrame\\UI-Backpack-TokenFrame.blp"
-    helper.Width, helper.Height = 256, 32
-
-    local TargetHeight =  Container.TokenFrame:GetHeight()
-
-    Texture = helper:GetTexturePiece("TokensFillLeft", 7,13, 6,24, nil, TargetHeight)
-    Texture:SetPoint("LEFT", Parent.."Left", "RIGHT")
-    Texture:SetPoint("BOTTOM", Parent.."Bottom", "TOP", 0, 0)
-
-    Texture = helper:GetTexturePiece("TokensFillRight", 165,171, 6,24, nil, TargetHeight)
-    Texture:SetPoint("RIGHT", Parent.."Right", "LEFT")
-    Texture:SetPoint("BOTTOM", Parent.."Bottom", "TOP", 0, 0)
-
-    Texture = helper:GetTexturePiece("TokensFillCenter", 14,164, 6,24, nil, TargetHeight)
-    Texture:SetPoint("LEFT", Parent.."TokensFillLeft", "RIGHT")
-    Texture:SetPoint("RIGHT", Parent.."TokensFillRight", "LEFT")
-
-    return Bottom
-end
 
 BaudBagTokenMixin = {}
 
@@ -196,3 +170,28 @@ function BaudBagTokenMixin:OnClick()
 end
 
 BaudBagTokenFrameMixin = {}
+
+function BaudBagTokenFrameMixin:RenderBackground(texturesParentName)
+    local container = self:GetParent()
+    BaudBag_DebugMsg("Token", "Showing Token Frame for Container (Name, ID)'", container:GetName(), container:GetID())
+    
+    -- init texture helper
+    local helper = AddOnTable:GetTextureHelper()
+    helper.Parent = _G[texturesParentName]
+    helper.File = "Interface\\ContainerFrame\\UI-Backpack-TokenFrame.blp"
+    helper.Width, helper.Height = 256, 32
+
+    local TargetHeight =  self:GetHeight()
+
+    Texture = helper:GetTexturePiece("TokensFillLeft", 7,13, 6,24, nil, TargetHeight)
+    Texture:SetPoint("LEFT", texturesParentName.."Left", "RIGHT")
+    Texture:SetPoint("BOTTOM", texturesParentName.."Bottom", "TOP", 0, 0)
+
+    Texture = helper:GetTexturePiece("TokensFillRight", 165,171, 6,24, nil, TargetHeight)
+    Texture:SetPoint("RIGHT", texturesParentName.."Right", "LEFT")
+    Texture:SetPoint("BOTTOM", texturesParentName.."Bottom", "TOP", 0, 0)
+
+    Texture = helper:GetTexturePiece("TokensFillCenter", 14,164, 6,24, nil, TargetHeight)
+    Texture:SetPoint("LEFT", texturesParentName.."TokensFillLeft", "RIGHT")
+    Texture:SetPoint("RIGHT", texturesParentName.."TokensFillRight", "LEFT")
+end
