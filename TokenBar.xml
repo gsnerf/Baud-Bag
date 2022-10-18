@@ -8,17 +8,13 @@
 				<Texture parentKey="Icon">
 					<Size x="12" y="12" />
 					<Anchors>
-						<Anchor point="TOPRIGHT">
-							<Offset x="0" y="0"/>
-						</Anchor>
+						<Anchor point="TOPRIGHT" x="0" y="0" />
 					</Anchors>
 				</Texture>
 				<FontString parentKey="Quantity" inherits="GameFontHighlightSmall" justifyH="RIGHT">
 					<Size x="38" y="10"/>
 					<Anchors>
-						<Anchor point="RIGHT" relativeKey="$parent.Icon" relativePoint="LEFT">
-							<Offset x="-1" y="-1"/>
-						</Anchor>
+						<Anchor point="RIGHT" relativeKey="$parent.Icon" relativePoint="LEFT"  x="-1" y="-1"/>
 					</Anchors>
 				</FontString>
 			</Layer>
@@ -40,43 +36,31 @@
 	</Button>
 	
 	<Frame name="BaudBagTokenFrameTemplate" hidden="true" virtual="true">
-		<Size>
-			<AbsDimension y="32"/>
-		</Size>
+		<Size y="32" />
 		<Frames>
 			<Button parentKey="Token1" inherits="BaudBagTokenTemplate" id="1">
 				<Anchors>
-					<Anchor point="RIGHT">
-						<Offset x="-13" y="0"/>
-					</Anchor>
+					<Anchor point="RIGHT" x="-13" y="0" />
 				</Anchors>
 			</Button>
 			<Button parentKey="Token2" inherits="BaudBagTokenTemplate" id="2">
 				<Anchors>
-					<Anchor point="RIGHT" relativeKey="$parent.Token1" relativePoint="LEFT">
-						<Offset x="-2" y="0"/>
-					</Anchor>
+					<Anchor point="RIGHT" relativeKey="$parent.Token1" relativePoint="LEFT" x="-2" y="0" />
 				</Anchors>
 			</Button>
 			<Button parentKey="Token3" inherits="BaudBagTokenTemplate" id="3">
 				<Anchors>
-					<Anchor point="RIGHT" relativeKey="$parent.Token2" relativePoint="LEFT">
-						<Offset x="-2" y="0"/>
-					</Anchor>
+					<Anchor point="RIGHT" relativeKey="$parent.Token2" relativePoint="LEFT" x="-2" y="0" />
 				</Anchors>
 			</Button>
 			<Button parentKey="Token4" inherits="BaudBagTokenTemplate" id="4">
 				<Anchors>
-					<Anchor point="RIGHT" relativeKey="$parent.Token3" relativePoint="LEFT">
-						<Offset x="-2" y="0"/>
-					</Anchor>
+					<Anchor point="RIGHT" relativeKey="$parent.Token3" relativePoint="LEFT" x="-2" y="0" />
 				</Anchors>
 			</Button>
 			<Button parentKey="Token5" inherits="BaudBagTokenTemplate" id="5">
 				<Anchors>
-					<Anchor point="RIGHT" relativeKey="$parent.Token4" relativePoint="LEFT">
-						<Offset x="-2" y="0"/>
-					</Anchor>
+					<Anchor point="RIGHT" relativeKey="$parent.Token4" relativePoint="LEFT" x="-2" y="0" />
 				</Anchors>
 			</Button>
 		</Frames>
