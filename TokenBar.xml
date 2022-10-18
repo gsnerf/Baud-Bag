@@ -1,7 +1,7 @@
 ﻿<Ui xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns="http://www.blizzard.com/wow/ui/">
 	<Script file="TokenBar.lua" />
 
-	<Button name="BaudBagTokenTemplate" hidden="true" virtual="true">
+	<Button name="BaudBagTokenTemplate" mixin="BaudBagTokenMixin" hidden="true" virtual="true">
 		<Size x="50" y="12" />
 		<Layers>
 			<Layer level="ARTWORK">
@@ -20,22 +20,13 @@
 			</Layer>
 		</Layers>
 		<Scripts>
-			<OnEnter>
-				GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
-				GameTooltip:SetBackpackToken(self:GetID())
-			</OnEnter>
-			<OnLeave>
-				GameTooltip:Hide()
-			</OnLeave>
-			<OnClick>
-				if ( IsModifiedClick("CHATLINK") ) then
-					HandleModifiedItemClick(C_CurrencyInfo.GetCurrencyLink(self.currencyType, self.amount))
-				end
-			</OnClick>
+			<OnEnter method="OnEnter" />
+			<OnLeave method="OnLeave" />
+			<OnClick method="OnClick" />
 		</Scripts>
 	</Button>
 	
-	<Frame name="BaudBagTokenFrameTemplate" hidden="true" virtual="true">
+	<Frame name="BaudBagTokenFrameTemplate" mixin="BaudBagTokenFrameMixin" virtual="true">
 		<Size y="32" />
 		<Frames>
 			<Button parentKey="Token1" inherits="BaudBagTokenTemplate" id="1">

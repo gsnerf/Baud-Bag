@@ -129,8 +129,6 @@ BackpackTokenFrame_IsShown = function()
 end
 
 
---local pre_ManageBackpackTokenFrame = ManageBackpackTokenFrame
---ManageBackpackTokenFrame = function(backpack)
 local ManageTokenFrame = function(backpack)
     BaudBag_DebugMsg("Token", "Manage was called on TokenFrame")
     if (BBConfig and BBConfig[1].Enabled == false) then
@@ -179,3 +177,22 @@ function BaudBagTokenFrame_RenderBackgrounds(Container, Parent)
 
     return Bottom
 end
+
+BaudBagTokenMixin = {}
+
+function BaudBagTokenMixin:OnEnter()
+    GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
+    GameTooltip:SetBackpackToken(self:GetID())
+end
+
+function BaudBagTokenMixin:OnLeave()
+    GameTooltip:Hide()
+end
+
+function BaudBagTokenMixin:OnClick()
+    if ( IsModifiedClick("CHATLINK") ) then
+        HandleModifiedItemClick(C_CurrencyInfo.GetCurrencyLink(self.currencyType, self.amount))
+    end
+end
+
+BaudBagTokenFrameMixin = {}
