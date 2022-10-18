@@ -26,74 +26,13 @@ local TokenFrame_Update = function()
     AddOnTable.Functions.DebugMessage("Token", "Update was called on TokenFrame")
     -- make sure the old is called when BaudBag is disabled for the backpack
     if (BBConfig and BBConfig[1].Enabled == false) then
-        --AddOnTable.Functions.DebugMessage("Token", "BaudBag disabled for Backpack, calling original!")
-        --MAX_WATCHED_TOKENS = MAX_WATCHED_TOKENS_ORIG
-        --return pre_BackpackTokenFrame_Update()
         AddOnTable.Functions.DebugMessage("Token", "BaudBag disabled for Backpack, skipping!")
         return
     end
 	
     -- get the token frame and reset to default values (will be updated below)
-    local TokenFrame = _G["BaudBagContainer1_1TokenFrame"]
-    TokenFrame.shouldShow = 0
-    TokenFrame.numWatchedTokens = 0
-
-    -- do whatever the original does but for our own frame
-    --MAX_WATCHED_TOKENS = MAX_WATCHED_TOKENS_BAUD_BAG -- this HAS to be done to allow more than 3 selections in the management window
-    local watchButton
-    local digits, countSize
-    local usedWidth = 0
-    local digitWidth = 8 + calculateScaleFix(TokenFrame)
-    for i=1, MAX_WATCHED_TOKENS do
-        local currencyInfo = C_CurrencyInfo.GetBackpackCurrencyInfo(i)
-        watchButton = TokenFrame["Token"..i]
-
-        -- Update watched tokens
-        if ( currencyInfo ) then
-            AddOnTable.Functions.DebugMessage("Token", "Update: Token "..i.." found")
-			
-            -- set icon
-            watchButton.Icon:SetTexture(currencyInfo.iconFileID)
-			
-            -- and quantity
-            if ( currencyInfo.quantity <= 99999 ) then
-                watchButton.Quantity:SetText(currencyInfo.quantity)
-            else
-                watchButton.Quantity:SetText("*")
-            end
-			
-            -- update width based on text to show
-            digits = string.len(tostring(currencyInfo.quantity))
-            AddOnTable.Functions.DebugMessage("Token", "number of digits in currency '"..currencyInfo.name.."': "..digits)
-            countSize = digits * digitWidth + math.floor(6 / digits)
-            watchButton.Quantity:SetWidth(countSize)
-            -- 12 (icon width) + 1 (space between quantity & icon) + quantity width + 5 (space to the left)
-            watchButton:SetWidth(18 + countSize)
-
-            -- recalc used width now
-            usedWidth = usedWidth + watchButton:GetWidth()
-            AddOnTable.Functions.DebugMessage("Token", "used width after currency '"..currencyInfo.name.."': "..usedWidth.." space available: "..TokenFrame:GetWidth())
-			
-            -- make only visible if there is enough space 
-            watchButton:Hide()
-            if (usedWidth < TokenFrame:GetWidth()) then
-                watchButton:Show()
-                watchButton.currencyType = currencyInfo.currencyTypesID
-                watchButton.amount = currencyInfo.quantity
-                TokenFrame.shouldShow = 1
-                TokenFrame.numWatchedTokens = i
-            end
-        else
-            AddOnTable.Functions.DebugMessage("Token", "Update: Token "..i.." NOT found")
-            watchButton:Hide()
-            watchButton.currencyType = nil
-            watchButton.amount = 0
-            if ( i == 1 ) then
-                AddOnTable.Functions.DebugMessage("Token", "Update: Token 1 => hiding backpack")
-                TokenFrame.shouldShow = 0
-            end
-        end
-    end
+    local backpackContainer = _G["BaudBagContainer1_1"]
+    backpackContainer.TokenFrame:Update()
 end
 hooksecurefunc("BackpackTokenFrame_Update", TokenFrame_Update)
 
@@ -194,4 +133,66 @@ function BaudBagTokenFrameMixin:RenderBackground(texturesParentName)
     Texture = helper:GetTexturePiece("TokensFillCenter", 14,164, 6,24, nil, TargetHeight)
     Texture:SetPoint("LEFT", texturesParentName.."TokensFillLeft", "RIGHT")
     Texture:SetPoint("RIGHT", texturesParentName.."TokensFillRight", "LEFT")
+end
+
+function BaudBagTokenFrameMixin:Update()
+    -- init runtime variables
+    self.shouldShow = 0
+    self.numWatchedTokens = 0
+
+        -- do whatever the original does but for our own frame
+    local watchButton
+    local digits, countSize
+    local usedWidth = 0
+    local digitWidth = 8 + calculateScaleFix(self)
+    for i=1, MAX_WATCHED_TOKENS do
+        local currencyInfo = C_CurrencyInfo.GetBackpackCurrencyInfo(i)
+        watchButton = self["Token"..i]
+
+        -- Update watched tokens
+        if ( currencyInfo ) then
+            AddOnTable.Functions.DebugMessage("Token", "Update: Token "..i.." found")
+			
+            -- set icon
+            watchButton.Icon:SetTexture(currencyInfo.iconFileID)
+			
+            -- and quantity
+            if ( currencyInfo.quantity <= 99999 ) then
+                watchButton.Quantity:SetText(currencyInfo.quantity)
+            else
+                watchButton.Quantity:SetText("*")
+            end
+			
+            -- update width based on text to show
+            digits = string.len(tostring(currencyInfo.quantity))
+            AddOnTable.Functions.DebugMessage("Token", "number of digits in currency '"..currencyInfo.name.."': "..digits)
+            countSize = digits * digitWidth + math.floor(6 / digits)
+            watchButton.Quantity:SetWidth(countSize)
+            -- 12 (icon width) + 1 (space between quantity & icon) + quantity width + 5 (space to the left)
+            watchButton:SetWidth(18 + countSize)
+
+            -- recalc used width now
+            usedWidth = usedWidth + watchButton:GetWidth()
+            AddOnTable.Functions.DebugMessage("Token", "used width after currency '"..currencyInfo.name.."': "..usedWidth.." space available: "..TokenFrame:GetWidth())
+			
+            -- make only visible if there is enough space 
+            watchButton:Hide()
+            if (usedWidth < self:GetWidth()) then
+                watchButton:Show()
+                watchButton.currencyType = currencyInfo.currencyTypesID
+                watchButton.amount = currencyInfo.quantity
+                self.shouldShow = 1
+                self.numWatchedTokens = i
+            end
+        else
+            AddOnTable.Functions.DebugMessage("Token", "Update: Token "..i.." NOT found")
+            watchButton:Hide()
+            watchButton.currencyType = nil
+            watchButton.amount = 0
+            if ( i == 1 ) then
+                AddOnTable.Functions.DebugMessage("Token", "Update: Token 1 => hiding backpack")
+                self.shouldShow = 0
+            end
+        end
+    end
 end
