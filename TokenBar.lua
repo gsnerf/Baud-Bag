@@ -142,7 +142,7 @@ function BaudBagTokenFrameMixin:Update()
 
             -- recalc used width now
             usedWidth = usedWidth + watchButton:GetWidth()
-            AddOnTable.Functions.DebugMessage("Token", "used width after currency '"..currencyInfo.name.."': "..usedWidth.." space available: "..TokenFrame:GetWidth())
+            AddOnTable.Functions.DebugMessage("Token", "used width after currency '"..currencyInfo.name.."': "..usedWidth.." space available: "..self:GetWidth())
 			
             -- make only visible if there is enough space 
             watchButton:Hide()
