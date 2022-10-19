@@ -151,7 +151,6 @@ Func = function(self, event, ...)
 end
 EventFuncs.MAIL_SHOW = Func
 EventFuncs.AUCTION_HOUSE_SHOW = Func
-EventFuncs.SCRAPPING_MACHINE_SHOW = Func
 
 Func = function(self, event, ...)
     BaudBag_DebugMsg("Bags", "Event fired", event)
@@ -160,7 +159,6 @@ end
 EventFuncs.MERCHANT_CLOSED = Func
 EventFuncs.MAIL_CLOSED = Func
 EventFuncs.AUCTION_HOUSE_CLOSED = Func
-EventFuncs.SCRAPPING_MACHINE_CLOSE = Func
 
 local collectedBagEvents = {}
 Func = function(self, event, ...)
