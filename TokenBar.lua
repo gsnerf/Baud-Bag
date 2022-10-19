@@ -11,9 +11,6 @@
   ]]
 local AddOnName, AddOnTable = ...
 local _
-MAX_WATCHED_TOKENS_ORIG = MAX_WATCHED_TOKENS
-MAX_WATCHED_TOKENS_BAUD_BAG = 5
-
 
 local function calculateScaleFix(TokenFrame)
     local scale = TokenFrame:GetEffectiveScale()
@@ -22,6 +19,7 @@ local function calculateScaleFix(TokenFrame)
     return scaleFix
 end
 
+-- this is being called (among others) when the currency selection in the token frame changes
 local TokenFrame_Update = function()
     AddOnTable.Functions.DebugMessage("Token", "Update was called on TokenFrame")
     -- make sure the old is called when BaudBag is disabled for the backpack
@@ -37,36 +35,7 @@ end
 hooksecurefunc("BackpackTokenFrame_Update", TokenFrame_Update)
 
 
-local pre_GetNumWatchedTokens = GetNumWatchedTokens
-GetNumWatchedTokens = function()
-    -- make sure the old is called when baudbag is disabled for the bagpack
-    if (BBConfig and BBConfig[1].Enabled == false) then
-        AddOnTable.Functions.DebugMessage("Token", "BaudBag disabled for Backpack, calling original!")
-        return pre_GetNumWatchedTokens()
-    end
-	
-    local TokenFrame = _G["BaudBagContainer1_1TokenFrame"]
-	
-    if (not TokenFrame.numWatchedTokens) then
-        -- No count yet so get it 
-        BackpackTokenFrame_Update() 
-    end
-    return TokenFrame.numWatchedTokens or 0
-end
-
-local pre_BackpackTokenFrame_IsShown = BackpackTokenFrame_IsShown
-BackpackTokenFrame_IsShown = function()
-    AddOnTable.Functions.DebugMessage("Token", "IsShown was called on BaudBagTokenFrame")
-    -- make sure the old is called when BaudBag is disabled for the backpack
-    if (BBConfig and BBConfig[1].Enabled == false) then
-        AddOnTable.Functions.DebugMessage("Token", "BaudBag disabled for Backpack, calling original!")
-        return pre_BackpackTokenFrame_IsShown()
-    end
-
-    return _G["BaudBagContainer1_1TokenFrame"].shouldShow 
-end
-
-
+-- this is being called (among others) when the currency selection in the token frame changes
 local ManageTokenFrame = function(backpack)
     AddOnTable.Functions.DebugMessage("Token", "Manage was called on TokenFrame")
     if (BBConfig and BBConfig[1].Enabled == false) then
@@ -78,13 +47,13 @@ local ManageTokenFrame = function(backpack)
     local TokenFrame = _G["BaudBagContainer1_1TokenFrame"]
     local Backpack   = _G["BaudBagContainer1_1"]
 
-    if (BackpackTokenFrame_IsShown() == 1) and (not TokenFrame:IsShown()) then
+    if (TokenFrame.shouldShow == 1) and (not TokenFrame:IsShown()) then
         AddOnTable.Functions.DebugMessage("Token", "Manage: TokenFrame visible, update settings")
         TokenFrame:Show()
         BaudBagUpdateContainer(Backpack)
-    elseif (BackpackTokenFrame_IsShown() ~= 1 and TokenFrame:IsShown()) then
+    elseif (TokenFrame.shouldShow ~= 1 and TokenFrame:IsShown()) then
         AddOnTable.Functions.DebugMessage("Token", "Manage: TokenFrame NOT visible, hide it")
-        TokenFrame:Hide() 
+        TokenFrame:Hide()
         BaudBagUpdateContainer(Backpack)
     end
 end
