@@ -112,7 +112,7 @@
 	</Slider>
 
 	<!-- actual frame -->
-	<Frame name="BaudBagOptions">
+	<Frame name="BaudBagOptions" mixin="BaudBagOptionsMixin">
 		<Layers>
 			<Layer level="ARTWORK">
 				<FontString parentKey="Title" inherits="GameFontNormalLarge">
@@ -308,8 +308,8 @@
 
 		</Frames>
 		<Scripts>
-			<OnLoad		function="BaudBagOptions_OnLoad" />
-			<OnEvent	function="BaudBagOptions_OnEvent" />
+			<OnLoad  method="OnLoad" />
+			<OnEvent method="OnEvent" />
 		</Scripts>
 	</Frame>
 </Ui>
