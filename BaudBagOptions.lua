@@ -503,7 +503,7 @@ function BaudBagOptionsMixin:Update()
             if BaudBagIcons[Bag]then
                 Texture = BaudBagIcons[Bag]
             elseif(SelectedBags == 1)then
-                Texture = GetInventoryItemTexture("player", ContainerIDToInventoryID(Bag))
+                Texture = GetInventoryItemTexture("player", AddOnTable.BlizzAPI.ContainerIDToInventoryID(Bag))
             elseif bagCache and bagCache.BagLink then
                 Texture = GetItemIcon(bagCache.BagLink)
             else
@@ -511,7 +511,7 @@ function BaudBagOptionsMixin:Update()
             end
 			
             -- assign texture, id and get item to be shown
-            _G[Button:GetName().."IconTexture"]:SetTexture(Texture or select(2,GetInventorySlotInfo("Bag0Slot")))
+            _G[Button:GetName().."IconTexture"]:SetTexture(Texture or select(2,AddOnTable.BlizzAPI.GetInventorySlotInfo("Bag0Slot")))
             Button:SetID(ContNum)
             Button:Show()
         end

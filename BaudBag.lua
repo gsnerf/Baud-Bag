@@ -88,7 +88,7 @@ local EventFuncs = {
         end
 
         if (Slot ~= nil) then
-            local _, _, locked = GetContainerItemInfo(Bag, Slot)
+            local _, _, locked = AddOnTable.BlizzAPI.GetContainerItemInfo(Bag, Slot)
             local itemLock = AddOnTable.State.ItemLock
             if ((not locked) and itemLock.Move) then
                 if (itemLock.IsReagent and (BaudBag_IsBankContainer(Bag)) and (Bag ~= REAGENTBANK_CONTAINER)) then
@@ -131,11 +131,11 @@ Func = function(self, event, ...)
     if (BBConfig.SellJunk and MerchantFrame:IsShown()) then
         BaudBagForEachBag(1,
             function(Bag, Index)
-                for Slot = 1, GetContainerNumSlots(Bag) do
-                    local quality = select(4, GetContainerItemInfo(Bag, Slot))
+                for Slot = 1, AddOnTable.BlizzAPI.GetContainerNumSlots(Bag) do
+                    local quality = select(4, AddOnTable.BlizzAPI.GetContainerItemInfo(Bag, Slot))
                     if (quality and quality == 0) then
                         BaudBag_DebugMsg("Junk", "Found junk (Container, Slot)", Bag, Slot)
-                        UseContainerItem(Bag, Slot)
+                        AddOnTable.BlizzAPI.UseContainerItem(Bag, Slot)
                     end
                 end
             end
@@ -698,12 +698,12 @@ end
 
 function BaudBag_FixContainerClickForReagent(Bag, Slot)
     -- determine if there is another item with the same item in the reagent bank
-    local _, count, _, _, _, _, link = GetContainerItemInfo(Bag, Slot)
+    local _, count, _, _, _, _, link = AddOnTable.BlizzAPI.GetContainerItemInfo(Bag, Slot)
     local maxSize = select(8, GetItemInfo(link))
     local targetSlots = {}
-    local emptySlots = GetContainerFreeSlots(REAGENTBANK_CONTAINER)
-    for i = 1, GetContainerNumSlots(REAGENTBANK_CONTAINER) do
-        local _, targetCount, _, _, _, _, targbcetLink = GetContainerItemInfo(REAGENTBANK_CONTAINER, i)
+    local emptySlots = AddOnTable.BlizzAPI.GetContainerFreeSlots(REAGENTBANK_CONTAINER)
+    for i = 1, AddOnTable.BlizzAPI.GetContainerNumSlots(REAGENTBANK_CONTAINER) do
+        local _, targetCount, _, _, _, _, targetLink = AddOnTable.BlizzAPI.GetContainerItemInfo(REAGENTBANK_CONTAINER, i)
         if (link == targetLink) then
             local target    = {}
             target.count    = targetCount
@@ -726,13 +726,13 @@ function BaudBag_FixContainerClickForReagent(Bag, Slot)
             if (space > 0) then
                 if (space < count) then
                     -- doesn't seem so, split and go on
-                    SplitContainerItem(Bag, Slot, space)
-                    PickupContainerItem(REAGENTBANK_CONTAINER, Value.slot)
+                    AddOnTable.BlizzAPI.SplitContainerItem(Bag, Slot, space)
+                    AddOnTable.BlizzAPI.PickupContainerItem(REAGENTBANK_CONTAINER, Value.slot)
                     count = count - space
                 else
                     -- seems so: put everything there
-                    PickupContainerItem(Bag, Slot)
-                    PickupContainerItem(REAGENTBANK_CONTAINER, Value.slot)
+                    AddOnTable.BlizzAPI.PickupContainerItem(Bag, Slot)
+                    AddOnTable.BlizzAPI.PickupContainerItem(REAGENTBANK_CONTAINER, Value.slot)
                     count = 0
                 end
             end
@@ -745,8 +745,8 @@ function BaudBag_FixContainerClickForReagent(Bag, Slot)
     if (count > 0) then
         for Key, Value in pairs(emptySlots) do
             BaudBag_DebugMsg("ItemHandle", "putting rest stack into reagent bank slot (restStack)", Value)
-            PickupContainerItem(Bag, Slot)
-            PickupContainerItem(REAGENTBANK_CONTAINER, Value)
+            AddOnTable.BlizzAPI.PickupContainerItem(Bag, Slot)
+            AddOnTable.BlizzAPI.PickupContainerItem(REAGENTBANK_CONTAINER, Value)
             return
         end
     end

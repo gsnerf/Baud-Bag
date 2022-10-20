@@ -237,7 +237,7 @@ function Prototype:UpdateBagPicture(containerFrame, parentName, backdrop)
     elseif (containerFrame.BagSet == 2) and not AddOnTable.State.BankOpen and bagCache.BagLink then
         icon = GetItemIcon(bagCache.BagLink)
     else
-        icon = GetInventoryItemTexture("player", ContainerIDToInventoryID(bagID))
+        icon = GetInventoryItemTexture("player", AddOnTable.BlizzAPI.ContainerIDToInventoryID(bagID))
     end
 
     SetPortraitToTexture(texture, icon or "Interface\\Icons\\INV_Misc_QuestionMark")

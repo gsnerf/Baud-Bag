@@ -117,7 +117,7 @@ OpenAllBags = function(frame)
     for Bag = 0, 4 do
         BaudBag_DebugMsg("BagOpening", "[OpenAllBags] analyzing bag (ID)", Bag)
         Container = _G[AddOnName.."SubBag"..Bag]:GetParent()
-        if (GetContainerNumSlots(Bag) > 0) and not Container:IsShown()then
+        if (AddOnTable.BlizzAPI.GetContainerNumSlots(Bag) > 0) and not Container:IsShown()then
             BaudBag_DebugMsg("BagOpening", "[OpenAllBags] showing bag")
             Container:Show()
         end
@@ -143,7 +143,7 @@ CloseAllBags = function(frame)
     for Bag = 0, 4 do
         BaudBag_DebugMsg("BagOpening", "[CloseAllBags] analyzing bag (id)", Bag)
         local Container = _G[AddOnName.."SubBag"..Bag]:GetParent()
-        if (GetContainerNumSlots(Bag) > 0) and Container:IsShown() then
+        if (AddOnTable.BlizzAPI.GetContainerNumSlots(Bag) > 0) and Container:IsShown() then
             BaudBag_DebugMsg("BagOpening", "[CloseAllBags] hiding  bag")
             Container:Hide()
         end
@@ -187,7 +187,7 @@ ToggleAllBags = function()
     
     -- first make sure all bags are closed
     for i=0, NUM_BAG_FRAMES, 1 do
-        if ( GetContainerNumSlots(i) > 0 ) then     
+        if (AddOnTable.BlizzAPI.GetContainerNumSlots(i) > 0 ) then     
             totalBags = totalBags + 1
         end
         if ( BaudBag_IsBagOpen(i) ) then

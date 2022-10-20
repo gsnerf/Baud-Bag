@@ -23,13 +23,13 @@ function Prototype:UpdateContent(useCache, slotCache)
     isReadable = false
 
     if not useCache then
-        texture, count, locked, quality, isReadable, _, link, isFiltered, hasNoValue, itemID = GetContainerItemInfo(self.Parent.ContainerId, self.SlotIndex)
+        texture, count, locked, quality, isReadable, _, link, isFiltered, hasNoValue, itemID = AddOnTable.BlizzAPI.GetContainerItemInfo(self.Parent.ContainerId, self.SlotIndex)
         
         if link then
             cacheEntry = { Link = link, Count = count }
             name = GetItemInfo(link)
             isNewItem = C_NewItems.IsNewItem(self.Parent.ContainerId, self.SlotIndex)
-            isBattlePayItem = IsBattlePayItem(self.Parent.ContainerId, self.SlotIndex)
+            isBattlePayItem = AddOnTable.BlizzAPI.IsBattlePayItem(self.Parent.ContainerId, self.SlotIndex)
         end
     elseif slotCache then
         self.hasItem = nil
@@ -50,7 +50,7 @@ function Prototype:UpdateContent(useCache, slotCache)
             
             self.hasItem = 1
             isNewItem = C_NewItems.IsNewItem(self.Parent.ContainerId, self.SlotIndex)
-            isBattlePayItem = IsBattlePayItem(self.Parent.ContainerId, self.SlotIndex)
+            isBattlePayItem = AddOnTable.BlizzAPI.IsBattlePayItem(self.Parent.ContainerId, self.SlotIndex)
 
             -- how to find out if an item is filtered by search here or not?
         end
@@ -124,7 +124,7 @@ function Prototype:UpdateQuestOverlay(containerId)
         questTexture:ClearAllPoints()
         questTexture:SetPoint("CENTER", self.icon, "CENTER", -newWidth/3, 0)
         
-        local isQuestItem, questId, isActive = GetContainerItemQuestInfo(containerId, self.SlotIndex)
+        local isQuestItem, questId, isActive = AddOnTable.BlizzAPI.GetContainerItemQuestInfo(containerId, self.SlotIndex)
         local isQuestRelated = questId ~= nil or isQuestItem
 
         if ( isQuestRelated ) then

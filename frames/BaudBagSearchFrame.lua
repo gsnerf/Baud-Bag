@@ -166,7 +166,7 @@ function BaudBagSearchFrameEditBox_OnTextChanged(self, isUserInput)
 
                     -- get item link according to the type of bag
                     if (SubBag.BagSet ~= 2) or AddOnTable.State.BankOpen then
-                        Link = GetContainerItemLink(SubBag:GetID(), Slot)
+                        Link = AddOnTable.BlizzAPI.GetContainerItemLink(SubBag:GetID(), Slot)
                     elseif slotCache then
                         Link = slotCache.Link
                     end

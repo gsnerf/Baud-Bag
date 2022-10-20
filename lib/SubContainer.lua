@@ -33,7 +33,7 @@ function Prototype:GetSize()
         local bagCache = AddOnTable.Cache:GetBagCache(self.ContainerId)
         return bagCache.Size
     else
-        return GetContainerNumSlots(self.ContainerId)
+        return AddOnTable.BlizzAPI.GetContainerNumSlots(self.ContainerId)
     end
 end
 
@@ -255,8 +255,8 @@ function Prototype:GetSlotInfo()
         end
         return free, cache.Size
     else
-        local freeSlots, _ = GetContainerNumFreeSlots(self.ContainerId)
-        local overallSlots = GetContainerNumSlots(self.ContainerId)
+        local freeSlots, _ = AddOnTable.BlizzAPI.GetContainerNumFreeSlots(self.ContainerId)
+        local overallSlots = AddOnTable.BlizzAPI.GetContainerNumSlots(self.ContainerId)
         return freeSlots, overallSlots
     end
 end

@@ -22,6 +22,7 @@ localization\Localization.ru.lua
 localization\Localization.zhCN.lua
 localization\Localization.zhTW.lua
 BaudBagFunctions.lua
+API-DF.lua
 lib\BaseTypes.lua
 lib\BagSet.lua
 lib\SubContainer.lua

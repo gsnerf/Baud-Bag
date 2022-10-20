@@ -218,10 +218,10 @@ function Prototype:GetCleanupIgnore()
     for _, container in pairs(self.SubContainers) do
         local id = container.ContainerId
         if (id == BACKPACK_CONTAINER) then
-            return GetBackpackAutosortDisabled()
+            return AddOnTable.BlizzAPI.GetBackpackAutosortDisabled()
         end
         if (id == BANK_CONTAINER) then
-            return GetBankAutosortDisabled()
+            return AddOnTable.BlizzAPI.GetBankAutosortDisabled()
         end
         if (self.BagSet.Id == BagSetType.Backpack.Id) then
             return GetBagSlotFlag(id, LE_BAG_FILTER_FLAG_IGNORE_CLEANUP)
@@ -239,10 +239,10 @@ function Prototype:SetCleanupIgnore(value)
     for _, container in pairs(self.SubContainers) do
         local id = container.ContainerId
         if (id == BACKPACK_CONTAINER) then
-            SetBackpackAutosortDisabled(value)
+            AddOnTable.BlizzAPI.SetBackpackAutosortDisabled(value)
         end
         if (id == BANK_CONTAINER) then
-            SetBankAutosortDisabled(value)
+            AddOnTable.BlizzAPI.SetBankAutosortDisabled(value)
         end
         if (self.BagSet.Id == BagSetType.Backpack.Id and id ~= BACKPACK_CONTAINER) then
             SetBagSlotFlag(id, LE_BAG_FILTER_FLAG_IGNORE_CLEANUP, value)
