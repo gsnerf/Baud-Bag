@@ -32,7 +32,11 @@ local TokenFrame_Update = function()
     local backpackContainer = _G["BaudBagContainer1_1"]
     backpackContainer.TokenFrame:Update()
 end
-hooksecurefunc("BackpackTokenFrame_Update", TokenFrame_Update)
+if (BackpackTokenFrame_Update) then
+    hooksecurefunc("BackpackTokenFrame_Update", TokenFrame_Update)
+else
+    hooksecurefunc(BackpackTokenFrame, "Update", TokenFrame_Update)
+end
 
 
 -- this is being called (among others) when the currency selection in the token frame changes
@@ -57,7 +61,7 @@ local ManageTokenFrame = function(backpack)
         BaudBagUpdateContainer(Backpack)
     end
 end
-hooksecurefunc("ManageBackpackTokenFrame", ManageTokenFrame)
+--hooksecurefunc("ManageBackpackTokenFrame", ManageTokenFrame)
 
 
 BaudBagTokenMixin = {}
@@ -114,7 +118,7 @@ function BaudBagTokenFrameMixin:Update()
     local digits, countSize
     local usedWidth = 0
     local digitWidth = 8 + calculateScaleFix(self)
-    for i=1, MAX_WATCHED_TOKENS do
+    for i=1, BackpackTokenFrame:GetNumWatchedTokens() do
         local currencyInfo = C_CurrencyInfo.GetBackpackCurrencyInfo(i)
         watchButton = self["Token"..i]
 
