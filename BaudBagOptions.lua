@@ -106,8 +106,8 @@ function BaudBagOptions_OnEvent(self, event, ...)
     self.GroupContainer.BackgroundSelection.Label:SetText(Localized.Background)
     self.GroupContainer.EnabledCheck.tooltipText  = Localized.EnabledTooltip
     self.GroupContainer.CloseAllCheck.tooltipText = Localized.CloseAllTooltip
-    _G[self.GroupContainer.EnabledCheck:GetName().."Text"]:SetText(Localized.Enabled)
-    _G[self.GroupContainer.CloseAllCheck:GetName().."Text"]:SetText(Localized.CloseAll)
+    self.GroupContainer.EnabledCheck.text:SetText(Localized.Enabled)
+    self.GroupContainer.CloseAllCheck.text:SetText(Localized.CloseAll)
     self.GroupContainer.EnabledCheck:SetHitRectInsets(0, -BaudBagOptionsGroupContainerEnabledCheckText:GetWidth() - 10, 0, 0)
     self.GroupContainer.CloseAllCheck:SetHitRectInsets(0, -BaudBagOptionsGroupContainerCloseAllCheckText:GetWidth() - 10, 0, 0)
 
