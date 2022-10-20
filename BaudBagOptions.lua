@@ -97,7 +97,10 @@ function BaudBagOptionsMixin:OnEvent(event, ...)
     self.okay			= self.OnOkay
     self.cancel			= self.OnCancel
     self.refresh		= self.OnRefresh
-    InterfaceOptions_AddCategory(self)
+    
+    -- register with wow api
+    local category = Settings.RegisterCanvasLayoutCategory(self, "Baud Bag")
+    Settings.RegisterAddOnCategory(category)
 	
     -- set localized labels
     self.Title:SetText("Baud Bag "..Localized.Options)
