@@ -58,7 +58,6 @@ local EventFuncs = {
             BaudBag_Debug = {}
         end
         BaudBag_DebugMsg("Bags", "Event PLAYER_LOGIN fired")
-        
 
         BackpackBagOverview_Initialize()
         BaudBagUpdateFromBBConfig()
@@ -261,7 +260,7 @@ function BaudBag_OnLoad(self, event, ...)
     AddOnTable.Functions.RegisterEvents(self)
 
     -- the first container from each set (inventory/bank) is different and is created in the XML
-    local SubBag, Container
+    local Container
     for BagSet = 1, 2 do
         Container = _G[Prefix.."Container"..BagSet.."_1"]
         Container.FreeSlots:SetPoint("RIGHT",Container:GetName().."MoneyFrame","LEFT")
