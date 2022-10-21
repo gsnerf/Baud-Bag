@@ -73,7 +73,8 @@ function Prototype:UpdateContent(useCache, slotCache)
 
     -- in case this is a container button we try to use the regular upgrade system (this might be even extended by addons like pawn)
     if self.UpgradeIcon then
-        ContainerFrameItemButton_UpdateItemUpgradeIcon(self)
+        -- while the UpgradeIcon texture itself still exists, it doesn't seem to be used anymore?
+        --ContainerFrameItemButton_UpdateItemUpgradeIcon(self)
     end
 
     return link, cacheEntry
@@ -196,7 +197,7 @@ function Prototype:UpdateTooltip()
         local slotId = (not self.isBag) and self:GetID() or nil
         self:UpdateTooltipFromCache(bagId, slotId)
     else
-        ContainerFrameItemButton_OnUpdate(self)
+        self:OnUpdate()
     end
 end
 
