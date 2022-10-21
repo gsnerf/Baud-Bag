@@ -116,8 +116,6 @@ function BaudBagOptionsMixin:OnEvent(event, ...)
     -- localized global checkbox labels
     for Key, Value in ipairs(GlobalCheckButtons) do
         local checkButton = self.GroupGlobal["CheckButton"..Key]
-        --local checkButtonText = _G[Prefix.."GroupGlobalCheckButton"..Key.."Text"]
-
         checkButton.text:SetText(Value.Text)
         checkButton.tooltipText = Value.TooltipText
 
@@ -385,8 +383,8 @@ function BaudBagOptionsSliderTemplateMixin:OnValueChanged()
         self:SetValue(self:GetValue())
         value = self:GetValue()     -- cant use original 'value' parameter
         self._onsetting = false
-    else 
-        return 
+    else
+        return
     end               -- ignore recursion for actual event handler
     --[[ END !!!TEMPORARY!!! ]]--
 
