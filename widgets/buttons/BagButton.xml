@@ -1,7 +1,7 @@
 <Ui xmlns="http://www.blizzard.com/wow/ui/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.blizzard.com/wow/ui/ ..\..\FrameXML\UI.xsd">
     <Script file="BagButton.lua" />
 
-    <ItemButton name="BaudBag_BagButton" mixin="BaudBag_BagButtonMixin" inherits="ItemAnimTemplate" virtual="true">
+    <ItemButton name="BaudBag_BagButton" mixin="BaudBag_BagButtonMixin" virtual="true">
 		<KeyValues>
 			<KeyValue key="isBag" value="1" type="number" />
 			<KeyValue key="IsBankContainer" value="false" type="boolean" />
@@ -13,11 +13,34 @@
 		<Layers>
 			<Layer level="OVERLAY">
 				<Texture parentKey="SlotHighlightTexture" alphaMode="ADD" file="Interface\Buttons\CheckButtonHilight" setAllPoints="true" hidden="true"/>
+				<Texture  parentKey="animIcon" setAllPoints="true"/>
 			</Layer>
 		</Layers>
 		<Frames>
 			<Cooldown parentKey="Cooldown" inherits="CooldownFrameTemplate" hidden="true" />
 		</Frames>
+		<Animations>
+			<AnimationGroup parentKey="flyin">
+				<Scale childKey="animIcon" fromScaleX="0.125" fromScaleY="0.125" toScaleX="1" toScaleY="1" duration="1" order="1"/>
+				<Alpha childKey="animIcon" fromAlpha="0" toAlpha="1" duration="1" order="1"/>
+				<Path childKey="animIcon" curve="SMOOTH" duration="1" order="1">
+					<ControlPoints>
+						<ControlPoint offsetX="-15" offsetY="30"/>
+						<ControlPoint offsetX="-75" offsetY="60"/>
+					</ControlPoints>
+				</Path>
+				<Scripts>
+					<OnPlay>
+						local iconFrame = self:GetParent();
+						iconFrame.animIcon:Show();
+					</OnPlay>
+					<OnFinished>
+						local iconFrame = self:GetParent();
+						iconFrame.animIcon:Hide();
+					</OnFinished>
+				</Scripts>
+			</AnimationGroup>
+		</Animations>
 		<Scripts>
 			<OnLoad  method="OnLoad" intrinsicOrder="precall" />
 			<OnEvent method="OnEvent" intrinsicOrder="precall" />
