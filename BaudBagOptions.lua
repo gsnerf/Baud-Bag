@@ -94,9 +94,9 @@ function BaudBagOptionsMixin:OnEvent(event, ...)
 	
     -- add to options windows
     self.name			= "Baud Bag"
-    self.okay			= BaudBagOptions_OnOkay
-    self.cancel			= BaudBagOptions_OnCancel
-    self.refresh		= BaudBagOptions_OnRefresh
+    self.okay			= self.OnOkay
+    self.cancel			= self.OnCancel
+    self.refresh		= self.OnRefresh
     InterfaceOptions_AddCategory(self)
 	
     -- set localized labels
@@ -191,25 +191,25 @@ function BaudBagOptionsMixin:OnEvent(event, ...)
     end
 	
     -- make sure the view is updated with the data loaded from the config
-    BaudBagOptions:Update()
+    self:Update()
 end
 
-function BaudBagOptions_OnRefresh(self, event, ...)
+function BaudBagOptionsMixin:OnRefresh(event, ...)
     AddOnTable.Functions.DebugMessage("Options", "OnRefresh was called!")
-    BaudBagOptions:Update()
+    self:Update()
 end
 
-function BaudBagOptions_OnOkay(self, event, ...)
+function BaudBagOptionsMixin:OnOkay(event, ...)
     AddOnTable.Functions.DebugMessage("Options", "'Okay' pressed, saving BBConfig.")
     CfgBackup = BBConfig
     BaudBagSaveCfg(BBConfig)
 end
 
-function BaudBagOptions_OnCancel(self, event, ...)
+function BaudBagOptionsMixin:OnCancel(event, ...)
     AddOnTable.Functions.DebugMessage("Options", "'Cancel' pressed, reset to last BBConfig.")
     BBConfig = CfgBackup
     ReloadConfigDependant()
-    BaudBagOptions:Update()
+    self:Update()
 end
 
 
