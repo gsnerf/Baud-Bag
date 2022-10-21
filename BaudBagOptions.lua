@@ -195,18 +195,18 @@ function BaudBagOptionsMixin:OnEvent(event, ...)
 end
 
 function BaudBagOptions_OnRefresh(self, event, ...)
-    BaudBag_DebugMsg("Options", "OnRefresh was called!")
+    AddOnTable.Functions.DebugMessage("Options", "OnRefresh was called!")
     BaudBagOptions:Update()
 end
 
 function BaudBagOptions_OnOkay(self, event, ...)
-    BaudBag_DebugMsg("Options", "'Okay' pressed, saving BBConfig.")
+    AddOnTable.Functions.DebugMessage("Options", "'Okay' pressed, saving BBConfig.")
     CfgBackup = BBConfig
     BaudBagSaveCfg(BBConfig)
 end
 
 function BaudBagOptions_OnCancel(self, event, ...)
-    BaudBag_DebugMsg("Options", "'Cancel' pressed, reset to last BBConfig.")
+    AddOnTable.Functions.DebugMessage("Options", "'Cancel' pressed, reset to last BBConfig.")
     BBConfig = CfgBackup
     ReloadConfigDependant()
     BaudBagOptions:Update()
@@ -345,7 +345,7 @@ function BaudBagOptionsCheckButton_OnClick(self, event, ...)
     local SavedVar
     if (self:GetParent() == BaudBagOptions.GroupGlobal) then
         SavedVar = GlobalCheckButtons[self:GetID()].SavedVar
-        BaudBag_DebugMsg("Options", "Update global variable: "..SavedVar)
+        AddOnTable.Functions.DebugMessage("Options", "Update global variable: "..SavedVar)
         BBConfig[SavedVar] = self:GetChecked()
 
         if (SavedVar == "RarityColor") then
@@ -357,12 +357,12 @@ function BaudBagOptionsCheckButton_OnClick(self, event, ...)
         end
     else
         SavedVar = ContainerCheckButtons[self:GetID()].SavedVar
-        BaudBag_DebugMsg("Options", "Update container variable: "..SavedVar)
+        AddOnTable.Functions.DebugMessage("Options", "Update container variable: "..SavedVar)
         BBConfig[SelectedBags][SelectedContainer][SavedVar] = self:GetChecked()
 
         -- make sure options who need it (visible things) update the affected container
         if (SavedVar == "BlankTop") or (SavedVar == "RarityColor") then -- or (SavedVar == "RarityColorAltern") then
-            BaudBag_DebugMsg("Options", "Want to update container: "..Prefix.."Container"..SelectedBags.."_"..SelectedContainer)
+            AddOnTable.Functions.DebugMessage("Options", "Want to update container: "..Prefix.."Container"..SelectedBags.."_"..SelectedContainer)
             BaudBagUpdateContainer(_G["BaudBagContainer"..SelectedBags.."_"..SelectedContainer]) -- TODO: move to BaudBagBBConfig save?
         end
     end
@@ -402,16 +402,16 @@ function BaudBagOptionsSliderTemplateMixin:OnValueChanged()
     
     -- events are also called when values are set on load, make sure to not end in an update loop
     if Updating then
-        BaudBag_DebugMsg("Options", "It seems we are already updating, skipping further update...")
+        AddOnTable.Functions.DebugMessage("Options", "It seems we are already updating, skipping further update...")
         return
     end
     
     if (self:GetParent() == BaudBagOptions.GroupGlobal) then
-        BaudBag_DebugMsg("Options", "Updating value of global slider with id "..self:GetID().." to "..self:GetValue())
+        AddOnTable.Functions.DebugMessage("Options", "Updating value of global slider with id "..self:GetID().." to "..self:GetValue())
         
         -- save BBConfig entry
         local SavedVar = GlobalSliderBars[self:GetID()].SavedVar
-        BaudBag_DebugMsg("Options", "The variable associated with this value is "..SavedVar)
+        AddOnTable.Functions.DebugMessage("Options", "The variable associated with this value is "..SavedVar)
         BBConfig[SavedVar] = self:GetValue()
 
         BaudBagForEachOpenContainer(
@@ -420,11 +420,11 @@ function BaudBagOptionsSliderTemplateMixin:OnValueChanged()
             end
         )
     else
-        BaudBag_DebugMsg("Options", "Updating value of container slider with id "..self:GetID().." to "..self:GetValue())
+        AddOnTable.Functions.DebugMessage("Options", "Updating value of container slider with id "..self:GetID().." to "..self:GetValue())
 
         -- save BBConfig entry
         local SavedVar = ContainerSliderBars[self:GetID()].SavedVar
-        BaudBag_DebugMsg("Options", "The variable associated with this value is "..SavedVar)
+        AddOnTable.Functions.DebugMessage("Options", "The variable associated with this value is "..SavedVar)
         BBConfig[SelectedBags][SelectedContainer][SavedVar] = self:GetValue()
 
         -- cause the appropriate update  -- TODO: move to BaudBagBBConfig save?
