@@ -371,7 +371,8 @@ end
 
 
 --[[ slider functions ]]--
-function BaudBagSlider_OnValueChanged(self)
+BaudBagOptionsSliderTemplateMixin = {}
+function BaudBagOptionsSliderTemplateMixin:OnValueChanged()
     --[[
         This is called when the value of a slider is changed.
         First the new value directly shown in the title.

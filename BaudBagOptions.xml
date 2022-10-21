@@ -104,10 +104,10 @@
 		</Scripts>
 	</CheckButton>
 
-	<Slider name="BaudBagOptionsSliderTemplate" inherits="OptionsSliderTemplate" virtual="true">
+	<Slider name="BaudBagOptionsSliderTemplate" inherits="UISliderTemplateWithLabels" mixin="BaudBagOptionsSliderTemplateMixin" virtual="true">
 		<Size x="200" y="18" />
 		<Scripts>
-			<OnValueChanged function="BaudBagSlider_OnValueChanged" />
+			<OnValueChanged method="OnValueChanged" />
 		</Scripts>
 	</Slider>
 
