@@ -156,7 +156,9 @@ function Prototype:UpdateItemOverlays()
         BaudBag_DebugMsg("Bags", "Updating Items of Bag (ContainerId, container name)", self.ContainerId, self.Name)
         for Slot = 1, self.Size do
             local itemSlotObject = self.Items[Slot]
-            ContainerFrame_UpdateCooldown(self.ContainerId, itemSlotObject)
+            local info = AddOnTable.BlizzAPI.GetContainerItemInfo(self.ContainerId, itemSlotObject:GetID())
+            local texture = info and info.iconFileID
+            itemSlotObject:UpdateCooldown(texture)
             itemSlotObject:UpdateQuestOverlay(self.ContainerId)
         end
     end
