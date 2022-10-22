@@ -514,7 +514,7 @@ function BaudBagOptionsMixin:Update()
             end
 			
             -- assign texture, id and get item to be shown
-            _G[Button:GetName().."IconTexture"]:SetTexture(Texture or select(2,AddOnTable.BlizzAPI.GetInventorySlotInfo("Bag0Slot")))
+            _G[Button:GetName().."IconTexture"]:SetTexture(Texture or select(2, GetInventorySlotInfo("BAG0SLOT")))
             Button:SetID(ContNum)
             Button:Show()
         end
