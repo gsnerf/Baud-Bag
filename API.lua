@@ -27,7 +27,18 @@ AddOnTable.BlizzAPI = {
             isBound = isBound,
         }
     end,
-    GetContainerItemQuestInfo = GetContainerItemQuestInfo,
+    --- returns information about quest related information from an item
+    ---@param containerID number ID of the container 
+    ---@param slotIndex number index of the slot in the container
+    ---@return {isQuestItem: boolean, questID: number?, isActive: boolean }
+    GetContainerItemQuestInfo = function(containerID, slotIndex)
+        local isQuestItem, questID, isActive = GetContainerItemQuestInfo(containerID, slotIndex)
+        return {
+            isQuestItem = isQuestItem,
+            questID = questID,
+            isActive = isActive
+        }
+    end,
     GetBackpackAutosortDisabled = GetBackpackAutosortDisabled,
     GetBankAutosortDisabled = GetBankAutosortDisabled,
     GetContainerItemID = GetContainerItemID,

@@ -124,15 +124,7 @@ function Prototype:UpdateQuestOverlay(containerId)
         questTexture:ClearAllPoints()
         questTexture:SetPoint("CENTER", self.icon, "CENTER", -newWidth/3, 0)
 
-        local questInfo = {}
-        local isQuestItem, questId, isActive = AddOnTable.BlizzAPI.GetContainerItemQuestInfo(containerId, self.SlotIndex)
-        if (type(isQuestItem) == table) then
-            questInfo = isQuestItem
-        else
-            questInfo.isQuestItem = isQuestItem
-            questInfo.questID = questId
-            questInfo.isActive = isActive
-        end
+        local questInfo = AddOnTable.BlizzAPI.GetContainerItemQuestInfo(containerId, self.SlotIndex)
         local isQuestRelated = questInfo.questID ~= nil or questInfo.isQuestItem
 
         if ( isQuestRelated ) then
