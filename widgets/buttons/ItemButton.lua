@@ -169,13 +169,13 @@ function Prototype:UpdateNewAndBattlepayoverlays(isNewItem, isBattlePayItem)
     end
 
     if (BBConfig.ShowNewItems and isNewItem) then
-        
+
         if (isBattlePayItem) then
             newItemTexture:Hide()
             battlepayItemTexture:Show()
         else
-            if (quality and NEW_ITEM_ATLAS_BY_QUALITY[quality]) then
-                newItemTexture:SetAtlas(NEW_ITEM_ATLAS_BY_QUALITY[quality])
+            if (self.Quality and NEW_ITEM_ATLAS_BY_QUALITY[self.Quality]) then
+                newItemTexture:SetAtlas(NEW_ITEM_ATLAS_BY_QUALITY[self.Quality])
             else
                 newItemTexture:SetAtlas("bags-glow-white")
             end
