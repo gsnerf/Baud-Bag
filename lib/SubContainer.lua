@@ -154,6 +154,9 @@ end
 function Prototype:UpdateItemOverlays()
     if self:IsOpen() then
         BaudBag_DebugMsg("Bags", "Updating Items of Bag (ContainerId, container name)", self.ContainerId, self.Name)
+        if not AddOnTable.Functions.IsInventory(self.ContainerId) then
+            return
+        end
         for Slot = 1, self.Size do
             local itemSlotObject = self.Items[Slot]
             local containerItemInfo = AddOnTable.BlizzAPI.GetContainerItemInfo(self.ContainerId, itemSlotObject:GetID())
