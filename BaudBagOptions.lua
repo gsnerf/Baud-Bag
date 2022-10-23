@@ -251,7 +251,7 @@ function BaudBagEnabledCheck_OnClick(self, event, ...)
     -- TODO: move to BaudBagBBConfig save?
     if BBConfig and (BBConfig[2].Enabled == true) then BankFrame:UnregisterEvent("BANKFRAME_OPENED") end
     if BBConfig and (BBConfig[2].Enabled == false) then BankFrame:RegisterEvent("BANKFRAME_OPENED") end
-    BackpackTokenFrame_Update()
+    BackpackTokenFrame:Update()
 end
 
 function BaudBagCloseAllCheck_OnClick(self, event, ...)
