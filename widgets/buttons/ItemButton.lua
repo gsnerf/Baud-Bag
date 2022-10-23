@@ -16,21 +16,9 @@ function Prototype:UpdateContent(useCache, slotCache)
     local containerItemInfo = {}
 
     if not useCache then
-        local texture, count, locked, quality, isReadable, lootable, link, isFiltered, hasNoValue, itemID, isBound = AddOnTable.BlizzAPI.GetContainerItemInfo(self.Parent.ContainerId, self.SlotIndex)
-        if type(texture) == "table" then
-            containerItemInfo = texture
-        else
-            containerItemInfo.iconFileID = texture
-            containerItemInfo.stackCount = count
-            containerItemInfo.isLocked = locked
-            containerItemInfo.quality = quality
-            containerItemInfo.isReadable = isReadable
-            containerItemInfo.hasLoot = lootable
-            containerItemInfo.hyperlink = link
-            containerItemInfo.isFiltered = isFiltered
-            containerItemInfo.hasNoValue = hasNoValue
-            containerItemInfo.itemID = itemID
-            containerItemInfo.isBound = isBound
+        containerItemInfo = AddOnTable.BlizzAPI.GetContainerItemInfo(self.Parent.ContainerId, self.SlotIndex)
+        if containerItemInfo == nil then
+            containerItemInfo = {}
         end
         
         if containerItemInfo.hyperlink then
@@ -126,7 +114,7 @@ function Prototype:UpdateCustomRarity(showColor, intensity)
 end
 
 function Prototype:UpdateQuestOverlay(containerId)
-    local questTexture = _G[self.Name.."IconQuestTexture"]
+    local questTexture = self.IconQuestTexture
 
     if (questTexture) then
         local width, height = self.icon:GetSize()
@@ -135,19 +123,27 @@ function Prototype:UpdateQuestOverlay(containerId)
         questTexture:SetSize(newWidth, newHeight)
         questTexture:ClearAllPoints()
         questTexture:SetPoint("CENTER", self.icon, "CENTER", -newWidth/3, 0)
-        
+
+        local questInfo = {}
         local isQuestItem, questId, isActive = AddOnTable.BlizzAPI.GetContainerItemQuestInfo(containerId, self.SlotIndex)
-        local isQuestRelated = questId ~= nil or isQuestItem
+        if (type(isQuestItem) == table) then
+            questInfo = isQuestItem
+        else
+            questInfo.isQuestItem = isQuestItem
+            questInfo.questID = questId
+            questInfo.isActive = isActive
+        end
+        local isQuestRelated = questInfo.questID ~= nil or questInfo.isQuestItem
 
         if ( isQuestRelated ) then
             self.IconBorder:SetVertexColor(1, 0.9, 0.4, 0.9)
             self.IconBorder:Show()
-            if (not isActive) then
+            if (not questInfo.isActive) then
                 questTexture:Show()
             end
         end
 
-        if ( not questId or isActive ) then
+        if ( not questInfo.questID or questInfo.isActive ) then
             questTexture:Hide()
         end
     end

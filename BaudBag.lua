@@ -88,9 +88,9 @@ local EventFuncs = {
         end
 
         if (Slot ~= nil) then
-            local _, _, locked = AddOnTable.BlizzAPI.GetContainerItemInfo(Bag, Slot)
+            local containerItemInfo = AddOnTable.BlizzAPI.GetContainerItemInfo(Bag, Slot)
             local itemLock = AddOnTable.State.ItemLock
-            if ((not locked) and itemLock.Move) then
+            if ((not containerItemInfo.isLocked) and itemLock.Move) then
                 if (itemLock.IsReagent and (BaudBag_IsBankContainer(Bag)) and (Bag ~= REAGENTBANK_CONTAINER)) then
                     BaudBag_FixContainerClickForReagent(Bag, Slot)
                 end
@@ -132,8 +132,8 @@ Func = function(self, event, ...)
         BaudBagForEachBag(1,
             function(Bag, Index)
                 for Slot = 1, AddOnTable.BlizzAPI.GetContainerNumSlots(Bag) do
-                    local quality = select(4, AddOnTable.BlizzAPI.GetContainerItemInfo(Bag, Slot))
-                    if (quality and quality == 0) then
+                    local containerItemInfo = AddOnTable.BlizzAPI.GetContainerItemInfo(Bag, Slot)
+                    if (containerItemInfo.quality and containerItemInfo.quality == 0) then
                         BaudBag_DebugMsg("Junk", "Found junk (Container, Slot)", Bag, Slot)
                         AddOnTable.BlizzAPI.UseContainerItem(Bag, Slot)
                     end
@@ -698,16 +698,17 @@ end
 
 function BaudBag_FixContainerClickForReagent(Bag, Slot)
     -- determine if there is another item with the same item in the reagent bank
-    local _, count, _, _, _, _, link = AddOnTable.BlizzAPI.GetContainerItemInfo(Bag, Slot)
-    local maxSize = select(8, GetItemInfo(link))
+    local containerItemInfoBag = AddOnTable.BlizzAPI.GetContainerItemInfo(Bag, Slot)
+    local maxSize = select(8, GetItemInfo(containerItemInfoBag.hyperlink))
     local targetSlots = {}
     local emptySlots = AddOnTable.BlizzAPI.GetContainerFreeSlots(REAGENTBANK_CONTAINER)
     for i = 1, AddOnTable.BlizzAPI.GetContainerNumSlots(REAGENTBANK_CONTAINER) do
-        local _, targetCount, _, _, _, _, targetLink = AddOnTable.BlizzAPI.GetContainerItemInfo(REAGENTBANK_CONTAINER, i)
-        if (link == targetLink) then
-            local target    = {}
-            target.count    = targetCount
-            target.slot     = i
+        local containerItemInfoReagentBank = AddOnTable.BlizzAPI.GetContainerItemInfo(REAGENTBANK_CONTAINER, i)
+        if (containerItemInfoBag.hyperlink == containerItemInfoReagentBank.hyperlink) then
+            local target    = {
+                count    = containerItemInfoReagentBank.stackCount,
+                slot     = i
+            }
             table.insert(targetSlots, target)
         end
     end
@@ -715,6 +716,7 @@ function BaudBag_FixContainerClickForReagent(Bag, Slot)
     BaudBag_DebugMsg("ItemHandle", "fixing reagent bank entry (Bag, Slot, targetSlots, emptySlots)", Bag, Slot, targetSlots, emptySlots)
 
     -- if there already is a stack of the same item try to join the stacks
+    local count = containerItemInfoBag.stackCount
     for Key, Value in pairs(targetSlots) do
         BaudBag_DebugMsg("ItemHandle", "there already seem to be items of the same type in the reagent bank", Value)
         
