@@ -166,7 +166,7 @@ end
 
 --            --if (not itemID and voidCache[i]) then
 --            --	itemID = voidCache[i];
---            --	_, _, _, _, _, _, _, _, _, textureName, _ = GetItemInfo(itemID);
+--            --	_, _, _, _, _, _, _, _, _, textureName, _ = AddOnTable.BlizzAPI.GetItemInfo(itemID);
 --            --end
 
 --            button = _G["VoidStorageStorageButton"..i];

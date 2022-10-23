@@ -23,7 +23,7 @@ function Prototype:UpdateContent(useCache, slotCache)
         
         if containerItemInfo.hyperlink then
             cacheEntry = { Link = containerItemInfo.hyperlink, Count = containerItemInfo.stackCount }
-            isNewItem = C_NewItems.IsNewItem(self.Parent.ContainerId, self.SlotIndex)
+            isNewItem = AddOnTable.BlizzAPI.IsNewItem(self.Parent.ContainerId, self.SlotIndex)
             isBattlePayItem = AddOnTable.BlizzAPI.IsBattlePayItem(self.Parent.ContainerId, self.SlotIndex)
         end
     elseif slotCache then
@@ -35,7 +35,7 @@ function Prototype:UpdateContent(useCache, slotCache)
             -- regular items ... 
             local texture, quality
             if (strmatch(containerItemInfo.hyperlink, "|Hitem:")) then
-                _, _, quality, _, _, _, _, _, _, texture = GetItemInfo(containerItemInfo.hyperlink)
+                _, _, quality, _, _, _, _, _, _, texture = AddOnTable.BlizzAPI.GetItemInfo(containerItemInfo.hyperlink)
                 -- ... or a caged battle pet ...
             elseif (strmatch(containerItemInfo.hyperlink, "|Hbattlepet:")) then
                 local _, speciesID, _, qualityString = strsplit(":", containerItemInfo.hyperlink)
@@ -47,7 +47,7 @@ function Prototype:UpdateContent(useCache, slotCache)
             containerItemInfo.iconFileID = texture
 
             self.hasItem = 1
-            isNewItem = C_NewItems.IsNewItem(self.Parent.ContainerId, self.SlotIndex)
+            isNewItem = AddOnTable.BlizzAPI.IsNewItem(self.Parent.ContainerId, self.SlotIndex)
             isBattlePayItem = AddOnTable.BlizzAPI.IsBattlePayItem(self.Parent.ContainerId, self.SlotIndex)
 
             -- how to find out if an item is filtered by search here or not?

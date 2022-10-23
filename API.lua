@@ -39,5 +39,7 @@ AddOnTable.BlizzAPI = {
     SortBankBags = SortBankBags,
     SortReagentBankBags = SortReagentBankBags,
     SplitContainerItem = SplitContainerItem,
-    UseContainerItem = UseContainerItem
+    UseContainerItem = UseContainerItem,
+    IsNewItem = C_NewItems.IsNewItem,
+    GetItemInfo = GetItemInfo
 }

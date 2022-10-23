@@ -6,7 +6,7 @@ AddOnTable.BlizzAPI = {
     GetContainerNumSlots = C_Container.GetContainerNumSlots,
     GetContainerNumFreeSlots = C_Container.GetContainerNumFreeSlots,
     GetContainerFreeSlots = C_Container.GetContainerFreeSlots,
-    GetInventorySlotInfo = C_Container.GetInventorySlotInfo,
+    GetInventorySlotInfo = GetInventorySlotInfo,
     ---wrapper for the regular GetContainerItemInfo so we can support the addon in multiple interface levels
     ---@param containerId number ID of the container the item is located in
     ---@param slotIndex number ID of the slot in the container the item is located in
@@ -25,5 +25,7 @@ AddOnTable.BlizzAPI = {
     SortBankBags = C_Container.SortBankBags,
     SortReagentBankBags = C_Container.SortReagentBankBags,
     SplitContainerItem = C_Container.SplitContainerItem,
-    UseContainerItem = C_Container.UseContainerItem
+    UseContainerItem = C_Container.UseContainerItem,
+    IsNewItem = C_NewItems.IsNewItem,
+    GetItemInfo = GetItemInfo
 }
