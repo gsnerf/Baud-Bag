@@ -56,7 +56,11 @@ function Prototype:UpdateContent(useCache, slotCache)
 
     end
     
-    self:SetItemButtonTexture(containerItemInfo.iconFileID)
+    if SetItemButtonTexture ~= nil then
+        SetItemButtonTexture(self, containerItemInfo.iconFileID)
+    else
+        self:SetItemButtonTexture(containerItemInfo.iconFileID)
+    end
     --SetItemButtonQuality(self, containerItemInfo.quality, containerItemInfo.iconFileID)
     SetItemButtonCount(self, containerItemInfo.stackCount)
     SetItemButtonDesaturated(self, containerItemInfo.isLocked)
