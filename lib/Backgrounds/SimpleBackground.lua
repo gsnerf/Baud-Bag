@@ -23,7 +23,7 @@ function Prototype:Update(containerFrame, backdrop, shiftName)
 
     local Bottom = self.Insets.Bottom
     if (containerFrame:GetID() == 1) then
-        if (BackpackTokenFrame_IsShown() == 1  and containerFrame:GetName() == "BaudBagContainer1_1") then
+        if (containerFrame.TokenFrame.shouldShow == 1 and containerFrame:GetName() == "BaudBagContainer1_1") then
             containerFrame.FreeSlots:SetPoint("BOTTOMLEFT",   2, -17)
             containerFrame.MoneyFrame:SetPoint("BOTTOMRIGHT", 8, -18)
             containerFrame.TokenFrame:SetPoint("BOTTOMLEFT",  8, -36)
@@ -48,7 +48,7 @@ function AddOnTable:CreateSimpleBackground(id, name, insets, backdrop, color)
     background.Insets = insets
     background.Backdrop = backdrop
     background.BackdropColor = color
-    
+
     AddOnTable["Backgrounds"][id] = background
-    return bagSet
+    return background
 end

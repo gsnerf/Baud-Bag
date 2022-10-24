@@ -1,7 +1,6 @@
 ## Author: Thurmal (Author), Suddendeath2000 (Former Author), Baudzila (Original Author)
 ## DefaultState: Enabled
-## Interface: 90100
-## Globe: check-classic
+## Interface: 100000
 ## LoadOnDemand: 0
 ## Dependencies: Blizzard_VoidStorageUI
 ## OptionalDeps: CaedronWardrobe, Masque
@@ -12,7 +11,7 @@
 ## Title: Baud Bag
 ## Title-zhCN: 背包整合 Baud Bag
 ## Title-zhTW: 背包整合 Baud Bag
-## Version: 9.1.0
+## Version: 10.0.2.0
 
 # english has to be the first locale!
 localization\Localization.en.lua
@@ -23,6 +22,7 @@ localization\Localization.ru.lua
 localization\Localization.zhCN.lua
 localization\Localization.zhTW.lua
 BaudBagFunctions.lua
+API.lua
 lib\BaseTypes.lua
 lib\BagSet.lua
 lib\SubContainer.lua
@@ -34,12 +34,14 @@ lib\Backgrounds\SimpleBackground.lua
 lib\Backgrounds\BackgroundRegistration.lua
 widgets\buttons\BagButton.xml
 widgets\buttons\ItemButton.lua
+Events.lua
 BaudBagConfig.lua
 BaudBagCache.lua
 BaudBagToolTips.lua
 BaudBagOptions.xml
-BaudBagToken.xml
-BaudBagBank.xml
+TokenBar.xml
+BaudBagBank.lua
+ReagentBank.xml
 frames\BaudBagSearchFrame.xml
 Overrides.lua
 BaudBag.xml

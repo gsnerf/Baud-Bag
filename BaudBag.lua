@@ -15,22 +15,6 @@ local FadeTime = 0.2
 -- this is supposed to be deprecated and should be removed in the future this does not have to be global
 local Prefix = "BaudBag" -- this should be identical to "AddOnName"
 local NumCont = {}
-local ItemToolTip
-
-
-local BBFrameFuncs = {
-    IsCraftingReagent = function (itemId)
-        ItemToolTip:SetItemByID(itemId)
-        local isReagent = false
-        for i = 1, ItemToolTip:NumLines() do
-            local text = _G["BaudBagScanningTooltipTextLeft"..i]:GetText()
-            if (string.find(text, Localized.TooltipScanReagent)) then
-                isReagent = true
-            end
-        end
-        return isReagent
-    end
-}
 
 --[[ Local helper methods used in event handling ]]
 local function BackpackBagOverview_Initialize()
@@ -74,7 +58,6 @@ local EventFuncs = {
             BaudBag_Debug = {}
         end
         BaudBag_DebugMsg("Bags", "Event PLAYER_LOGIN fired")
-        
 
         BackpackBagOverview_Initialize()
         BaudBagUpdateFromBBConfig()
@@ -105,15 +88,16 @@ local EventFuncs = {
         end
 
         if (Slot ~= nil) then
-            local _, _, locked = GetContainerItemInfo(Bag, Slot)
-            if ((not locked) and BaudBagFrame.ItemLock.Move) then
-                if (BaudBagFrame.ItemLock.IsReagent and (BaudBag_IsBankContainer(Bag)) and (Bag ~= REAGENTBANK_CONTAINER)) then
+            local containerItemInfo = AddOnTable.BlizzAPI.GetContainerItemInfo(Bag, Slot)
+            local itemLock = AddOnTable.State.ItemLock
+            if ((not containerItemInfo.isLocked) and itemLock.Move) then
+                if (itemLock.IsReagent and (BaudBag_IsBankContainer(Bag)) and (Bag ~= REAGENTBANK_CONTAINER)) then
                     BaudBag_FixContainerClickForReagent(Bag, Slot)
                 end
-                BaudBagFrame.ItemLock.Move      = false
-                BaudBagFrame.ItemLock.IsReagent = false
+                itemLock.Move      = false
+                itemLock.IsReagent = false
             end
-            BaudBag_DebugMsg("ItemHandle", "Updating ItemLock Info", BaudBagFrame.ItemLock)
+            BaudBag_DebugMsg("ItemHandle", "Updating ItemLock Info", itemLock.ItemLock)
         end
     end,
 
@@ -147,11 +131,11 @@ Func = function(self, event, ...)
     if (BBConfig.SellJunk and MerchantFrame:IsShown()) then
         BaudBagForEachBag(1,
             function(Bag, Index)
-                for Slot = 1, GetContainerNumSlots(Bag) do
-                    local quality = select(4, GetContainerItemInfo(Bag, Slot))
-                    if (quality and quality == 0) then
+                for Slot = 1, AddOnTable.BlizzAPI.GetContainerNumSlots(Bag) do
+                    local containerItemInfo = AddOnTable.BlizzAPI.GetContainerItemInfo(Bag, Slot)
+                    if (containerItemInfo.quality and containerItemInfo.quality == 0) then
                         BaudBag_DebugMsg("Junk", "Found junk (Container, Slot)", Bag, Slot)
-                        UseContainerItem(Bag, Slot)
+                        AddOnTable.BlizzAPI.UseContainerItem(Bag, Slot)
                     end
                 end
             end
@@ -166,7 +150,6 @@ Func = function(self, event, ...)
 end
 EventFuncs.MAIL_SHOW = Func
 EventFuncs.AUCTION_HOUSE_SHOW = Func
-EventFuncs.SCRAPPING_MACHINE_SHOW = Func
 
 Func = function(self, event, ...)
     BaudBag_DebugMsg("Bags", "Event fired", event)
@@ -175,7 +158,6 @@ end
 EventFuncs.MERCHANT_CLOSED = Func
 EventFuncs.MAIL_CLOSED = Func
 EventFuncs.AUCTION_HOUSE_CLOSED = Func
-EventFuncs.SCRAPPING_MACHINE_CLOSE = Func
 
 local collectedBagEvents = {}
 Func = function(self, event, ...)
@@ -268,19 +250,17 @@ function BaudBag_OnLoad(self, event, ...)
 
     BaudBag_DebugMsg("Bags", "OnLoad was called")
 
-    -- init item lock info
-    BaudBagFrame.ItemLock           = {}
-    BaudBagFrame.ItemLock.Move      = false
-    BaudBagFrame.ItemLock.IsReagent = false
+    AddOnTable.Functions.InitFunctions()
 
     -- register for global events (actually handled in OnEvent function)
     for Key, Value in pairs(EventFuncs)do
         self:RegisterEvent(Key)
     end
     BaudBag_RegisterBankEvents(self)
+    AddOnTable.Functions.RegisterEvents(self)
 
     -- the first container from each set (inventory/bank) is different and is created in the XML
-    local SubBag, Container
+    local Container
     for BagSet = 1, 2 do
         Container = _G[Prefix.."Container"..BagSet.."_1"]
         Container.FreeSlots:SetPoint("RIGHT",Container:GetName().."MoneyFrame","LEFT")
@@ -296,15 +276,6 @@ function BaudBag_OnLoad(self, event, ...)
     BaudBag_DebugMsg("Bags", "Creating sub bags")
     BackpackSet:PerformInitialBuild()
     BankSet:PerformInitialBuild()
-
-    -- create tooltip for parsing exactly once!
-    ItemToolTip = CreateFrame("GameTooltip", "BaudBagScanningTooltip", nil, "GameTooltipTemplate")
-    ItemToolTip:SetOwner( WorldFrame, "ANCHOR_NONE" )
-
-    -- now make sure all functions that are supposed to be part of the frame are hooked to the frame, now we know that it is there!
-    for Key, Value in pairs(BBFrameFuncs) do
-        BaudBagFrame[Key] = Value
-    end
 end
 
 
@@ -314,6 +285,7 @@ function BaudBag_OnEvent(self, event, ...)
     if EventFuncs[event] then
         EventFuncs[event](self, event, ...)
     end
+    AddOnTable.Functions.OnEvent(self, event, ...)
 end
 
 -- this just makes sure the bags will be visible at the correct layer position when opened
@@ -427,7 +399,7 @@ function BaudBagContainer_OnHide(self, event, ...)
     (first the bag set so the "offline" title doesn't show up before closing and then the bank to disconnect)
     ]]--
     if (self:GetID() == 1) and (BBConfig[self.BagSet].Enabled) and (BBConfig[self.BagSet].CloseAll) then
-        if (self.BagSet == 2) and BaudBagFrame.BankOpen then
+        if (self.BagSet == 2) and AddOnTable.State.BankOpen then
             -- [TAINT] can be problematic, but doesn't have to be
             CloseBankFrame()
         end
@@ -545,10 +517,10 @@ local function UpdateThisHighlight(self)
 end
 
 --These function hooks override the bag button highlight changes that Blizzard does
-hooksecurefunc("BagSlotButton_OnClick", UpdateThisHighlight)
-hooksecurefunc("BagSlotButton_OnDrag", UpdateThisHighlight)
-hooksecurefunc("BagSlotButton_OnModifiedClick", UpdateThisHighlight)
-hooksecurefunc("BackpackButton_OnClick", function(self)
+--hooksecurefunc("BagSlotButton_OnClick", UpdateThisHighlight)
+--hooksecurefunc("BagSlotButton_OnDrag", UpdateThisHighlight)
+--hooksecurefunc("BagSlotButton_OnModifiedClick", UpdateThisHighlight)
+--[[hooksecurefunc("BackpackButton_OnClick", function(self)
     if BBConfig and(BBConfig[1].Enabled == false)then
         return
     end
@@ -557,7 +529,7 @@ hooksecurefunc("BackpackButton_OnClick", function(self)
     else
         self.SlotHighlightTexture:Hide()
     end
-end)
+end)]]
 
 --[[ custom defined BaudBagSubBag event handlers ]]--
 local SubBagEvents = {}
@@ -588,7 +560,7 @@ end
 
 
 function BaudBagSubBag_OnEvent(self, event, ...)
-    if not self:GetParent():IsShown() or BaudBag_IsBankDefaultContainer(Bag) or (self:GetID() >= 5) and not BaudBagFrame.BankOpen then
+    if not self:GetParent():IsShown() or BaudBag_IsBankDefaultContainer(Bag) or (self:GetID() >= 5) and not AddOnTable.State.BankOpen then
         return
     end
     SubBagEvents[event](self, event, ...)
@@ -642,8 +614,8 @@ function BaudBag_OnModifiedClick(self, button)
 end
 
 
-hooksecurefunc("ContainerFrameItemButton_OnModifiedClick", BaudBag_OnModifiedClick)
-hooksecurefunc("BankFrameItemButtonGeneric_OnModifiedClick", BaudBag_OnModifiedClick)
+--hooksecurefunc("ContainerFrameItemButton_OnModifiedClick", BaudBag_OnModifiedClick)
+--hooksecurefunc("BankFrameItemButtonGeneric_OnModifiedClick", BaudBag_OnModifiedClick)
 
 -- TODO: after changes there is some weird behavior after applying changes (like changing the name)
 -- Seems to be in Background drawing for Slot Count
@@ -706,36 +678,19 @@ function BaudBag_BagSlot_OnLeave(self, event, ...)
 	
 end
 
-function BaudBag_ContainerFrameItemButton_OnClick(self, button)
-    BaudBag_DebugMsg("ItemHandle", "OnClick called (button, bag)", button, self:GetParent():GetID())
-    if (button ~= "LeftButton" and BaudBagFrame.BankOpen) then
-        local itemId = GetContainerItemID(self:GetParent():GetID(), self:GetID())
-        local isReagent = (itemId and BaudBagFrame.IsCraftingReagent(itemId))
-        local sourceIsBank = BaudBag_IsBankContainer(self:GetParent():GetID())
-        local targetReagentBank = IsReagentBankUnlocked() and isReagent
-        
-        BaudBag_DebugMsg("ItemHandle", "handling item (itemId, isReagent, targetReagentBank)", itemId, isReagent, targetReagentBank)
-
-        -- remember to start a move operation when item was placed in bank by wow!
-        if (targetReagentBank) then
-            BaudBagFrame.ItemLock.Move      = true
-            BaudBagFrame.ItemLock.IsReagent = true
-        end
-    end
-end
-
 function BaudBag_FixContainerClickForReagent(Bag, Slot)
     -- determine if there is another item with the same item in the reagent bank
-    local _, count, _, _, _, _, link = GetContainerItemInfo(Bag, Slot)
-    local maxSize = select(8, GetItemInfo(link))
+    local containerItemInfoBag = AddOnTable.BlizzAPI.GetContainerItemInfo(Bag, Slot)
+    local maxSize = select(8, AddOnTable.BlizzAPI.GetItemInfo(containerItemInfoBag.hyperlink))
     local targetSlots = {}
-    local emptySlots = GetContainerFreeSlots(REAGENTBANK_CONTAINER)
-    for i = 1, GetContainerNumSlots(REAGENTBANK_CONTAINER) do
-        local _, targetCount, _, _, _, _, targbcetLink = GetContainerItemInfo(REAGENTBANK_CONTAINER, i)
-        if (link == targetLink) then
-            local target    = {}
-            target.count    = targetCount
-            target.slot     = i
+    local emptySlots = AddOnTable.BlizzAPI.GetContainerFreeSlots(REAGENTBANK_CONTAINER)
+    for i = 1, AddOnTable.BlizzAPI.GetContainerNumSlots(REAGENTBANK_CONTAINER) do
+        local containerItemInfoReagentBank = AddOnTable.BlizzAPI.GetContainerItemInfo(REAGENTBANK_CONTAINER, i)
+        if (containerItemInfoBag.hyperlink == containerItemInfoReagentBank.hyperlink) then
+            local target    = {
+                count    = containerItemInfoReagentBank.stackCount,
+                slot     = i
+            }
             table.insert(targetSlots, target)
         end
     end
@@ -743,6 +698,7 @@ function BaudBag_FixContainerClickForReagent(Bag, Slot)
     BaudBag_DebugMsg("ItemHandle", "fixing reagent bank entry (Bag, Slot, targetSlots, emptySlots)", Bag, Slot, targetSlots, emptySlots)
 
     -- if there already is a stack of the same item try to join the stacks
+    local count = containerItemInfoBag.stackCount
     for Key, Value in pairs(targetSlots) do
         BaudBag_DebugMsg("ItemHandle", "there already seem to be items of the same type in the reagent bank", Value)
         
@@ -754,13 +710,13 @@ function BaudBag_FixContainerClickForReagent(Bag, Slot)
             if (space > 0) then
                 if (space < count) then
                     -- doesn't seem so, split and go on
-                    SplitContainerItem(Bag, Slot, space)
-                    PickupContainerItem(REAGENTBANK_CONTAINER, Value.slot)
+                    AddOnTable.BlizzAPI.SplitContainerItem(Bag, Slot, space)
+                    AddOnTable.BlizzAPI.PickupContainerItem(REAGENTBANK_CONTAINER, Value.slot)
                     count = count - space
                 else
                     -- seems so: put everything there
-                    PickupContainerItem(Bag, Slot)
-                    PickupContainerItem(REAGENTBANK_CONTAINER, Value.slot)
+                    AddOnTable.BlizzAPI.PickupContainerItem(Bag, Slot)
+                    AddOnTable.BlizzAPI.PickupContainerItem(REAGENTBANK_CONTAINER, Value.slot)
                     count = 0
                 end
             end
@@ -773,8 +729,8 @@ function BaudBag_FixContainerClickForReagent(Bag, Slot)
     if (count > 0) then
         for Key, Value in pairs(emptySlots) do
             BaudBag_DebugMsg("ItemHandle", "putting rest stack into reagent bank slot (restStack)", Value)
-            PickupContainerItem(Bag, Slot)
-            PickupContainerItem(REAGENTBANK_CONTAINER, Value)
+            AddOnTable.BlizzAPI.PickupContainerItem(Bag, Slot)
+            AddOnTable.BlizzAPI.PickupContainerItem(REAGENTBANK_CONTAINER, Value)
             return
         end
     end

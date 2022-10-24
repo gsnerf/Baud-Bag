@@ -1,9 +1,10 @@
 local _
+local AddOnName, AddOnTable = ...
 local Prefix = "BaudBag"
-local INV_ID_BAG_FIRST = ContainerIDToInventoryID(1)
-local INV_ID_BAG_LAST = ContainerIDToInventoryID(NUM_BAG_SLOTS)
-local INV_ID_BANK_BAG_FIRST = ContainerIDToInventoryID(NUM_BAG_SLOTS+1)
-local INV_ID_BANK_BAG_LAST = ContainerIDToInventoryID(NUM_BAG_SLOTS + NUM_BANKBAGSLOTS)
+local INV_ID_BAG_FIRST = AddOnTable.BlizzAPI.ContainerIDToInventoryID(1)
+local INV_ID_BAG_LAST = AddOnTable.BlizzAPI.ContainerIDToInventoryID(NUM_BAG_SLOTS)
+local INV_ID_BANK_BAG_FIRST = AddOnTable.BlizzAPI.ContainerIDToInventoryID(NUM_BAG_SLOTS+1)
+local INV_ID_BANK_BAG_LAST = AddOnTable.BlizzAPI.ContainerIDToInventoryID(NUM_BAG_SLOTS + NUM_BANKBAGSLOTS)
 
 -- Adds container name when mousing over bags, aswell as simulating offline bank item mouse over
 hooksecurefunc(GameTooltip, "SetInventoryItem", function (Data, Unit, InvID)

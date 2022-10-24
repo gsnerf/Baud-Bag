@@ -50,7 +50,7 @@
 	</Frame>
 
 	<!-- This is the checkbox between two bags that marks if the box is joined or not -->
-	<CheckButton name="BaudBagOptionsJoinCheckTemplate" inherits="OptionsCheckButtonTemplate" virtual="true">
+	<CheckButton name="BaudBagOptionsJoinCheckTemplate" inherits="BaudBagOptionsCheckButtonTemplate" virtual="true">
 		<Size x="26" y="26" />
 		<HitRectInsets>
 			<AbsInset left="0" right="0" top="0" bottom="0" />
@@ -63,7 +63,7 @@
 
 	<!-- TEMPLATES USED IN THE XML DECLARATION OF THE FRAME-->
 
-	<CheckButton name="BaudBagOptionsCheckButtonTemplate" inherits="OptionsCheckButtonTemplate" virtual="true">
+	<CheckButton name="BaudBagGeneralOptionsCheckButtonTemplate" inherits="BaudBagOptionsCheckButtonTemplate" virtual="true">
 		<Size x="26" y="26" />
 		<HitRectInsets>
 			<AbsInset left="0" right="0" top="0" bottom="0" />
@@ -73,15 +73,46 @@
 		</Scripts>
 	</CheckButton>
 
-	<Slider name="BaudBagOptionsSliderTemplate" inherits="OptionsSliderTemplate" virtual="true">
+	<CheckButton name="BaudBagOptionsCheckButtonTemplate" virtual="true" inherits="UICheckButtonTemplate">
+		<Size x="26" y="26"/>
+		<HitRectInsets>
+			<AbsInset left="0" right="-100" top="0" bottom="0"/>
+		</HitRectInsets>
+		
+		<Scripts>
+			<OnClick>
+				if ( self:GetChecked() ) then
+					PlaySound(SOUNDKIT.IG_MAINMENU_OPTION_CHECKBOX_ON);
+				else
+					PlaySound(SOUNDKIT.IG_MAINMENU_OPTION_CHECKBOX_OFF);
+				end
+				BlizzardOptionsPanel_CheckButton_OnClick(self);
+			</OnClick>
+			<OnEnter>
+				if ( self.tooltipText ) then
+					GetAppropriateTooltip():SetOwner(self, self.tooltipOwnerPoint or "ANCHOR_RIGHT");
+					GetAppropriateTooltip():SetText(self.tooltipText, nil, nil, nil, nil, true);
+				end
+				if ( self.tooltipRequirement ) then
+					GetAppropriateTooltip():AddLine(self.tooltipRequirement, 1.0, 1.0, 1.0, true);
+					GetAppropriateTooltip():Show();
+				end
+			</OnEnter>
+			<OnLeave>
+				GetAppropriateTooltip():Hide();
+			</OnLeave>
+		</Scripts>
+	</CheckButton>
+
+	<Slider name="BaudBagOptionsSliderTemplate" inherits="UISliderTemplateWithLabels" mixin="BaudBagOptionsSliderTemplateMixin" virtual="true">
 		<Size x="200" y="18" />
 		<Scripts>
-			<OnValueChanged function="BaudBagSlider_OnValueChanged" />
+			<OnValueChanged method="OnValueChanged" />
 		</Scripts>
 	</Slider>
 
 	<!-- actual frame -->
-	<Frame name="BaudBagOptions">
+	<Frame name="BaudBagOptions" mixin="BaudBagOptionsMixin">
 		<Layers>
 			<Layer level="ARTWORK">
 				<FontString parentKey="Title" inherits="GameFontNormalLarge">
@@ -114,25 +145,25 @@
 					</Frame>
 
 
-					<CheckButton name="$parentCheckButton1" parentKey="CheckButton1" inherits="BaudBagOptionsCheckButtonTemplate" id="1">
+					<CheckButton name="$parentCheckButton1" parentKey="CheckButton1" inherits="BaudBagGeneralOptionsCheckButtonTemplate" id="1">
 						<Anchors>
 							<Anchor point="TOPLEFT" relativeKey="$parent.Header" relativePoint="BOTTOMLEFT" x="20" y="-7" />
 						</Anchors>
 					</CheckButton>
 
-					<CheckButton name="$parentCheckButton2" parentKey="CheckButton2" inherits="BaudBagOptionsCheckButtonTemplate" id="2">
+					<CheckButton name="$parentCheckButton2" parentKey="CheckButton2" inherits="BaudBagGeneralOptionsCheckButtonTemplate" id="2">
 						<Anchors>
 							<Anchor point="TOPLEFT" relativeKey="$parent.CheckButton1" relativePoint="BOTTOMLEFT" y="-5" />
 						</Anchors>
 					</CheckButton>
 
-					<CheckButton name="$parentCheckButton3" parentKey="CheckButton3" inherits="BaudBagOptionsCheckButtonTemplate" id="3">
+					<CheckButton name="$parentCheckButton3" parentKey="CheckButton3" inherits="BaudBagGeneralOptionsCheckButtonTemplate" id="3">
 						<Anchors>
 							<Anchor point="TOPLEFT" relativeKey="$parent.CheckButton2" relativePoint="BOTTOMLEFT" y="-5" />
 						</Anchors>
 					</CheckButton>
 
-					<CheckButton name="$parentCheckButton4" parentKey="CheckButton4" inherits="BaudBagOptionsCheckButtonTemplate" id="4">
+					<CheckButton name="$parentCheckButton4" parentKey="CheckButton4" inherits="BaudBagGeneralOptionsCheckButtonTemplate" id="4">
 						<Anchors>
 							<Anchor point="TOPLEFT" relativeKey="$parent.CheckButton3" relativePoint="BOTTOMLEFT" y="-5" />
 						</Anchors>
@@ -178,7 +209,7 @@
 						</Layers>
 					</Frame>
 
-					<CheckButton name="$parentEnabledCheck" parentKey="EnabledCheck" inherits="OptionsCheckButtonTemplate" id="Enabled">
+					<CheckButton name="$parentEnabledCheck" parentKey="EnabledCheck" inherits="BaudBagOptionsCheckButtonTemplate" id="Enabled">
 						<Anchors>
 							<Anchor point="TOPLEFT" relativeKey="$parent.SetSelection" relativePoint="TOPRIGHT" x="5" y="-2" />
 						</Anchors>
@@ -187,7 +218,7 @@
 						</Scripts>
 					</CheckButton>
 
-					<CheckButton name="$parentCloseAllCheck" parentKey="CloseAllCheck" inherits="OptionsCheckButtonTemplate" id="CloseAll">
+					<CheckButton name="$parentCloseAllCheck" parentKey="CloseAllCheck" inherits="BaudBagOptionsCheckButtonTemplate" id="CloseAll">
 						<Anchors>
 							<Anchor point="TOPLEFT" relativeTo="$parentEnabledCheckText" relativePoint="TOPRIGHT" x="10" y="6" />
 						</Anchors>
@@ -244,19 +275,19 @@
 						</Layers>
 					</Frame>
 
-					<CheckButton name="$parentCheckButton1" parentKey="CheckButton1" inherits="BaudBagOptionsCheckButtonTemplate" id="1">
+					<CheckButton name="$parentCheckButton1" parentKey="CheckButton1" inherits="BaudBagGeneralOptionsCheckButtonTemplate" id="1">
 						<Anchors>
 							<Anchor point="TOPLEFT" relativeKey="$parent.BackgroundSelection" relativePoint="BOTTOMLEFT" x="20" y="-7" />
 						</Anchors>
 					</CheckButton>
 
-					<CheckButton name="$parentCheckButton2" parentKey="CheckButton2" inherits="BaudBagOptionsCheckButtonTemplate" id="2">
+					<CheckButton name="$parentCheckButton2" parentKey="CheckButton2" inherits="BaudBagGeneralOptionsCheckButtonTemplate" id="2">
 						<Anchors>
 							<Anchor point="TOPLEFT" relativeKey="$parent.CheckButton1" relativePoint="BOTTOMLEFT" x="0" y="8" />
 						</Anchors>
 					</CheckButton>
 
-					<CheckButton name="$parentCheckButton3" parentKey="CheckButton3" inherits="BaudBagOptionsCheckButtonTemplate" id="3">
+					<CheckButton name="$parentCheckButton3" parentKey="CheckButton3" inherits="BaudBagGeneralOptionsCheckButtonTemplate" id="3">
 						<Anchors>
 							<Anchor point="TOPLEFT" relativeKey="$parent.CheckButton2" relativePoint="BOTTOMLEFT" x="0" y="8" />
 						</Anchors>
@@ -277,8 +308,8 @@
 
 		</Frames>
 		<Scripts>
-			<OnLoad		function="BaudBagOptions_OnLoad" />
-			<OnEvent	function="BaudBagOptions_OnEvent" />
+			<OnLoad  method="OnLoad" />
+			<OnEvent method="OnEvent" />
 		</Scripts>
 	</Frame>
 </Ui>

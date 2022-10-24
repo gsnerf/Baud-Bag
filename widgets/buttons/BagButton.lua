@@ -17,7 +17,6 @@ function BaudBag_BagButtonMixin:Initialize()
     self.IsBankContainer = self.BagSetType == BagSetType.Bank
     self.IsInventoryContainer = self.BagSetType == BagSetType.Backpack
 
-    ItemAnim_OnLoad( self )
     if (self.IsInventoryContainer) then
         PaperDollItemSlotButton_OnLoad( self )
         -- as the PaperDollItemSlotButton_OnLoad method called just now overwrites the UpdateTooltip function, we have to reset it here...
@@ -66,7 +65,7 @@ end
 function BaudBag_BagButtonMixin:UpdateTooltip()
     if (self.IsInventoryContainer) then
         BaudBag_DebugMsg("Tooltip", "[BagButton:UpdateTooltip] bag belongs to inventory, forwarding to BagSlotButton_OnEnter [bagId]", self.SubContainerId)
-        BagSlotButton_OnEnter(self)
+        --BagSlotButton_OnEnter(self)
         return
     end
 
@@ -101,12 +100,20 @@ end
 function BaudBag_BagButtonMixin:OnLoad()
     self:RegisterEvent( "BAG_UPDATE_DELAYED" )
     self:RegisterEvent( "INVENTORY_SEARCH_UPDATE" )
+    self:RegisterEvent( "ITEM_PUSH" )
 	self:RegisterForDrag( "LeftButton" )
     self:RegisterForClicks( "LeftButtonUp", "RightButtonUp" )
 end
 
 function BaudBag_BagButtonMixin:OnEvent( event, ... )
-    ItemAnim_OnEvent( self, event, ... )
+    if ( event == "ITEM_PUSH" ) then
+		local bagSlot, iconFileID = ...
+		local id = self:GetID()
+		if ( id == bagSlot ) then
+			self.animIcon:SetTexture(iconFileID)
+			self.flyin:Play(true)
+		end
+	end
 end
 
 function BaudBag_BagButtonMixin:OnShow()

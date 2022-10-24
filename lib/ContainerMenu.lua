@@ -49,16 +49,16 @@ end
     -- cleanup button first regular
     if (DropDownBagSet == 1) then
         entry.text = BAG_CLEANUP_BAGS
-        entry.func = SortBags
+        entry.func = AddOnTable.BlizzAPI.SortBags
         entry.checked = false
         UIDropDownMenu_AddButton(entry)
-    elseif (DropDownContainer and BaudBagFrame.BankOpen) then
+    elseif (DropDownContainer and AddOnTable.State.BankOpen) then
         if(_G["BaudBagContainer"..DropDownBagSet.."_"..DropDownContainer].Bags[1]:GetID() == -3) then
             entry.text = BAG_CLEANUP_REAGENT_BANK
-            entry.func = SortReagentBankBags
+            entry.func = AddOnTable.BlizzAPI.SortReagentBankBags
         else
             entry.text = BAG_CLEANUP_BANK
-            entry.func = SortBankBags
+            entry.func = AddOnTable.BlizzAPI.SortBankBags
         end
         UIDropDownMenu_AddButton(entry)
     end
@@ -85,7 +85,7 @@ end
     UIDropDownMenu_AddButton(entry)
 
     -- increase backpack size
-    local needToShow = not (IsAccountSecured() and GetContainerNumSlots(BACKPACK_CONTAINER) > BACKPACK_BASE_SIZE)
+    local needToShow = not (IsAccountSecured() and AddOnTable.BlizzAPI.GetContainerNumSlots(BACKPACK_CONTAINER) > BACKPACK_BASE_SIZE)
     if (needToShow) then
         entry.text = BACKPACK_AUTHENTICATOR_INCREASE_SIZE
         entry.func = BaudBag_AddSlotsClick
@@ -108,7 +108,7 @@ function AddFilterOptions(bagSetId, containerId, header)
             or
             firstSubContainerId == REAGENTBANK_CONTAINER
             or
-            IsInventoryItemProfessionBag("player", ContainerIDToInventoryID(firstSubContainerId))
+            IsInventoryItemProfessionBag("player", AddOnTable.BlizzAPI.ContainerIDToInventoryID(firstSubContainerId))
         )
     ) then
         -- the backpack, bank or reagent bank themselves cannot have filters!
@@ -132,14 +132,12 @@ function AddFilterOptions(bagSetId, containerId, header)
     end
 
     local info = UIDropDownMenu_CreateInfo()
-    for i = LE_BAG_FILTER_FLAG_EQUIPMENT, NUM_LE_BAG_FILTER_FLAGS do
-        if ( i ~= LE_BAG_FILTER_FLAG_JUNK ) then
-            info.text = BAG_FILTER_LABELS[i]
-            info.func = toggleFilter
-            info.arg1 = i
-            info.checked = containerObject:GetFilterType() == i
-            UIDropDownMenu_AddButton(info)
-        end
+    for _, flag in AddOnTable.BlizzAPI.EnumerateBagGearFilters() do
+        info.text = BAG_FILTER_LABELS[flag]
+        info.func = toggleFilter
+        info.arg1 = flag
+        info.checked = containerObject:GetFilterType() == flag
+        UIDropDownMenu_AddButton(info)
     end
 end
 

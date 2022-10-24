@@ -34,11 +34,10 @@ function Prototype:GetTexturePiece(Name, MinX, MaxX, MinY, MaxY, Width, Height, 
     Texture:ClearAllPoints()
     Texture:SetTexture(self.File)
     Texture:SetTexCoord(MinX / self.Width, (MaxX + 1) / self.Width, MinY / self.Height, (MaxY + 1) / self.Height)
-    Texture:SetWidth(Width)
-    Texture:SetHeight(Height)
+    Texture:SetSize(Width, Height)
     Texture:SetDrawLayer(Layer)
     Texture:Show()
-    
+
     return Texture
 end
 

@@ -165,8 +165,8 @@ function BaudBagSearchFrameEditBox_OnTextChanged(self, isUserInput)
                     slotCache = bagCache and bagCache[Slot] or nil
 
                     -- get item link according to the type of bag
-                    if (SubBag.BagSet ~= 2) or BaudBagFrame.BankOpen then
-                        Link = GetContainerItemLink(SubBag:GetID(), Slot)
+                    if (SubBag.BagSet ~= 2) or AddOnTable.State.BankOpen then
+                        Link = AddOnTable.BlizzAPI.GetContainerItemLink(SubBag:GetID(), Slot)
                     elseif slotCache then
                         Link = slotCache.Link
                     end
@@ -179,7 +179,7 @@ function BaudBagSearchFrameEditBox_OnTextChanged(self, isUserInput)
 
                         -- we can have different types of links, usually it is an item...
                         if (strmatch(Link, "|Hitem:")) then
-                            Name, _, _, _, _, _, _, _, _, _ = GetItemInfo(Link)
+                            Name, _, _, _, _, _, _, _, _, _ = AddOnTable.BlizzAPI.GetItemInfo(Link)
 
                             -- ... or a cages battle pet ...
                         elseif (strmatch(Link, "|Hbattlepet:")) then

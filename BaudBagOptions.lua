@@ -59,6 +59,8 @@ BACKDROP_BB_OPTIONS_CONTAINER = {
 	insets = { left = 5, right = 5, top = 5, bottom = 5 },
 }
 
+BaudBagOptionsMixin = {}
+
 --[[
     Needed functions:
     - option window loaded => set all basic control settings and add dynamic components
@@ -68,7 +70,7 @@ BACKDROP_BB_OPTIONS_CONTAINER = {
   ]]
 
 --[[ BaudBagOptions frame related events and methods ]]
-function BaudBagOptions_OnLoad(self, event, ...)
+function BaudBagOptionsMixin:OnLoad(event, ...)
     -- the config needs a reference to this
     BaudBagSetCfgPreReq(GlobalSliderBars, ContainerSliderBars, GlobalCheckButtons, ContainerCheckButtons)
     self:RegisterEvent("ADDON_LOADED")
@@ -78,7 +80,7 @@ function BaudBagOptions_OnLoad(self, event, ...)
 end
 
 --[[ All actual processing needs to be done after we are sure we have a config to load from! ]]
-function BaudBagOptions_OnEvent(self, event, ...)
+function BaudBagOptionsMixin:OnEvent(event, ...)
 
     -- failsafe: we only want to handle the addon loaded event
     local arg1 = ...
@@ -92,10 +94,17 @@ function BaudBagOptions_OnEvent(self, event, ...)
 	
     -- add to options windows
     self.name			= "Baud Bag"
-    self.okay			= BaudBagOptions_OnOkay
-    self.cancel			= BaudBagOptions_OnCancel
-    self.refresh		= BaudBagOptions_OnRefresh
-    InterfaceOptions_AddCategory(self)
+    self.okay			= self.OnOkay
+    self.cancel			= self.OnCancel
+    self.refresh		= self.OnRefresh
+    
+    -- register with wow api
+    if (Settings ~= nil and Settings.RegisterCanvasLayoutCategory ~= nil) then
+        local category = Settings.RegisterCanvasLayoutCategory(self, "Baud Bag")
+        Settings.RegisterAddOnCategory(category)
+    else
+        InterfaceOptions_AddCategory(self)
+    end
 	
     -- set localized labels
     self.Title:SetText("Baud Bag "..Localized.Options)
@@ -106,23 +115,21 @@ function BaudBagOptions_OnEvent(self, event, ...)
     self.GroupContainer.BackgroundSelection.Label:SetText(Localized.Background)
     self.GroupContainer.EnabledCheck.tooltipText  = Localized.EnabledTooltip
     self.GroupContainer.CloseAllCheck.tooltipText = Localized.CloseAllTooltip
-    _G[self.GroupContainer.EnabledCheck:GetName().."Text"]:SetText(Localized.Enabled)
-    _G[self.GroupContainer.CloseAllCheck:GetName().."Text"]:SetText(Localized.CloseAll)
-    self.GroupContainer.EnabledCheck:SetHitRectInsets(0, -BaudBagOptionsGroupContainerEnabledCheckText:GetWidth() - 10, 0, 0)
-    self.GroupContainer.CloseAllCheck:SetHitRectInsets(0, -BaudBagOptionsGroupContainerCloseAllCheckText:GetWidth() - 10, 0, 0)
+    self.GroupContainer.EnabledCheck.text:SetText(Localized.Enabled)
+    self.GroupContainer.CloseAllCheck.text:SetText(Localized.CloseAll)
+    self.GroupContainer.EnabledCheck:SetHitRectInsets(0, -self.GroupContainer.EnabledCheck.text:GetWidth() - 10, 0, 0)
+    self.GroupContainer.CloseAllCheck:SetHitRectInsets(0, -self.GroupContainer.CloseAllCheck.text:GetWidth() - 10, 0, 0)
 
     -- localized global checkbox labels
     for Key, Value in ipairs(GlobalCheckButtons) do
         local checkButton = self.GroupGlobal["CheckButton"..Key]
-        local checkButtonText = _G[Prefix.."GroupGlobalCheckButton"..Key.."Text"]
-
-        checkButtonText:SetText(Value.Text)
+        checkButton.text:SetText(Value.Text)
         checkButton.tooltipText = Value.TooltipText
 
         if (not Value.CanBeSet) then
             checkButton:Disable()
-            checkButtonText:SetFontObject("GameFontDisable")
-            checkButtonText:SetText(Value.Text.." ("..Value.UnavailableText..")")
+            checkButton.text:SetFontObject("GameFontDisable")
+            checkButton.text:SetText(Value.Text.." ("..Value.UnavailableText..")")
         end
     end
     for Key, Value in ipairs(GlobalSliderBars) do
@@ -136,7 +143,7 @@ function BaudBagOptions_OnEvent(self, event, ...)
     -- localized checkbox labels
     for Key, Value in ipairs(ContainerCheckButtons) do
         local checkButton = self.GroupContainer["CheckButton"..Key]
-        _G[checkButton:GetName().."Text"]:SetText(Value.Text)
+        checkButton.text:SetText(Value.Text)
         checkButton.tooltipText = Value.TooltipText
     end
 
@@ -167,8 +174,8 @@ function BaudBagOptions_OnEvent(self, event, ...)
       ]]
     local Button, Container, Check
     for Bag = 1, MaxBags do
-        Button		= CreateFrame("ItemButton", Prefix.."Bag"..Bag,       BaudBagOptions.GroupContainer.BagFrame, Prefix.."BagTemplate")
-        Container	= CreateFrame("Frame",      Prefix.."Container"..Bag, BaudBagOptions.GroupContainer.BagFrame, Prefix.."ContainerTemplate")
+        Button		= CreateFrame("ItemButton", Prefix.."Bag"..Bag,       self.GroupContainer.BagFrame, Prefix.."BagTemplate")
+        Container	= CreateFrame("Frame",      Prefix.."Container"..Bag, self.GroupContainer.BagFrame, Prefix.."ContainerTemplate")
         if (Bag == 1) then
             -- first bag only has a container
             Container:SetPoint("LEFT", _G[Prefix.."Bag1"], "LEFT", -6, 0)
@@ -189,25 +196,25 @@ function BaudBagOptions_OnEvent(self, event, ...)
     end
 	
     -- make sure the view is updated with the data loaded from the config
-    BaudBagOptionsUpdate()
+    self:Update()
 end
 
-function BaudBagOptions_OnRefresh(self, event, ...)
-    BaudBag_DebugMsg("Options", "OnRefresh was called!")
-    BaudBagOptionsUpdate()
+function BaudBagOptionsMixin:OnRefresh(event, ...)
+    AddOnTable.Functions.DebugMessage("Options", "OnRefresh was called!")
+    self:Update()
 end
 
-function BaudBagOptions_OnOkay(self, event, ...)
-    BaudBag_DebugMsg("Options", "'Okay' pressed, saving BBConfig.")
+function BaudBagOptionsMixin:OnOkay(event, ...)
+    AddOnTable.Functions.DebugMessage("Options", "'Okay' pressed, saving BBConfig.")
     CfgBackup = BBConfig
     BaudBagSaveCfg(BBConfig)
 end
 
-function BaudBagOptions_OnCancel(self, event, ...)
-    BaudBag_DebugMsg("Options", "'Cancel' pressed, reset to last BBConfig.")
+function BaudBagOptionsMixin:OnCancel(event, ...)
+    AddOnTable.Functions.DebugMessage("Options", "'Cancel' pressed, reset to last BBConfig.")
     BBConfig = CfgBackup
     ReloadConfigDependant()
-    BaudBagOptionsUpdate()
+    self:Update()
 end
 
 
@@ -232,7 +239,7 @@ end
 
 function BaudBagOptionsSetDropDown_OnClick(self)
     SelectedBags = self.value
-    BaudBagOptionsUpdate()
+    BaudBagOptions:Update()
 end
 
 
@@ -248,7 +255,11 @@ function BaudBagEnabledCheck_OnClick(self, event, ...)
     -- TODO: move to BaudBagBBConfig save?
     if BBConfig and (BBConfig[2].Enabled == true) then BankFrame:UnregisterEvent("BANKFRAME_OPENED") end
     if BBConfig and (BBConfig[2].Enabled == false) then BankFrame:RegisterEvent("BANKFRAME_OPENED") end
-    BackpackTokenFrame_Update()
+    if (BackpackTokenFrame_Update ~= nil) then
+        BackpackTokenFrame_Update()
+    else
+        BackpackTokenFrame:Update()
+    end
 end
 
 function BaudBagCloseAllCheck_OnClick(self, event, ...)
@@ -267,7 +278,7 @@ end
 --[[ Dynamic Bags/Container Clicks ]]
 function BaudBagOptionsBag_OnClick(self, event, ...)
     SelectedContainer = self:GetID()
-    BaudBagOptionsUpdate()
+    BaudBagOptions:Update()
 end
 
 function BaudBagOptionsJoinCheck_OnClick(self, event, ...)
@@ -285,7 +296,7 @@ function BaudBagOptionsJoinCheck_OnClick(self, event, ...)
     else
         tinsert(BBConfig[SelectedBags], ContNum, BaudBagCopyTable(BBConfig[SelectedBags][ContNum-1]))
     end
-    BaudBagOptionsUpdate()
+    BaudBagOptions:Update()
     BaudUpdateJoinedBags()
 end
 
@@ -343,7 +354,7 @@ function BaudBagOptionsCheckButton_OnClick(self, event, ...)
     local SavedVar
     if (self:GetParent() == BaudBagOptions.GroupGlobal) then
         SavedVar = GlobalCheckButtons[self:GetID()].SavedVar
-        BaudBag_DebugMsg("Options", "Update global variable: "..SavedVar)
+        AddOnTable.Functions.DebugMessage("Options", "Update global variable: "..SavedVar)
         BBConfig[SavedVar] = self:GetChecked()
 
         if (SavedVar == "RarityColor") then
@@ -355,21 +366,22 @@ function BaudBagOptionsCheckButton_OnClick(self, event, ...)
         end
     else
         SavedVar = ContainerCheckButtons[self:GetID()].SavedVar
-        BaudBag_DebugMsg("Options", "Update container variable: "..SavedVar)
+        AddOnTable.Functions.DebugMessage("Options", "Update container variable: "..SavedVar)
         BBConfig[SelectedBags][SelectedContainer][SavedVar] = self:GetChecked()
 
         -- make sure options who need it (visible things) update the affected container
         if (SavedVar == "BlankTop") or (SavedVar == "RarityColor") then -- or (SavedVar == "RarityColorAltern") then
-            BaudBag_DebugMsg("Options", "Want to update container: "..Prefix.."Container"..SelectedBags.."_"..SelectedContainer)
+            AddOnTable.Functions.DebugMessage("Options", "Want to update container: "..Prefix.."Container"..SelectedBags.."_"..SelectedContainer)
             BaudBagUpdateContainer(_G["BaudBagContainer"..SelectedBags.."_"..SelectedContainer]) -- TODO: move to BaudBagBBConfig save?
         end
     end
-    BaudBagOptionsUpdate()
+    BaudBagOptions:Update()
 end
 
 
 --[[ slider functions ]]--
-function BaudBagSlider_OnValueChanged(self)
+BaudBagOptionsSliderTemplateMixin = {}
+function BaudBagOptionsSliderTemplateMixin:OnValueChanged()
     --[[
         This is called when the value of a slider is changed.
         First the new value directly shown in the title.
@@ -382,8 +394,8 @@ function BaudBagSlider_OnValueChanged(self)
         self:SetValue(self:GetValue())
         value = self:GetValue()     -- cant use original 'value' parameter
         self._onsetting = false
-    else 
-        return 
+    else
+        return
     end               -- ignore recursion for actual event handler
     --[[ END !!!TEMPORARY!!! ]]--
 
@@ -399,16 +411,16 @@ function BaudBagSlider_OnValueChanged(self)
     
     -- events are also called when values are set on load, make sure to not end in an update loop
     if Updating then
-        BaudBag_DebugMsg("Options", "It seems we are already updating, skipping further update...")
+        AddOnTable.Functions.DebugMessage("Options", "It seems we are already updating, skipping further update...")
         return
     end
     
     if (self:GetParent() == BaudBagOptions.GroupGlobal) then
-        BaudBag_DebugMsg("Options", "Updating value of global slider with id "..self:GetID().." to "..self:GetValue())
+        AddOnTable.Functions.DebugMessage("Options", "Updating value of global slider with id "..self:GetID().." to "..self:GetValue())
         
         -- save BBConfig entry
         local SavedVar = GlobalSliderBars[self:GetID()].SavedVar
-        BaudBag_DebugMsg("Options", "The variable associated with this value is "..SavedVar)
+        AddOnTable.Functions.DebugMessage("Options", "The variable associated with this value is "..SavedVar)
         BBConfig[SavedVar] = self:GetValue()
 
         BaudBagForEachOpenContainer(
@@ -417,11 +429,11 @@ function BaudBagSlider_OnValueChanged(self)
             end
         )
     else
-        BaudBag_DebugMsg("Options", "Updating value of container slider with id "..self:GetID().." to "..self:GetValue())
+        AddOnTable.Functions.DebugMessage("Options", "Updating value of container slider with id "..self:GetID().." to "..self:GetValue())
 
         -- save BBConfig entry
         local SavedVar = ContainerSliderBars[self:GetID()].SavedVar
-        BaudBag_DebugMsg("Options", "The variable associated with this value is "..SavedVar)
+        AddOnTable.Functions.DebugMessage("Options", "The variable associated with this value is "..SavedVar)
         BBConfig[SelectedBags][SelectedContainer][SavedVar] = self:GetValue()
 
         -- cause the appropriate update  -- TODO: move to BaudBagBBConfig save?
@@ -436,7 +448,7 @@ function BaudBagSlider_OnValueChanged(self)
 end
 
 
-function BaudBagOptionsUpdate()
+function BaudBagOptionsMixin:Update()
     -- prepare vars
     local Button, Check, Container, Texture
     local ContNum = 1
@@ -444,21 +456,21 @@ function BaudBagOptionsUpdate()
     Updating = true
 
     -- first reload the drop down (weird problems if not done)
-    local containerDropDown = BaudBagOptions.GroupContainer.SetSelection
+    local containerDropDown = self.GroupContainer.SetSelection
     UIDropDownMenu_Initialize(containerDropDown, BaudBagOptionsSetDropDown_Initialize)
     UIDropDownMenu_SetSelectedValue(containerDropDown, SelectedBags)
 
     -- is the box enabled
-    BaudBagOptions.GroupContainer.EnabledCheck:SetChecked(BBConfig[SelectedBags].Enabled~=false)
-    BaudBagOptions.GroupContainer.CloseAllCheck:SetChecked(BBConfig[SelectedBags].CloseAll~=false)
+    self.GroupContainer.EnabledCheck:SetChecked(BBConfig[SelectedBags].Enabled~=false)
+    self.GroupContainer.CloseAllCheck:SetChecked(BBConfig[SelectedBags].CloseAll~=false)
 
     -- load global checkbox and slider values
     for Key, Value in ipairs(GlobalCheckButtons) do
-        local Button = BaudBagOptions.GroupGlobal["CheckButton"..Key]
+        local Button = self.GroupGlobal["CheckButton"..Key]
         Button:SetChecked(BBConfig[Value.SavedVar])
     end
     for Key, Value in ipairs(GlobalSliderBars) do
-        local slider = BaudBagOptions.GroupGlobal["Slider"..Key]
+        local slider = self.GroupGlobal["Slider"..Key]
         slider:SetValue(BBConfig[Value.SavedVar])
 
         if (Value.DependsOn ~= nil and not BBConfig[Value.DependsOn]) then
@@ -472,7 +484,7 @@ function BaudBagOptionsUpdate()
     
     -- load bag specific options (position and show each button that belongs to the current set,
     --		check joined box and create container frames)
-    local bagParent = BaudBagOptions.GroupContainer.BagFrame
+    local bagParent = self.GroupContainer.BagFrame
     BaudBagForEachBag(SelectedBags,
         function(Bag, Index)
             Button	= _G[Prefix.."Bag"..Index]
@@ -502,7 +514,7 @@ function BaudBagOptionsUpdate()
             if BaudBagIcons[Bag]then
                 Texture = BaudBagIcons[Bag]
             elseif(SelectedBags == 1)then
-                Texture = GetInventoryItemTexture("player", ContainerIDToInventoryID(Bag))
+                Texture = GetInventoryItemTexture("player", AddOnTable.BlizzAPI.ContainerIDToInventoryID(Bag))
             elseif bagCache and bagCache.BagLink then
                 Texture = GetItemIcon(bagCache.BagLink)
             else
@@ -510,7 +522,7 @@ function BaudBagOptionsUpdate()
             end
 			
             -- assign texture, id and get item to be shown
-            _G[Button:GetName().."IconTexture"]:SetTexture(Texture or select(2,GetInventorySlotInfo("Bag0Slot")))
+            _G[Button:GetName().."IconTexture"]:SetTexture(Texture or select(2, AddOnTable.BlizzAPI.GetInventorySlotInfo("BAG0SLOT")))
             Button:SetID(ContNum)
             Button:Show()
         end
@@ -553,30 +565,30 @@ function BaudBagOptionsUpdate()
     end
 
     -- load container name into the textbox
-    local nameInput = BaudBagOptions.GroupContainer.NameInput
+    local nameInput = self.GroupContainer.NameInput
     nameInput:SetText(BBConfig[SelectedBags][SelectedContainer].Name or "test")
     nameInput:SetCursorPosition(0)
 
     -- load background state (initialized here to work around some strange behavior)
-    local backgroundDropDown = BaudBagOptions.GroupContainer.BackgroundSelection
+    local backgroundDropDown = self.GroupContainer.BackgroundSelection
     UIDropDownMenu_Initialize(backgroundDropDown, BaudBagOptionsBackgroundDropDown_Initialize)
     UIDropDownMenu_SetSelectedValue(backgroundDropDown, BBConfig[SelectedBags][SelectedContainer].Background)
 
     -- load slider values
     for Key, Value in ipairs(ContainerSliderBars) do
-        local Slider = BaudBagOptions.GroupContainer["Slider"..Key]
+        local Slider = self.GroupContainer["Slider"..Key]
         Slider:SetValue(BBConfig[SelectedBags][SelectedContainer][Value.SavedVar])
     end
 
     -- load checkbox values
     for Key, Value in ipairs(ContainerCheckButtons) do
-        local Button = BaudBagOptions.GroupContainer["CheckButton"..Key]
+        local Button = self.GroupContainer["CheckButton"..Key]
         Button:SetChecked(BBConfig[SelectedBags][SelectedContainer][Value.SavedVar])
     end
 	
     -- load checkbox enabled
     for Key, Value in ipairs(ContainerCheckButtons) do
-        local Button = BaudBagOptions.GroupContainer["CheckButton"..Key]
+        local Button = self.GroupContainer["CheckButton"..Key]
         local ButtonText = _G[Button:GetName().."Text"]
         if (Value.DependsOn ~= nil and not BBConfig[SelectedBags][SelectedContainer][Value.DependsOn]) then
             Button:Disable()
@@ -593,7 +605,7 @@ end
 function BaudBagOptionsSelectContainer(BagSet, Container)
     SelectedBags = BagSet
     SelectedContainer = Container
-    BaudBagOptionsUpdate()
+    BaudBagOptions:Update()
 end
 
-hooksecurefunc(AddOnTable, "Configuration_Updated", function(self) BaudBagOptionsUpdate() end)
+hooksecurefunc(AddOnTable, "Configuration_Updated", function(self) BaudBagOptions:Update() end)

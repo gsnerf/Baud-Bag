@@ -26,7 +26,7 @@ function Prototype:UpdateName()
     local targetName = containerConfig.Name or ""
     local targetColor = NORMAL_FONT_COLOR
 
-    if ((self.Frame.BagSet == 2) and (not BaudBagFrame.BankOpen)) then
+    if ((self.Frame.BagSet == 2) and (not AddOnTable.State.BankOpen)) then
         targetName = containerConfig.Name..AddOnTable.Localized.Offline
         targetColor = RED_FONT_COLOR
     end
@@ -145,7 +145,7 @@ function Prototype:UpdateSubContainers(col, row)
             container.Frame:Show()
 
             -- last but not least update visibility for deposit button of reagent bank
-            if (container.ContainerId == REAGENTBANK_CONTAINER and BaudBagFrame.BankOpen) then
+            if (container.ContainerId == REAGENTBANK_CONTAINER and AddOnTable.State.BankOpen) then
                 self.Frame.DepositButton:Show()
             else
                 self.Frame.DepositButton:Hide()
@@ -218,16 +218,16 @@ function Prototype:GetCleanupIgnore()
     for _, container in pairs(self.SubContainers) do
         local id = container.ContainerId
         if (id == BACKPACK_CONTAINER) then
-            return GetBackpackAutosortDisabled()
+            return AddOnTable.BlizzAPI.GetBackpackAutosortDisabled()
         end
         if (id == BANK_CONTAINER) then
-            return GetBankAutosortDisabled()
+            return AddOnTable.BlizzAPI.GetBankAutosortDisabled()
         end
         if (self.BagSet.Id == BagSetType.Backpack.Id) then
-            return GetBagSlotFlag(id, LE_BAG_FILTER_FLAG_IGNORE_CLEANUP)
+            return AddOnTable.BlizzAPI.GetBagSlotFlag(id, AddOnTable.BlizzAPI.GetIgnoreCleanupFlag())
         end
         if (self.BagSet.Id == BagSetType.Bank.Id) then
-            return GetBankBagSlotFlag(id - NUM_BAG_SLOTS, LE_BAG_FILTER_FLAG_IGNORE_CLEANUP)
+            return AddOnTable.BlizzAPI.GetBankBagSlotFlag(id - NUM_BAG_SLOTS, AddOnTable.BlizzAPI.GetIgnoreCleanupFlag())
         end
 
         -- fallback
@@ -239,16 +239,16 @@ function Prototype:SetCleanupIgnore(value)
     for _, container in pairs(self.SubContainers) do
         local id = container.ContainerId
         if (id == BACKPACK_CONTAINER) then
-            SetBackpackAutosortDisabled(value)
+            AddOnTable.BlizzAPI.SetBackpackAutosortDisabled(value)
         end
         if (id == BANK_CONTAINER) then
-            SetBankAutosortDisabled(value)
+            AddOnTable.BlizzAPI.SetBankAutosortDisabled(value)
         end
         if (self.BagSet.Id == BagSetType.Backpack.Id and id ~= BACKPACK_CONTAINER) then
-            SetBagSlotFlag(id, LE_BAG_FILTER_FLAG_IGNORE_CLEANUP, value)
+            AddOnTable.BlizzAPI.SetBagSlotFlag(id, AddOnTable.BlizzAPI.GetIgnoreCleanupFlag(), value)
         end
         if (self.BagSet.Id == BagSetType.Bank.Id and id ~= BANK_CONTAINER) then
-            SetBankBagSlotFlag(id - NUM_BAG_SLOTS, LE_BAG_FILTER_FLAG_IGNORE_CLEANUP, value)
+            AddOnTable.BlizzAPI.SetBankBagSlotFlag(id - NUM_BAG_SLOTS, AddOnTable.BlizzAPI.GetIgnoreCleanupFlag(), value)
         end
     end
 end

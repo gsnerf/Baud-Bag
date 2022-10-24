@@ -28,12 +28,12 @@ end
 
 function Prototype:GetSize()
     local isBankBag = self.BagSet.Id == BagSetType.Bank.Id
-    local useCache = isBankBag and not BaudBagFrame.BankOpen
+    local useCache = isBankBag and not AddOnTable.State.BankOpen
     if useCache and (self.ContainerId ~= -3) then
         local bagCache = AddOnTable.Cache:GetBagCache(self.ContainerId)
         return bagCache.Size
     else
-        return GetContainerNumSlots(self.ContainerId)
+        return AddOnTable.BlizzAPI.GetContainerNumSlots(self.ContainerId)
     end
 end
 
@@ -103,12 +103,12 @@ function Prototype:UpdateSlotContents()
     local rarityIntensity = BBConfig.RarityIntensity
     local isBankBag = self.BagSet.Id == BagSetType.Bank.Id
     local bagCache = AddOnTable.Cache:GetBagCache(self.ContainerId)
-    local useCache = isBankBag and not BaudBagFrame.BankOpen
+    local useCache = isBankBag and not AddOnTable.State.BankOpen
     
     -- reinit values that might be outdated
     self.FreeSlots = 0
 
-    BaudBag_DebugMsg("Bags", "Updating SubBag (ID, Size, isBagContainer, isBankOpen)", self.ContainerId, self.Size, not isBankBag, BaudBagFrame.BankOpen)
+    BaudBag_DebugMsg("Bags", "Updating SubBag (ID, Size, isBagContainer, isBankOpen)", self.ContainerId, self.Size, not isBankBag, AddOnTable.State.BankOpen)
 
     for slot = 1, self.Size do
         local itemObject = self.Items[slot]
@@ -154,9 +154,18 @@ end
 function Prototype:UpdateItemOverlays()
     if self:IsOpen() then
         BaudBag_DebugMsg("Bags", "Updating Items of Bag (ContainerId, container name)", self.ContainerId, self.Name)
+        if not AddOnTable.Functions.IsInventory(self.ContainerId) then
+            return
+        end
         for Slot = 1, self.Size do
             local itemSlotObject = self.Items[Slot]
-            ContainerFrame_UpdateCooldown(self.ContainerId, itemSlotObject)
+            if (ContainerFrame_UpdateCooldown ~= nil) then
+                ContainerFrame_UpdateCooldown(self.ContainerId, itemSlotObject)
+            else
+                local containerItemInfo = AddOnTable.BlizzAPI.GetContainerItemInfo(self.ContainerId, itemSlotObject:GetID())
+                local texture = containerItemInfo and containerItemInfo.iconFileID
+                itemSlotObject:UpdateCooldown(texture)
+            end
             itemSlotObject:UpdateQuestOverlay(self.ContainerId)
         end
     end
@@ -255,8 +264,8 @@ function Prototype:GetSlotInfo()
         end
         return free, cache.Size
     else
-        local freeSlots, _ = GetContainerNumFreeSlots(self.ContainerId)
-        local overallSlots = GetContainerNumSlots(self.ContainerId)
+        local freeSlots, _ = AddOnTable.BlizzAPI.GetContainerNumFreeSlots(self.ContainerId)
+        local overallSlots = AddOnTable.BlizzAPI.GetContainerNumSlots(self.ContainerId)
         return freeSlots, overallSlots
     end
 end
@@ -266,15 +275,15 @@ function Prototype:GetFilterType()
         local funcToExec
 
         if (self.BagSet.Id == BagSetType.Backpack.Id) then
-            funcToExec = GetBagSlotFlag
+            funcToExec = AddOnTable.BlizzAPI.GetBagSlotFlag
         end
         if (self.BagSet.Id == BagSetType.Bank.Id) then
-            funcToExec = GetBankBagSlotFlag
+            funcToExec = AddOnTable.BlizzAPI.GetBankBagSlotFlag
         end
 
-        for i = LE_BAG_FILTER_FLAG_EQUIPMENT, NUM_LE_BAG_FILTER_FLAGS do
-            if (funcToExec(self.ContainerId, i)) then
-                self.FilterType = i
+        for i, flag in  AddOnTable.BlizzAPI.EnumerateBagGearFilters() do
+            if (funcToExec(self.ContainerId, flag)) then
+                self.FilterType = flag
             end
         end
     end
@@ -284,10 +293,10 @@ end
 
 function Prototype:SetFilterType(type, value)
     if (self.BagSet.Id == BagSetType.Backpack.Id) then
-        SetBagSlotFlag(self.ContainerId, type, value)
+        AddOnTable.BlizzAPI.SetBagSlotFlag(self.ContainerId, type, value)
     end
     if (self.BagSet.Id == BagSetType.Bank.Id) then
-        SetBankBagSlotFlag(self.ContainerId, type, value)
+        AddOnTable.BlizzAPI.SetBankBagSlotFlag(self.ContainerId, type, value)
     end
     self.FilterType = nil
 end
@@ -335,7 +344,7 @@ end
 
 -- TODO: don't know if this mixup of object orientation and wow function handly really works like that
 function Prototype:OnEvent(self, event, ...)
-    if not self:GetParent():IsShown() or (self:GetID() >= 5) and not BaudBagFrame.BankOpen then
+    if not self:GetParent():IsShown() or (self:GetID() >= 5) and not AddOnTable.State.BankOpen then
         return
     end
     Events[event](self, event, ...)

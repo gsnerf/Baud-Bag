@@ -1,6 +1,8 @@
 local AddOnName, AddOnTable = ...
 local _
 local Localized = AddOnTable.Localized
+-- replacing REAGENTBANK_CONTAINER constant with a local variable as we aren't sure that this code is run on retail
+local ReagentBankContainer = -3
 
 -- Definition
 BagSetType = {
@@ -16,7 +18,7 @@ BagSetType = {
         Id = 2,
         Name = Localized.BankBox,
         IsSubContainerOf = function(containerId)
-            local isBankDefaultContainer = (containerId == BANK_CONTAINER) or (containerId == REAGENTBANK_CONTAINER)
+            local isBankDefaultContainer = (containerId == BANK_CONTAINER) or (containerId == ReagentBankContainer)
             local isBankSubContainer = (ITEM_INVENTORY_BANK_BAG_OFFSET < containerId) and (containerId <= ITEM_INVENTORY_BANK_BAG_OFFSET + NUM_BANKBAGSLOTS)
             return isBankDefaultContainer or isBankSubContainer
         end,
@@ -46,8 +48,10 @@ table.insert(BagSetType.Bank.ContainerIterationOrder, BANK_CONTAINER)
 for bag = NUM_BAG_SLOTS + 1, NUM_BAG_SLOTS + NUM_BANKBAGSLOTS do
     table.insert(BagSetType.Bank.ContainerIterationOrder, bag)
 end
-table.insert(BagSetType.Bank.ContainerIterationOrder, REAGENTBANK_CONTAINER)
-
+-- explicitly using the numerical value of the expansion instead of the enum, as classic variants seemingly do not contain those enums
+if (GetExpansionLevel() >= 5) then
+    table.insert(BagSetType.Bank.ContainerIterationOrder, ReagentBankContainer)
+end
 
 -- Definition
 ContainerType = {
@@ -58,7 +62,7 @@ ContainerType = {
 --[[ this is a really dump way to access the config to get the joined state... ]]
 local idIndexMap = {}
 idIndexMap[BANK_CONTAINER] = 1
-idIndexMap[REAGENTBANK_CONTAINER] = NUM_BANKBAGSLOTS + 2
+idIndexMap[ReagentBankContainer] = NUM_BANKBAGSLOTS + 2
 for id = BACKPACK_CONTAINER, NUM_BAG_SLOTS do
     idIndexMap[id] = id + 1
 end

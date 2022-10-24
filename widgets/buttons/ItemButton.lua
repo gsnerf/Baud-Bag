@@ -11,46 +11,44 @@ local Prototype = {
 }
 
 function Prototype:UpdateContent(useCache, slotCache)
-    local texture, count, locked, quality, isReadable, link, isFiltered, hasNoValue, itemID
-    local name, isNewItem, isBattlePayItem
+    local isNewItem, isBattlePayItem
     local cacheEntry = nil
-    
-    -- initialize with default values before possibly overriding later
-    locked = false
-    quality = Enum.ItemQuality.Poor
-    isNewItemm = false
-    isBattlePayItem = false
-    isReadable = false
+    local containerItemInfo = {}
 
     if not useCache then
-        texture, count, locked, quality, isReadable, _, link, isFiltered, hasNoValue, itemID = GetContainerItemInfo(self.Parent.ContainerId, self.SlotIndex)
+        containerItemInfo = AddOnTable.BlizzAPI.GetContainerItemInfo(self.Parent.ContainerId, self.SlotIndex)
+        if containerItemInfo == nil then
+            containerItemInfo = {}
+        end
         
-        if link then
-            cacheEntry = { Link = link, Count = count }
-            name = GetItemInfo(link)
-            isNewItem = C_NewItems.IsNewItem(self.Parent.ContainerId, self.SlotIndex)
-            isBattlePayItem = IsBattlePayItem(self.Parent.ContainerId, self.SlotIndex)
+        if containerItemInfo.hyperlink then
+            cacheEntry = { Link = containerItemInfo.hyperlink, Count = containerItemInfo.stackCount }
+            isNewItem = AddOnTable.BlizzAPI.IsNewItem(self.Parent.ContainerId, self.SlotIndex)
+            isBattlePayItem = AddOnTable.BlizzAPI.IsBattlePayItem(self.Parent.ContainerId, self.SlotIndex)
         end
     elseif slotCache then
         self.hasItem = nil
-        link = slotCache.Link
-        count = slotCache.Count or 0
+        containerItemInfo.hyperlink = slotCache.Link
+        containerItemInfo.stackCount = slotCache.Count or 0
 
-        if link then
+        if containerItemInfo.hyperlink then
             -- regular items ... 
-            if (strmatch(link, "|Hitem:")) then
-                name, _, quality, _, _, _, _, _, _, texture = GetItemInfo(link)
-            -- ... or a caged battle pet ...
-            elseif (strmatch(link, "|Hbattlepet:")) then
-                local _, speciesID, _, qualityString = strsplit(":", link)
-                name, texture = C_PetJournal.GetPetInfoBySpeciesID(speciesID)
+            local texture, quality
+            if (strmatch(containerItemInfo.hyperlink, "|Hitem:")) then
+                _, _, quality, _, _, _, _, _, _, texture = AddOnTable.BlizzAPI.GetItemInfo(containerItemInfo.hyperlink)
+                -- ... or a caged battle pet ...
+            elseif (strmatch(containerItemInfo.hyperlink, "|Hbattlepet:")) then
+                local _, speciesID, _, qualityString = strsplit(":", containerItemInfo.hyperlink)
+                _, texture = C_PetJournal.GetPetInfoBySpeciesID(speciesID)
                 quality = tonumber(qualityString)
-            -- ... we don't know about everything else
+                -- ... we don't know about everything else
             end
-            
+            containerItemInfo.quality = quality
+            containerItemInfo.iconFileID = texture
+
             self.hasItem = 1
-            isNewItem = C_NewItems.IsNewItem(self.Parent.ContainerId, self.SlotIndex)
-            isBattlePayItem = IsBattlePayItem(self.Parent.ContainerId, self.SlotIndex)
+            isNewItem = AddOnTable.BlizzAPI.IsNewItem(self.Parent.ContainerId, self.SlotIndex)
+            isBattlePayItem = AddOnTable.BlizzAPI.IsBattlePayItem(self.Parent.ContainerId, self.SlotIndex)
 
             -- how to find out if an item is filtered by search here or not?
         end
@@ -58,25 +56,32 @@ function Prototype:UpdateContent(useCache, slotCache)
 
     end
     
-    SetItemButtonTexture(self, texture)
-    --SetItemButtonQuality(self, quality, itemID)
-    SetItemButtonCount(self, count)
-    SetItemButtonDesaturated(self, locked)
+    if SetItemButtonTexture ~= nil then
+        SetItemButtonTexture(self, containerItemInfo.iconFileID)
+    else
+        self:SetItemButtonTexture(containerItemInfo.iconFileID)
+    end
+    --SetItemButtonQuality(self, containerItemInfo.quality, containerItemInfo.iconFileID)
+    SetItemButtonCount(self, containerItemInfo.stackCount)
+    SetItemButtonDesaturated(self, containerItemInfo.isLocked)
     
-    self.Quality = quality
+    self.Quality = containerItemInfo.quality
     self:UpdateNewAndBattlepayoverlays(isNewItem, isBattlePayItem)
-    self:UpdateItemOverlay(itemID)
-    self.readable = isReadable
+    self:UpdateItemOverlay(containerItemInfo.itemID)
+    self.readable = containerItemInfo.isReadable
     if (self.JunkIcon) then
-        self.JunkIcon:SetShown(quality == Enum.ItemQuality.Poor and not hasNoValue and MerchantFrame:IsShown())
+        self.JunkIcon:SetShown(containerItemInfo.quality == Enum.ItemQuality.Poor and not containerItemInfo.hasNoValue and MerchantFrame:IsShown())
     end
 
     -- in case this is a container button we try to use the regular upgrade system (this might be even extended by addons like pawn)
     if self.UpgradeIcon then
-        ContainerFrameItemButton_UpdateItemUpgradeIcon(self)
+        -- while the UpgradeIcon texture itself still exists, it doesn't seem to be used in DF however
+        if (ContainerFrameItemButton_UpdateItemUpgradeIcon ~= nil) then
+            ContainerFrameItemButton_UpdateItemUpgradeIcon(self)
+        end
     end
 
-    return link, cacheEntry
+    return containerItemInfo.hyperlink, cacheEntry
 end
 
 --[[
@@ -105,7 +110,8 @@ function Prototype:UpdateCustomRarity(showColor, intensity)
             self.IconBorder:SetVertexColor(0.6, 0.2, 0.9, 0.5 * intensity)
         else
             -- we have no alternative colors for this rarity, just use the default ones
-            self.IconBorder:SetVertexColor(GetItemQualityColor(quality))
+            local color = BAG_ITEM_QUALITY_COLORS[quality]
+            self.IconBorder:SetVertexColor( color.r, color.g, color.b, color.a )
         end
         self.IconBorder:Show()
     else
@@ -114,7 +120,9 @@ function Prototype:UpdateCustomRarity(showColor, intensity)
 end
 
 function Prototype:UpdateQuestOverlay(containerId)
-    local questTexture = _G[self.Name.."IconQuestTexture"]
+    -- can only use this after DF launch and when/if classic ever gets an interface code update :(
+    --local questTexture = self.IconQuestTexture
+    local questTexture = _G[self:GetName().."IconQuestTexture"]
 
     if (questTexture) then
         local width, height = self.icon:GetSize()
@@ -123,19 +131,19 @@ function Prototype:UpdateQuestOverlay(containerId)
         questTexture:SetSize(newWidth, newHeight)
         questTexture:ClearAllPoints()
         questTexture:SetPoint("CENTER", self.icon, "CENTER", -newWidth/3, 0)
-        
-        local isQuestItem, questId, isActive = GetContainerItemQuestInfo(containerId, self.SlotIndex)
-        local isQuestRelated = questId ~= nil or isQuestItem
+
+        local questInfo = AddOnTable.BlizzAPI.GetContainerItemQuestInfo(containerId, self.SlotIndex)
+        local isQuestRelated = questInfo.questID ~= nil or questInfo.isQuestItem
 
         if ( isQuestRelated ) then
             self.IconBorder:SetVertexColor(1, 0.9, 0.4, 0.9)
             self.IconBorder:Show()
-            if (not isActive) then
+            if (not questInfo.isActive) then
                 questTexture:Show()
             end
         end
 
-        if ( not questId or isActive ) then
+        if ( not questInfo.questID or questInfo.isActive ) then
             questTexture:Hide()
         end
     end
@@ -161,13 +169,13 @@ function Prototype:UpdateNewAndBattlepayoverlays(isNewItem, isBattlePayItem)
     end
 
     if (BBConfig.ShowNewItems and isNewItem) then
-        
+
         if (isBattlePayItem) then
             newItemTexture:Hide()
             battlepayItemTexture:Show()
         else
-            if (quality and NEW_ITEM_ATLAS_BY_QUALITY[quality]) then
-                newItemTexture:SetAtlas(NEW_ITEM_ATLAS_BY_QUALITY[quality])
+            if (self.Quality and NEW_ITEM_ATLAS_BY_QUALITY[self.Quality]) then
+                newItemTexture:SetAtlas(NEW_ITEM_ATLAS_BY_QUALITY[self.Quality])
             else
                 newItemTexture:SetAtlas("bags-glow-white")
             end
@@ -196,7 +204,11 @@ function Prototype:UpdateTooltip()
         local slotId = (not self.isBag) and self:GetID() or nil
         self:UpdateTooltipFromCache(bagId, slotId)
     else
-        ContainerFrameItemButton_OnUpdate(self)
+        if (ContainerFrameItemButton_OnUpdate ~= nil) then
+            ContainerFrameItemButton_OnUpdate(self)
+        else
+            self:OnUpdate()
+        end
     end
 end
 
