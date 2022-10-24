@@ -224,10 +224,10 @@ function Prototype:GetCleanupIgnore()
             return AddOnTable.BlizzAPI.GetBankAutosortDisabled()
         end
         if (self.BagSet.Id == BagSetType.Backpack.Id) then
-            return GetBagSlotFlag(id, LE_BAG_FILTER_FLAG_IGNORE_CLEANUP)
+            return AddOnTable.BlizzAPI.GetBagSlotFlag(id, AddOnTable.BlizzAPI.GetIgnoreCleanupFlag())
         end
         if (self.BagSet.Id == BagSetType.Bank.Id) then
-            return GetBankBagSlotFlag(id - NUM_BAG_SLOTS, LE_BAG_FILTER_FLAG_IGNORE_CLEANUP)
+            return AddOnTable.BlizzAPI.GetBankBagSlotFlag(id - NUM_BAG_SLOTS, AddOnTable.BlizzAPI.GetIgnoreCleanupFlag())
         end
 
         -- fallback
@@ -245,10 +245,10 @@ function Prototype:SetCleanupIgnore(value)
             AddOnTable.BlizzAPI.SetBankAutosortDisabled(value)
         end
         if (self.BagSet.Id == BagSetType.Backpack.Id and id ~= BACKPACK_CONTAINER) then
-            SetBagSlotFlag(id, LE_BAG_FILTER_FLAG_IGNORE_CLEANUP, value)
+            AddOnTable.BlizzAPI.SetBagSlotFlag(id, AddOnTable.BlizzAPI.GetIgnoreCleanupFlag(), value)
         end
         if (self.BagSet.Id == BagSetType.Bank.Id and id ~= BANK_CONTAINER) then
-            SetBankBagSlotFlag(id - NUM_BAG_SLOTS, LE_BAG_FILTER_FLAG_IGNORE_CLEANUP, value)
+            AddOnTable.BlizzAPI.SetBankBagSlotFlag(id - NUM_BAG_SLOTS, AddOnTable.BlizzAPI.GetIgnoreCleanupFlag(), value)
         end
     end
 end

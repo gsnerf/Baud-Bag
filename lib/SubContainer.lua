@@ -293,10 +293,10 @@ end
 
 function Prototype:SetFilterType(type, value)
     if (self.BagSet.Id == BagSetType.Backpack.Id) then
-        SetBagSlotFlag(self.ContainerId, type, value)
+        AddOnTable.BlizzAPI.SetBagSlotFlag(self.ContainerId, type, value)
     end
     if (self.BagSet.Id == BagSetType.Bank.Id) then
-        SetBankBagSlotFlag(self.ContainerId, type, value)
+        AddOnTable.BlizzAPI.SetBankBagSlotFlag(self.ContainerId, type, value)
     end
     self.FilterType = nil
 end

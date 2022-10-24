@@ -34,10 +34,14 @@ if C_Container ~= nil then
         ---@return integer
         GetNumWatchedTokens = function() return BackpackTokenFrame:GetNumWatchedTokens() end,
         EnumerateBagGearFilters = ContainerFrameUtil_EnumerateBagGearFilters,
+        GetIgnoreCleanupFlag = function() return Enum.BagSlotFlags.DisableAutoSort end,
         GetJunkFlag = function() return Enum.BagSlotFlags.PriorityJunk end,
         GetBagSlotFlag = C_Container.GetBagSlotFlag,
-        -- it is NOT a typo, that it's the same method for this and GetBagSlotFlag!
-        GetBankBagSlotFlag = C_Container.GetBagSlotFlag
+        SetBagSlotFlag = C_Container.SetBagSlotFlag,
+        -- it is NOT a typo, that the BankBagSlot references the same method as the BagSlots!
+        GetBankBagSlotFlag = C_Container.GetBagSlotFlag,
+        SetBankBagSlotFlag = C_Container.SetBagSlotFlag,
+
     }
 
 else
@@ -106,9 +110,12 @@ else
                 --seemingly does not exist before DF: Enum.BagSlotFlags.PriorityQuestItems (32)
             })
         end,
-        GetJunkFlag = function() return 5 end,
+        GetIgnoreFlag = function() return LE_BAG_FILTER_FLAG_IGNORE_CLEANUP end,
+        GetJunkFlag = function() return LE_BAG_FILTER_FLAG_JUNK end,
         GetBagSlotFlag = GetBagSlotFlag,
-        GetBankBagSlotFlag = GetBankBagSlotFlag
+        SetBagSlotFlag = SetBagSlotFlag,
+        GetBankBagSlotFlag = GetBankBagSlotFlag,
+        SetBankBagSlotFlag = SetBankBagSlotFlag
     }
 
 end
