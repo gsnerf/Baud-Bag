@@ -36,7 +36,8 @@ if C_Container ~= nil then
         EnumerateBagGearFilters = ContainerFrameUtil_EnumerateBagGearFilters,
         GetJunkFlag = function() return Enum.BagSlotFlags.PriorityJunk end,
         GetBagSlotFlag = C_Container.GetBagSlotFlag,
-        GetBankBagSlotFlag = C_Container.GetBankBagSlotFlag
+        -- it is NOT a typo, that it's the same method for this and GetBagSlotFlag!
+        GetBankBagSlotFlag = C_Container.GetBagSlotFlag
     }
 
 else
