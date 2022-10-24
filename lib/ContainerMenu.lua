@@ -132,14 +132,15 @@ function AddFilterOptions(bagSetId, containerId, header)
     end
 
     local info = UIDropDownMenu_CreateInfo()
-    for i = LE_BAG_FILTER_FLAG_EQUIPMENT, NUM_LE_BAG_FILTER_FLAGS do
-        if ( i ~= LE_BAG_FILTER_FLAG_JUNK ) then
-            info.text = BAG_FILTER_LABELS[i]
+    local filterFlagJunk = AddOnTable.BlizzAPI.GetJunkFlag()
+    for i, flag in AddOnTable.BlizzAPI.EnumerateBagGearFilters() do
+        --if ( flag ~= filterFlagJunk ) then
+            info.text = BAG_FILTER_LABELS[flag]
             info.func = toggleFilter
-            info.arg1 = i
+            info.arg1 = flag
             info.checked = containerObject:GetFilterType() == i
             UIDropDownMenu_AddButton(info)
-        end
+        --end
     end
 end
 
