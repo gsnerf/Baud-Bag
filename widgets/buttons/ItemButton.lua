@@ -200,7 +200,11 @@ function Prototype:UpdateTooltip()
         local slotId = (not self.isBag) and self:GetID() or nil
         self:UpdateTooltipFromCache(bagId, slotId)
     else
-        self:OnUpdate()
+        if (ContainerFrameItemButton_OnUpdate ~= nil) then
+            ContainerFrameItemButton_OnUpdate(self)
+        else
+            self:OnUpdate()
+        end
     end
 end
 
