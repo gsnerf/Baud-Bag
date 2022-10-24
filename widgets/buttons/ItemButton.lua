@@ -75,8 +75,10 @@ function Prototype:UpdateContent(useCache, slotCache)
 
     -- in case this is a container button we try to use the regular upgrade system (this might be even extended by addons like pawn)
     if self.UpgradeIcon then
-        -- while the UpgradeIcon texture itself still exists, it doesn't seem to be used anymore?
-        --ContainerFrameItemButton_UpdateItemUpgradeIcon(self)
+        -- while the UpgradeIcon texture itself still exists, it doesn't seem to be used in DF however
+        if (ContainerFrameItemButton_UpdateItemUpgradeIcon ~= nil) then
+            ContainerFrameItemButton_UpdateItemUpgradeIcon(self)
+        end
     end
 
     return containerItemInfo.hyperlink, cacheEntry
@@ -118,7 +120,9 @@ function Prototype:UpdateCustomRarity(showColor, intensity)
 end
 
 function Prototype:UpdateQuestOverlay(containerId)
-    local questTexture = self.IconQuestTexture
+    -- can only use this after DF launch and when/if classic ever gets an interface code update :(
+    --local questTexture = self.IconQuestTexture
+    local questTexture = _G[self:GetName().."IconQuestTexture"]
 
     if (questTexture) then
         local width, height = self.icon:GetSize()
