@@ -38,32 +38,6 @@ else
     hooksecurefunc(BackpackTokenFrame, "Update", TokenFrame_Update)
 end
 
-
--- this is being called (among others) when the currency selection in the token frame changes
-local ManageTokenFrame = function(backpack)
-    AddOnTable.Functions.DebugMessage("Token", "Manage was called on TokenFrame")
-    if (BBConfig and BBConfig[1].Enabled == false) then
-        AddOnTable.Functions.DebugMessage("Token", "BaudBag disabled for Backpack, ignoring!")
-        return
-    end
-	
-    -- get references to all frames needed for the management
-    local TokenFrame = _G["BaudBagContainer1_1TokenFrame"]
-    local Backpack   = _G["BaudBagContainer1_1"]
-
-    if (TokenFrame.shouldShow == 1) and (not TokenFrame:IsShown()) then
-        AddOnTable.Functions.DebugMessage("Token", "Manage: TokenFrame visible, update settings")
-        TokenFrame:Show()
-        BaudBagUpdateContainer(Backpack)
-    elseif (TokenFrame.shouldShow ~= 1 and TokenFrame:IsShown()) then
-        AddOnTable.Functions.DebugMessage("Token", "Manage: TokenFrame NOT visible, hide it")
-        TokenFrame:Hide()
-        BaudBagUpdateContainer(Backpack)
-    end
-end
---hooksecurefunc("ManageBackpackTokenFrame", ManageTokenFrame)
-
-
 BaudBagTokenMixin = {}
 
 function BaudBagTokenMixin:OnEnter()
@@ -85,7 +59,7 @@ BaudBagTokenFrameMixin = {}
 
 function BaudBagTokenFrameMixin:RenderBackground(texturesParentName)
     local container = self:GetParent()
-    AddOnTable.Functions.DebugMessage("Token", "Showing Token Frame for Container (Name, ID)'", container:GetName(), container:GetID())
+    AddOnTable.Functions.DebugMessage("Token", "Rendering background for Token Frame for Container (Name, ID)'", container:GetName(), container:GetID())
     
     -- init texture helper
     local helper = AddOnTable:GetTextureHelper()
@@ -168,5 +142,15 @@ function BaudBagTokenFrameMixin:Update()
                 self.shouldShow = 0
             end
         end
+    end
+
+    if self.shouldShow == 1 and not self:IsShown() then
+        AddOnTable.Functions.DebugMessage("Token", "Manage: TokenFrame show be visible but is not, showing")
+        self:Show()
+        BaudBagUpdateContainer(self:GetParent())
+    elseif (self.shouldShow ~= 1 and self:IsShown()) then
+        AddOnTable.Functions.DebugMessage("Token", "Manage: TokenFrame NOT visible, hide it")
+        self:Hide()
+        BaudBagUpdateContainer(self:GetParent())
     end
 end

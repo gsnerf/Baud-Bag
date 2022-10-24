@@ -32,7 +32,9 @@ if C_Container ~= nil then
         GetItemInfo = GetItemInfo,
         ---returns the number of watched tokens or the maximum number of watched tokens in old API
         ---@return integer
-        GetNumWatchedTokens = function() return BackpackTokenFrame:GetNumWatchedTokens() end,
+        --GetNumWatchedTokens = function() return BackpackTokenFrame:GetNumWatchedTokens() end,
+        -- this is necessary until TokenFrame was rewritten to be able to handle an arbitrary number of tokens
+        GetNumWatchedTokens = function() return 5 end,
         EnumerateBagGearFilters = ContainerFrameUtil_EnumerateBagGearFilters,
         GetIgnoreCleanupFlag = function() return Enum.BagSlotFlags.DisableAutoSort end,
         GetJunkFlag = function() return Enum.BagSlotFlags.PriorityJunk end,
