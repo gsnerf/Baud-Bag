@@ -145,12 +145,10 @@ function BaudBagTokenFrameMixin:Update()
     end
 
     if self.shouldShow == 1 and not self:IsShown() then
-        AddOnTable.Functions.DebugMessage("Token", "Manage: TokenFrame show be visible but is not, showing")
+        AddOnTable.Functions.DebugMessage("Token", "Manage: TokenFrame should be visible but is not, showing")
         self:Show()
-        BaudBagUpdateContainer(self:GetParent())
     elseif (self.shouldShow ~= 1 and self:IsShown()) then
         AddOnTable.Functions.DebugMessage("Token", "Manage: TokenFrame NOT visible, hide it")
         self:Hide()
-        BaudBagUpdateContainer(self:GetParent())
     end
 end
