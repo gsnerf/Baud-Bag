@@ -678,24 +678,6 @@ function BaudBag_BagSlot_OnLeave(self, event, ...)
 	
 end
 
-function BaudBag_ContainerFrameItemButton_OnClick(self, button)
-    BaudBag_DebugMsg("ItemHandle", "OnClick called (button, bag)", button, self:GetParent():GetID())
-    if (button ~= "LeftButton" and AddOnTable.State.BankOpen) then
-        local itemId = GetContainerItemID(self:GetParent():GetID(), self:GetID())
-        local isReagent = (itemId and AddOnTable.Functions.IsCraftingReagent(itemId))
-        local sourceIsBank = BaudBag_IsBankContainer(self:GetParent():GetID())
-        local targetReagentBank = IsReagentBankUnlocked() and isReagent
-        
-        BaudBag_DebugMsg("ItemHandle", "handling item (itemId, isReagent, targetReagentBank)", itemId, isReagent, targetReagentBank)
-
-        -- remember to start a move operation when item was placed in bank by wow!
-        if (targetReagentBank) then
-            AddOnTable.State.ItemLock.Move      = true
-            AddOnTable.State.ItemLock.IsReagent = true
-        end
-    end
-end
-
 function BaudBag_FixContainerClickForReagent(Bag, Slot)
     -- determine if there is another item with the same item in the reagent bank
     local containerItemInfoBag = AddOnTable.BlizzAPI.GetContainerItemInfo(Bag, Slot)
