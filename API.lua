@@ -110,7 +110,7 @@ else
                 --seemingly does not exist before DF: Enum.BagSlotFlags.PriorityQuestItems (32)
             })
         end,
-        GetIgnoreFlag = function() return LE_BAG_FILTER_FLAG_IGNORE_CLEANUP end,
+        GetIgnoreCleanupFlag = function() return LE_BAG_FILTER_FLAG_IGNORE_CLEANUP end,
         GetJunkFlag = function() return LE_BAG_FILTER_FLAG_JUNK end,
         GetBagSlotFlag = GetBagSlotFlag,
         SetBagSlotFlag = SetBagSlotFlag,
