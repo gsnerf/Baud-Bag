@@ -65,7 +65,7 @@ end
 function BaudBag_BagButtonMixin:UpdateTooltip()
     if (self.IsInventoryContainer) then
         BaudBag_DebugMsg("Tooltip", "[BagButton:UpdateTooltip] bag belongs to inventory, forwarding to BagSlotButton_OnEnter [bagId]", self.SubContainerId)
-        BagSlotButton_OnEnter(self)
+        --BagSlotButton_OnEnter(self)
         return
     end
 

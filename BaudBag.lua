@@ -517,10 +517,10 @@ local function UpdateThisHighlight(self)
 end
 
 --These function hooks override the bag button highlight changes that Blizzard does
-hooksecurefunc("BagSlotButton_OnClick", UpdateThisHighlight)
-hooksecurefunc("BagSlotButton_OnDrag", UpdateThisHighlight)
-hooksecurefunc("BagSlotButton_OnModifiedClick", UpdateThisHighlight)
-hooksecurefunc("BackpackButton_OnClick", function(self)
+--hooksecurefunc("BagSlotButton_OnClick", UpdateThisHighlight)
+--hooksecurefunc("BagSlotButton_OnDrag", UpdateThisHighlight)
+--hooksecurefunc("BagSlotButton_OnModifiedClick", UpdateThisHighlight)
+--[[hooksecurefunc("BackpackButton_OnClick", function(self)
     if BBConfig and(BBConfig[1].Enabled == false)then
         return
     end
@@ -529,7 +529,7 @@ hooksecurefunc("BackpackButton_OnClick", function(self)
     else
         self.SlotHighlightTexture:Hide()
     end
-end)
+end)]]
 
 --[[ custom defined BaudBagSubBag event handlers ]]--
 local SubBagEvents = {}
@@ -614,8 +614,8 @@ function BaudBag_OnModifiedClick(self, button)
 end
 
 
-hooksecurefunc("ContainerFrameItemButton_OnModifiedClick", BaudBag_OnModifiedClick)
-hooksecurefunc("BankFrameItemButtonGeneric_OnModifiedClick", BaudBag_OnModifiedClick)
+--hooksecurefunc("ContainerFrameItemButton_OnModifiedClick", BaudBag_OnModifiedClick)
+--hooksecurefunc("BankFrameItemButtonGeneric_OnModifiedClick", BaudBag_OnModifiedClick)
 
 -- TODO: after changes there is some weird behavior after applying changes (like changing the name)
 -- Seems to be in Background drawing for Slot Count
