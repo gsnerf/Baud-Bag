@@ -118,7 +118,8 @@ function BaudBagTokenFrameMixin:Update()
     local digits, countSize
     local usedWidth = 0
     local digitWidth = 8 + calculateScaleFix(self)
-    for i=1, BackpackTokenFrame:GetNumWatchedTokens() do
+    -- check is necessary for backwards compatibility
+    for i=1, AddOnTable.BlizzAPI.GetNumWatchedTokens() do
         local currencyInfo = C_CurrencyInfo.GetBackpackCurrencyInfo(i)
         watchButton = self["Token"..i]
 

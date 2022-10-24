@@ -29,7 +29,10 @@ if C_Container ~= nil then
         SplitContainerItem = C_Container.SplitContainerItem,
         UseContainerItem = C_Container.UseContainerItem,
         IsNewItem = C_NewItems.IsNewItem,
-        GetItemInfo = GetItemInfo
+        GetItemInfo = GetItemInfo,
+        ---returns the number of watched tokens or the maximum number of watched tokens in old API
+        ---@return integer
+        GetNumWatchedTokens = function() return BackpackTokenFrame:GetNumWatchedTokens() end,
     }
 
 else
@@ -85,7 +88,10 @@ else
         SplitContainerItem = SplitContainerItem,
         UseContainerItem = UseContainerItem,
         IsNewItem = C_NewItems.IsNewItem,
-        GetItemInfo = GetItemInfo
+        GetItemInfo = GetItemInfo,
+        ---returns the number of watched tokens or the maximum number of watched tokens in old API
+        ---@return integer
+        GetNumWatchedTokens = function() return MAX_WATCHED_TOKENS end,
     }
 
 end
