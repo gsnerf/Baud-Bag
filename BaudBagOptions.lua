@@ -99,8 +99,12 @@ function BaudBagOptionsMixin:OnEvent(event, ...)
     self.refresh		= self.OnRefresh
     
     -- register with wow api
-    local category = Settings.RegisterCanvasLayoutCategory(self, "Baud Bag")
-    Settings.RegisterAddOnCategory(category)
+    if (Settings ~= nil and Settings.RegisterCanvasLayoutCategory ~= nil) then
+        local category = Settings.RegisterCanvasLayoutCategory(self, "Baud Bag")
+        Settings.RegisterAddOnCategory(category)
+    else
+        InterfaceOptions_AddCategory(self)
+    end
 	
     -- set localized labels
     self.Title:SetText("Baud Bag "..Localized.Options)
@@ -251,7 +255,11 @@ function BaudBagEnabledCheck_OnClick(self, event, ...)
     -- TODO: move to BaudBagBBConfig save?
     if BBConfig and (BBConfig[2].Enabled == true) then BankFrame:UnregisterEvent("BANKFRAME_OPENED") end
     if BBConfig and (BBConfig[2].Enabled == false) then BankFrame:RegisterEvent("BANKFRAME_OPENED") end
-    BackpackTokenFrame:Update()
+    if (BackpackTokenFrame_Update ~= nil) then
+        BackpackTokenFrame_Update()
+    else
+        BackpackTokenFrame:Update()
+    end
 end
 
 function BaudBagCloseAllCheck_OnClick(self, event, ...)
