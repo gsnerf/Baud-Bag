@@ -1,4 +1,6 @@
 ﻿=== Changelog ===
+v10.0.2.1
+  - fixed original bank opening alongside baud bag bank with pre-patch and in beta
 v10.0.2
   - introduced basic support for dragonflight (10.0.0 and 10.0.2)
     - addon should still be fully backwards compatible
@@ -6,6 +8,7 @@ v10.0.2
       - regular bank is opening alongside baud bag bank
       - bag buttons in the main menu bar may behave strange (in that case use shortcuts to open the bags)
       - tooltips might look strange or might be missing
+  - now also allow filtering bags for junk (unsure why that was prevented earlier)
 v9.1.0
   - fixed adding/removing/swapping bags and
     - not correctly updating bag contents
