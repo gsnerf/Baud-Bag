@@ -1,4 +1,6 @@
 ﻿=== Changelog ===
+v10.0.2.2
+  - fixed junk selling not working as intended
 v10.0.2.1
   - fixed original bank opening alongside baud bag bank with pre-patch and in beta
 v10.0.2

@@ -127,26 +127,6 @@ local EventFuncs = {
 Func = function(self, event, ...)
     BaudBag_DebugMsg("Bags", "Event fired (event)", event)
     BaudBagAutoOpenSet(1, false)
-
-    if (BBConfig.SellJunk and MerchantFrame:IsShown()) then
-        BaudBagForEachBag(1,
-            function(Bag, Index)
-                for Slot = 1, AddOnTable.BlizzAPI.GetContainerNumSlots(Bag) do
-                    local containerItemInfo = AddOnTable.BlizzAPI.GetContainerItemInfo(Bag, Slot)
-                    if (containerItemInfo.quality and containerItemInfo.quality == 0) then
-                        BaudBag_DebugMsg("Junk", "Found junk (Container, Slot)", Bag, Slot)
-                        AddOnTable.BlizzAPI.UseContainerItem(Bag, Slot)
-                    end
-                end
-            end
-        )
-    end
-end
-EventFuncs.MERCHANT_SHOW = Func
-
-Func = function(self, event, ...)
-    BaudBag_DebugMsg("Bags", "Event fired (event)", event)
-    BaudBagAutoOpenSet(1, false)
 end
 EventFuncs.MAIL_SHOW = Func
 EventFuncs.AUCTION_HOUSE_SHOW = Func
@@ -240,11 +220,43 @@ Func = function(self, event, ...)
 end
 EventFuncs.BAG_UPDATE_DELAYED = Func
 
+local function HandleMerchantShow()
+    BaudBag_DebugMsg("Bags", "MerchandFrame was shown, opening bags")
+    BaudBagAutoOpenSet(1, false)
+
+    BaudBag_DebugMsg("Junk", "MerchandFrame was shown checking if we need to sell junk")
+    if (BBConfig.SellJunk and MerchantFrame:IsShown()) then
+        BaudBag_DebugMsg("Junk", "junk selling active and merchant frame is shown, identifiyng junk now")
+        BaudBagForEachBag(1,
+            function(Bag, Index)
+                for Slot = 1, AddOnTable.BlizzAPI.GetContainerNumSlots(Bag) do
+                    local containerItemInfo = AddOnTable.BlizzAPI.GetContainerItemInfo(Bag, Slot)
+                    if (containerItemInfo.quality and containerItemInfo.quality == 0) then
+                        BaudBag_DebugMsg("Junk", "Found junk (Container, Slot)", Bag, Slot)
+                        AddOnTable.BlizzAPI.UseContainerItem(Bag, Slot)
+                    end
+                end
+            end
+        )
+    end
+end
+
 if PlayerInteractionFrameManager ~= nil then
     Func = function(self, event, ...)
+        -- todo: also call original manager when bank is deactivated in the settings!
         local type = ...
         if type ~= Enum.PlayerInteractionType.Banker then
             PlayerInteractionFrameManager:OnEvent(event, ...)
+        end
+
+        if type == Enum.PlayerInteractionType.Merchant then
+            if event == "PLAYER_INTERACTION_MANAGER_FRAME_SHOW" then
+                HandleMerchantShow()
+            end
+
+            --[[if event == "PLAYER_INTERACTION_MANAGER_FRAME_HIDE" then
+                -- for the moment still handled via MERCHANT_CLOSED
+            end]]
         end
     end
     EventFuncs.PLAYER_INTERACTION_MANAGER_FRAME_SHOW = Func
