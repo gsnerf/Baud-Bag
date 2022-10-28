@@ -1,4 +1,8 @@
 ﻿=== Changelog ===
+v10.0.2.3
+  - fixed a number of issue with the container menus (+ in top right of the container)
+  - fixed an error when using the sliders in the options window
+  - fixed an error when trying to search for items using bag search
 v10.0.2.2
   - fixed junk selling not working as intended
   - fixed bank showing faulty bags
