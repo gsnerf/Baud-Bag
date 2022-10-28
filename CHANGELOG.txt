@@ -1,6 +1,10 @@
 ﻿=== Changelog ===
 v10.0.2.2
   - fixed junk selling not working as intended
+  - fixed bank showing faulty bags
+  - fixed showing of new item background backgrounds in old skins
+  - fixed error messages being thrown in some instances of SetVertexColor calls
+  - improved hook into default frame operations for bank case (only preventing when bank is actually activated in baud bag)
 v10.0.2.1
   - fixed original bank opening alongside baud bag bank with pre-patch and in beta
 v10.0.2
