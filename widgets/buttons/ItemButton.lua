@@ -268,6 +268,8 @@ function AddOnTable:CreateItemButton(subContainer, slotIndex, buttonTemplate)
     itemButton.BorderFrame = itemButton:CreateTexture(itemButton.Name.."Border", "OVERLAY")
     itemButton.BorderFrame:Hide()
     itemButton:SetScript("OnEnter", itemButton.UpdateTooltip)
+    itemButton.emptyBackgroundTexture = nil
+    itemButton.emptyBackgroundAtlas = nil
     
     itemButton.QuestOverlay = _G[itemButton.Name.."IconQuestTexture"]
     
