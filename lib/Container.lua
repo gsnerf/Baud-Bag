@@ -220,7 +220,7 @@ function Prototype:GetCleanupIgnore()
         if (id == BACKPACK_CONTAINER) then
             return AddOnTable.BlizzAPI.GetBackpackAutosortDisabled()
         end
-        if (id == BANK_CONTAINER) then
+        if (id == AddOnTable.BlizzConstants.BANK_CONTAINER or id == AddOnTable.BlizzConstants.REAGENTBANK_CONTAINER) then
             return AddOnTable.BlizzAPI.GetBankAutosortDisabled()
         end
         if (self.BagSet.Id == BagSetType.Backpack.Id) then

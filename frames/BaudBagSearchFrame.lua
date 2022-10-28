@@ -149,7 +149,8 @@ function BaudBagSearchFrameEditBox_OnTextChanged(self, isUserInput)
     local Status, Result
     local bagCache, slotCache
     for Bag = -3, LastBagID do
-        if not (Bag == -2) then
+        -- TODO: bag 5 is currently not supported, re-enable when reagent bags are supported
+        if not (Bag == -2 or Bag == 5) then
             SubBagObject = AddOnTable.SubBags[Bag]
             SubBag = SubBagObject.Frame
             Open	= SubBag:IsShown()and SubBag:GetParent():IsShown() and not SubBag:GetParent().Closing

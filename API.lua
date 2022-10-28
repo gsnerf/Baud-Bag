@@ -129,8 +129,8 @@ if C_Container ~= nil then
                     --seemingly does not exist before DF: Enum.BagSlotFlags.PriorityQuestItems (32)
                 })
             end,
-            GetIgnoreCleanupFlag = function() return LE_BAG_FILTER_FLAG_IGNORE_CLEANUP end,
-            GetJunkFlag = function() return LE_BAG_FILTER_FLAG_JUNK end,
+            GetIgnoreCleanupFlag = function() return Enum.BagSlotFlags.DisableAutoSort end,
+            GetJunkFlag = function() return Enum.BagSlotFlags.PriorityJunk end,
             GetBagSlotFlag = C_Container.GetBagSlotFlag,
             SetBagSlotFlag = C_Container.SetBagSlotFlag,
             -- it is NOT a typo, that the BankBagSlot references the same method as the BagSlots!
