@@ -245,7 +245,7 @@ if PlayerInteractionFrameManager ~= nil then
     Func = function(self, event, ...)
         -- todo: also call original manager when bank is deactivated in the settings!
         local type = ...
-        if type ~= Enum.PlayerInteractionType.Banker then
+        if type ~= Enum.PlayerInteractionType.Banker or not BBConfig[2].Enabled then
             PlayerInteractionFrameManager:OnEvent(event, ...)
         end
 
