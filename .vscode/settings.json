@@ -2,5 +2,11 @@
 {
 	"files.exclude": {
 		"**/.git": true
-	}
+	},
+    "Lua.diagnostics.globals": [
+        "WorldFrame",
+        "GameTooltip",
+		"PlayerInteractionFrameManager",
+		"MerchantFrame",
+    ]
 }

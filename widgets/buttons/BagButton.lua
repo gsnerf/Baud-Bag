@@ -41,7 +41,7 @@ function BaudBag_BagButtonMixin:GetBagID()
     end
 
     if (self.IsBankContainer) then
-        return self:GetID() + NUM_BAG_SLOTS
+        return self:GetID() + AddOnTable.BlizzConstants.BACKPACK_LAST_CONTAINER
     end
 end
 

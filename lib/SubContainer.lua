@@ -184,6 +184,7 @@ local function UpdateBackpackHighlight(subContainer)
         end
     else
         local bagId = subContainer.ContainerId -1
+        if subContainer.ContainerId == 5 then return end
         if (open) then
             _G["CharacterBag"..bagId.."Slot"].SlotHighlightTexture:Show()
             AddOnTable["Sets"][1].BagButtons[bagId].SlotHighlightTexture:Show()
@@ -221,7 +222,7 @@ local function UpdateBankBagHighlight(subContainer)
     end
 
     if (subContainer.ContainerId ~= BANK_CONTAINER) then
-        local button = AddOnTable["Sets"][2].BagButtons[subContainer.ContainerId-4]
+        local button = AddOnTable["Sets"][2].BagButtons[subContainer.ContainerId - AddOnTable.BlizzConstants.BACKPACK_LAST_CONTAINER]
         if (open) then
             button.SlotHighlightTexture:Show()
         else
@@ -344,7 +345,7 @@ end
 
 -- TODO: don't know if this mixup of object orientation and wow function handly really works like that
 function Prototype:OnEvent(self, event, ...)
-    if not self:GetParent():IsShown() or (self:GetID() >= 5) and not AddOnTable.State.BankOpen then
+    if not self:GetParent():IsShown() or (self:GetID() >= 6) and not AddOnTable.State.BankOpen then
         return
     end
     Events[event](self, event, ...)

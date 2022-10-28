@@ -11,7 +11,7 @@
 ## Title: Baud Bag
 ## Title-zhCN: 背包整合 Baud Bag
 ## Title-zhTW: 背包整合 Baud Bag
-## Version: 10.0.2.1
+## Version: 10.0.2.2
 
 # english has to be the first locale!
 localization\Localization.en.lua
@@ -21,8 +21,8 @@ localization\Localization.ko.lua
 localization\Localization.ru.lua
 localization\Localization.zhCN.lua
 localization\Localization.zhTW.lua
-BaudBagFunctions.lua
 API.lua
+BaudBagFunctions.lua
 lib\BaseTypes.lua
 lib\BagSet.lua
 lib\SubContainer.lua
@@ -40,7 +40,7 @@ BaudBagCache.lua
 BaudBagToolTips.lua
 BaudBagOptions.xml
 TokenBar.xml
-BaudBagBank.lua
+Bank.lua
 ReagentBank.xml
 frames\BaudBagSearchFrame.xml
 Overrides.lua

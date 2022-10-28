@@ -103,11 +103,11 @@ function Prototype:UpdateCustomRarity(showColor, intensity)
     if quality and (quality > 1) and showColor then
         -- use alternative rarity coloring
         if (quality == Enum.ItemQuality.Uncommon) then
-            self.IconBorder:SetVertexColor(0.1,   1,   0, 0.5 * intensity)
+            self.IconBorder:SetVertexColor(0.1,   1,   0, math.min(0.5 * intensity, 1))
         elseif (quality == Enum.ItemQuality.Rare) then
-            self.IconBorder:SetVertexColor(  0, 0.4, 0.8, 0.8 * intensity)
+            self.IconBorder:SetVertexColor(  0, 0.4, 0.8, math.min(0.8 * intensity, 1))
         elseif (quality == Enum.ItemQuality.Epic) then
-            self.IconBorder:SetVertexColor(0.6, 0.2, 0.9, 0.5 * intensity)
+            self.IconBorder:SetVertexColor(0.6, 0.2, 0.9, math.min(0.5 * intensity, 1))
         else
             -- we have no alternative colors for this rarity, just use the default ones
             local color = BAG_ITEM_QUALITY_COLORS[quality]
@@ -268,6 +268,8 @@ function AddOnTable:CreateItemButton(subContainer, slotIndex, buttonTemplate)
     itemButton.BorderFrame = itemButton:CreateTexture(itemButton.Name.."Border", "OVERLAY")
     itemButton.BorderFrame:Hide()
     itemButton:SetScript("OnEnter", itemButton.UpdateTooltip)
+    itemButton.emptyBackgroundTexture = nil
+    itemButton.emptyBackgroundAtlas = nil
     
     itemButton.QuestOverlay = _G[itemButton.Name.."IconQuestTexture"]
     
