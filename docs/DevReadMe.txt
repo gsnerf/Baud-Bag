@@ -53,8 +53,8 @@ Each container set has a container element, that always exist. Each of those con
 - Reagent Bank: -3 (REAGENTBANK_CONTAINER)
 
 Some container sets have additional bags that the player can buy and use. Each used bag has a separate ID that indicates in which bag slot the bag is used.  
- - Bags: 4 additional bags, IDs 1 to 4 (NUM_BAG_SLOTS = 4)
- - Bank: 7 additional bags, IDs 5 to 11 (NUM_BANKBAGSLOTS = 7)
+ - Bags: 5 additional bags, IDs 1 to 5 (NUM_TOTAL_EQUIPPED_BAG_SLOTS = NUM_BAG_SLOTS + NUM_REAGENTBAG_SLOTS = 4 + 1 = 5)
+ - Bank: 7 additional bags, IDs 6 to 12 (NUM_BANKBAGSLOTS = 7)
 
 Registered to Events:
 global:

@@ -3,7 +3,7 @@ local Localized = AddOnTable.Localized
 local _
 
 local Prefix = "BaudBag"
-local LastBagID = NUM_BANKBAGSLOTS + NUM_BAG_SLOTS
+local LastBagID = AddOnTable.BlizzConstants.BANK_LAST_CONTAINER
 
 local BagsSearched = {}
 

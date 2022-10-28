@@ -21,8 +21,8 @@ localization\Localization.ko.lua
 localization\Localization.ru.lua
 localization\Localization.zhCN.lua
 localization\Localization.zhTW.lua
-BaudBagFunctions.lua
 API.lua
+BaudBagFunctions.lua
 lib\BaseTypes.lua
 lib\BagSet.lua
 lib\SubContainer.lua

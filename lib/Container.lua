@@ -227,7 +227,8 @@ function Prototype:GetCleanupIgnore()
             return AddOnTable.BlizzAPI.GetBagSlotFlag(id, AddOnTable.BlizzAPI.GetIgnoreCleanupFlag())
         end
         if (self.BagSet.Id == BagSetType.Bank.Id) then
-            return AddOnTable.BlizzAPI.GetBankBagSlotFlag(id - NUM_BAG_SLOTS, AddOnTable.BlizzAPI.GetIgnoreCleanupFlag())
+            -- TODO: check if the ID is really correct for the newer versions of the API, maybe we need that in the API wrapper instead!
+            return AddOnTable.BlizzAPI.GetBankBagSlotFlag(id - AddOnTable.BlizzConstants.BACKPACK_LAST_CONTAINER, AddOnTable.BlizzAPI.GetIgnoreCleanupFlag())
         end
 
         -- fallback
@@ -248,7 +249,8 @@ function Prototype:SetCleanupIgnore(value)
             AddOnTable.BlizzAPI.SetBagSlotFlag(id, AddOnTable.BlizzAPI.GetIgnoreCleanupFlag(), value)
         end
         if (self.BagSet.Id == BagSetType.Bank.Id and id ~= BANK_CONTAINER) then
-            AddOnTable.BlizzAPI.SetBankBagSlotFlag(id - NUM_BAG_SLOTS, AddOnTable.BlizzAPI.GetIgnoreCleanupFlag(), value)
+            -- TODO: check if the ID is really correct for the newer versions of the API, maybe we need that in the API wrapper instead!
+            AddOnTable.BlizzAPI.SetBankBagSlotFlag(id - AddOnTable.BlizzConstants.BACKPACK_LAST_CONTAINER, AddOnTable.BlizzAPI.GetIgnoreCleanupFlag(), value)
         end
     end
 end

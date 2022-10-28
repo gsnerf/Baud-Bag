@@ -49,6 +49,20 @@ if C_Container ~= nil then
             SetBankBagSlotFlag = C_Container.SetBagSlotFlag,
         }
 
+        AddOnTable.BlizzConstants = {
+            REAGENTBANK_CONTAINER = -3, -- REAGENTBANK_CONTAINER (from WoD onwards)
+            KEYRING_CONTAINER = -2, -- KEYRING_CONTAINER (only in BC? and WotLK)
+            BANK_CONTAINER = -1, -- BANK_CONTAINER
+            BACKPACK_CONTAINER = 0, -- BACKPACK_CONTAINER
+            BACKPACK_CONTAINER_NUM = 4, -- NUM_BAG_SLOTS
+            BACKPACK_REAGENT_BAG_NUM = 1, -- NUM_REAGENTBAG_SLOTS
+            BACKPACK_FIRST_CONTAINER = 0, -- == BACKPACK_CONTAINER
+            BACKPACK_LAST_CONTAINER = 5, -- == BACKPACK_CONTAINER + NUM_TOTAL_EQUIPPED_BAG_SLOTS ( == NUM_BAG_SLOTS + NUM_REAGENTBAG_SLOTS)
+            BANK_CONTAINER_NUM = 7, -- == NUM_BANKBAGSLOTS
+            BANK_FIRST_CONTAINER = 6, -- == NUM_TOTAL_EQUIPPED_BAG_SLOTS + 1
+            BANK_LAST_CONTAINER = 12 -- == NUM_TOTAL_EQUIPPED_BAG_SLOTS + 1 + NUM_BANKBAGSLOTS
+        }
+
     else
 
         AddOnTable.BlizzAPI = {
@@ -123,7 +137,20 @@ if C_Container ~= nil then
             GetBankBagSlotFlag = C_Container.GetBagSlotFlag,
             SetBankBagSlotFlag = C_Container.SetBagSlotFlag,
         }
-
+        
+        AddOnTable.BlizzConstants = {
+            REAGENTBANK_CONTAINER = -3, -- REAGENTBANK_CONTAINER (from WoD onwards)
+            KEYRING_CONTAINER = -2, -- KEYRING_CONTAINER (only in BC? and WotLK)
+            BANK_CONTAINER = -1, -- BANK_CONTAINER
+            BACKPACK_CONTAINER = 0, -- BACKPACK_CONTAINER
+            BACKPACK_CONTAINER_NUM = 4, -- NUM_BAG_SLOTS
+            BACKPACK_REAGENT_BAG_NUM = 1, -- NUM_REAGENTBAG_SLOTS
+            BACKPACK_FIRST_CONTAINER = 0, -- == BACKPACK_CONTAINER
+            BACKPACK_LAST_CONTAINER = 5, -- == BACKPACK_CONTAINER + NUM_TOTAL_EQUIPPED_BAG_SLOTS ( == NUM_BAG_SLOTS + NUM_REAGENTBAG_SLOTS)
+            BANK_CONTAINER_NUM = 7, -- == NUM_BANKBAGSLOTS
+            BANK_FIRST_CONTAINER = 6, -- == NUM_TOTAL_EQUIPPED_BAG_SLOTS + 1
+            BANK_LAST_CONTAINER = 12 -- == NUM_TOTAL_EQUIPPED_BAG_SLOTS + 1 + NUM_BANKBAGSLOTS
+        }
     end
 
 else
@@ -198,6 +225,20 @@ else
         SetBagSlotFlag = SetBagSlotFlag,
         GetBankBagSlotFlag = GetBankBagSlotFlag,
         SetBankBagSlotFlag = SetBankBagSlotFlag
+    }
+
+    AddOnTable.BlizzConstants = {
+        REAGENTBANK_CONTAINER = -3, -- REAGENTBANK_CONTAINER (from WoD onwards)
+        KEYRING_CONTAINER = -2, -- KEYRING_CONTAINER (only in BC? and WotLK)
+        BANK_CONTAINER = -1, -- BANK_CONTAINER
+        BACKPACK_CONTAINER = 0, -- BACKPACK_CONTAINER
+        BACKPACK_CONTAINER_NUM = 4, -- NUM_BAG_SLOTS
+        BACKPACK_REAGENT_BAG_NUM = 0, -- NUM_REAGENTBAG_SLOTS
+        BACKPACK_FIRST_CONTAINER = 0, -- == BACKPACK_CONTAINER
+        BACKPACK_LAST_CONTAINER = 4, -- == BACKPACK_CONTAINER + NUM_TOTAL_EQUIPPED_BAG_SLOTS ( == NUM_BAG_SLOTS + NUM_REAGENTBAG_SLOTS)
+        BANK_CONTAINER_NUM = 7, -- == NUM_BANKBAGSLOTS
+        BANK_FIRST_CONTAINER = 5, -- == NUM_TOTAL_EQUIPPED_BAG_SLOTS + 1
+        BANK_LAST_CONTAINER = 11 -- == NUM_TOTAL_EQUIPPED_BAG_SLOTS + 1 + NUM_BANKBAGSLOTS
     }
 
 end

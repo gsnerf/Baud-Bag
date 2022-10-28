@@ -123,19 +123,19 @@ function BaudBagForEachBag(BagSet, Func)
             1-4 == inventory bags
             5-11 == bank bags
     ]]--
-    if (BagSet == 1) then -- regular bags
-        for Bag = 1, 5 do
-            Func(Bag - 1, Bag);
+        if (BagSet == 1) then -- regular bags
+        for Bag = AddOnTable.BlizzConstants.BACKPACK_FIRST_CONTAINER, AddOnTable.BlizzConstants.BACKPACK_LAST_CONTAINER do
+            Func(Bag, Bag + 1);
         end
     else -- bank
         Func(-1, 1);
         -- bank bags
-        for Bag = 1, NUM_BANKBAGSLOTS do
-            Func(Bag + 4, Bag + 1);
+        for Bag = 1, AddOnTable.BlizzConstants.BANK_CONTAINER_NUM do
+            Func(Bag + AddOnTable.BlizzConstants.BACKPACK_LAST_CONTAINER, Bag + 1);
         end
         -- reagent bank
         if (AddOnTable.State.ReagentBankSupported) then
-            Func(-3, NUM_BANKBAGSLOTS + 2);
+            Func(-3, AddOnTable.BlizzConstants.BANK_CONTAINER_NUM + 2);
         end
     end
 end
@@ -206,12 +206,12 @@ function BaudBag_BagHandledByBaudBag(id)
            -2 == keyring & currency
            -1 == bank
             0 == backpack
-            1-4 == inventory bags
-            5-11 == bank bags
+            1-5 == inventory bags
+            6-12 == bank bags
 
         As the given indices > 0 may vary in the future use these constants instead:
             NUM_BAG_FRAMES (for max inventory bags)
-            ITEM_INVENTORY_BANK_BAG_OFFSET (first bank bag)
+            NUM_TOTAL_EQUIPPED_BAG_SLOTS (first bank bag)
             NUM_BANKBAGSLOTS (number of bank bags)
       ]]
     return (BaudBag_IsBankContainer(id) and BBConfig[2].Enabled) or (BaudBag_IsInventory(id) and BBConfig[1].Enabled);
@@ -222,13 +222,13 @@ AddOnTable.Functions.BagHandledByBaudBag = BaudBag_BagHandledByBaudBag
     These Bag IDs belong to the bank container:
        -3    == REAGENTBANK_CONTAINER
        -1    == BANK_CONTAINER
-        5-11 == bank bags
+        6-12 == bank bags
     As the IDs might change we use blizzards own constants instead. Nevertheless we expect:
         1. the special bank containers to stand on their own
         2. the rest bank
   ]]
 function BaudBag_IsBankContainer(bagId)
-    return BaudBag_IsBankDefaultContainer(bagId) or (bagId > ITEM_INVENTORY_BANK_BAG_OFFSET and bagId <= ITEM_INVENTORY_BANK_BAG_OFFSET + NUM_BANKBAGSLOTS);
+    return BaudBag_IsBankDefaultContainer(bagId) or (AddOnTable.BlizzConstants.BANK_FIRST_CONTAINER <= bagId and bagId <= AddOnTable.BlizzConstants.BANK_LAST_CONTAINER);
 end
 AddOnTable.Functions.IsBankContainer = BaudBag_IsBankContainer
 
@@ -240,17 +240,17 @@ AddOnTable.Functions.IsBankContainer = BaudBag_IsBankContainer
 function BaudBag_IsBankDefaultContainer(bagId)
     -- replacing REAGENTBANK_CONTAINER constant with it's value (-3) as we aren't sure that this code is run on retail
     local ReagentBankContainer = -3
-    return (bagId == BANK_CONTAINER or bagId == ReagentBankContainer);
+    return (bagId == AddOnTable.BlizzConstants.BANK_CONTAINER or bagId == AddOnTable.BlizzConstants.REAGENTBANK_CONTAINER);
 end
 AddOnTable.Functions.IsDefaultContainer = BaudBag_IsBankDefaultContainer
 
 --[[
     These IDs belong to the inventory containers:
         0   == BACKPACK_CONTAINER
-        1-5 == regular bags defined by NUM_BAG_SLOTS
+        1-5 == regular bags defined by blizz constants
   ]]
 function BaudBag_IsInventory(bagId)
-    return (bagId >= BACKPACK_CONTAINER and bagId <= BACKPACK_CONTAINER + NUM_BAG_SLOTS);
+    return (AddOnTable.BlizzConstants.BACKPACK_FIRST_CONTAINER <= bagId and bagId <= AddOnTable.BlizzConstants.BACKPACK_LAST_CONTAINER);
 end
 AddOnTable.Functions.IsInventory = BaudBag_IsInventory
 

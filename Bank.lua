@@ -68,7 +68,7 @@ function BaudBagBankBags_Initialize()
     -- create BagSlots for regular bags
     for Bag = 1, NUM_BANKBAGSLOTS do
         local buttonIndex = Bag
-        local subContainerId = Bag + ITEM_INVENTORY_BANK_BAG_OFFSET
+        local subContainerId = Bag + AddOnTable.BlizzConstants.BACKPACK_LAST_CONTAINER
         local bagButton = AddOnTable:CreateBagButton(bankSet.Type, buttonIndex, subContainerId, BBContainer2)
         bagButton:SetID(buttonIndex)
         bagButton:SetPoint("TOPLEFT", 8 + mod(Bag - 1, 2) * 39, -8 - floor((Bag - 1) / 2) * 39)
@@ -165,7 +165,7 @@ function AddOnTable:BankBags_UpdateContent(self, bankVisible)
 
     BaudBag_DebugMsg("Bank", "Recording bank bag info.")
     for Bag = 1, NUM_BANKBAGSLOTS do
-        local bagCache = AddOnTable.Cache:GetBagCache(Bag + ITEM_INVENTORY_BANK_BAG_OFFSET)
+        local bagCache = AddOnTable.Cache:GetBagCache(Bag + AddOnTable.BlizzConstants.BACKPACK_LAST_CONTAINER)
         local inventoryId = BankButtonIDToInvSlotID(Bag, 1)
         bagCache.BagLink  = GetInventoryItemLink("player", inventoryId)
         bagCache.BagCount = GetInventoryItemCount("player", inventoryId)

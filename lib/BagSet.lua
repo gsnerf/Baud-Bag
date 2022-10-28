@@ -90,7 +90,7 @@ function Prototype:RebuildContainers()
             containerObject:UpdateFromConfig()
         end
 
-        BaudBag_DebugMsg("Container", "(orderIndex, id)", orderIndex, id)
+        BaudBag_DebugMsg("Container", "(orderIndex, id)", subContainerIndex, id)
         containerObject.SubContainers[subContainerIndex] = subContainer
         containerObject.Frame.Bags[subContainerIndex] = subContainer.Frame
         subContainer.Frame:SetParent(containerObject.Frame)
