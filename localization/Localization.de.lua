@@ -62,4 +62,6 @@ if (GetLocale() == "deDE") then
     L.UseMasqueReloadPopupText = "Scheinbar hast du die Einstellungen für die Masque Unterstützung verändert. Damit die Änderungen wirksam werden muss das UI neugeladen werden, möchtest du das jetzt tun?"
     L.UseMasqueReloadPopupAccept = "ja"
     L.UseMasqueReloadPopupDecline = "nein"
+    L.ShowItemLevel = "Itemlevel anzeigen"
+    L.ShowItemLevelTooltip = "Zeigt das Itemlevel auf Ausrüstungsgegenständen (die gelbe Zahl oben)"
 end
