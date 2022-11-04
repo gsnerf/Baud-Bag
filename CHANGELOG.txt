@@ -1,4 +1,10 @@
 ﻿=== Changelog ===
+v10.0.2.4
+  - hardened junk selling against empty item buttons
+  - fixed bag sorting
+  - fixed faulty bag filter display in container menu
+  - fixed broken bag frame backdrop
+  - introduced possibility to show item level on equipable items (defaults to disabled, can be configured in the options menu)
 v10.0.2.3
   - fixed a number of issue with the container menus (+ in top right of the container)
   - fixed an error when using the sliders in the options window
