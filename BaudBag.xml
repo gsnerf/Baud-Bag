@@ -17,9 +17,7 @@
 	</Frame>
 	
 	<Frame topLevel="true" name="BaudBagContainerTemplate" virtual="true" hidden="true" parent="UIParent" movable="true" frameStrata="MEDIUM" enableMouse="true">
-		<Size>
-			<AbsDimension x="640" y="560" />
-		</Size>
+		<Size x="640" y="560" />
 		<Anchors>
 			<Anchor point="CENTER" />
 		</Anchors>
