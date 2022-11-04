@@ -2,9 +2,8 @@
 	
 	<Script file="BaudBag.lua" />
   
-	<Frame name="BaudBagBagsFrameTemplate" virtual="true" enableMouse="true" inherits="BackdropTemplate">
+	<Frame name="BaudBagBagsFrameTemplate" virtual="true" enableMouse="true" inherits="TooltipBackdropTemplate">
 		<KeyValues>
-			<KeyValue key="backdropInfo" value="BACKDROP_TOOLTIP_16_16_5555" type="global"/>
 			<KeyValue key="backdropColor" value="BLACK_FONT_COLOR" type="global"/>
 			<KeyValue key="backdropColorAlpha" value="1" type="number"/>
 		</KeyValues>
@@ -308,14 +307,14 @@
 
 	<Frame name="BaudBagContainer1_1" inherits="BaudBagFirstContainerTemplate">
 		<Frames>
-			<Frame name="$parentBagsFrame" inherits="BaudBagBagsFrameTemplate">
+			<Frame name="$parentBagsFrame" parentKey="BagsFrame" inherits="BaudBagBagsFrameTemplate">
 			</Frame>
 		</Frames>
 	</Frame>
 	
 	<Frame name="BaudBagContainer2_1" inherits="BaudBagFirstContainerTemplate">
 		<Frames>
-			<Frame name="$parentBagsFrame" inherits="BaudBagBagsFrameTemplate" frameStrata="MEDIUM">
+			<Frame name="$parentBagsFrame" parentKey="BagsFrame" inherits="BaudBagBagsFrameTemplate" frameStrata="MEDIUM">
 				<Frames>
 					<Frame name="BaudBagBankSlotPurchaseFrame" setAllPoints="true" parent="BaudBagContainer2_1BagsFrame">
 						<Layers>
