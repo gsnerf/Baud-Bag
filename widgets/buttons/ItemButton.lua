@@ -64,6 +64,20 @@ function Prototype:UpdateContent(useCache, slotCache)
     --SetItemButtonQuality(self, containerItemInfo.quality, containerItemInfo.iconFileID)
     SetItemButtonCount(self, containerItemInfo.stackCount)
     SetItemButtonDesaturated(self, containerItemInfo.isLocked)
+    local itemLevelText = ""
+    if (containerItemInfo.hyperlink ~= nil and BBConfig.ShowItemLevel) then
+        local _, _, _, itemLevel, _, _, _, _, itemEquipLoc = AddOnTable.BlizzAPI.GetItemInfo(containerItemInfo.hyperlink)
+        if itemLevel ~= nil and itemEquipLoc ~= "" and itemEquipLoc ~= INVTYPE_NON_EQUIP then
+            itemLevelText = itemLevel
+        end
+    end
+    
+    if (itemLevelText ~= "") then
+        self.ItemLevel:SetText(itemLevelText)
+        self.ItemLevel:Show()
+    else
+        self.ItemLevel:Hide()
+    end
     
     self.Quality = containerItemInfo.quality
     self:UpdateNewAndBattlepayoverlays(isNewItem, isBattlePayItem)
@@ -250,6 +264,8 @@ function Prototype:ApplyBaseSkin()
     self.BorderFrame:SetAlpha(0.8)
     self.BorderFrame:SetSize(70, 70)
 
+    self.ItemLevel:SetPoint("TOP")
+
     if (self.QuestOverlay) then
         self.QuestOverlay:SetAtlas("QuestNormal", false)
     end
@@ -270,6 +286,8 @@ function AddOnTable:CreateItemButton(subContainer, slotIndex, buttonTemplate)
     itemButton:SetScript("OnEnter", itemButton.UpdateTooltip)
     itemButton.emptyBackgroundTexture = nil
     itemButton.emptyBackgroundAtlas = nil
+    itemButton.ItemLevel = itemButton:CreateFontString(nil, "OVERLAY", "NumberFontNormalYellow")
+    itemButton.ItemLevel:Hide()
     
     itemButton.QuestOverlay = _G[itemButton.Name.."IconQuestTexture"]
     

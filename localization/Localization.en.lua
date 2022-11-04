@@ -71,5 +71,7 @@ AddOnTable["Localized"] = {
     UseMasqueUnavailable = "Masque not found",
     UseMasqueReloadPopupText = "You seem to have enabled or disabled Masque support within Baud Bag. For changes to take effect you will need to reload your ui. Do you want to do that now?",
     UseMasqueReloadPopupAccept = "yes",
-    UseMasqueReloadPopupDecline = "no"
+    UseMasqueReloadPopupDecline = "no",
+    ShowItemLevel = "Show item level",
+    ShowItemLevelTooltip = "Shows item levels on equipable items (small yellow number on the top)",
 }

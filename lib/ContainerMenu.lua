@@ -26,7 +26,7 @@ end
   function BaudBagContainerDropDown_Initialize(dropDown, level, menuList)
     BaudBag_DebugMsg("MenuDropDown", "initializing with (level, menuList, DropDownBagSet, DropDownContainer)", level, menuList, DropDownBagSet, DropDownContainer)
     local header = { isTitle = true, notCheckable = true }
-    local entry = {  }
+    local entry = UIDropDownMenu_CreateInfo();
 
     -- category bag specifics
     header.text = Localized.MenuCatSpecific

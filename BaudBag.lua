@@ -231,7 +231,7 @@ local function HandleMerchantShow()
             function(Bag, Index)
                 for Slot = 1, AddOnTable.BlizzAPI.GetContainerNumSlots(Bag) do
                     local containerItemInfo = AddOnTable.BlizzAPI.GetContainerItemInfo(Bag, Slot)
-                    if (containerItemInfo.quality and containerItemInfo.quality == 0) then
+                    if (containerItemInfo and containerItemInfo.quality and containerItemInfo.quality == 0) then
                         BaudBag_DebugMsg("Junk", "Found junk (Container, Slot)", Bag, Slot)
                         AddOnTable.BlizzAPI.UseContainerItem(Bag, Slot)
                     end
