@@ -34,6 +34,7 @@ if C_Container ~= nil then
             UseContainerItem = C_Container.UseContainerItem,
             IsNewItem = C_NewItems.IsNewItem,
             GetItemInfo = GetItemInfo,
+            GetDetailedItemLevelInfo = GetDetailedItemLevelInfo,
             ---returns the number of watched tokens or the maximum number of watched tokens in old API
             ---@return integer
             --GetNumWatchedTokens = function() return BackpackTokenFrame:GetNumWatchedTokens() end,
@@ -118,6 +119,7 @@ if C_Container ~= nil then
             UseContainerItem = UseContainerItem,
             IsNewItem = C_NewItems.IsNewItem,
             GetItemInfo = GetItemInfo,
+            GetDetailedItemLevelInfo = GetDetailedItemLevelInfo,
             ---returns the number of watched tokens or the maximum number of watched tokens in old API
             ---@return integer
             GetNumWatchedTokens = function() return 5 end,
@@ -201,6 +203,7 @@ else
         UseContainerItem = UseContainerItem,
         IsNewItem = C_NewItems.IsNewItem,
         GetItemInfo = GetItemInfo,
+        GetDetailedItemLevelInfo = GetDetailedItemLevelInfo,
         ---returns the number of watched tokens or the maximum number of watched tokens in old API
         ---@return integer
         GetNumWatchedTokens = function() return MAX_WATCHED_TOKENS end,
