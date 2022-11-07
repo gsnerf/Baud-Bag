@@ -358,6 +358,10 @@ function BaudBagContainer_OnUpdate(self, event, ...)
 
     if (self.FadeStart) then
         local Alpha = (GetTime() - self.FadeStart) / FadeTime
+        if not BBConfig.EnableFadeAnimation then
+            -- immediate show/hide without animation
+            Alpha = 1.1
+        end
         if self.Closing then
             Alpha = 1 - Alpha
             if (Alpha < 0) then

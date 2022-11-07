@@ -74,4 +74,6 @@ AddOnTable["Localized"] = {
     UseMasqueReloadPopupDecline = "no",
     ShowItemLevel = "Show item level",
     ShowItemLevelTooltip = "Shows item levels on equipable items (small yellow number on the top)",
+    EnableFadeAnimation = "Enable container fade animation",
+    EnableFadeAnimationTooltip = "Controls wether the containers have a fade in/out animation uppon opening/closing"
 }

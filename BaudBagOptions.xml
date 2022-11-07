@@ -134,7 +134,7 @@
 					<Anchor point="TOPLEFT" relativeKey="$parent.Title" relativePoint="BOTTOMLEFT" y="-10" />
 					<Anchor point="RIGHT" x="-10" />
 				</Anchors>
-				<Size y="180" />
+				<Size y="200" />
 
 				<Frames>
 					<Frame parentKey="Header" inherits="BaudBagGroupHeaderTemplate">
@@ -175,9 +175,15 @@
 						</Anchors>
 					</CheckButton>
 
+					<CheckButton name="$parentCheckButton6" parentKey="CheckButton6" inherits="BaudBagGeneralOptionsCheckButtonTemplate" id="6">
+						<Anchors>
+							<Anchor point="TOPLEFT" relativeKey="$parent.CheckButton5" relativePoint="BOTTOMLEFT" y="-5" />
+						</Anchors>
+					</CheckButton>
+
 					<Slider parentKey="Slider1" minValue="0.5" maxValue="2.5" valueStep="0.1" inherits="BaudBagOptionsSliderTemplate" id="1">
 						<Anchors>
-							<Anchor point="TOPLEFT" relativeKey="$parent.CheckButton5" relativePoint="TOPRIGHT" x="175" y="-20" />
+							<Anchor point="TOPLEFT" relativeKey="$parent.CheckButton4" relativePoint="TOPRIGHT" x="175" y="-15" />
 						</Anchors>
 					</Slider>
 
