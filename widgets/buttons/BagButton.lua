@@ -259,8 +259,7 @@ function AddOnTable:CreateBackpackBagButton(bagIndex, parentFrame)
     -- initialize size
     bagButton:SetSize(30, 30)
     bagButton.IconBorder:SetSize(30, 30)
-    _G[bagButton:GetName().."NormalTexture"]:SetWidth(50)
-    _G[bagButton:GetName().."NormalTexture"]:SetHeight(50)
+    bagButton.NormalTexture:SetSize(50, 50)
     
     AddOnTable:BagSlot_Created(bagSetType, subContainerId, bagButton)
 
