@@ -1,4 +1,8 @@
 ﻿=== Changelog ===
+v10.0.2.5
+  - adapted ilvl overlay to show effective item level instead of "regular" item level (whatever that's supposed to be)
+  - made fade in/out animation configurable and default to off for basic consistency with default UI
+  - many fixes to bag buttons to actually work the way they where intended to (especially for backpack bags)
 v10.0.2.4
   - hardened junk selling against empty item buttons
   - fixed bag sorting
