@@ -66,9 +66,10 @@ function Prototype:UpdateContent(useCache, slotCache)
     SetItemButtonDesaturated(self, containerItemInfo.isLocked)
     local itemLevelText = ""
     if (containerItemInfo.hyperlink ~= nil and BBConfig.ShowItemLevel) then
-        local _, _, _, itemLevel, _, _, _, _, itemEquipLoc = AddOnTable.BlizzAPI.GetItemInfo(containerItemInfo.hyperlink)
-        if itemLevel ~= nil and itemEquipLoc ~= "" and itemEquipLoc ~= INVTYPE_NON_EQUIP then
-            itemLevelText = itemLevel
+        local _, _, _, _, _, _, _, _, itemEquipLoc = AddOnTable.BlizzAPI.GetItemInfo(containerItemInfo.hyperlink)
+        local effectiveItemLevel, _, _ = AddOnTable.BlizzAPI.GetDetailedItemLevelInfo(containerItemInfo.hyperlink)
+        if effectiveItemLevel ~= nil and itemEquipLoc ~= "" and itemEquipLoc ~= INVTYPE_NON_EQUIP then
+            itemLevelText = effectiveItemLevel
         end
     end
     

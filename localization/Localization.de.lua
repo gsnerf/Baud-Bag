@@ -64,4 +64,6 @@ if (GetLocale() == "deDE") then
     L.UseMasqueReloadPopupDecline = "nein"
     L.ShowItemLevel = "Itemlevel anzeigen"
     L.ShowItemLevelTooltip = "Zeigt das Itemlevel auf Ausrüstungsgegenständen (die gelbe Zahl oben)"
+    L.EnableFadeAnimation = "Aktiviere Ein-/Ausblende animationen"
+    L.EnableFadeAnimationTooltip = "Aktiviert eine Animation zum sanften Einblenden oder Ausblenden der Taschen beim Öffnen und Schließen"
 end

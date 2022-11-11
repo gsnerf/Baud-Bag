@@ -21,11 +21,12 @@ local ContainerSliderBars = {
 }
 
 local GlobalCheckButtons = {
-    {Text=Localized.ShowNewItems,   SavedVar="ShowNewItems",  Default=true,  TooltipText=Localized.ShowNewItemsTooltip,   DependsOn=nil, CanBeSet=true,                      UnavailableText = "" },
-    {Text=Localized.SellJunk,       SavedVar="SellJunk",      Default=false, TooltipText=Localized.SellJunkTooltip,       DependsOn=nil, CanBeSet=true,                      UnavailableText = "" },
-    {Text=Localized.UseMasque,      SavedVar="UseMasque",     Default=false, TooltipText=Localized.UseMasqueTooltp,       DependsOn=nil, CanBeSet=IsAddOnLoaded("Masque"),   UnavailableText = Localized.UseMasqueUnavailable},
-    {Text=Localized.RarityColoring, SavedVar="RarityColor",   Default=true,  TooltipText=Localized.RarityColoringTooltip, DependsOn=nil, CanBeSet=true,                      UnavailableText = "" },
-    {Text=Localized.ShowItemLevel,  SavedVar="ShowItemLevel", Default=false, TooltipText=Localized.ShowItemLevelTooltip,  DependsOn=nil, CanBeSet=true,                      UnavailableText = "" },
+    {Text=Localized.ShowNewItems,        SavedVar="ShowNewItems",        Default=true,  TooltipText=Localized.ShowNewItemsTooltip,        DependsOn=nil, CanBeSet=true,                      UnavailableText = "" },
+    {Text=Localized.SellJunk,            SavedVar="SellJunk",            Default=false, TooltipText=Localized.SellJunkTooltip,            DependsOn=nil, CanBeSet=true,                      UnavailableText = "" },
+    {Text=Localized.UseMasque,           SavedVar="UseMasque",           Default=false, TooltipText=Localized.UseMasqueTooltp,            DependsOn=nil, CanBeSet=IsAddOnLoaded("Masque"),   UnavailableText = Localized.UseMasqueUnavailable},
+    {Text=Localized.RarityColoring,      SavedVar="RarityColor",         Default=true,  TooltipText=Localized.RarityColoringTooltip,      DependsOn=nil, CanBeSet=true,                      UnavailableText = "" },
+    {Text=Localized.ShowItemLevel,       SavedVar="ShowItemLevel",       Default=false, TooltipText=Localized.ShowItemLevelTooltip,       DependsOn=nil, CanBeSet=true,                      UnavailableText = "" },
+    {Text=Localized.EnableFadeAnimation, SavedVar="EnableFadeAnimation", Default=false, TooltipText=Localized.EnableFadeAnimationTooltip, DependsOn=nil, CanBeSet=true,                      UnavailableText = "" },
 }
 
 local ContainerCheckButtons = {

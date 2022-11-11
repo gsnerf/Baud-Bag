@@ -68,8 +68,7 @@ function BaudBagBankBags_Initialize()
     -- create BagSlots for regular bags
     for Bag = 1, NUM_BANKBAGSLOTS do
         local buttonIndex = Bag
-        local subContainerId = Bag + AddOnTable.BlizzConstants.BACKPACK_LAST_CONTAINER
-        local bagButton = AddOnTable:CreateBagButton(bankSet.Type, buttonIndex, subContainerId, BBContainer2)
+        local bagButton = AddOnTable:CreateBankBagButton(buttonIndex, BBContainer2)
         bagButton:SetID(buttonIndex)
         bagButton:SetPoint("TOPLEFT", 8 + mod(Bag - 1, 2) * 39, -8 - floor((Bag - 1) / 2) * 39)
         bankSet.BagButtons[Bag] = bagButton

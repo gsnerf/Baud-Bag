@@ -22,15 +22,17 @@ local function BackpackBagOverview_Initialize()
     BaudBag_DebugMsg("Bags", "Creating bag slot buttons.")
     local backpackSet = AddOnTable["Sets"][1]
     local BBContainer1 = _G[Prefix.."Container1_1BagsFrame"]
-    BBContainer1:SetWidth(15 + 30)
-    BBContainer1:SetHeight(15 + 4 * 30)
     
-    for Bag = 1, 4 do
-        local buttonIndex = Bag - 1
-        local bagButton = AddOnTable:CreateBagButton(backpackSet.Type, buttonIndex, Bag, BBContainer1)
-        bagButton:SetPoint("TOPLEFT", 8, -8 - buttonIndex * 30)
-        backpackSet.BagButtons[buttonIndex] = bagButton
+    -- this is one container less, as the backpack itself doesn't get a button
+    for backpackBagButton = 0, AddOnTable.BlizzConstants.BACKPACK_CONTAINER_NUM - 1 do
+        local bagButton = AddOnTable:CreateBackpackBagButton(backpackBagButton, BBContainer1)
+        bagButton:SetPoint("TOPLEFT", 8, -8 - backpackBagButton * bagButton:GetHeight())
+        backpackSet.BagButtons[backpackBagButton] = bagButton
     end
+
+    local firstBackpackBagButton = backpackSet.BagButtons[0]
+    BBContainer1:SetWidth(15 + firstBackpackBagButton:GetWidth())
+    BBContainer1:SetHeight(15 + AddOnTable.BlizzConstants.BACKPACK_CONTAINER_NUM * firstBackpackBagButton:GetHeight())
 end
 
 --[[ NON XML EVENT HANDLERS ]]--
@@ -358,6 +360,10 @@ function BaudBagContainer_OnUpdate(self, event, ...)
 
     if (self.FadeStart) then
         local Alpha = (GetTime() - self.FadeStart) / FadeTime
+        if not BBConfig.EnableFadeAnimation then
+            -- immediate show/hide without animation
+            Alpha = 1.1
+        end
         if self.Closing then
             Alpha = 1 - Alpha
             if (Alpha < 0) then
