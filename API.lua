@@ -48,6 +48,7 @@ if C_Container ~= nil then
             -- it is NOT a typo, that the BankBagSlot references the same method as the BagSlots!
             GetBankBagSlotFlag = C_Container.GetBagSlotFlag,
             SetBankBagSlotFlag = C_Container.SetBagSlotFlag,
+            CanContainerUseFilterMenu = ContainerFrame_CanContainerUseFilterMenu,
         }
 
         AddOnTable.BlizzConstants = {
@@ -61,7 +62,9 @@ if C_Container ~= nil then
             BACKPACK_LAST_CONTAINER = 5, -- == BACKPACK_CONTAINER + NUM_TOTAL_EQUIPPED_BAG_SLOTS ( == NUM_BAG_SLOTS + NUM_REAGENTBAG_SLOTS)
             BANK_CONTAINER_NUM = 7, -- == NUM_BANKBAGSLOTS
             BANK_FIRST_CONTAINER = 6, -- == NUM_TOTAL_EQUIPPED_BAG_SLOTS + 1
-            BANK_LAST_CONTAINER = 12 -- == NUM_TOTAL_EQUIPPED_BAG_SLOTS + 1 + NUM_BANKBAGSLOTS
+            BANK_LAST_CONTAINER = 12, -- == NUM_TOTAL_EQUIPPED_BAG_SLOTS + 1 + NUM_BANKBAGSLOTS
+            BAG_FILTER_ASSIGNED_TO = BAG_FILTER_ASSIGNED_TO, -- localized "Assigned To:"
+            BAG_FILTER_LABELS = BAG_FILTER_LABELS, -- list of localized filter names, like "Consumables", "Trade Goods", etc.
         }
 
     else
@@ -131,6 +134,7 @@ if C_Container ~= nil then
             -- it is NOT a typo, that the BankBagSlot references the same method as the BagSlots!
             GetBankBagSlotFlag = C_Container.GetBagSlotFlag,
             SetBankBagSlotFlag = C_Container.SetBagSlotFlag,
+            CanContainerUseFilterMenu = ContainerFrame_CanContainerUseFilterMenu,
         }
         
         AddOnTable.BlizzConstants = {
@@ -144,7 +148,9 @@ if C_Container ~= nil then
             BACKPACK_LAST_CONTAINER = 5, -- == BACKPACK_CONTAINER + NUM_TOTAL_EQUIPPED_BAG_SLOTS ( == NUM_BAG_SLOTS + NUM_REAGENTBAG_SLOTS)
             BANK_CONTAINER_NUM = 7, -- == NUM_BANKBAGSLOTS
             BANK_FIRST_CONTAINER = 6, -- == NUM_TOTAL_EQUIPPED_BAG_SLOTS + 1
-            BANK_LAST_CONTAINER = 12 -- == NUM_TOTAL_EQUIPPED_BAG_SLOTS + 1 + NUM_BANKBAGSLOTS
+            BANK_LAST_CONTAINER = 12, -- == NUM_TOTAL_EQUIPPED_BAG_SLOTS + 1 + NUM_BANKBAGSLOTS
+            BAG_FILTER_ASSIGNED_TO = BAG_FILTER_ASSIGNED_TO, -- localized "Assigned To:"
+            BAG_FILTER_LABELS = BAG_FILTER_LABELS, -- list of localized filter names, like "Consumables", "Trade Goods", etc.
         }
     end
 
@@ -221,7 +227,8 @@ else
         GetBagSlotFlag = GetBagSlotFlag,
         SetBagSlotFlag = SetBagSlotFlag,
         GetBankBagSlotFlag = GetBankBagSlotFlag,
-        SetBankBagSlotFlag = SetBankBagSlotFlag
+        SetBankBagSlotFlag = SetBankBagSlotFlag,
+        CanContainerUseFilterMenu = ContainerFrame_CanContainerUseFilterMenu,
     }
 
     AddOnTable.BlizzConstants = {
@@ -235,7 +242,9 @@ else
         BACKPACK_LAST_CONTAINER = 4, -- == BACKPACK_CONTAINER + NUM_TOTAL_EQUIPPED_BAG_SLOTS ( == NUM_BAG_SLOTS + NUM_REAGENTBAG_SLOTS)
         BANK_CONTAINER_NUM = 7, -- == NUM_BANKBAGSLOTS
         BANK_FIRST_CONTAINER = 5, -- == NUM_TOTAL_EQUIPPED_BAG_SLOTS + 1
-        BANK_LAST_CONTAINER = 11 -- == NUM_TOTAL_EQUIPPED_BAG_SLOTS + 1 + NUM_BANKBAGSLOTS
+        BANK_LAST_CONTAINER = 11, -- == NUM_TOTAL_EQUIPPED_BAG_SLOTS + 1 + NUM_BANKBAGSLOTS
+        BAG_FILTER_ASSIGNED_TO = BAG_FILTER_ASSIGNED_TO, -- localized "Assigned To:"
+        BAG_FILTER_LABELS = BAG_FILTER_LABELS, -- list of localized filter names, like "Consumables", "Trade Goods", etc.
     }
 
 end
