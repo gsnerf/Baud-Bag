@@ -18,7 +18,8 @@ function BaudBag_BagButtonMixin:Initialize()
     self.IsInventoryContainer = self.BagSetType == BagSetType.Backpack
 
     if (self.IsInventoryContainer) then
-        local id, textureName = GetInventorySlotInfo("Bag"..self.BagIndex.."Slot")
+        local slotPrefix = self.SubContainerId <= AddOnTable.BlizzConstants.BACKPACK_CONTAINER_NUM and "Bag" or "ReagentBag"
+        local id, textureName = GetInventorySlotInfo(slotPrefix..self.BagIndex.."Slot")
         self:SetID(id)
     end
 
@@ -240,10 +241,6 @@ function BaudBag_BagButtonMixin:OnReceiveDrag()
 end
 
 function AddOnTable:CreateBackpackBagButton(bagIndex, parentFrame)
-    -- Attention:
-    -- "PaperDollFrame" calls GetInventorySlotInfo on the button created here
-    -- For this to work the name bas to be "BagXSlot" with 9 random chars before that
-    -- TODO: check if this is actually needed or if we can somehow break the connection to that!
     local bagSetType = BagSetType.Backpack
     local subContainerId = bagIndex + 1
     local name = "BBBagSet"..bagSetType.Id.."Bag"..bagIndex.."Slot"
@@ -261,6 +258,23 @@ function AddOnTable:CreateBackpackBagButton(bagIndex, parentFrame)
     bagButton.IconBorder:SetSize(30, 30)
     bagButton.NormalTexture:SetSize(50, 50)]]
     
+    AddOnTable:BagSlot_Created(bagSetType, subContainerId, bagButton)
+
+    return bagButton
+end
+
+function AddOnTable:CreateReagentBagButton(bagIndex, parentFrame)
+    local subContainerId = bagIndex + AddOnTable.BlizzConstants.BACKPACK_CONTAINER_NUM + 1
+    local name = "BBBagSet1ReagentBag"..bagIndex.."Slot"
+
+    local bagButton = CreateFrame("ItemButton", name, parentFrame, "BaudBag_BagButton")
+    bagButton.BagSetType = BagSetType.Backpack
+    bagButton.BagIndex = bagIndex
+    bagButton.Bag = subContainerId
+    bagButton.SubContainerId = subContainerId
+    bagButton:SetFrameStrata("HIGH")
+    bagButton:Initialize()
+
     AddOnTable:BagSlot_Created(bagSetType, subContainerId, bagButton)
 
     return bagButton
