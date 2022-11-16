@@ -149,20 +149,9 @@ function BaudBag_BagButtonMixin:OnEvent( event, ... )
 			self.flyin:Play(true)
 		end
 	end
-
-    if (self.IsInventoryContainer and event == "PLAYER_EQUIPMENT_CHANGED") then
-        local inventorySlotId = ...
-        local isBackpackContainerSlotId = ContainerIDToInventoryID(1) <= inventorySlotId and inventorySlotId <= ContainerIDToInventoryID(AddOnTable.BlizzConstants.NUM_BAG_SLOTS)
-        local isBankContainerSlotId = ContainerIDToInventoryID(AddOnTable.BlizzConstants.BANK_FIRST_CONTAINER) <= inventorySlotId and inventorySlotId <= ContainerIDToInventoryID(AddOnTable.BlizzConstants.BANK_LAST_CONTAINER)
-        if isBackpackContainerSlotId or isBankContainerSlotId then
-            self:SetID(inventorySlotId)
-            self:UpdateContent()
-        end
-    end
 end
 
 local bagButtonRelatedEvents = {
-    "PLAYER_EQUIPMENT_CHANGED",
     "MERCHANT_UPDATE",
     "PLAYERBANKSLOTS_CHANGED",
     "ITEM_LOCK_CHANGED",
