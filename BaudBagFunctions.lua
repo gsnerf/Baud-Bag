@@ -121,9 +121,10 @@ function BaudBagForEachBag(BagSet, Func)
            -1 == bank
             0 == backpack
             1-4 == inventory bags
-            5-11 == bank bags
+            5 == reagent bag
+            6-12 == bank bags
     ]]--
-        if (BagSet == 1) then -- regular bags
+    if (BagSet == 1) then -- regular bags
         for Bag = AddOnTable.BlizzConstants.BACKPACK_FIRST_CONTAINER, AddOnTable.BlizzConstants.BACKPACK_LAST_CONTAINER do
             Func(Bag, Bag + 1);
         end

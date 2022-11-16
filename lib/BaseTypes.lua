@@ -38,8 +38,7 @@ BagSetType = {
 
 -- INITIALIZATION of BagSetType:
 -- * Backpack:
---[[ NOTE: this is being left as number of bag containers as the reagent bag is not supported yet this will probably need to change unless the reagent bag is suposed to be a separate set in the future ]]
-for bag = AddOnTable.BlizzConstants.BACKPACK_CONTAINER, AddOnTable.BlizzConstants.BACKPACK_CONTAINER_NUM do
+for bag = AddOnTable.BlizzConstants.BACKPACK_FIRST_CONTAINER, AddOnTable.BlizzConstants.BACKPACK_LAST_CONTAINER do
     table.insert(BagSetType.Backpack.ContainerIterationOrder, bag)
 end
 -- * Bank:

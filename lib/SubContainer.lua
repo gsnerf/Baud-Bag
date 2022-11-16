@@ -184,13 +184,21 @@ local function UpdateBackpackHighlight(subContainer)
         end
     else
         local bagId = subContainer.ContainerId -1
-        if subContainer.ContainerId == 5 then return end
+        local mainMenuBarButton = _G["CharacterBag"..bagId.."Slot"]
+        local baudBagBagButton = AddOnTable["Sets"][1].BagButtons[bagId]
+
+        if (subContainer.ContainerId == 5) then
+            bagId = subContainer.ContainerId - (AddOnTable.BlizzConstants.BACKPACK_FIRST_CONTAINER + AddOnTable.BlizzConstants.BACKPACK_CONTAINER_NUM + 1)
+            mainMenuBarButton = _G["CharacterReagentBag"..bagId.."Slot"]
+            baudBagBagButton = AddOnTable["Sets"][1].ReagentBagButtons[bagId]
+        end
+        
         if (open) then
-            _G["CharacterBag"..bagId.."Slot"].SlotHighlightTexture:Show()
-            AddOnTable["Sets"][1].BagButtons[bagId].SlotHighlightTexture:Show()
+            mainMenuBarButton.SlotHighlightTexture:Show()
+            baudBagBagButton.SlotHighlightTexture:Show()
         else
-            _G["CharacterBag"..bagId.."Slot"].SlotHighlightTexture:Hide()
-            AddOnTable["Sets"][1].BagButtons[bagId].SlotHighlightTexture:Hide()
+            mainMenuBarButton.SlotHighlightTexture:Hide()
+            baudBagBagButton.SlotHighlightTexture:Hide()
         end
     end
 end
