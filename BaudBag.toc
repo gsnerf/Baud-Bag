@@ -1,6 +1,6 @@
 ## Author: Thurmal (Author), Suddendeath2000 (Former Author), Baudzila (Original Author)
 ## DefaultState: Enabled
-## Interface: 100000
+## Interface: 100002
 ## LoadOnDemand: 0
 ## Dependencies: Blizzard_VoidStorageUI
 ## OptionalDeps: CaedronWardrobe, Masque
