@@ -1,4 +1,7 @@
 ﻿=== Changelog ===
+v10.0.2.6
+  - added support for reagent bag
+  - known issue: the bag buttons do not correctly update when equipping new bags... to work around please close and reopen the respective bag set
 v10.0.2.5
   - adapted ilvl overlay to show effective item level instead of "regular" item level (whatever that's supposed to be)
   - made fade in/out animation configurable and default to off for basic consistency with default UI
