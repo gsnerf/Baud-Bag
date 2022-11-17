@@ -1,4 +1,8 @@
 ﻿=== Changelog ===
+v10.0.2.7
+  - fixed a number of container config related issues (including bag cleanup)
+  - fixed updating of bag buttons
+  - fixed bags closing automatically on moving items when there is a profession item in the bag and the profession tutorial has not been completed yet
 v10.0.2.6
   - added support for reagent bag
   - known issue: the bag buttons do not correctly update when equipping new bags... to work around please close and reopen the respective bag set
