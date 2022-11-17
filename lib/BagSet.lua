@@ -81,7 +81,7 @@ function Prototype:RebuildContainers()
 
             isOpen = false
             containerNumber = containerNumber + 1
-            if (self.MaxContainerNumber < containerNumber) then
+            if (self.MaxContainerNumber < containerNumber and subContainer ~= nil) then
                 containerObject = AddOnTable:CreateContainer(self.Type, containerNumber)
 
                 self.Containers[containerNumber] = containerObject
