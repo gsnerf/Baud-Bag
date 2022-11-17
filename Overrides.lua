@@ -114,7 +114,7 @@ OpenAllBags = function(frame)
     end
 
     local Container, AnyShown
-    for Bag = 0, 4 do
+    for Bag = AddOnTable.BlizzConstants.BACKPACK_FIRST_CONTAINER, AddOnTable.BlizzConstants.BACKPACK_LAST_CONTAINER do
         BaudBag_DebugMsg("BagOpening", "[OpenAllBags] analyzing bag (ID)", Bag)
         Container = _G[AddOnName.."SubBag"..Bag]:GetParent()
         if (AddOnTable.BlizzAPI.GetContainerNumSlots(Bag) > 0) and not Container:IsShown()then
@@ -128,6 +128,12 @@ local orig_CloseAllBags = CloseAllBags
 CloseAllBags = function(frame)
     BaudBag_DebugMsg("BagOpening", "[CloseAllBags] (sourceName)", ((frame ~= nil) and frame:GetName() or "[none]"))
 
+        -- call default bags if the addon is disabled for regular bags
+        if (not BBConfig or not BBConfig[1].Enabled) then
+            BaudBag_DebugMsg("BagOpening", "[CloseAllBags] sent to original frames")
+            return orig_CloseAllBags(frame)
+        end
+
     -- failsafe check as opening mail or merchant seems to instantly call OpenAllBags instead of the bags registering for the events...
     if (frame ~= nil and (frame:GetName() == "MailFrame" or frame:GetName() == "MerchantFrame")) then
         BaudBag_DebugMsg("BagOpening", "[CloseAllBags] found merchant or mail call, stopping now!")
@@ -140,7 +146,7 @@ CloseAllBags = function(frame)
         return
     end
 
-    for Bag = 0, 4 do
+    for Bag = AddOnTable.BlizzConstants.BACKPACK_FIRST_CONTAINER, AddOnTable.BlizzConstants.BACKPACK_LAST_CONTAINER do
         BaudBag_DebugMsg("BagOpening", "[CloseAllBags] analyzing bag (id)", Bag)
         local Container = _G[AddOnName.."SubBag"..Bag]:GetParent()
         if (AddOnTable.BlizzAPI.GetContainerNumSlots(Bag) > 0) and Container:IsShown() then
@@ -169,6 +175,7 @@ function BaudBag_IsBagOpen(BagId)
     BaudBag_DebugMsg("BagOpening", "[IsBagOpen] (BagId, open)", BagId, open)
     return open
 end
+IsBagOpen = BaudBag_IsBagOpen
 
 --[[ this usually only applies to inventory bags ]]--
 local orig_ToggleAllBags = ToggleAllBags
@@ -184,10 +191,10 @@ ToggleAllBags = function()
 
     local bagsOpen = 0
     local totalBags = 0
-    
-    -- first make sure all bags are closed
-    for i=0, NUM_BAG_FRAMES, 1 do
-        if (AddOnTable.BlizzAPI.GetContainerNumSlots(i) > 0 ) then     
+
+    -- first find out if everything is open or only a part of everything
+    for i = AddOnTable.BlizzConstants.BACKPACK_FIRST_CONTAINER, AddOnTable.BlizzConstants.BACKPACK_LAST_CONTAINER do
+        if (AddOnTable.BlizzAPI.GetContainerNumSlots(i) > 0 ) then
             totalBags = totalBags + 1
         end
         if ( BaudBag_IsBagOpen(i) ) then
@@ -197,11 +204,11 @@ ToggleAllBags = function()
 
     -- now correctly open all of them
     if (bagsOpen < totalBags) then
-        for i=0, NUM_BAG_FRAMES, 1 do
+        for i = AddOnTable.BlizzConstants.BACKPACK_FIRST_CONTAINER, AddOnTable.BlizzConstants.BACKPACK_LAST_CONTAINER do
             OpenBag(i)
         end
     else
-        for i=0, NUM_BAG_FRAMES, 1 do
+        for i = AddOnTable.BlizzConstants.BACKPACK_FIRST_CONTAINER, AddOnTable.BlizzConstants.BACKPACK_LAST_CONTAINER do
             CloseBag(i)
         end
     end
