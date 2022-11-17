@@ -202,7 +202,7 @@ Func = function(self, event, ...)
         end
     end
 
-    -- full rebuild if it seems the bags could have been swapped/added/removed
+    -- full rebuild if it seems the bags could have been swapped (something like this will probably be necessary for classic, so it stays for the moment)
     if affectedContainerCount > 1 then
         if bagsAffected then
             AddOnTable.Sets[1]:RebuildContainers()
@@ -231,6 +231,12 @@ Func = function(self, event, ...)
     collectedBagEvents = {}
 end
 EventFuncs.BAG_UPDATE_DELAYED = Func
+
+EventFuncs.BAG_CONTAINER_UPDATE = function(self, event, ...)
+    -- not sure how to identify what set is affected, so for now rebuild everything
+    AddOnTable.Sets[1]:RebuildContainers()
+    AddOnTable.Sets[2]:RebuildContainers()
+end
 
 local function HandleMerchantShow()
     BaudBag_DebugMsg("Bags", "MerchandFrame was shown, opening bags")

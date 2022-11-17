@@ -149,6 +149,10 @@ function BaudBag_BagButtonMixin:OnEvent( event, ... )
 			self.flyin:Play(true)
 		end
 	end
+
+    if ( event == "BAG_CONTAINER_UPDATE" ) then
+        self:UpdateContent()
+    end
 end
 
 local bagButtonRelatedEvents = {
@@ -159,6 +163,7 @@ local bagButtonRelatedEvents = {
     "UPDATE_INVENTORY_ALERTS",
     "AZERITE_ITEM_POWER_LEVEL_CHANGED",
     "AZERITE_EMPOWERED_ITEM_SELECTION_UPDATED",
+    "BAG_CONTAINER_UPDATE",
 }
 function BaudBag_BagButtonMixin:OnShow()
     if (self.IsInventoryContainer) then
