@@ -176,7 +176,7 @@ local function UpdateBackpackHighlight(subContainer)
     -- needed in this case???
     subContainer.Frame:GetParent().UnlockInfo:Hide()
 
-    if (subContainer.ContainerId == BACKPACK_CONTAINER) then
+    if (subContainer.ContainerId == AddOnTable.BlizzConstants.BACKPACK_CONTAINER) then
         if (open) then
             MainMenuBarBackpackButton.SlotHighlightTexture:Show()
         else
@@ -212,7 +212,7 @@ local function UpdateBankBagHighlight(subContainer)
 
     unlockInfo:Hide()
 
-    if (subContainer.ContainerId == REAGENTBANK_CONTAINER) then
+    if (subContainer.ContainerId == AddOnTable.BlizzConstants.REAGENTBANK_CONTAINER) then
         if (open)   then
             _G["BBReagentsBag"].SlotHighlightTexture:Show()
         else
@@ -229,7 +229,7 @@ local function UpdateBankBagHighlight(subContainer)
         return
     end
 
-    if (subContainer.ContainerId ~= BANK_CONTAINER) then
+    if (subContainer.ContainerId ~= AddOnTable.BlizzConstants.BANK_CONTAINER) then
         local button = AddOnTable["Sets"][2].BagButtons[subContainer.ContainerId - AddOnTable.BlizzConstants.BACKPACK_LAST_CONTAINER]
         if (open) then
             button.SlotHighlightTexture:Show()
