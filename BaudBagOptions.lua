@@ -6,6 +6,7 @@ local MaxBags   = NUM_BANKBAGSLOTS + 2
 local Prefix    = "BaudBagOptions"
 local Updating  = false
 local CfgBackup
+local category = nil
 
 local SelectedBags      = 1
 local SelectedContainer = 1
@@ -102,8 +103,9 @@ function BaudBagOptionsMixin:OnEvent(event, ...)
     
     -- register with wow api
     if (Settings ~= nil and Settings.RegisterCanvasLayoutCategory ~= nil) then
-        local category = Settings.RegisterCanvasLayoutCategory(self, "Baud Bag")
+        category = Settings.RegisterCanvasLayoutCategory(self, "Baud Bag")
         Settings.RegisterAddOnCategory(category)
+        AddOnTable.Functions.DebugMessage("Options", "Using new settings system to register category", category)
     else
         InterfaceOptions_AddCategory(self)
     end
@@ -159,10 +161,17 @@ function BaudBagOptionsMixin:OnEvent(event, ...)
     end
 	
     -- some slash command settings
-    SlashCmdList[Prefix..'_SLASHCMD'] = function() 
-        -- double call is needed to work around what seems to be a bug in blizzards code...
-        InterfaceOptionsFrame_OpenToCategory(self)
-        InterfaceOptionsFrame_OpenToCategory(self)
+    SlashCmdList[Prefix..'_SLASHCMD'] = function()
+        if (category ~= nil) then
+            -- retail options system
+            AddOnTable.Functions.DebugMessage("Options", "Using new settings system to open category", category:GetID())
+            Settings.OpenToCategory(category:GetID())
+        else
+            -- classic options system
+            -- double call is needed to work around what seems to be a bug in blizzards code...
+            InterfaceOptionsFrame_OpenToCategory(self)
+            InterfaceOptionsFrame_OpenToCategory(self)
+        end
     end
     _G["SLASH_"..Prefix.."_SLASHCMD1"] = '/baudbag'
     _G["SLASH_"..Prefix.."_SLASHCMD2"] = '/bb'
