@@ -195,9 +195,9 @@ Func = function(self, event, ...)
     local bagsAffected = false
     for bagId, _ in pairs(collectedBagEvents) do
         affectedContainerCount = affectedContainerCount + 1
-        if bagId >= 0 and bagId <= 4 then
+        if AddOnTable.BlizzConstants.BACKPACK_FIRST_CONTAINER <= bagId and bagId <= AddOnTable.BlizzConstants.BACKPACK_LAST_CONTAINER then
             bagsAffected = true
-        elseif bagId == -3 or bagId == -1 or bagId > 4 then
+        elseif bagId == AddOnTable.BlizzConstants.REAGENTBANK_CONTAINER or bagId == AddOnTable.BlizzConstants.BANK_CONTAINER or AddOnTable.BlizzConstants.BANK_FIRST_CONTAINER <= bagId then
             bankAffected = true
         end
     end
