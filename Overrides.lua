@@ -169,6 +169,7 @@ function BaudBag_IsBagOpen(BagId)
     BaudBag_DebugMsg("BagOpening", "[IsBagOpen] (BagId, open)", BagId, open)
     return open
 end
+IsBagOpen = BaudBag_IsBagOpen
 
 --[[ this usually only applies to inventory bags ]]--
 local orig_ToggleAllBags = ToggleAllBags
