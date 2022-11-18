@@ -736,15 +736,35 @@ function BaudBag_BagSlot_OnLeave(self, event, ...)
 	
 end
 
+function BaudBag_ContainerFrameItemButton_OnClick(self, button)
+    BaudBag_DebugMsg("ItemHandle", "OnClick called (button, bag)", button, self:GetParent():GetID())
+    if (button ~= "LeftButton" and AddOnTable.State.BankOpen) then
+        local itemId = AddOnTable.BlizzAPI.GetContainerItemID(self:GetParent():GetID(), self:GetID())
+        local isReagent = (itemId and AddOnTable.Functions.IsCraftingReagent(itemId))
+        local sourceIsBank = BaudBag_IsBankContainer(self:GetParent():GetID())
+        local targetReagentBank = IsReagentBankUnlocked() and isReagent
+        
+        BaudBag_DebugMsg("ItemHandle", "handling item (itemId, isReagent, targetReagentBank)", itemId, isReagent, targetReagentBank)
+
+        -- remember to start a move operation when item was placed in bank by wow!
+        if (targetReagentBank) then
+            AddOnTable.State.ItemLock.Move      = true
+            AddOnTable.State.ItemLock.IsReagent = true
+        end
+    end
+end
+hooksecurefunc("ContainerFrameItemButton_OnClick", BaudBag_ContainerFrameItemButton_OnClick)
+
 function BaudBag_FixContainerClickForReagent(Bag, Slot)
     -- determine if there is another item with the same item in the reagent bank
+    BaudBag_DebugMsg("ItemHandle", "Trying to fix a reagent right click to move it to the reagent bank")
     local containerItemInfoBag = AddOnTable.BlizzAPI.GetContainerItemInfo(Bag, Slot)
     local maxSize = select(8, AddOnTable.BlizzAPI.GetItemInfo(containerItemInfoBag.hyperlink))
     local targetSlots = {}
     local emptySlots = AddOnTable.BlizzAPI.GetContainerFreeSlots(REAGENTBANK_CONTAINER)
     for i = 1, AddOnTable.BlizzAPI.GetContainerNumSlots(REAGENTBANK_CONTAINER) do
         local containerItemInfoReagentBank = AddOnTable.BlizzAPI.GetContainerItemInfo(REAGENTBANK_CONTAINER, i)
-        if (containerItemInfoBag.hyperlink == containerItemInfoReagentBank.hyperlink) then
+        if (containerItemInfoReagentBank ~= nil and containerItemInfoBag.hyperlink == containerItemInfoReagentBank.hyperlink) then
             local target    = {
                 count    = containerItemInfoReagentBank.stackCount,
                 slot     = i
