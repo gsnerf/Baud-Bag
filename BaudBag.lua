@@ -83,6 +83,12 @@ local EventFuncs = {
 
     ITEM_LOCK_CHANGED = function(self, event, ...)
         local Bag, Slot = ...
+
+        -- do nothing if this was called for an equipment slot, rather than a bag slot
+        if (Slot == nil or (Bag == BANK_CONTAINER and Slot > NUM_BANKGENERIC_SLOTS)) then
+            return
+        end
+
         BaudBag_DebugMsg("ItemHandle", "Event ITEM_LOCK_CHANGED fired (bag, slot) ", Bag, Slot)
         if (Bag == BANK_CONTAINER) then
             if (Slot <= NUM_BANKGENERIC_SLOTS) then
