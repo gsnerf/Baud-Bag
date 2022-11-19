@@ -60,7 +60,7 @@ function Prototype:Rebuild()
     local currentSize = self.Size
     local availableItemButtons = self.AvailableItemButtons
     local bagCache = AddOnTable.Cache:GetBagCache(self.ContainerId)
-    BaudBag_DebugMsg("BagCreation", "Rebuilding subcontainer content (containerId, currentSize, newSize, availableItemButtons)", self.ContainerId, currentSize, newSize, availableItemButtons)
+    AddOnTable.Functions.DebugMessage("BagCreation", "Rebuilding subcontainer content (containerId, currentSize, newSize, availableItemButtons)", self.ContainerId, currentSize, newSize, availableItemButtons)
     
     -- create missing slots if necessary
     if (availableItemButtons < newSize) then
@@ -108,7 +108,7 @@ function Prototype:UpdateSlotContents()
     -- reinit values that might be outdated
     self.FreeSlots = 0
 
-    BaudBag_DebugMsg("Bags", "Updating SubBag (ID, Size, isBagContainer, isBankOpen)", self.ContainerId, self.Size, not isBankBag, AddOnTable.State.BankOpen)
+    AddOnTable.Functions.DebugMessage("Bags", "Updating SubBag (ID, Size, isBagContainer, isBankOpen)", self.ContainerId, self.Size, not isBankBag, AddOnTable.State.BankOpen)
 
     for slot = 1, self.Size do
         local itemObject = self.Items[slot]
@@ -153,7 +153,7 @@ end
 --[[ This only does something when the container is open (so the items are actually visible) ]]
 function Prototype:UpdateItemOverlays()
     if self:IsOpen() then
-        BaudBag_DebugMsg("Bags", "Updating Items of Bag (ContainerId, container name)", self.ContainerId, self.Name)
+        AddOnTable.Functions.DebugMessage("Bags", "Updating Items of Bag (ContainerId, container name)", self.ContainerId, self.Name)
         if not AddOnTable.Functions.IsInventory(self.ContainerId) then
             return
         end
@@ -253,7 +253,7 @@ function Prototype:SetSlotHighlighting(shouldHighlight)
 end
 
 function Prototype:GetSlotInfo()
-    BaudBag_DebugMsg("Bags", "Counting free slots for container (id)", self.ContainerId)
+    AddOnTable.Functions.DebugMessage("Bags", "Counting free slots for container (id)", self.ContainerId)
     local useCache = AddOnTable.Cache:UsesCache(self.ContainerId)
 
     if useCache then
@@ -334,7 +334,7 @@ local function EventUpdateFunction(self, event, ...)
     if (self.ContainerId ~= idOfBagToUpdate) then
         return
     end
-    BaudBag_DebugMsg("ItemHandle", "Event fired for subBag, Params[Event, ID]", event, self.ContainerId)
+    AddOnTable.Functions.DebugMessage("ItemHandle", "Event fired for subBag, Params[Event, ID]", event, self.ContainerId)
     self:Update(event, ...)
 end
 

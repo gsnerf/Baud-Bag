@@ -48,10 +48,10 @@ function Prototype:RebuildContainers()
         
         -- now update visibility
         if localIsOpen then
-            BaudBag_DebugMsg("Container", "Showing Container (Name)", localContainerObject.Name)
+            AddOnTable.Functions.DebugMessage("Container", "Showing Container (Name)", localContainerObject.Name)
             localContainerObject.Frame:Show()
         else
-            BaudBag_DebugMsg("Container", "Hiding Container (Name)", localContainerObject.Name)
+            AddOnTable.Functions.DebugMessage("Container", "Hiding Container (Name)", localContainerObject.Name)
             localContainerObject.Frame:Hide()
         end
     end
@@ -91,7 +91,7 @@ function Prototype:RebuildContainers()
             containerObject:UpdateFromConfig()
         end
 
-        BaudBag_DebugMsg("Container", "(orderIndex, id)", subContainerIndex, id)
+        AddOnTable.Functions.DebugMessage("Container", "(orderIndex, id)", subContainerIndex, id)
         containerObject.SubContainers[subContainerIndex] = subContainer
         containerObject.Frame.Bags[subContainerIndex] = subContainer.Frame
         subContainer.Frame:SetParent(containerObject.Frame)
@@ -115,7 +115,7 @@ function Prototype:GetSlotInfo()
     local free = 0
     local overall = 0
 
-    BaudBag_DebugMsg("Bags", "Counting free slots for (set)", self.Type.Id)
+    AddOnTable.Functions.DebugMessage("Bags", "Counting free slots for (set)", self.Type.Id)
 
     for id, subContainer in pairs(self.SubContainers) do
         if (id ~= -3) then

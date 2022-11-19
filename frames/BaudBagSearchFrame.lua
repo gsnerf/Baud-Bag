@@ -135,7 +135,7 @@ function BaudBagSearchFrame_ShowFrame(ParentContainer, Scale, Background)
 end
 
 function BaudBagSearchFrameEditBox_OnTextChanged(self, isUserInput)
-    BaudBag_DebugMsg("Search", "Changed search phrase, searching open bags")
+    AddOnTable.Functions.DebugMessage("Search", "Changed search phrase, searching open bags")
     local compareString = self:GetText()
 	
     -- check search text for validity
@@ -158,7 +158,7 @@ function BaudBagSearchFrameEditBox_OnTextChanged(self, isUserInput)
 
             -- if the bag is open go through its items and compare the itemname
             if (Open) then
-                BaudBag_DebugMsg("Search", "Bag is open, going through items (BagID)", Bag)
+                AddOnTable.Functions.DebugMessage("Search", "Bag is open, going through items (BagID)", Bag)
                 BagsSearched[Bag] = true
 
                 for Slot = 1, SubBagObject:GetSize() do
@@ -176,7 +176,7 @@ function BaudBagSearchFrameEditBox_OnTextChanged(self, isUserInput)
                     if Link then
                         -- debug message
                         printableLink = gsub(Link, "\124", "\124\124")
-                        BaudBag_DebugMsg("Search", "Found a link (link)", printableLink)
+                        AddOnTable.Functions.DebugMessage("Search", "Found a link (link)", printableLink)
 
                         -- we can have different types of links, usually it is an item...
                         if (strmatch(Link, "|Hitem:")) then
@@ -196,7 +196,7 @@ function BaudBagSearchFrameEditBox_OnTextChanged(self, isUserInput)
                     -- add transparency if search active but not a result
                     Texture = ItemButton
                     if (Link and compareString ~= "") then
-                        BaudBag_DebugMsg("Search", "Searching (searchString, itemName)", compareString, Name)
+                        AddOnTable.Functions.DebugMessage("Search", "Searching (searchString, itemName)", compareString, Name)
 
                         -- first run string search and go through results later (because of error handling)
                         Status, Result = pcall(string.find, string.lower(Name), string.lower(compareString))
@@ -205,15 +205,15 @@ function BaudBagSearchFrameEditBox_OnTextChanged(self, isUserInput)
                         if (Status) then
                             --if (string.find(string.lower(Name), string.lower(compareString)) == nil) then
                             if (Result == nil) then
-                                BaudBag_DebugMsg("Search", "Itemname does not match")
+                                AddOnTable.Functions.DebugMessage("Search", "Itemname does not match")
                                 Texture:SetAlpha(0.2)
                             else
-                                BaudBag_DebugMsg("Search", "Item seems to match")
+                                AddOnTable.Functions.DebugMessage("Search", "Item seems to match")
                                 Texture:SetAlpha(1)
                             end
                             -- find failed, create debug message
                         else
-                            BaudBag_DebugMsg("Search", "current search creates problem (result)", Result)
+                            AddOnTable.Functions.DebugMessage("Search", "current search creates problem (result)", Result)
                             return
                         end
                     else
@@ -252,14 +252,14 @@ function BaudBagSearchFrame_OnHide(self, event, ...)
 end
 
 function BaudBagSearchFrame_CheckClose(caller)
-    BaudBag_DebugMsg("Search", "Checking if searchframe needs to be closed:")
+    AddOnTable.Functions.DebugMessage("Search", "Checking if searchframe needs to be closed:")
     if (BaudBagSearchFrame:IsVisible()) then
-        BaudBag_DebugMsg("Search", "(sourceName, attachedTo)", caller:GetName(), BaudBagSearchFrame.AttachedTo)
+        AddOnTable.Functions.DebugMessage("Search", "(sourceName, attachedTo)", caller:GetName(), BaudBagSearchFrame.AttachedTo)
         local isSelf		= (caller:GetName() == BaudBagSearchFrame:GetName())
         local isAttached	= (caller:GetName() == BaudBagSearchFrame.AttachedTo)
         local isClosed		= _G[BaudBagSearchFrame.AttachedTo].Closing or (not _G[BaudBagSearchFrame.AttachedTo]:IsVisible())
 		
-        BaudBag_DebugMsg("Search", "isSelf, isAttached, isClosed", isSelf, isAttached, isClosed)
+        AddOnTable.Functions.DebugMessage("Search", "isSelf, isAttached, isClosed", isSelf, isAttached, isClosed)
         if (isSelf or (isAttached and isClosed)) then
             BaudBagSearchFrame:Hide()
         end

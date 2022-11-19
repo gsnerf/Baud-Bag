@@ -212,9 +212,9 @@ function Prototype:UpdateNewAndBattlepayoverlays(isNewItem, isBattlePayItem)
 end
 
 function Prototype:UpdateTooltip()
-    BaudBag_DebugMsg("Tooltip", "[ItemButton:UpdateTooltip] Updating tooltip for item button "..self:GetName())
+    AddOnTable.Functions.DebugMessage("Tooltip", "[ItemButton:UpdateTooltip] Updating tooltip for item button "..self:GetName())
     if (self.Parent.BagSet.Id == BagSetType.Bank.Id) then
-        BaudBag_DebugMsg("Tooltip", "[ItemButton:UpdateTooltip] This button is part of the bank bags... reading from cache")
+        AddOnTable.Functions.DebugMessage("Tooltip", "[ItemButton:UpdateTooltip] This button is part of the bank bags... reading from cache")
         local bagId = (self.isBag) and self.Bag or self:GetParent():GetID()
         local slotId = (not self.isBag) and self:GetID() or nil
         self:UpdateTooltipFromCache(bagId, slotId)
@@ -233,11 +233,11 @@ function Prototype:UpdateTooltipFromCache(bagId, slotId)
     local bagCache = AddOnTable.Cache:GetBagCache(bagId)
     local slotCache = bagCache[slotId]
     if not slotCache then
-        BaudBag_DebugMsg("Tooltip", "[ItemButton:UpdateTooltipFromCache] Cannot show cache for item because there is no cache entry [bagId, slotId]", bagId, slotId)
+        AddOnTable.Functions.DebugMessage("Tooltip", "[ItemButton:UpdateTooltipFromCache] Cannot show cache for item because there is no cache entry [bagId, slotId]", bagId, slotId)
         GameTooltip:Hide()
         return
     end
-    BaudBag_DebugMsg("Tooltip", "[ItemButton:UpdateTooltipFromCache] Showing cached item info [bagId, slotId, cachEntry]", bagId, slotId, slotCache.Link)
+    AddOnTable.Functions.DebugMessage("Tooltip", "[ItemButton:UpdateTooltipFromCache] Showing cached item info [bagId, slotId, cachEntry]", bagId, slotId, slotCache.Link)
     AddOnTable.Functions.ShowLinkTooltip(self, slotCache.Link)
     GameTooltip:Show()
     CursorUpdate(self)

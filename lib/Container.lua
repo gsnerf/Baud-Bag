@@ -37,7 +37,7 @@ function Prototype:UpdateName()
 end
 
 function Prototype:SaveCoordsToConfig()
-    BaudBag_DebugMsg("Container", "Saving container coords to config (name)", self.Name)
+    AddOnTable.Functions.DebugMessage("Container", "Saving container coords to config (name)", self.Name)
     local scale = self.Frame:GetScale()
     local x, y = self.Frame:GetCenter()
     x = x * scale
@@ -47,10 +47,10 @@ end
 
 function Prototype:UpdateFromConfig()
     if (self.Frame == nil) then
-        BaudBag_DebugMsg("Container", "Frame doesn't exist yet. Called UpdateFromConfig() to early???", self.Id, self.Name)
+        AddOnTable.Functions.DebugMessage("Container", "Frame doesn't exist yet. Called UpdateFromConfig() to early???", self.Id, self.Name)
         return
     end
-    BaudBag_DebugMsg("Container", "Updating container from config (name)", self.Name)
+    AddOnTable.Functions.DebugMessage("Container", "Updating container from config (name)", self.Name)
 
     local containerConfig = BBConfig[self.Frame.BagSet][self.Id]
 
@@ -123,7 +123,7 @@ function Prototype:Update()
         self.Frame:SetHeight(row * 39 - 2)
     end
     
-    BaudBag_DebugMsg("Bags", "Finished Arranging Container.")
+    AddOnTable.Functions.DebugMessage("Bags", "Finished Arranging Container.")
     AddOnTable:Container_Updated(self.BagSet, self.Id)
 end
 
@@ -134,15 +134,15 @@ function Prototype:UpdateSubContainers(col, row)
     local slotLevel     = self.Frame:GetFrameLevel() + 1
     local container
 
-    BaudBag_DebugMsg("Container", "Started Updating SubContainers For Container", self.Id)
+    AddOnTable.Functions.DebugMessage("Container", "Started Updating SubContainers For Container", self.Id)
 
     for _, container in pairs(self.SubContainers) do
-        BaudBag_DebugMsg("Container", "Updating SubContainer with ID and Size", container.ContainerId, container.Size)
+        AddOnTable.Functions.DebugMessage("Container", "Updating SubContainer with ID and Size", container.ContainerId, container.Size)
         -- not existing subbags (bags with no itemslots) are hidden
         if (container.Size <= 0) then
             container.Frame:Hide()
         else
-            BaudBag_DebugMsg("Bags", "Adding (bagName)", container.Name)
+            AddOnTable.Functions.DebugMessage("Bags", "Adding (bagName)", container.Name)
 
             -- position item slots
             container:UpdateSlotContents()
@@ -266,10 +266,10 @@ function AddOnTable:CreateContainer(bagSetType, bbContainerId)
     local container = _G.setmetatable({}, Metatable)
     container.Id = bbContainerId
     container.Name = AddOnName.."Container"..bagSetType.Id.."_"..bbContainerId
-    BaudBag_DebugMsg("Container", "Creating Container (name)", container.Name)
+    AddOnTable.Functions.DebugMessage("Container", "Creating Container (name)", container.Name)
     local frame = _G[container.Name]
     if (frame == nil) then
-        BaudBag_DebugMsg("Container", "Frame for container does not yet exist, creating new Frame (name)", name)
+        AddOnTable.Functions.DebugMessage("Container", "Frame for container does not yet exist, creating new Frame (name)", name)
         frame = CreateFrame("Frame", container.Name, BaudBagFrame, "BaudBagContainerTemplate")
     end
     frame:SetID(bbContainerId)

@@ -24,7 +24,7 @@ end
     Beware that the bank box won't exist yet when this is initialized at first.
   ]]
   function BaudBagContainerDropDown_Initialize(dropDown, level, menuList)
-    BaudBag_DebugMsg("MenuDropDown", "initializing with (level, menuList, DropDownBagSet, DropDownContainer)", level, menuList, DropDownBagSet, DropDownContainer)
+    AddOnTable.Functions.DebugMessage("MenuDropDown", "initializing with (level, menuList, DropDownBagSet, DropDownContainer)", level, menuList, DropDownBagSet, DropDownContainer)
     local header = { isTitle = true, notCheckable = true }
     local entry = UIDropDownMenu_CreateInfo();
 
@@ -142,7 +142,7 @@ function AddFilterOptions(bagSetId, containerId, header)
 end
 
 function ToggleContainerLock(self)
-    BaudBag_DebugMsg("MenuDropDown", "toggeling container lock (DropDownBagSet, DropDownContainer, currentConfig)", DropDownBagSet, DropDownContainer, AddOnTable.Config[DropDownBagSet][DropDownContainer].Locked)
+    AddOnTable.Functions.DebugMessage("MenuDropDown", "toggeling container lock (DropDownBagSet, DropDownContainer, currentConfig)", DropDownBagSet, DropDownContainer, AddOnTable.Config[DropDownBagSet][DropDownContainer].Locked)
     AddOnTable.Config[DropDownBagSet][DropDownContainer].Locked = not AddOnTable.Config[DropDownBagSet][DropDownContainer].Locked
 end
 

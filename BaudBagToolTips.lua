@@ -9,23 +9,23 @@ local INV_ID_BANK_BAG_LAST = AddOnTable.BlizzAPI.ContainerIDToInventoryID(AddOnT
 -- Adds container name when mousing over bags, aswell as simulating offline bank item mouse over
 hooksecurefunc(GameTooltip, "SetInventoryItem", function (Data, Unit, InvID)
     if (Unit ~= "player") then
-        BaudBag_DebugMsg("Tooltip", "SetInventoryItem called with unit '"..Unit.."' which cannot be handled")
+        AddOnTable.Functions.DebugMessage("Tooltip", "SetInventoryItem called with unit '"..Unit.."' which cannot be handled")
         return
     end
 
     if (InvID >= INV_ID_BAG_FIRST) and (InvID <= INV_ID_BAG_LAST) then
-        BaudBag_DebugMsg("Tooltip", "Showing tooltip for bags in overview...")
+        AddOnTable.Functions.DebugMessage("Tooltip", "Showing tooltip for bags in overview...")
         if BBConfig and (BBConfig[1].Enabled==false) then
             return
         end
-        BaudBag_DebugMsg("Tooltip", "... success!")
+        AddOnTable.Functions.DebugMessage("Tooltip", "... success!")
         BaudBagModifyBagTooltip(InvID - INV_ID_BAG_FIRST + 1)
     elseif (InvID >= INV_ID_BANK_BAG_FIRST) and (InvID <= INV_ID_BANK_BAG_LAST) then
-        BaudBag_DebugMsg("Tooltip", "Showing tooltip for bank bags in overview...")
+        AddOnTable.Functions.DebugMessage("Tooltip", "Showing tooltip for bank bags in overview...")
         if BBConfig and (BBConfig[2].Enabled == false) then
             return
         end
-        BaudBag_DebugMsg("Tooltip", "... success")
+        AddOnTable.Functions.DebugMessage("Tooltip", "... success")
         BaudBagModifyBagTooltip(INV_ID_BAG_LAST + InvID - INV_ID_BANK_BAG_FIRST + 1)
     end
     
@@ -40,9 +40,9 @@ end)
 
 -- this adapts an existing tooltip to show the name of the container in the first subline (instead of i.e. soulbound)
 function BaudBagModifyBagTooltip(BagID)
-    BaudBag_DebugMsg("Tooltip", "ModifyBagTooltip called for BagID"..BagID)
+    AddOnTable.Functions.DebugMessage("Tooltip", "ModifyBagTooltip called for BagID"..BagID)
     if not GameTooltip:IsShown() then
-        BaudBag_DebugMsg("Tooltip", "Returning pre-maturely 1")
+        AddOnTable.Functions.DebugMessage("Tooltip", "Returning pre-maturely 1")
         return;
     end
 
@@ -50,7 +50,7 @@ function BaudBagModifyBagTooltip(BagID)
     Container = BBConfig[Container.BagSet][Container:GetID()].Name
 
     if not Container or not strfind(Container, "%S") then
-        BaudBag_DebugMsg("Tooltip", "Returning pre-maturely 2")
+        AddOnTable.Functions.DebugMessage("Tooltip", "Returning pre-maturely 2")
         return
     end  
 

@@ -15,7 +15,7 @@ local _
 local initialized = false
 
 local function DebugMsg(message, ...)
-    BaudBag_DebugMsg("Cache", message, ...)
+    AddOnTable.Functions.DebugMessage("Cache", message, ...)
 end
 
 local CacheMixin = {}
@@ -95,17 +95,17 @@ function BaudBagUpdateCachedTooltip(tooltip, bagId, slotId)
         return
     end
 
-    BaudBag_DebugMsg("Tooltip", "[UpdateCachedTooltip] Updating tooltip with cache for bagID: "..bagId.." and itemID: "..slotId)
+    AddOnTable.Functions.DebugMessage("Tooltip", "[UpdateCachedTooltip] Updating tooltip with cache for bagID: "..bagId.." and itemID: "..slotId)
     
     local bagCache = AddOnTable.Cache:GetBagCache(bagId)
     if (not bagCache) then
-        BaudBag_DebugMsg("Tooltip", "[UpdateCachedTooltip] Could not show cache for bag as there is no cache entry [bagId]", bagId)
+        AddOnTable.Functions.DebugMessage("Tooltip", "[UpdateCachedTooltip] Could not show cache for bag as there is no cache entry [bagId]", bagId)
         return
     end
 
     local slotCache = bagCache[slotId]
     if not slotCache then
-        BaudBag_DebugMsg("Tooltip", "[UpdateCachedTooltip] Cannot show cache for item because there is no cache entry [bagId, slotId]", bagId, slotId)
+        AddOnTable.Functions.DebugMessage("Tooltip", "[UpdateCachedTooltip] Cannot show cache for item because there is no cache entry [bagId, slotId]", bagId, slotId)
         return
     end
 

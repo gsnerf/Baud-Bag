@@ -1,22 +1,23 @@
-﻿local next = next;
+﻿local AddOnName, AddOnTable = ...
+local next = next;
 local _;
 
 -- this method is called from a user defined shortcut (see bindings.xml)
 function BaudBagToggleVoidStorage(self)
-    BaudBag_DebugMsg("VoidStorage", "Toggle was called...");
+    AddOnTable.Functions.DebugMessage("VoidStorage", "Toggle was called...");
 
     -- void storage is an LoadOnDemand addon, make sure its loaded
     LoadAddOn("Blizzard_VoidStorageUI");
 
     -- toggle switch
     if (not VoidStorageFrame:IsShown()) then
-        BaudBag_DebugMsg("VoidStorage", "... not yet visible, updating and showing! ("..tostring(CanUseVoidStorage()).."|"..tostring(IsVoidStorageReady())..")");
+        AddOnTable.Functions.DebugMessage("VoidStorage", "... not yet visible, updating and showing! ("..tostring(CanUseVoidStorage()).."|"..tostring(IsVoidStorageReady())..")");
         -- before showing we need to make sure the items where initialized
         -- else the void storage will show up empty
         VoidStorageFrame_Update();
         VoidStorageFrame_Show();
     else
-        BaudBag_DebugMsg("VoidStorage", "... already visible, hiding!");
+        AddOnTable.Functions.DebugMessage("VoidStorage", "... already visible, hiding!");
         VoidStorageFrame_Hide();
     end
 end
@@ -29,7 +30,7 @@ local EventFuncs = {}
 This will be called whenever we are at an accessible void storage point and the content changed.
 ]]--
 local eventFunc = function(self, event, ...)
-    BaudBag_DebugMsg("Cache", "Void Storage event received: "..event, ...);
+    AddOnTable.Functions.DebugMessage("Cache", "Void Storage event received: "..event, ...);
     local voidCache = BaudBagGetVoidCache();
 
     -- go through all items in the storage and cache them (overriding all values in the process)
@@ -39,11 +40,11 @@ local eventFunc = function(self, event, ...)
             voidCache[i] = itemID and itemID or nil;
         end
     else
-        BaudBag_DebugMsg("Cache", "Void Storage not ready yet, not doing anything!");
+        AddOnTable.Functions.DebugMessage("Cache", "Void Storage not ready yet, not doing anything!");
     end
 
     if (next(voidCache) == nil) then
-        BaudBag_DebugMsg("Cache", "ATTENTION: the void storage cache is empty!");
+        AddOnTable.Functions.DebugMessage("Cache", "ATTENTION: the void storage cache is empty!");
     end
 	
     -- for content updates usually just the changed item is updated, which will create problems with the cached items
@@ -120,19 +121,19 @@ end
 
 --local origVoidStorageFrame_Show = VoidStorageFrame_Show;
 --VoidStorageFrame_Show = function(...)
---    BaudBag_DebugMsg("VoidStorage", "Tried to catch the Show event");
+--    AddOnTable.Functions.DebugMessage("VoidStorage", "Tried to catch the Show event");
 --    return origVoidStorageFrame_Show(...);
 --end
 
 --local origVoidStorageFrame_Hide = VoidStorageFrame_Hide;
 --VoidStorageFrame_Hide = function(...)
---    BaudBag_DebugMsg("VoidStorage", "Tried to catch the Hide event");
+--    AddOnTable.Functions.DebugMessage("VoidStorage", "Tried to catch the Hide event");
 --    return origVoidStorageFrame_Hide(...);
 --end
 
 --local origVoidStorage_ItemsUpdate = VoidStorage_ItemsUpdate;
 --VoidStorage_ItemsUpdate = function(doDeposit, doContents)
---    BaudBag_DebugMsg("VoidStorage", "executing VoidStorage_ItemsUpdate ("..tostring(doDeposit).."||"..tostring(doContents)..")");
+--    AddOnTable.Functions.DebugMessage("VoidStorage", "executing VoidStorage_ItemsUpdate ("..tostring(doDeposit).."||"..tostring(doContents)..")");
 --    local voidCache = BaudBagGetVoidCache();
 --    local button;
 --    if ( doDeposit ) then
