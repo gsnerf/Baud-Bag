@@ -165,12 +165,12 @@ function Prototype:UpdateQuestOverlay(containerId)
 end
 
 function Prototype:UpdateItemOverlay(itemID)
-        if itemID and C_AzeriteEmpoweredItem.IsAzeriteEmpoweredItemByID(itemID) then
-            self.IconOverlay:SetAtlas([[AzeriteIconFrame]]);
-            self.IconOverlay:Show();
-        else
-            self.IconOverlay:Hide();
-        end
+    if itemID and C_AzeriteEmpoweredItem.IsAzeriteEmpoweredItemByID(itemID) then
+        self.IconOverlay:SetAtlas([[AzeriteIconFrame]]);
+        self.IconOverlay:Show();
+    else
+        self.IconOverlay:Hide();
+    end
 end
 
 function Prototype:UpdateNewAndBattlepayoverlays(isNewItem, isBattlePayItem)
