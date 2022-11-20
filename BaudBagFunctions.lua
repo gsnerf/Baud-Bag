@@ -264,7 +264,7 @@ AddOnTable.Functions.IsCraftingReagent = function (itemId)
     local isReagent = false
     for i = 1, ItemToolTip:NumLines() do
         local text = _G["BaudBagScanningTooltipTextLeft"..i]:GetText()
-        if (string.find(text, Localized.TooltipScanReagent)) then
+        if (string.find(text, AddOnTable.Localized.TooltipScanReagent)) then
             isReagent = true
         end
     end
