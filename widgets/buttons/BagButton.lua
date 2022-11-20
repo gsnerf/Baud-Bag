@@ -269,7 +269,7 @@ function AddOnTable:CreateReagentBagButton(bagIndex, parentFrame)
     bagButton:SetFrameStrata("HIGH")
     bagButton:Initialize()
 
-    AddOnTable:BagSlot_Created(bagSetType, subContainerId, bagButton)
+    AddOnTable:BagSlot_Created(bagButton.BagSetType, subContainerId, bagButton)
 
     return bagButton
 end
