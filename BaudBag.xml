@@ -32,7 +32,6 @@
 				</Anchors>
 				<Scripts>
 					<OnClick>
-						AddOnTable.Functions.DebugMessage("BagOpening", "["..self:GetParent():GetName().."] Close Button pressed");
 						self:GetParent():Hide();
 					</OnClick>
 				</Scripts>
