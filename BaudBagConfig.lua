@@ -55,6 +55,12 @@ function BaudBagRestoreCfg()
             BBConfig[BagSet].Joined[9] = false;
         end
 
+        -- make sure the reagent bag is NOT joined by default!
+        if (BagSet == 1 and BBConfig[1].Joined[6] == nil) then
+            AddOnTable.Functions.DebugMessage("Config", "- reagent bag join for BagSet "..BagSet.." damaged or missing, creating now");
+            BBConfig[BagSet].Joined[6] = false;
+        end
+
         local Container = 0;
         BaudBagForEachBag(BagSet, function(Bag, Index)
 

@@ -54,11 +54,6 @@ function Prototype:UpdateFromConfig()
 
     local containerConfig = BBConfig[self.Frame.BagSet][self.Id]
 
-    -- this will be the case for empty containers, like a not equipped reagent bag
-    if containerConfig == nil then
-        return
-    end
-
     if not containerConfig.Coords then
         self:SaveCoordsToConfig()
     end
