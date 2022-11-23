@@ -5,7 +5,7 @@ local Localized = AddOnTable.Localized
 
 local EventFuncs = {
     BANKFRAME_CLOSED = function(self, event, ...)
-        BaudBag_DebugMsg("Bank", "Event BANKFRAME_CLOSED fired")
+        AddOnTable.Functions.DebugMessage("Bank", "Event BANKFRAME_CLOSED fired")
         AddOnTable.State.BankOpen = false
         BaudBagBankSlotPurchaseButton:Disable()
         if _G[Prefix.."Container2_1"].AutoOpened then
@@ -22,7 +22,7 @@ local EventFuncs = {
 }
 
 local Func = function(self, event, ...)
-    BaudBag_DebugMsg("Bank", "Event fired", event)
+    AddOnTable.Functions.DebugMessage("Bank", "Event fired", event)
     
 	-- set bank open marker if it was opend
     if (event == "BANKFRAME_OPENED") then
@@ -99,7 +99,7 @@ function BaudBagBankBags_Update()
     local BagSlot
     local bankSet = AddOnTable["Sets"][2]
 
-    BaudBag_DebugMsg("Bank", "BankBags: updating")
+    AddOnTable.Functions.DebugMessage("Bank", "BankBags: updating")
     
     for Bag = 1, NUM_BANKBAGSLOTS do
         BagSlot = bankSet.BagButtons[Bag]
@@ -117,14 +117,14 @@ function BaudBagBankBags_Update()
     local BBContainer2 = _G[Prefix.."Container2_1BagsFrame"]
     
     if Full then
-        BaudBag_DebugMsg("Bank", "BankBags: all bags bought hiding purchase button")
+        AddOnTable.Functions.DebugMessage("Bank", "BankBags: all bags bought hiding purchase button")
         Purchase:Hide()
         BBContainer2:SetHeight(BBContainer2.Height)
         return
     end
     
     local Cost = GetBankSlotCost(Slots)
-    BaudBag_DebugMsg("Bank", "BankBags: buyable bag slots left, currentCost = "..Cost)
+    AddOnTable.Functions.DebugMessage("Bank", "BankBags: buyable bag slots left, currentCost = "..Cost)
     
     -- This line allows the confirmation box to show the cost
     BankFrame.nextSlotCost = Cost
@@ -158,11 +158,11 @@ function AddOnTable:BankBags_UpdateContent(self, bankVisible)
     BaudBagBankBags_Update()
     
     if not bankVisible then
-        BaudBag_DebugMsg("Bank", "Bankframe does not really seem to be open or event was not BANKFRAME_OPENED. Stepping over actually opening the Bankframes")
+        AddOnTable.Functions.DebugMessage("Bank", "Bankframe does not really seem to be open or event was not BANKFRAME_OPENED. Stepping over actually opening the Bankframes")
         return
     end
 
-    BaudBag_DebugMsg("Bank", "Recording bank bag info.")
+    AddOnTable.Functions.DebugMessage("Bank", "Recording bank bag info.")
     for Bag = 1, NUM_BANKBAGSLOTS do
         local bagCache = AddOnTable.Cache:GetBagCache(Bag + AddOnTable.BlizzConstants.BACKPACK_LAST_CONTAINER)
         local inventoryId = BankButtonIDToInvSlotID(Bag, 1)

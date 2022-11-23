@@ -37,6 +37,7 @@ if (GetLocale() == "deDE") then
     L.KeyRing = "Schlüsselbund"
     L.Of = "s "
     L.Inventory = "Inventar"
+    L.ReagentBag = "Reagenzien"
     L.BankBox = "Bankfach"
     L.ReagentBankBox = "Materiallager"
     L.BlizInventory = "Bliz Inventar"

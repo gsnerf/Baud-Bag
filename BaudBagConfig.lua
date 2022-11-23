@@ -19,7 +19,7 @@ end
 local function checkValue(toCheck, compareWith, default, log)
     -- default check if applied, return default value
     if (type(toCheck) ~= compareWith) then
-        BaudBag_DebugMsg("Config", log);
+        AddOnTable.Functions.DebugMessage("Config", log);
         return default;
     end
 
@@ -28,7 +28,7 @@ local function checkValue(toCheck, compareWith, default, log)
 end
 
 function BaudBagRestoreCfg()
-    BaudBag_DebugMsg("Config", "Restoring BBConfig structure:");
+    AddOnTable.Functions.DebugMessage("Config", "Restoring BBConfig structure:");
 	
     -- cofig base
     BaudBag_Cfg = checkValue(BaudBag_Cfg, "table", {}, "- basic BBConfig damaged or missing, creating now");
@@ -51,8 +51,14 @@ function BaudBagRestoreCfg()
 
         -- make sure the reagent bank is NOT joined by default!
         if (BagSet == 2 and BBConfig[2].Joined[9] == nil) then
-            BaudBag_DebugMsg("Config", "- reagent bank join for BagSet "..BagSet.." damaged or missing, creating now");
+            AddOnTable.Functions.DebugMessage("Config", "- reagent bank join for BagSet "..BagSet.." damaged or missing, creating now");
             BBConfig[BagSet].Joined[9] = false;
+        end
+
+        -- make sure the reagent bag is NOT joined by default!
+        if (BagSet == 1 and BBConfig[1].Joined[6] == nil) then
+            AddOnTable.Functions.DebugMessage("Config", "- reagent bag join for BagSet "..BagSet.." damaged or missing, creating now");
+            BBConfig[BagSet].Joined[6] = false;
         end
 
         local Container = 0;
@@ -60,10 +66,14 @@ function BaudBagRestoreCfg()
 
             if (Container == 0) or (BBConfig[BagSet].Joined[Index] == false) then
                 Container = Container + 1;
+                
+                local isBackpack = Container == 1
+                local isReagentBank = Bag == AddOnTable.BlizzConstants.REAGENTBANK_CONTAINER
+                local isReagentBag = AddOnTable.BlizzConstants.BACKPACK_FIRST_REAGENT_CONTAINER ~= nil and AddOnTable.BlizzConstants.BACKPACK_FIRST_REAGENT_CONTAINER <= Bag and Bag <= AddOnTable.BlizzConstants.BACKPACK_LAST_CONTAINER
 
                 if (type(BBConfig[BagSet][Container]) ~= "table") then
-                    BaudBag_DebugMsg("Config", "- BagSet["..BagSet.."], Bag["..Bag.."], Container["..Container.."] container data damaged or missing, creating now");
-                    if (Container == 1) or (Bag==-3) then
+                    AddOnTable.Functions.DebugMessage("Config", "- BagSet["..BagSet.."], Bag["..Bag.."], Container["..Container.."] container data damaged or missing, creating now");
+                    if isBackpack or isReagentBank or isReagentBag then
                         BBConfig[BagSet][Container] = {};
                     else
                         BBConfig[BagSet][Container] = BaudBagCopyTable(BBConfig[BagSet][Container-1]);
@@ -71,15 +81,25 @@ function BaudBagRestoreCfg()
                 end
 
                 if not BBConfig[BagSet][Container].Name then
-                    BaudBag_DebugMsg("Config", "- BagSet["..BagSet.."], Bag["..Bag.."], Container["..Container.."] container name missing, creating now");
-                    BBConfig[BagSet][Container].Name = UnitName("player")..Localized.Of..((BagSet==1) and Localized.Inventory or Localized.BankBox);
-                    if (Bag == REAGENTBANK_CONTAINER) then
-                        BBConfig[BagSet][Container].Name = UnitName("player")..Localized.Of..Localized.ReagentBankBox;
+                    AddOnTable.Functions.DebugMessage("Config", "- BagSet["..BagSet.."], Bag["..Bag.."], Container["..Container.."] container name missing, creating now");
+                    local nameAddition = Localized.BankBox
+                    if (BagSet == 1) then
+                        if ( isReagentBag ) then
+                            nameAddition = Localized.ReagentBag
+                        else
+                            nameAddition = Localized.Inventory
+                        end
                     end
+
+                    if ( isReagentBank ) then
+                        nameAddition = Localized.ReagentBankBox
+                    end
+                    
+                    BBConfig[BagSet][Container].Name = UnitName("player")..Localized.Of..nameAddition
                 end
 
                 if (type(BBConfig[BagSet][Container].Background) ~= "number") then
-                    BaudBag_DebugMsg("Config", "- BagSet["..BagSet.."], Bag["..Bag.."], Container["..Container.."] container background damaged or missing, creating now");
+                    AddOnTable.Functions.DebugMessage("Config", "- BagSet["..BagSet.."], Bag["..Bag.."], Container["..Container.."] container background damaged or missing, creating now");
                     if (BagSet == 2) then
                         -- bank containers have "blizz bank" default
                         BBConfig[BagSet][Container].Background = 2;
@@ -106,7 +126,7 @@ end
 function ConvertOldConfig()
     -- take over old sell junk data
     if (type(BBConfig[1]) == "table" and type(BBConfig[1].SellJunk) == "boolean") then
-        BaudBag_DebugMsg("Config", "- sell junk state is now global, converting old value from bag set 1");
+        AddOnTable.Functions.DebugMessage("Config", "- sell junk state is now global, converting old value from bag set 1");
         BBConfig.SellJunk = BBConfig[1].SellJunk;
         BBConfig[1].SellJunk = nil;
         BBConfig[2].SellJunk = nil;
@@ -114,7 +134,7 @@ function ConvertOldConfig()
 
     -- take over old new items highlight data
     if (type(BBConfig[1]) == "table" and type(BBConfig[1][1]) == "table" and type(BBConfig[1][1].ShowNewItems) == "boolean") then
-        BaudBag_DebugMsg("Config", "- show new items state is now global, converting old value from first bagpack container");
+        AddOnTable.Functions.DebugMessage("Config", "- show new items state is now global, converting old value from first bagpack container");
         BBConfig.ShowNewItems = BBConfig[1][1].ShowNewItems;
         for BagSet = 1, 2 do
             local Container = 0;
@@ -131,14 +151,14 @@ function ConvertOldConfig()
 end
 
 function BaudBagSaveCfg()
-    BaudBag_DebugMsg("Config", "Saving configuration");
+    AddOnTable.Functions.DebugMessage("Config", "Saving configuration");
     BaudBag_Cfg = BaudBagCopyTable(BBConfig);
     ReloadConfigDependant();
     AddOnTable:Configuration_Updated()
 end
 
 function ReloadConfigDependant()
-    BaudBag_DebugMsg("Config", "Reloading configuration depending objects");
+    AddOnTable.Functions.DebugMessage("Config", "Reloading configuration depending objects");
     BaudUpdateJoinedBags();
     BaudBagUpdateBagFrames();
 end

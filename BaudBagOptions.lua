@@ -501,12 +501,13 @@ function BaudBagOptionsMixin:Update()
     --		check joined box and create container frames)
     local bagParent = self.GroupContainer.BagFrame
 
-    -- for the time being this seems to be necessary to fix the probably broken configuration
-    BBConfig[1].Joined[6] = false
-    if SelectedBags == 1 then
-        _G[Prefix.."JoinCheck6"]:Hide()
-    else
-        _G[Prefix.."JoinCheck6"]:Show()
+    if (AddOnTable.BlizzConstants.BACKPACK_FIRST_REAGENT_CONTAINER ~= nil) then
+        -- for backback set we need to ensure, that the reagent bag(s) cannot be joined with the regular bags
+        if SelectedBags == 1 then
+            _G[Prefix.."JoinCheck"..(AddOnTable.BlizzConstants.BACKPACK_FIRST_REAGENT_CONTAINER+1)]:Hide()
+        else
+            _G[Prefix.."JoinCheck"..(AddOnTable.BlizzConstants.BACKPACK_FIRST_REAGENT_CONTAINER+1)]:Show()
+        end
     end
     AddOnTable.Functions.ForEachBag(SelectedBags,
         function(Bag, Index)

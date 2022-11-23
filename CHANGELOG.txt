@@ -1,4 +1,11 @@
 ﻿=== Changelog ===
+v10.0.2.8
+  - fixed error messages on cleaning up the reagent bank
+  - fixed issues with missing container configurations for the reagent bag
+  - fixed faulty call to item slot creation hook (mostly breaking masque support)
+  - removed chat message when empty container is encountered, as this is an expected state now
+  - added specific default naming for reagent bags
+  - added hacky workaround to rightclick on reagent problem when visiting the bank and the reagent bank is visible
 v10.0.2.7
   - fixed a number of container config related issues (including bag cleanup)
   - fixed updating of bag buttons

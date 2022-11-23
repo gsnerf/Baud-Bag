@@ -53,7 +53,7 @@ BaudBag_DebugLog = false;
 BaudBag_Debug = {};
 
 
-function BaudBag_DebugMsg(type, msg, ...)
+AddOnTable.Functions.DebugMessage = function(type, msg, ...)
     if (BaudBag_DebugCfg[type].Active) then
         DEFAULT_CHAT_FRAME:AddMessage(GetTime().." BaudBag ("..BaudBag_DebugCfg[type].Name.."): "..msg);
         if (... ~= nil) then
@@ -67,7 +67,6 @@ function BaudBag_DebugMsg(type, msg, ...)
         table.insert(BaudBag_Debug, GetTime().." BaudBag ("..BaudBag_DebugCfg[type].Name.."): "..msg);
     end
 end
-AddOnTable.Functions.DebugMessage = BaudBag_DebugMsg
 
 function BaudBag_Vardump(value, depth, key)
     local linePrefix = "";
@@ -265,7 +264,7 @@ AddOnTable.Functions.IsCraftingReagent = function (itemId)
     local isReagent = false
     for i = 1, ItemToolTip:NumLines() do
         local text = _G["BaudBagScanningTooltipTextLeft"..i]:GetText()
-        if (string.find(text, Localized.TooltipScanReagent)) then
+        if (string.find(text, AddOnTable.Localized.TooltipScanReagent)) then
             isReagent = true
         end
     end

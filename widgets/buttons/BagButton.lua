@@ -89,7 +89,7 @@ function BaudBag_BagButtonMixin:UpdateTooltip()
     GameTooltip:SetOwner(self, "ANCHOR_LEFT")
 
     if (self.IsInventoryContainer) then
-        BaudBag_DebugMsg("Tooltip", "[BagButton:UpdateTooltip] bag belongs to inventory, updating with inventory item logic for [bagId]", self.SubContainerId)
+        AddOnTable.Functions.DebugMessage("Tooltip", "[BagButton:UpdateTooltip] bag belongs to inventory, updating with inventory item logic for [bagId]", self.SubContainerId)
         GameTooltip:SetInventoryItem("player", self:GetID())
 
         if AddOnTable.BlizzAPI.CanContainerUseFilterMenu( self.SubContainerId ) then
@@ -105,7 +105,7 @@ function BaudBag_BagButtonMixin:UpdateTooltip()
     if (self.IsBankContainer) then
         local bagCache = AddOnTable.Cache:GetBagCache(self.SubContainerId)
         if (bagCache.BagLink) then
-            BaudBag_DebugMsg("Tooltip", "[BagButton:UpdateTooltip] Showing cached item info [bagId, cacheEntry]", self.SubContainerId, bagCache.BagLink)
+            AddOnTable.Functions.DebugMessage("Tooltip", "[BagButton:UpdateTooltip] Showing cached item info [bagId, cacheEntry]", self.SubContainerId, bagCache.BagLink)
             AddOnTable.Functions.ShowLinkTooltip(self, bagCache.BagLink)
         end
     end
@@ -181,7 +181,7 @@ end
 
 --[[ if the mouse hovers over the bag slot item the slots belonging to this bag should be shown after a certain time (atm 350ms or 0.35s) ]]
 function BaudBag_BagButtonMixin:OnEnter()
-    BaudBag_DebugMsg("BagHover", "Mouse is hovering above item, initializing highlight")
+    AddOnTable.Functions.DebugMessage("BagHover", "Mouse is hovering above item, initializing highlight")
     self.HighlightBag		= true
     self.HighlightBagOn		= false
     self.HighlightBagCount	= GetTime() + 0.35
@@ -192,7 +192,7 @@ end
 --[[ determine if and how long the mouse was hovering and change bag according ]]
 function BaudBag_BagButtonMixin:OnUpdate()
     if (self.HighlightBag and (not self.HighlightBagOn) and GetTime() >= self.HighlightBagCount) then
-        BaudBag_DebugMsg("BagHover", "showing item (itemName)", self:GetName())
+        AddOnTable.Functions.DebugMessage("BagHover", "showing item (itemName)", self:GetName())
         self.HighlightBagOn	= true
         AddOnTable["SubBags"][self.SubContainerId]:SetSlotHighlighting(true)
     end
@@ -204,7 +204,7 @@ function BaudBag_BagButtonMixin:OnLeave()
     GameTooltip_Hide()
     ResetCursor()
 
-    BaudBag_DebugMsg("BagHover", "Mouse not hovering above item anymore")
+    AddOnTable.Functions.DebugMessage("BagHover", "Mouse not hovering above item anymore")
     self.HighlightBag		= false
 	
     if (self.HighlightBagOn) then
@@ -269,7 +269,7 @@ function AddOnTable:CreateReagentBagButton(bagIndex, parentFrame)
     bagButton:SetFrameStrata("HIGH")
     bagButton:Initialize()
 
-    AddOnTable:BagSlot_Created(bagSetType, subContainerId, bagButton)
+    AddOnTable:BagSlot_Created(bagButton.BagSetType, subContainerId, bagButton)
 
     return bagButton
 end
