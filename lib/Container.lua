@@ -87,10 +87,10 @@ function Prototype:Update()
     local contCfg         = BBConfig[self.Frame.BagSet][self.Id]
     local numberOfColumns = contCfg.Columns
 
-    -- this should only happen when the dev coded some bullshit!
+    -- this will happen with the new reagent bag system when no reagent bag is equipped yet..
     if (self.Frame.Slots <= 0) then
         if self.Frame:IsShown() then
-            DEFAULT_CHAT_FRAME:AddMessage("Container \""..contCfg.Name.."\" has no contents.", 1, 1, 0)
+            AddOnTable.Functions.DebugMessage("Bags", "Container '"..contCfg.Name.."' has no contents, hiding...")
             self.Frame:Hide()
         end
         return
