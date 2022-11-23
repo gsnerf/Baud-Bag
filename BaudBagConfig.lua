@@ -66,10 +66,14 @@ function BaudBagRestoreCfg()
 
             if (Container == 0) or (BBConfig[BagSet].Joined[Index] == false) then
                 Container = Container + 1;
+                
+                local isBackpack = Container == 1
+                local isReagentBank = Bag == AddOnTable.BlizzConstants.REAGENTBANK_CONTAINER
+                local isReagentBag = AddOnTable.BlizzConstants.BACKPACK_FIRST_REAGENT_CONTAINER ~= nil and AddOnTable.BlizzConstants.BACKPACK_FIRST_REAGENT_CONTAINER <= Bag and Bag <= AddOnTable.BlizzConstants.BACKPACK_LAST_CONTAINER
 
                 if (type(BBConfig[BagSet][Container]) ~= "table") then
                     AddOnTable.Functions.DebugMessage("Config", "- BagSet["..BagSet.."], Bag["..Bag.."], Container["..Container.."] container data damaged or missing, creating now");
-                    if (Container == 1) or (Bag==-3) then
+                    if isBackpack or isReagentBank or isReagentBag then
                         BBConfig[BagSet][Container] = {};
                     else
                         BBConfig[BagSet][Container] = BaudBagCopyTable(BBConfig[BagSet][Container-1]);
@@ -78,10 +82,20 @@ function BaudBagRestoreCfg()
 
                 if not BBConfig[BagSet][Container].Name then
                     AddOnTable.Functions.DebugMessage("Config", "- BagSet["..BagSet.."], Bag["..Bag.."], Container["..Container.."] container name missing, creating now");
-                    BBConfig[BagSet][Container].Name = UnitName("player")..Localized.Of..((BagSet==1) and Localized.Inventory or Localized.BankBox);
-                    if (Bag == REAGENTBANK_CONTAINER) then
-                        BBConfig[BagSet][Container].Name = UnitName("player")..Localized.Of..Localized.ReagentBankBox;
+                    local nameAddition = Localized.BankBox
+                    if (BagSet == 1) then
+                        if ( isReagentBag ) then
+                            nameAddition = Localized.ReagentBag
+                        else
+                            nameAddition = Localized.Inventory
+                        end
                     end
+
+                    if ( isReagentBank ) then
+                        nameAddition = Localized.ReagentBankBox
+                    end
+                    
+                    BBConfig[BagSet][Container].Name = UnitName("player")..Localized.Of..nameAddition
                 end
 
                 if (type(BBConfig[BagSet][Container].Background) ~= "number") then

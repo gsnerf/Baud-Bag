@@ -47,6 +47,7 @@ AddOnTable["Localized"] = {
     KeyRing = "Key Ring",
     Of = "'s ",
     Inventory = "Inventory",
+    ReagentBag = "Reagents",
     BankBox = "Bank Box",
     ReagentBankBox = "Reagent Bank",
     BlizInventory = "Bliz Inventory",
