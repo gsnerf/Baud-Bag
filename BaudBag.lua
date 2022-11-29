@@ -85,7 +85,11 @@ local EventFuncs = {
         local Bag, Slot = ...
 
         -- do nothing if this was called for an equipment slot, rather than a bag slot
-        if (Slot == nil or (Bag == BANK_CONTAINER and Slot > NUM_BANKGENERIC_SLOTS)) then
+        local notASlot = Slot == nil
+        local invalidBankSlot = (Bag == BANK_CONTAINER and Slot > NUM_BANKGENERIC_SLOTS)
+        local bagNotVisible = not notASlot and not AddOnTable.SubBags[Bag]:IsOpen()
+
+        if (notASlot or invalidBankSlot or bagNotVisible) then
             return
         end
 
