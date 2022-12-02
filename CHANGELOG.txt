@@ -1,4 +1,7 @@
 ﻿=== Changelog ===
+v10.0.2.9
+  - fixed error when handling the ITEM_LOCK_CHANGED event, as it's getting called for the bank even if that can't be regularily viewed by now
+  - fixed broken tooltips for reagent bag if there where cached items for the first bank bag before 10.0.0
 v10.0.2.8
   - fixed error messages on cleaning up the reagent bank
   - fixed issues with missing container configurations for the reagent bag
