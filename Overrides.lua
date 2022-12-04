@@ -12,7 +12,7 @@ OpenBackpack = function()
         return orig_OpenBackpack()
     end
 
-    OpenBag(0)
+    OpenBag(AddOnTable.BlizzConstants.BACKPACK_CONTAINER)
 end
 
 local orig_CloseBackpack = CloseBackpack
@@ -23,7 +23,7 @@ CloseBackpack = function()
         return orig_CloseBackpack()
     end
 
-    CloseBag(0)
+    CloseBag(AddOnTable.BlizzConstants.BACKPACK_CONTAINER)
 end
 
 local orig_ToggleBackpack = ToggleBackpack
@@ -39,14 +39,14 @@ ToggleBackpack = function()
         return
     end
 	
-    ToggleBag(0)
+    ToggleBag(AddOnTable.BlizzConstants.BACKPACK_CONTAINER)
 end
 
 
 local orig_ToggleBag = ToggleBag
 ToggleBag = function(id)
     -- decide if the current bag needs to be opened by baudbag or blizzard
-    if (id > 4) then
+    if (id > AddOnTable.BlizzConstants.BACKPACK_LAST_CONTAINER) then
         if BBConfig and (BBConfig[2].Enabled == false) then
             return orig_ToggleBag(id)
         end
@@ -70,14 +70,14 @@ ToggleBag = function(id)
         AddOnTable.Functions.DebugMessage("BagOpening", "[ToggleBag] container open, closing (name)", Container:GetName())
         Container:Hide()
         -- Hide the token bar if closing the backpack
-        if ( id == 0 and BackpackTokenFrame ) then
+        if ( id == AddOnTable.BlizzConstants.BACKPACK_CONTAINER and BackpackTokenFrame ) then
             BackpackTokenFrame:Hide()
         end
     else
         AddOnTable.Functions.DebugMessage("BagOpening", "[ToggleBag] container closed, opening (name)", Container:GetName())
         Container:Show()
         -- If there are tokens watched then show the bar
-        if ( id == 0 and ManageBackpackTokenFrame ) then
+        if ( id == AddOnTable.BlizzConstants.BACKPACK_CONTAINER and ManageBackpackTokenFrame ) then
             BackpackTokenFrame_Update()
             ManageBackpackTokenFrame()
         end
@@ -113,7 +113,7 @@ OpenAllBags = function(frame)
         return
     end
 
-    local Container, AnyShown
+    local Container
     for Bag = AddOnTable.BlizzConstants.BACKPACK_FIRST_CONTAINER, AddOnTable.BlizzConstants.BACKPACK_LAST_CONTAINER do
         AddOnTable.Functions.DebugMessage("BagOpening", "[OpenAllBags] analyzing bag (ID)", Bag)
         Container = _G[AddOnName.."SubBag"..Bag]:GetParent()
