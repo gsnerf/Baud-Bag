@@ -174,7 +174,7 @@ function BaudBagSearchFrameEditBox_OnTextChanged(self, isUserInput)
                     -- get the name for that link
                     if Link then
                         -- debug message
-                        printableLink = gsub(Link, "\124", "\124\124")
+                        local printableLink = gsub(Link, "\124", "\124\124")
                         AddOnTable.Functions.DebugMessage("Search", "Found a link (link)", printableLink)
 
                         -- we can have different types of links, usually it is an item...
