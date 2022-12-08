@@ -159,14 +159,15 @@ function Prototype:UpdateItemOverlays()
         end
         for Slot = 1, self.Size do
             local itemSlotObject = self.Items[Slot]
+            local containerItemInfo = AddOnTable.BlizzAPI.GetContainerItemInfo(self.ContainerId, itemSlotObject:GetID())
             if (ContainerFrame_UpdateCooldown ~= nil) then
                 ContainerFrame_UpdateCooldown(self.ContainerId, itemSlotObject)
             else
-                local containerItemInfo = AddOnTable.BlizzAPI.GetContainerItemInfo(self.ContainerId, itemSlotObject:GetID())
                 local texture = containerItemInfo and containerItemInfo.iconFileID
                 itemSlotObject:UpdateCooldown(texture)
             end
             itemSlotObject:UpdateQuestOverlay(self.ContainerId)
+            itemSlotObject:UpdateItemOverlay(containerItemInfo and containerItemInfo.itemID)
         end
     end
 end
