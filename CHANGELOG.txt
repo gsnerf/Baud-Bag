@@ -1,4 +1,7 @@
 ﻿=== Changelog ===
+v10.0.2.10
+  - fixed search not working for reagent bag
+  - added support for all regular item button overlays
 v10.0.2.9
   - fixed error when handling the ITEM_LOCK_CHANGED event, as it's getting called for the bank even if that can't be regularily viewed by now
   - fixed broken tooltips for reagent bag if there where cached items for the first bank bag before 10.0.0
