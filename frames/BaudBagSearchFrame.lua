@@ -148,9 +148,8 @@ function BaudBagSearchFrameEditBox_OnTextChanged(self, isUserInput)
     local SubBagObject, SubBag, Frame, Open, ItemButton, Link, Name, Texture
     local Status, Result
     local bagCache, slotCache
-    for Bag = -3, LastBagID do
-        -- TODO: bag 5 is currently not supported, re-enable when reagent bags are supported
-        if not (Bag == -2 or Bag == 5) then
+    for Bag = AddOnTable.BlizzConstants.REAGENTBANK_CONTAINER, LastBagID do
+        if not (Bag == AddOnTable.BlizzConstants.KEYRING_CONTAINER) then
             SubBagObject = AddOnTable.SubBags[Bag]
             SubBag = SubBagObject.Frame
             Open	= SubBag:IsShown()and SubBag:GetParent():IsShown() and not SubBag:GetParent().Closing
@@ -175,7 +174,7 @@ function BaudBagSearchFrameEditBox_OnTextChanged(self, isUserInput)
                     -- get the name for that link
                     if Link then
                         -- debug message
-                        printableLink = gsub(Link, "\124", "\124\124")
+                        local printableLink = gsub(Link, "\124", "\124\124")
                         AddOnTable.Functions.DebugMessage("Search", "Found a link (link)", printableLink)
 
                         -- we can have different types of links, usually it is an item...

@@ -53,7 +53,6 @@ function Prototype:UpdateContent(useCache, slotCache)
             -- how to find out if an item is filtered by search here or not?
         end
 
-
     end
     
     if SetItemButtonTexture ~= nil then
@@ -165,11 +164,10 @@ function Prototype:UpdateQuestOverlay(containerId)
 end
 
 function Prototype:UpdateItemOverlay(itemID)
-    if itemID and C_AzeriteEmpoweredItem.IsAzeriteEmpoweredItemByID(itemID) then
-        self.IconOverlay:SetAtlas([[AzeriteIconFrame]]);
-        self.IconOverlay:Show();
+    if (itemID ~= nil) then
+        SetItemButtonOverlay(self, itemID, self.Quality)
     else
-        self.IconOverlay:Hide();
+        ClearItemButtonOverlay(self)
     end
 end
 
