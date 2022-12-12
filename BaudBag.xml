@@ -26,7 +26,17 @@
 					<Frame name="$parentTextures" parentKey="Textures" setAllPoints="true" />
 				</Frames>
 			</Frame>
-			<Button name="$parentCloseButton" parentKey="CloseButton" inherits="UIPanelCloseButton">
+			<Button name="$parentCloseButton" parentKey="CloseButton">
+				<!--Size x="24" y="24"/>
+				<DisabledTexture atlas="RedButton-Exit-Disabled"/>
+				<NormalTexture atlas="RedButton-Exit"/>
+				<PushedTexture atlas="RedButton-exit-pressed"/>
+				<HighlightTexture atlas="RedButton-Highlight" alphaMode="ADD"/-->
+				<Size x="32" y="32"/>
+				<DisabledTexture file="Interface\Buttons\UI-Panel-MinimizeButton-Disabled"/>
+				<NormalTexture file="Interface\Buttons\UI-Panel-MinimizeButton-Up"/>
+				<PushedTexture file="Interface\Buttons\UI-Panel-MinimizeButton-Down"/>
+				<HighlightTexture file="Interface\Buttons\UI-Panel-MinimizeButton-Highlight" alphaMode="ADD"/>
 				<Anchors>
 					<Anchor point="TOPRIGHT" />
 				</Anchors>
