@@ -87,15 +87,31 @@ function Prototype:UpdateContent(useCache, slotCache)
         self.JunkIcon:SetShown(containerItemInfo.quality == Enum.ItemQuality.Poor and not containerItemInfo.hasNoValue and MerchantFrame:IsShown())
     end
 
-    -- in case this is a container button we try to use the regular upgrade system (this might be even extended by addons like pawn)
     if self.UpgradeIcon then
-        -- while the UpgradeIcon texture itself still exists, it doesn't seem to be used in DF however
-        if (ContainerFrameItemButton_UpdateItemUpgradeIcon ~= nil) then
-            ContainerFrameItemButton_UpdateItemUpgradeIcon(self)
-        end
+        self:UpdateItemUpgradeIcon()
+    end
+    
+    return containerItemInfo.hyperlink, cacheEntry
+end
+
+function Prototype:UpdateItemUpgradeIcon()
+
+    local isUpgrade = false
+
+    -- first lets check if pawn is available and if so use that as a source
+    if PawnIsContainerItemAnUpgrade then
+        isUpgrade = PawnIsContainerItemAnUpgrade (self:GetParent():GetID(), self:GetID())
+    -- now for regular wow upgrade information... while the UpgradeIcon texture itself still exists in DF, it doesn't seem to be used anymore, so this is mainly for classic(ish) versions
+    elseif AddOnTable.BlizzAPI.IsContainerItemAnUpgrade then
+        -- in case this is a container button we try to use the regular upgrade system (this might be even extended by addons like pawn)
+        isUpgrade = AddOnTable.BlizzAPI.IsContainerItemAnUpgrade(self:GetParent():GetID(), self:GetID())
     end
 
-    return containerItemInfo.hyperlink, cacheEntry
+    if ( isUpgrade == nil) then -- nil means not all the data was available to determine if this is an upgrade.
+        self.UpgradeIcon:SetShown(false);
+    else
+        self.UpgradeIcon:SetShown(isUpgrade);
+    end
 end
 
 --[[
@@ -289,6 +305,11 @@ function AddOnTable:CreateItemButton(subContainer, slotIndex, buttonTemplate)
     itemButton.ItemLevel:Hide()
     
     itemButton.QuestOverlay = _G[itemButton.Name.."IconQuestTexture"]
+    
+    if itemButton.UpgradeIcon then
+        itemButton.UpgradeIcon:ClearAllPoints()
+        itemButton.UpgradeIcon:SetPoint("BOTTOMLEFT")
+    end
     
     itemButton:ApplyBaseSkin()
     

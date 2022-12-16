@@ -46,6 +46,7 @@ if C_Container ~= nil then
         GetBankBagSlotFlag = C_Container.GetBagSlotFlag,
         SetBankBagSlotFlag = C_Container.SetBagSlotFlag,
         CanContainerUseFilterMenu = ContainerFrame_CanContainerUseFilterMenu,
+        IsContainerItemAnUpgrade = IsContainerItemAnUpgrade, -- note: this was removed in DF, so it will be nil there
     }
 
     AddOnTable.BlizzConstants = {
@@ -143,6 +144,7 @@ else
         GetBankBagSlotFlag = GetBankBagSlotFlag,
         SetBankBagSlotFlag = SetBankBagSlotFlag,
         CanContainerUseFilterMenu = ContainerFrame_CanContainerUseFilterMenu,
+        IsContainerItemAnUpgrade = IsContainerItemAnUpgrade, -- note: this was removed in DF, so it will be nil there
     }
 
     AddOnTable.BlizzConstants = {

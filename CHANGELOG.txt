@@ -1,4 +1,8 @@
 ﻿=== Changelog ===
+v10.0.2.11
+  - fixed wanky looking close button
+  - fixed keybindings not showing up in default keybinding ui
+  - added (optional) support for pawn update infos on bag items
 v10.0.2.10
   - fixed search not working for reagent bag
   - added support for all regular item button overlays

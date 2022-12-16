@@ -1,5 +1,5 @@
 <Bindings>
-    <Binding name="BaudBagToggleBank" header="BaudBag">
+    <Binding name="BaudBagToggleBank" header="BaudBag" category="Baud Bag">
         BaudBagToggleBank();
     </Binding>
     <!--<Binding name="BaudBagToggleVoidStorage" header="BaudBag">
