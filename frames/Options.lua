@@ -77,9 +77,6 @@ function BaudBagOptionsMixin:OnLoad(event, ...)
     -- the config needs a reference to this
     BaudBagSetCfgPreReq(GlobalSliderBars, ContainerSliderBars, GlobalCheckButtons, ContainerCheckButtons)
     self:RegisterEvent("ADDON_LOADED")
-
-    self.GroupGlobal.Header.Label:SetText(Localized.OptionsGroupGlobal)
-    self.GroupContainer.Header.Label:SetText(Localized.OptionsGroupContainer)
 end
 
 --[[ All actual processing needs to be done after we are sure we have a config to load from! ]]
@@ -88,7 +85,7 @@ function BaudBagOptionsMixin:OnEvent(event, ...)
     -- failsafe: we only want to handle the addon loaded event
     local arg1 = ...
     if ((event ~= "ADDON_LOADED") or (arg1 ~= "BaudBag")) then return end
-
+    
     -- make sure there is a BBConfig and a cache
     AddOnTable:InitCache()
     BaudBagRestoreCfg()
@@ -113,7 +110,12 @@ function BaudBagOptionsMixin:OnEvent(event, ...)
     -- set localized labels
     self.Title:SetText("Baud Bag "..Localized.Options)
     self.Version:SetText("(v"..GetAddOnMetadata("BaudBag","Version")..")")
-
+    
+    self.GroupGlobal.Header.Label:SetText(Localized.OptionsGroupGlobal)
+    self.GroupGlobal.ResetPositionsButton.Text:SetText(Localized.OptionsResetAllPositions)
+    self.GroupGlobal.ResetPositionsButton.tooltipText = Localized.OptionsResetAllPositionsTooltip
+    
+    self.GroupContainer.Header.Label:SetText(Localized.OptionsGroupContainer)
     self.GroupContainer.SetSelection.Label:SetText(Localized.BagSet)
     self.GroupContainer.NameInput.Text:SetText(Localized.ContainerName)
     self.GroupContainer.BackgroundSelection.Label:SetText(Localized.Background)
@@ -123,6 +125,8 @@ function BaudBagOptionsMixin:OnEvent(event, ...)
     self.GroupContainer.CloseAllCheck.text:SetText(Localized.CloseAll)
     self.GroupContainer.EnabledCheck:SetHitRectInsets(0, -self.GroupContainer.EnabledCheck.text:GetWidth() - 10, 0, 0)
     self.GroupContainer.CloseAllCheck:SetHitRectInsets(0, -self.GroupContainer.CloseAllCheck.text:GetWidth() - 10, 0, 0)
+    self.GroupContainer.ResetPositionButton.Text:SetText(Localized.OptionsResetContainerPosition)
+    self.GroupContainer.ResetPositionButton.tooltipText = Localized.OptionsResetContainerPositionTooltip
 
     -- localized global checkbox labels
     for Key, Value in ipairs(GlobalCheckButtons) do
@@ -633,3 +637,23 @@ function BaudBagOptionsSelectContainer(BagSet, Container)
 end
 
 hooksecurefunc(AddOnTable, "Configuration_Updated", function(self) BaudBagOptions:Update() end)
+
+local function ResetContainerPosition(bagSet, containerId, container)
+    container.Frame:ClearAllPoints()
+    container.Frame:SetPoint("CENTER", UIParent)
+    local x, y = container.Frame:GetCenter()
+    BBConfig[bagSet][containerId].Coords = {x, y}
+end
+
+PositionResetMixin = {}
+function PositionResetMixin:ResetPosition()
+    if (self:GetParent() == BaudBagOptions.GroupGlobal) then
+        AddOnTable.Functions.ForEachContainer(function(bagSet, containerId, container)
+            ResetContainerPosition(bagSet, containerId, container)
+        end)
+    else
+        local container = AddOnTable["Sets"][SelectedBags].Containers[SelectedContainer]
+        ResetContainerPosition(SelectedBags, SelectedContainer, container)
+    end
+end
+

@@ -141,6 +141,14 @@ function BaudBagForEachBag(BagSet, Func)
 end
 AddOnTable.Functions.ForEachBag = BaudBagForEachBag
 
+AddOnTable.Functions.ForEachContainer = function(func)
+    for setId, set in pairs(AddOnTable.Sets) do
+        for containerId, container in pairs(set.Containers) do
+            func(setId, containerId, container)
+        end
+    end
+end
+
 function BaudBagForEachOpenContainer(Func)
     for _, set in pairs(AddOnTable.Sets) do
         for _, container in pairs(set.Containers) do

@@ -134,7 +134,7 @@
 					<Anchor point="TOPLEFT" relativeKey="$parent.Title" relativePoint="BOTTOMLEFT" y="-10" />
 					<Anchor point="RIGHT" x="-10" />
 				</Anchors>
-				<Size y="200" />
+				<Size y="230" />
 
 				<Frames>
 					<Frame parentKey="Header" inherits="BaudBagGroupHeaderTemplate">
@@ -186,6 +186,16 @@
 							<Anchor point="TOPLEFT" relativeKey="$parent.CheckButton4" relativePoint="TOPRIGHT" x="175" y="-15" />
 						</Anchors>
 					</Slider>
+
+					<Button parentKey="ResetPositionsButton" inherits="UIPanelButtonTemplate" mixin="PositionResetMixin">
+						<Size x="200" y="22"/>
+						<Anchors>
+							<Anchor point="TOPLEFT" relativeKey="$parent.CheckButton6" relativePoint="BOTTOMLEFT" y="-5" />
+						</Anchors>
+						<Scripts>
+							<OnClick method="ResetPosition" />
+						</Scripts>
+					</Button>
 
 				</Frames>
 			</Frame>
@@ -315,6 +325,17 @@
 							<Anchor point="TOP" relativeKey="$parent.Slider1" relativePoint="BOTTOM" y="-15" />
 						</Anchors>
 					</Slider>
+
+					
+					<Button parentKey="ResetPositionButton" inherits="UIPanelButtonTemplate" mixin="PositionResetMixin">
+						<Size x="175" y="22"/>
+						<Anchors>
+							<Anchor point="TOPLEFT" relativeKey="$parent.BackgroundSelection" relativePoint="TOPRIGHT" x="5" y="-3" />
+						</Anchors>
+						<Scripts>
+							<OnClick method="ResetPosition" />
+						</Scripts>
+					</Button>
 				</Frames>
 			</Frame>
 
