@@ -106,6 +106,14 @@ function BaudBagOptionsMixin:OnEvent(event, ...)
     else
         InterfaceOptions_AddCategory(self)
     end
+
+    -- ensure retail style label adressing is possible
+    if (self.GroupContainer.EnabledCheck.text == nil) then
+        self.GroupContainer.EnabledCheck.text = _G[self.GroupContainer.EnabledCheck:GetName().."Text"]
+    end
+    if (self.GroupContainer.CloseAllCheck.text == nil) then
+        self.GroupContainer.CloseAllCheck.text = _G[self.GroupContainer.CloseAllCheck:GetName().."Text"]
+    end
 	
     -- set localized labels
     self.Title:SetText("Baud Bag "..Localized.Options)
@@ -131,6 +139,9 @@ function BaudBagOptionsMixin:OnEvent(event, ...)
     -- localized global checkbox labels
     for Key, Value in ipairs(GlobalCheckButtons) do
         local checkButton = self.GroupGlobal["CheckButton"..Key]
+        if (checkButton.text == nil) then
+            checkButton.text = _G[checkButton:GetName().."Text"]
+        end
         checkButton.text:SetText(Value.Text)
         checkButton.tooltipText = Value.TooltipText
 
