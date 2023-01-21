@@ -162,6 +162,9 @@ function BaudBagOptionsMixin:OnEvent(event, ...)
     -- localized checkbox labels
     for Key, Value in ipairs(ContainerCheckButtons) do
         local checkButton = self.GroupContainer["CheckButton"..Key]
+        if (checkButton.text == nil) then
+            checkButton.text = _G[checkButton:GetName().."Text"]
+        end
         checkButton.text:SetText(Value.Text)
         checkButton.tooltipText = Value.TooltipText
     end
