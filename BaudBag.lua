@@ -168,6 +168,9 @@ Func = function(self, event, ...)
             collectedBagEvents[bagId] = {}
         end
         table.insert(collectedBagEvents[bagId], event)
+
+        -- temporary until BAG_UPDATE_DELAYED is fixed again
+        AddOnTable["SubBags"][bagId]:UpdateSlotContents()
     end
 
     -- old stuff, for compatibility until the stuff above works as expected
