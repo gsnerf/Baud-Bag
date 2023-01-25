@@ -7,19 +7,62 @@
             "label": "copy to retail",
             "type": "shell",
             "command": "copy",
-            "args": [ "-Path", "${workspaceRoot}\\*", "-Destination", "C:\\Program Files (x86)\\World of Warcraft\\_retail_\\Interface\\addons\\BaudBag", "-Recurse", "-Force", "-Exclude", ".*" ]
+            "args": [
+                "-Path",
+                "${workspaceRoot}\\*",
+                "-Destination",
+                "C:\\Program Files (x86)\\World of Warcraft\\_retail_\\Interface\\addons\\BaudBag",
+                "-Recurse",
+                "-Force",
+                "-Exclude",
+                ".*"
+            ]
         },
         {
             "label": "copy to ptr",
             "type": "shell",
             "command": "copy",
-            "args": [ "-Path", "${workspaceRoot}\\*", "-Destination", "C:\\Program Files (x86)\\World of Warcraft\\_ptr_\\Interface\\addons\\BaudBag", "-Recurse", "-Force", "-Exclude", ".*" ]
+            "args": [
+                "-Path",
+                "${workspaceRoot}\\*",
+                "-Destination",
+                "C:\\Program Files (x86)\\World of Warcraft\\_ptr_\\Interface\\addons\\BaudBag",
+                "-Recurse",
+                "-Force",
+                "-Exclude",
+                ".*"
+            ]
         },
         {
             "label": "copy to beta",
             "type": "shell",
             "command": "copy",
-            "args": [ "-Path", "${workspaceRoot}\\*", "-Destination", "C:\\Program Files (x86)\\World of Warcraft\\_beta_\\Interface\\addons\\BaudBag", "-Recurse", "-Force", "-Exclude", ".*" ]
+            "args": [
+                "-Path",
+                "${workspaceRoot}\\*",
+                "-Destination",
+                "C:\\Program Files (x86)\\World of Warcraft\\_beta_\\Interface\\addons\\BaudBag",
+                "-Recurse",
+                "-Force",
+                "-Exclude",
+                ".*"
+            ]
+        },
+        {
+            "label": "copy to wotlk",
+            "type": "shell",
+            "command": "copy",
+            "args": [
+                "-Path",
+                "${workspaceRoot}\\*",
+                "-Destination",
+                "C:\\Program Files (x86)\\World of Warcraft\\_classic_\\Interface\\addons\\BaudBag",
+                "-Recurse",
+                "-Force",
+                "-Exclude",
+                ".*"
+            ],
+            "problemMatcher": []
         }
     ]
 }

@@ -76,5 +76,9 @@ AddOnTable["Localized"] = {
     ShowItemLevel = "Show item level",
     ShowItemLevelTooltip = "Shows item levels on equipable items (small yellow number on the top)",
     EnableFadeAnimation = "Enable container fade animation",
-    EnableFadeAnimationTooltip = "Controls wether the containers have a fade in/out animation uppon opening/closing"
+    EnableFadeAnimationTooltip = "Controls wether the containers have a fade in/out animation uppon opening/closing",
+    OptionsResetAllPositions = "Reset all container positions",
+    OptionsResetAllPositionsTooltip = "Mainly helpful if you moved a container off screen by accident. If you only want to reset the position for a specific container, use the option further down instead!",
+    OptionsResetContainerPosition = "Reset container position",
+    OptionsResetContainerPositionTooltip = "Use this if you dragged the selected container of screen by accident.",
 }

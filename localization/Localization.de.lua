@@ -67,4 +67,8 @@ if (GetLocale() == "deDE") then
     L.ShowItemLevelTooltip = "Zeigt das Itemlevel auf Ausrüstungsgegenständen (die gelbe Zahl oben)"
     L.EnableFadeAnimation = "Aktiviere Ein-/Ausblende animationen"
     L.EnableFadeAnimationTooltip = "Aktiviert eine Animation zum sanften Einblenden oder Ausblenden der Taschen beim Öffnen und Schließen"
+    L.OptionsResetAllPositions = "Alle Container zentrieren"
+    L.OptionsResetAllPositionsTooltip = "Nützlich um Container wieder ins Bild zu holen die ausserhalb des sichtbaren Bildschirmbereichs gelandet sind."
+    L.OptionsResetContainerPosition = "Container zentrieren"
+    L.OptionsResetContainerPositionTooltip = "Verwende dies um einen aus dem Bildschirmbreich geschobenen Container in die Mitte des Bildschirms zu versetzen."
 end

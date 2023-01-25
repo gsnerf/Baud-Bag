@@ -167,3 +167,9 @@ else
     }
 
 end
+
+if C_CurrencyInfo ~= nil and C_CurrencyInfo.GetBackpackCurrencyInfo ~= nil then
+    AddOnTable.BlizzAPI.GetBackpackCurrencyInfo = C_CurrencyInfo.GetBackpackCurrencyInfo
+else
+    AddOnTable.BlizzAPI.GetBackpackCurrencyInfo = GetBackpackCurrencyInfo
+end

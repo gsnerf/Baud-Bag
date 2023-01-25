@@ -39,13 +39,12 @@ end
 
 function Prototype:IsOpen()
     -- TODO: is self.Frame:IsShown() really necessary here?
-    local parent = self.Frame:GetParent()
-    return self.Frame:IsShown() and parent:IsShown() and not parent.Closing
+    -- possible answer: apparently there _can_ be a timing issue when calling GetParent() on load that _might_ be prevented by checking IsShown() first
+    return self.Frame:IsShown() and self.Frame:GetParent():IsShown() and not self.Frame:GetParent().Closing
 end
 
 function Prototype:GetItemButtonTemplate()
     -- TODO: this should propably be already known when creating the SubContainer, so better move somewhere earlier!
-    
     if (self.ContainerId == REAGENTBANK_CONTAINER) then
         return "ReagentBankItemButtonGenericTemplate"
     elseif (self.BagSet.Id == BagSetType.Bank.Id) then
