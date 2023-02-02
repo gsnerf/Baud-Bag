@@ -34,20 +34,51 @@ function BaudBag_BagButtonMixin:UpdateContent()
         local quality = GetInventoryItemQuality("player", inventorySlotId);
         local itemLink = GetInventoryItemLink("player", inventorySlotId)
 
-        self:SetItemButtonTexture(textureName)
+        self.Icon:SetTexture(textureName)
         if (textureName ~= nil) then
 			CooldownFrame_Set(self.Cooldown, start, duration, enable)
         else
             self.Cooldown:Hide()
         end
 
-        self:SetItemButtonQuality(quality, itemLink, false)
-        SetItemCraftingQualityOverlay(self, itemLink)
+        self:SetQuality(quality)
         SetItemButtonDesaturated(self, IsInventoryItemLocked(inventorySlotId))
     elseif (self.IsBankContainer) then
         local bagCache = AddOnTable.Cache:GetBagCache(self.SubContainerId)
         self:SetItem(bagCache.BagLink)
     end
+end
+
+function BaudBag_BagButtonMixin:SetQuality(quality)
+    local qualityColor = BAG_ITEM_QUALITY_COLORS[quality]
+    if (qualityColor) then
+        self.Border:SetVertexColor(qualityColor.r, qualityColor.g, qualityColor.b)
+    end
+end
+
+function BaudBag_BagButtonMixin:SetItem(item)
+	self.item = item;
+
+	if not item then
+		return true
+	end
+
+	local itemName, itemLink, itemQuality, itemLevel, itemMinLevel, itemType, itemSubType, itemStackCount, itemEquipLoc, itemIcon = GetItemInfo(item)
+
+	self.itemLink = itemLink
+	if self.itemLink == nil then
+		self.pendingInfo = { item = self.item, itemLocation = self.itemLocation }
+		self:RegisterEvent("GET_ITEM_INFO_RECEIVED")
+		self:Reset()
+		return true
+	end
+
+	self.pendingItem = nil;
+	self:UnregisterEvent("GET_ITEM_INFO_RECEIVED")
+
+	self.Icon:SetTexture(itemIcon)
+	self:SetQuality(itemQuality)
+	return true;
 end
 
 function BaudBag_BagButtonMixin:GetItemContextMatchResult()
@@ -153,6 +184,14 @@ function BaudBag_BagButtonMixin:OnEvent( event, ... )
     if ( event == "BAG_CONTAINER_UPDATE" ) then
         self:UpdateContent()
     end
+
+    if event == "GET_ITEM_INFO_RECEIVED" then
+        if not self.pendingInfo then
+			return;
+		end
+
+        self:SetItem(self.pendingInfo.item)
+    end
 end
 
 local bagButtonRelatedEvents = {
@@ -239,7 +278,7 @@ function AddOnTable:CreateBackpackBagButton(bagIndex, parentFrame)
     local subContainerId = bagIndex + 1
     local name = "BBBagSet"..bagSetType.Id.."Bag"..bagIndex.."Slot"
     
-    local bagButton = CreateFrame("ItemButton", name, parentFrame, "BaudBag_BagButton")
+    local bagButton = CreateFrame("Button", name, parentFrame, "BaudBag_BagButton")
     bagButton.BagSetType = bagSetType
     bagButton.BagIndex = bagIndex
     bagButton.Bag = subContainerId
@@ -261,7 +300,7 @@ function AddOnTable:CreateReagentBagButton(bagIndex, parentFrame)
     local subContainerId = bagIndex + AddOnTable.BlizzConstants.BACKPACK_CONTAINER_NUM + 1
     local name = "BBBagSet1ReagentBag"..bagIndex.."Slot"
 
-    local bagButton = CreateFrame("ItemButton", name, parentFrame, "BaudBag_BagButton")
+    local bagButton = CreateFrame("Button", name, parentFrame, "BaudBag_BagButton")
     bagButton.BagSetType = BagSetType.Backpack
     bagButton.BagIndex = bagIndex
     bagButton.Bag = subContainerId
@@ -283,7 +322,7 @@ function AddOnTable:CreateBankBagButton(bagIndex, parentFrame)
     local subContainerId = AddOnTable.BlizzConstants.BACKPACK_LAST_CONTAINER + bagIndex
     local name = "BBBagSet"..bagSetType.Id.."Bag"..bagIndex.."Slot"
 
-    local bagButton = CreateFrame("ItemButton", name, parentFrame, "BaudBag_BagButton")
+    local bagButton = CreateFrame("Button", name, parentFrame, "BaudBag_BagButton")
     bagButton.BagSetType = bagSetType
     bagButton.BagIndex = bagIndex
     bagButton.Bag = subContainerId
