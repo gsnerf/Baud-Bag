@@ -203,8 +203,8 @@ function BaudBagOptionsMixin:OnEvent(event, ...)
       ]]
     local Button, Container, Check
     for Bag = 1, MaxBags do
-        Button		= CreateFrame("ItemButton", Prefix.."Bag"..Bag,       self.GroupContainer.BagFrame, Prefix.."BagTemplate")
-        Container	= CreateFrame("Frame",      Prefix.."Container"..Bag, self.GroupContainer.BagFrame, Prefix.."ContainerTemplate")
+        Button		= CreateFrame("Button", Prefix.."Bag"..Bag,       self.GroupContainer.BagFrame, Prefix.."BagTemplate")
+        Container	= CreateFrame("Frame",  Prefix.."Container"..Bag, self.GroupContainer.BagFrame, Prefix.."ContainerTemplate")
         if (Bag == 1) then
             -- first bag only has a container
             Container:SetPoint("LEFT", _G[Prefix.."Bag1"], "LEFT", -6, 0)
@@ -564,7 +564,7 @@ function BaudBagOptionsMixin:Update()
             end
 			
             -- assign texture, id and get item to be shown
-            Button.icon:SetTexture(Texture or select(2, AddOnTable.BlizzAPI.GetInventorySlotInfo("BAG0SLOT")))
+            Button.Icon:SetTexture(Texture or select(2, AddOnTable.BlizzAPI.GetInventorySlotInfo("BAG0SLOT")))
             Button:SetID(ContNum)
             Button:Show()
         end

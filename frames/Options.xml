@@ -28,7 +28,7 @@
 	<!-- TEMPLATES FOR DYNAMICALLY GENERATED VISUAL ELEMENTS (see lua file) -->
 
 	<!-- This represents a clickable (check) Bag Button which will select the current container for options -->
-	<ItemButton name="BaudBagOptionsBagTemplate" virtual="true">
+	<Button name="BaudBagOptionsBagTemplate" inherits="BaudBag_BagButton" virtual="true">
 		<Size x="37" y="37" />
 		<Layers>
             <Layer level="OVERLAY">
@@ -38,7 +38,7 @@
 		<Scripts>
 			<OnClick function="BaudBagOptionsBag_OnClick" />
 		</Scripts>
-	</ItemButton>
+	</Button>
 
 	<!-- this is the visual representation of a container in which bags are joined (border around the joined bags) -->
 	<Frame name="BaudBagOptionsContainerTemplate" virtual="true" inherits="BackdropTemplate">
