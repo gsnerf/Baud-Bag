@@ -76,6 +76,11 @@ function BaudBag_BagButtonMixin:SetItem(item)
 	return true;
 end
 
+function BaudBag_BagButtonMixin:Reset()
+	self:SetTexture()
+	self:SetQuality()
+end
+
 --[[function BaudBag_BagButtonMixin:GetItemContextMatchResult()
 	return ItemButtonUtil.GetItemContextMatchResultForContainer( self:GetBagID() )
 end]]
@@ -155,6 +160,7 @@ function BaudBag_BagButtonMixin:PutItemInBag()
 
 	if ( not hadItem ) then
         -- TODO this is basically a global, also move to API?
+        -- TODO this is somehow behaving strangely in bags... (not in bank though)
         ToggleBag( translatedID )
 	end
 end
