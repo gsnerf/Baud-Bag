@@ -30,17 +30,10 @@ function BaudBag_BagButtonMixin:UpdateContent()
     if (self.IsInventoryContainer) then
         local inventorySlotId = self:GetID()
         local textureName = GetInventoryItemTexture("player", inventorySlotId)
-        local start, duration, enable = GetInventoryItemCooldown("player", inventorySlotId)
         local quality = GetInventoryItemQuality("player", inventorySlotId);
         local itemLink = GetInventoryItemLink("player", inventorySlotId)
 
         self.Icon:SetTexture(textureName)
-        if (textureName ~= nil) then
-			CooldownFrame_Set(self.Cooldown, start, duration, enable)
-        else
-            self.Cooldown:Hide()
-        end
-
         self:SetQuality(quality)
         SetItemButtonDesaturated(self, IsInventoryItemLocked(inventorySlotId))
     elseif (self.IsBankContainer) then

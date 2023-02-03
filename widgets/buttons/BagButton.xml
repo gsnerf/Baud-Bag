@@ -28,9 +28,6 @@
 				<Texture parentKey="animIcon" setAllPoints="true"/>
 			</Layer>
 		</Layers>
-		<Frames>
-			<Cooldown parentKey="Cooldown" inherits="CooldownFrameTemplate" hidden="true" />
-		</Frames>
 		<Animations>
 			<AnimationGroup parentKey="flyin">
 				<Scale childKey="animIcon" fromScaleX="0.125" fromScaleY="0.125" toScaleX="1" toScaleY="1" duration="1" order="1"/>
