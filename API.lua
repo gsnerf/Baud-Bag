@@ -47,6 +47,15 @@ if C_Container ~= nil then
         SetBankBagSlotFlag = C_Container.SetBagSlotFlag,
         CanContainerUseFilterMenu = ContainerFrame_CanContainerUseFilterMenu,
         IsContainerItemAnUpgrade = IsContainerItemAnUpgrade, -- note: this was removed in DF, so it will be nil there
+        IsInventoryItemLocked = IsInventoryItemLocked,
+        GetInventoryItemTexture = GetInventoryItemTexture,
+        GetInventoryItemQuality = GetInventoryItemQuality,
+        GetInventoryItemLink = GetInventoryItemLink,
+        CursorUpdate = CursorUpdate,
+        CursorHasItem = CursorHasItem,
+        ResetCursor = ResetCursor,
+        PickupBagFromSlot = PickupBagFromSlot,
+        PutItemInBag = PutItemInBag,
     }
 
     AddOnTable.BlizzConstants = {
@@ -67,6 +76,7 @@ if C_Container ~= nil then
         BANK_SLOTS_NUM = NUM_BANKGENERIC_SLOTS,
         BAG_FILTER_ASSIGNED_TO = BAG_FILTER_ASSIGNED_TO, -- localized "Assigned To:"
         BAG_FILTER_LABELS = BAG_FILTER_LABELS, -- list of localized filter names, like "Consumables", "Trade Goods", etc.
+        BAG_ITEM_QUALITY_COLORS = BAG_ITEM_QUALITY_COLORS, -- list of quality colors, index is quality id
     }
 
 else
@@ -146,6 +156,15 @@ else
         SetBankBagSlotFlag = SetBankBagSlotFlag,
         CanContainerUseFilterMenu = ContainerFrame_CanContainerUseFilterMenu,
         IsContainerItemAnUpgrade = IsContainerItemAnUpgrade, -- note: this was removed in DF, so it will be nil there
+        IsInventoryItemLocked = IsInventoryItemLocked,
+        GetInventoryItemTexture = GetInventoryItemTexture,
+        GetInventoryItemQuality = GetInventoryItemQuality,
+        GetInventoryItemLink = GetInventoryItemLink,
+        CursorUpdate = CursorUpdate,
+        CursorHasItem = CursorHasItem,
+        ResetCursor = ResetCursor,
+        PickupBagFromSlot = PickupBagFromSlot,
+        PutItemInBag = PutItemInBag,
     }
 
     AddOnTable.BlizzConstants = {
@@ -166,6 +185,7 @@ else
         BANK_SLOTS_NUM = NUM_BANKGENERIC_SLOTS,
         BAG_FILTER_ASSIGNED_TO = BAG_FILTER_ASSIGNED_TO, -- localized "Assigned To:"
         BAG_FILTER_LABELS = BAG_FILTER_LABELS, -- list of localized filter names, like "Consumables", "Trade Goods", etc.
+        BAG_ITEM_QUALITY_COLORS = BAG_ITEM_QUALITY_COLORS, -- list of quality colors, index is quality id
     }
 
 end

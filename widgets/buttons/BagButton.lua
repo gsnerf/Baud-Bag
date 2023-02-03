@@ -19,7 +19,7 @@ function BaudBag_BagButtonMixin:Initialize()
 
     if (self.IsInventoryContainer) then
         local slotPrefix = self.SubContainerId <= AddOnTable.BlizzConstants.BACKPACK_CONTAINER_NUM and "Bag" or "ReagentBag"
-        local id, textureName = GetInventorySlotInfo(slotPrefix..self.BagIndex.."Slot")
+        local id, textureName = AddOnTable.BlizzAPI.GetInventorySlotInfo(slotPrefix..self.BagIndex.."Slot")
         self:SetID(id)
     end
 
@@ -29,13 +29,13 @@ end
 function BaudBag_BagButtonMixin:UpdateContent()
     if (self.IsInventoryContainer or AddOnTable.State.BankOpen) then
         local inventorySlotId = self:GetInventorySlot()
-        local textureName = GetInventoryItemTexture("player", inventorySlotId)
-        local quality = GetInventoryItemQuality("player", inventorySlotId);
-        local itemLink = GetInventoryItemLink("player", inventorySlotId)
+        local textureName = AddOnTable.BlizzAPI.GetInventoryItemTexture("player", inventorySlotId)
+        local quality = AddOnTable.BlizzAPI.GetInventoryItemQuality("player", inventorySlotId)
+        local itemLink = AddOnTable.BlizzAPI.GetInventoryItemLink("player", inventorySlotId)
 
         self.Icon:SetTexture(textureName)
+        self.Icon:SetDesaturated(AddOnTable.BlizzAPI.IsInventoryItemLocked(inventorySlotId))
         self:SetQuality(quality)
-        SetItemButtonDesaturated(self, IsInventoryItemLocked(inventorySlotId))
     else
         local bagCache = AddOnTable.Cache:GetBagCache(self.SubContainerId)
         self:SetItem(bagCache.BagLink)
@@ -43,7 +43,7 @@ function BaudBag_BagButtonMixin:UpdateContent()
 end
 
 function BaudBag_BagButtonMixin:SetQuality(quality)
-    local qualityColor = BAG_ITEM_QUALITY_COLORS[quality]
+    local qualityColor = AddOnTable.BlizzConstants.BAG_ITEM_QUALITY_COLORS[quality]
     if (qualityColor) then
         self.Border:SetVertexColor(qualityColor.r, qualityColor.g, qualityColor.b)
     else
@@ -58,7 +58,7 @@ function BaudBag_BagButtonMixin:SetItem(item)
 		return true
 	end
 
-	local itemName, itemLink, itemQuality, itemLevel, itemMinLevel, itemType, itemSubType, itemStackCount, itemEquipLoc, itemIcon = GetItemInfo(item)
+	local _, itemLink, itemQuality, _, _, _, _, _, _, itemIcon = AddOnTable.BlizzAPI.GetItemInfo(item)
 
 	self.itemLink = itemLink
 	if self.itemLink == nil then
@@ -76,9 +76,9 @@ function BaudBag_BagButtonMixin:SetItem(item)
 	return true;
 end
 
-function BaudBag_BagButtonMixin:GetItemContextMatchResult()
+--[[function BaudBag_BagButtonMixin:GetItemContextMatchResult()
 	return ItemButtonUtil.GetItemContextMatchResultForContainer( self:GetBagID() )
-end
+end]]
 
 function BaudBag_BagButtonMixin:GetBagID()
     if ( self.IsInventoryContainer ) then
@@ -86,6 +86,7 @@ function BaudBag_BagButtonMixin:GetBagID()
             return 0
         end
 
+        -- TODO: this seems like a global... do something special with the wrapper?
         return (self:GetID() - CharacterBag0Slot:GetID()) + 1
     end
 
@@ -100,12 +101,11 @@ function BaudBag_BagButtonMixin:GetInventorySlot()
     end
 
     if (self.IsBankContainer) then
-        
         --[[ for reagent related BagButtons ]]
         if (self.SubContainerId == REAGENTBANK_CONTAINER) then
             return ReagentBankButtonIDToInvSlotID( self:GetID() )
         end
-    
+
         --[[ for bank related BagButtons ]]
         return BankButtonIDToInvSlotID( self:GetID(), 1 )
     end
@@ -138,22 +138,23 @@ function BaudBag_BagButtonMixin:UpdateTooltip()
 
     GameTooltip:Show()
     BaudBagModifyBagTooltip(self.SubContainerId)
-    CursorUpdate(self)
+    AddOnTable.BlizzAPI.CursorUpdate(self)
 end
 
 function BaudBag_BagButtonMixin:Pickup()
 	local inventoryID = self:GetInventorySlot()
-	PickupBagFromSlot( inventoryID )
+	AddOnTable.BlizzAPI.PickupBagFromSlot( inventoryID )
 end
 
 function BaudBag_BagButtonMixin:PutItemInBag()
-    local hadItem = CursorHasItem()
+    local hadItem = AddOnTable.BlizzAPI.CursorHasItem()
 	local inventoryID = self:GetInventorySlot()
-	PutItemInBag(inventoryID)
+	AddOnTable.BlizzAPI.PutItemInBag(inventoryID)
 
     local translatedID = self:GetBagID()
 
 	if ( not hadItem ) then
+        -- TODO this is basically a global, also move to API?
         ToggleBag( translatedID )
 	end
 end
@@ -236,7 +237,7 @@ end
 --[[ if the mouse was removed cancel all actions ]]
 function BaudBag_BagButtonMixin:OnLeave()
     GameTooltip_Hide()
-    ResetCursor()
+    AddOnTable.BlizzAPI.ResetCursor()
 
     AddOnTable.Functions.DebugMessage("BagHover", "Mouse not hovering above item anymore")
     self.HighlightBag		= false
@@ -252,7 +253,7 @@ function BaudBag_BagButtonMixin:OnClick( button )
         -- TODO: this might only be allowed when this is called from bank items
         self:Pickup()
     elseif ( IsModifiedClick( "OPENALLBAGS" ) ) then
-        if ( GetInventoryItemTexture("player", self:GetID()) ) then
+        if ( AddOnTable.BlizzAPI.GetInventoryItemTexture("player", self:GetID()) ) then
 			ToggleAllBags()
 		end
     else
@@ -272,7 +273,7 @@ function AddOnTable:CreateBackpackBagButton(bagIndex, parentFrame)
     local bagSetType = BagSetType.Backpack
     local subContainerId = bagIndex + 1
     local name = "BBBagSet"..bagSetType.Id.."Bag"..bagIndex.."Slot"
-    
+
     local bagButton = CreateFrame("Button", name, parentFrame, "BaudBag_BagButton")
     bagButton.BagSetType = bagSetType
     bagButton.BagIndex = bagIndex
@@ -280,12 +281,7 @@ function AddOnTable:CreateBackpackBagButton(bagIndex, parentFrame)
     bagButton.SubContainerId = subContainerId
     bagButton:SetFrameStrata("HIGH")
     bagButton:Initialize()
-    
-    -- initialize size
-    --[[bagButton:SetSize(30, 30)
-    bagButton.IconBorder:SetSize(30, 30)
-    bagButton.NormalTexture:SetSize(50, 50)]]
-    
+
     AddOnTable:BagSlot_Created(bagSetType, subContainerId, bagButton)
 
     return bagButton
