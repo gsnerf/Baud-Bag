@@ -182,7 +182,7 @@ Func = function(self, event, ...)
         if (bagId > AddOnTable.BlizzConstants.BANK_SLOTS_NUM) then
             local bankBagId = bagId-AddOnTable.BlizzConstants.BANK_SLOTS_NUM
             local bankBagButton = AddOnTable["Sets"][2].BagButtons[bankBagId]
-            BankFrameItemButton_Update(bankBagButton)
+            bankBagButton:UpdateContent()
             return
         end
 

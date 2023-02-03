@@ -27,8 +27,8 @@ function BaudBag_BagButtonMixin:Initialize()
 end
 
 function BaudBag_BagButtonMixin:UpdateContent()
-    if (self.IsInventoryContainer) then
-        local inventorySlotId = self:GetID()
+    if (self.IsInventoryContainer or AddOnTable.State.BankOpen) then
+        local inventorySlotId = self:GetInventorySlot()
         local textureName = GetInventoryItemTexture("player", inventorySlotId)
         local quality = GetInventoryItemQuality("player", inventorySlotId);
         local itemLink = GetInventoryItemLink("player", inventorySlotId)
@@ -36,7 +36,7 @@ function BaudBag_BagButtonMixin:UpdateContent()
         self.Icon:SetTexture(textureName)
         self:SetQuality(quality)
         SetItemButtonDesaturated(self, IsInventoryItemLocked(inventorySlotId))
-    elseif (self.IsBankContainer) then
+    else
         local bagCache = AddOnTable.Cache:GetBagCache(self.SubContainerId)
         self:SetItem(bagCache.BagLink)
     end
@@ -46,6 +46,8 @@ function BaudBag_BagButtonMixin:SetQuality(quality)
     local qualityColor = BAG_ITEM_QUALITY_COLORS[quality]
     if (qualityColor) then
         self.Border:SetVertexColor(qualityColor.r, qualityColor.g, qualityColor.b)
+    else
+        self.Border:SetVertexColor(1, 1, 1)
     end
 end
 

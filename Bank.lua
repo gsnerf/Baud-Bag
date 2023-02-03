@@ -152,7 +152,7 @@ function AddOnTable:BankBags_UpdateContent(self, bankVisible)
     AddOnTable.SubBags[BANK_CONTAINER]:UpdateSlotContents()
     for Index = 1, NUM_BANKBAGSLOTS do
         local bankBagButton = AddOnTable["Sets"][2].BagButtons[Index]
-        BankFrameItemButton_Update(bankBagButton)
+        bankBagButton:UpdateContent()
     end
     
     BaudBagBankBags_Update()
