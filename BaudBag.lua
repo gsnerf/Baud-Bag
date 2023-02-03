@@ -165,7 +165,7 @@ Func = function(self, event, ...)
 
     -- this is the ID of the affected container as known to WoW
     local bagId = ...
-    if bagId ~= -2 then
+    if AddOnTable.Functions.IsBankContainer(bagId) or AddOnTable.Functions.IsInventory(bagId) then
         if collectedBagEvents[bagId] == nil then
             collectedBagEvents[bagId] = {}
         end
