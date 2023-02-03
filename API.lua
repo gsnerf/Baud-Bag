@@ -64,6 +64,7 @@ if C_Container ~= nil then
         BANK_CONTAINER_NUM = 7, -- == NUM_BANKBAGSLOTS
         BANK_FIRST_CONTAINER = 6, -- == NUM_TOTAL_EQUIPPED_BAG_SLOTS + 1
         BANK_LAST_CONTAINER = 12, -- == NUM_TOTAL_EQUIPPED_BAG_SLOTS + 1 + NUM_BANKBAGSLOTS
+        BANK_SLOTS_NUM = NUM_BANKGENERIC_SLOTS,
         BAG_FILTER_ASSIGNED_TO = BAG_FILTER_ASSIGNED_TO, -- localized "Assigned To:"
         BAG_FILTER_LABELS = BAG_FILTER_LABELS, -- list of localized filter names, like "Consumables", "Trade Goods", etc.
     }
@@ -162,6 +163,7 @@ else
         BANK_CONTAINER_NUM = 7, -- == NUM_BANKBAGSLOTS
         BANK_FIRST_CONTAINER = 5, -- == NUM_TOTAL_EQUIPPED_BAG_SLOTS + 1
         BANK_LAST_CONTAINER = 11, -- == NUM_TOTAL_EQUIPPED_BAG_SLOTS + 1 + NUM_BANKBAGSLOTS
+        BANK_SLOTS_NUM = NUM_BANKGENERIC_SLOTS,
         BAG_FILTER_ASSIGNED_TO = BAG_FILTER_ASSIGNED_TO, -- localized "Assigned To:"
         BAG_FILTER_LABELS = BAG_FILTER_LABELS, -- list of localized filter names, like "Consumables", "Trade Goods", etc.
     }

@@ -179,8 +179,9 @@ Func = function(self, event, ...)
     -- if there are new bank slots the whole view has to be updated
     if (event == "PLAYERBANKSLOTS_CHANGED") then
         -- bank bag slot
-        if (bagId > NUM_BANKGENERIC_SLOTS) then
-            local bankBagButton = AddOnTable["Sets"][2].BagButtons[bagId-NUM_BANKGENERIC_SLOTS]
+        if (bagId > AddOnTable.BlizzConstants.BANK_SLOTS_NUM) then
+            local bankBagId = bagId-AddOnTable.BlizzConstants.BANK_SLOTS_NUM
+            local bankBagButton = AddOnTable["Sets"][2].BagButtons[bankBagId]
             BankFrameItemButton_Update(bankBagButton)
             return
         end
