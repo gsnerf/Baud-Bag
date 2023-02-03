@@ -27,7 +27,6 @@
 				<Texture parentKey="SlotHighlightTexture" alphaMode="ADD" file="Interface\Buttons\CheckButtonHilight" setAllPoints="true" hidden="true"/>
 				<Texture parentKey="animIcon" setAllPoints="true"/>
 			</Layer>
-
 		</Layers>
 		<Frames>
 			<Cooldown parentKey="Cooldown" inherits="CooldownFrameTemplate" hidden="true" />
@@ -55,16 +54,16 @@
 			</AnimationGroup>
 		</Animations>
 		<Scripts>
-			<OnLoad  method="OnLoad" intrinsicOrder="precall" />
-			<OnEvent method="OnEvent" intrinsicOrder="precall" />
-			<OnShow  method="OnShow" intrinsicOrder="precall" />
-			<OnHide  method="OnHide" intrinsicOrder="precall" />
-			<OnEnter method="OnEnter" intrinsicOrder="precall" />
-			<OnUpdate method="OnUpdate" intrinsicOrder="precall" />
-			<OnLeave method="OnLeave" intrinsicOrder="precall" />
-			<OnClick method="OnClick" intrinsicOrder="precall" />
-	        <OnDragStart   method="OnDragStart" intrinsicOrder="precall" />
-			<OnReceiveDrag method="OnReceiveDrag" intrinsicOrder="precall" />
+			<OnLoad  method="OnLoad" />
+			<OnEvent method="OnEvent" />
+			<OnShow  method="OnShow" />
+			<OnHide  method="OnHide" />
+			<OnEnter method="OnEnter" />
+			<OnUpdate method="OnUpdate" />
+			<OnLeave method="OnLeave" />
+			<OnClick method="OnClick" />
+	        <OnDragStart   method="OnDragStart" />
+			<OnReceiveDrag method="OnReceiveDrag" />
 		</Scripts>
 	</Button>
 </Ui>
