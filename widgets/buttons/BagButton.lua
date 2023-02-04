@@ -77,7 +77,7 @@ function BaudBag_BagButtonMixin:SetItem(item)
 end
 
 function BaudBag_BagButtonMixin:Reset()
-	self:SetTexture()
+	self.Icon:SetTexture()
 	self:SetQuality()
 end
 
