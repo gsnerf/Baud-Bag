@@ -58,27 +58,9 @@ if C_Container ~= nil then
         PutItemInBag = PutItemInBag,
     }
 
-    AddOnTable.BlizzConstants = {
-        REAGENTBANK_CONTAINER = -3, -- REAGENTBANK_CONTAINER (from WoD onwards)
-        KEYRING_CONTAINER = -2, -- KEYRING_CONTAINER (only in BC? and WotLK)
-        BANK_CONTAINER = -1, -- BANK_CONTAINER
-        BACKPACK_CONTAINER = 0, -- BACKPACK_CONTAINER
-        BACKPACK_CONTAINER_NUM = 4, -- NUM_BAG_SLOTS
-        BACKPACK_REAGENT_BAG_NUM = 1, -- NUM_REAGENTBAG_SLOTS,
-        BACKPACK_TOTAL_BAGS_NUM = 4 + (GetExpansionLevel() >= 9 and 1 or 0), -- == NUM_BAG_SLOTS + NUM_REAGENTBAG_SLOTS
-        BACKPACK_FIRST_CONTAINER = 0, -- == BACKPACK_CONTAINER
-        BACKPACK_LAST_BAG_CONTAINER = 4, -- == NUM_BAG_SLOTS
-        BACKPACK_FIRST_REAGENT_CONTAINER = 5, -- == NUM_BAG_SLOTS + 1
-        BACKPACK_LAST_CONTAINER = 5, -- == BACKPACK_CONTAINER + NUM_TOTAL_EQUIPPED_BAG_SLOTS ( == NUM_BAG_SLOTS + NUM_REAGENTBAG_SLOTS)
-        BANK_CONTAINER_NUM = 7, -- == NUM_BANKBAGSLOTS
-        BANK_FIRST_CONTAINER = 6, -- == NUM_TOTAL_EQUIPPED_BAG_SLOTS + 1
-        BANK_LAST_CONTAINER = 12, -- == NUM_TOTAL_EQUIPPED_BAG_SLOTS + 1 + NUM_BANKBAGSLOTS
-        BANK_SLOTS_NUM = NUM_BANKGENERIC_SLOTS,
-        BAG_FILTER_ASSIGNED_TO = BAG_FILTER_ASSIGNED_TO, -- localized "Assigned To:"
-        BAG_FILTER_LABELS = BAG_FILTER_LABELS, -- list of localized filter names, like "Consumables", "Trade Goods", etc.
-        BAG_ITEM_QUALITY_COLORS = BAG_ITEM_QUALITY_COLORS, -- list of quality colors, index is quality id
-    }
-
+    if (AddOnTable.BlizzAPI.IsBattlePayItem == nil) then
+        AddOnTable.BlizzAPI.IsBattlePayItem = function() return false end
+    end
 else
 
     -- this is the API as introduced pre Dragonflight which currently covers vanilla and wotlk
@@ -165,29 +147,37 @@ else
         ResetCursor = ResetCursor,
         PickupBagFromSlot = PickupBagFromSlot,
         PutItemInBag = PutItemInBag,
-    }
+    }    
+end
 
-    AddOnTable.BlizzConstants = {
-        REAGENTBANK_CONTAINER = -3, -- REAGENTBANK_CONTAINER (from WoD onwards)
-        KEYRING_CONTAINER = -2, -- KEYRING_CONTAINER (only in BC? and WotLK)
-        BANK_CONTAINER = -1, -- BANK_CONTAINER
-        BACKPACK_CONTAINER = 0, -- BACKPACK_CONTAINER
-        BACKPACK_CONTAINER_NUM = 4, -- NUM_BAG_SLOTS
-        BACKPACK_REAGENT_BAG_NUM = 0, -- NUM_REAGENTBAG_SLOTS,
-        BACKPACK_TOTAL_BAGS_NUM = 4, -- == NUM_BAG_SLOTS + NUM_REAGENTBAG_SLOTS
-        BACKPACK_FIRST_CONTAINER = 0, -- == BACKPACK_CONTAINER
-        BACKPACK_LAST_BAG_CONTAINER = 4, -- == NUM_BAG_SLOTS
-        BACKPACK_FIRST_REAGENT_CONTAINER = nil, -- == doesn't exist here
-        BACKPACK_LAST_CONTAINER = 4, -- == BACKPACK_CONTAINER + NUM_TOTAL_EQUIPPED_BAG_SLOTS ( == NUM_BAG_SLOTS + NUM_REAGENTBAG_SLOTS)
-        BANK_CONTAINER_NUM = 7, -- == NUM_BANKBAGSLOTS
-        BANK_FIRST_CONTAINER = 5, -- == NUM_TOTAL_EQUIPPED_BAG_SLOTS + 1
-        BANK_LAST_CONTAINER = 11, -- == NUM_TOTAL_EQUIPPED_BAG_SLOTS + 1 + NUM_BANKBAGSLOTS
-        BANK_SLOTS_NUM = NUM_BANKGENERIC_SLOTS,
-        BAG_FILTER_ASSIGNED_TO = BAG_FILTER_ASSIGNED_TO, -- localized "Assigned To:"
-        BAG_FILTER_LABELS = BAG_FILTER_LABELS, -- list of localized filter names, like "Consumables", "Trade Goods", etc.
-        BAG_ITEM_QUALITY_COLORS = BAG_ITEM_QUALITY_COLORS, -- list of quality colors, index is quality id
-    }
+AddOnTable.BlizzConstants = {
+    REAGENTBANK_CONTAINER = -3, -- REAGENTBANK_CONTAINER (from WoD onwards)
+    KEYRING_CONTAINER = -2, -- KEYRING_CONTAINER (only in BC? and WotLK)
+    BANK_CONTAINER = -1, -- BANK_CONTAINER
+    BACKPACK_CONTAINER = 0, -- BACKPACK_CONTAINER
+    BACKPACK_CONTAINER_NUM = 4, -- NUM_BAG_SLOTS
+    BACKPACK_REAGENT_BAG_NUM = 0, -- NUM_REAGENTBAG_SLOTS,
+    BACKPACK_TOTAL_BAGS_NUM = 4, -- == NUM_BAG_SLOTS + NUM_REAGENTBAG_SLOTS
+    BACKPACK_FIRST_CONTAINER = 0, -- == BACKPACK_CONTAINER
+    BACKPACK_LAST_BAG_CONTAINER = 4, -- == NUM_BAG_SLOTS
+    BACKPACK_FIRST_REAGENT_CONTAINER = nil, -- == doesn't exist here
+    BACKPACK_LAST_CONTAINER = 4, -- == BACKPACK_CONTAINER + NUM_TOTAL_EQUIPPED_BAG_SLOTS ( == NUM_BAG_SLOTS + NUM_REAGENTBAG_SLOTS)
+    BANK_CONTAINER_NUM = 7, -- == NUM_BANKBAGSLOTS
+    BANK_FIRST_CONTAINER = 5, -- == NUM_TOTAL_EQUIPPED_BAG_SLOTS + 1
+    BANK_LAST_CONTAINER = 11, -- == NUM_TOTAL_EQUIPPED_BAG_SLOTS + 1 + NUM_BANKBAGSLOTS
+    BANK_SLOTS_NUM = NUM_BANKGENERIC_SLOTS,
+    BAG_FILTER_ASSIGNED_TO = BAG_FILTER_ASSIGNED_TO, -- localized "Assigned To:"
+    BAG_FILTER_LABELS = BAG_FILTER_LABELS, -- list of localized filter names, like "Consumables", "Trade Goods", etc.
+    BAG_ITEM_QUALITY_COLORS = BAG_ITEM_QUALITY_COLORS, -- list of quality colors, index is quality id
+}
 
+if (GetExpansionLevel() >= 9) then
+    AddOnTable.BlizzConstants.BACKPACK_REAGENT_BAG_NUM = 1 -- NUM_REAGENTBAG_SLOTS,
+    AddOnTable.BlizzConstants.BACKPACK_TOTAL_BAGS_NUM = 5 -- == NUM_BAG_SLOTS + NUM_REAGENTBAG_SLOTS
+    AddOnTable.BlizzConstants.BACKPACK_FIRST_REAGENT_CONTAINER = 5 -- == NUM_BAG_SLOTS + 1
+    AddOnTable.BlizzConstants.BACKPACK_LAST_CONTAINER = 5 -- == BACKPACK_CONTAINER + NUM_TOTAL_EQUIPPED_BAG_SLOTS ( == NUM_BAG_SLOTS + NUM_REAGENTBAG_SLOTS)
+    AddOnTable.BlizzConstants.BANK_FIRST_CONTAINER = 6 -- == NUM_TOTAL_EQUIPPED_BAG_SLOTS + 1
+    AddOnTable.BlizzConstants.BANK_LAST_CONTAINER = 12 -- == NUM_TOTAL_EQUIPPED_BAG_SLOTS + 1 + NUM_BANKBAGSLOTS
 end
 
 if C_CurrencyInfo ~= nil and C_CurrencyInfo.GetBackpackCurrencyInfo ~= nil then
