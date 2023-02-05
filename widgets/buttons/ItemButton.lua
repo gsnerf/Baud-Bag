@@ -180,10 +180,14 @@ function Prototype:UpdateQuestOverlay(containerId)
 end
 
 function Prototype:UpdateItemOverlay(itemID)
-    if (itemID ~= nil) then
-        SetItemButtonOverlay(self, itemID, self.Quality)
+    if (SetItemButtonOverlay) then
+        if (itemID ~= nil) then
+            SetItemButtonOverlay(self, itemID, self.Quality)
+        else
+            ClearItemButtonOverlay(self)
+        end
     else
-        ClearItemButtonOverlay(self)
+        self.IconOverlay:Hide()
     end
 end
 
@@ -289,7 +293,12 @@ end
 function AddOnTable:CreateItemButton(subContainer, slotIndex, buttonTemplate)
     local name = subContainer.Name.."Item"..slotIndex
 
-    local itemButton = CreateFrame("ItemButton", name, subContainer.Frame, buttonTemplate)
+    local itemButton
+    if (GetExpansionLevel() > 7) then
+        itemButton = CreateFrame("ItemButton", name, subContainer.Frame, buttonTemplate)
+    else
+        itemButton = CreateFrame("Button", name, subContainer.Frame, buttonTemplate)
+    end
     itemButton:SetID(slotIndex)
     itemButton = Mixin(itemButton, Prototype)
     

@@ -177,10 +177,14 @@ local function UpdateBackpackHighlight(subContainer)
     subContainer.Frame:GetParent().UnlockInfo:Hide()
 
     if (subContainer.ContainerId == AddOnTable.BlizzConstants.BACKPACK_CONTAINER) then
-        if (open) then
-            MainMenuBarBackpackButton.SlotHighlightTexture:Show()
+        if (MainMenuBarBackpackButton.SlotHighlightTexture) then
+            if (open) then
+                MainMenuBarBackpackButton.SlotHighlightTexture:Show()
+            else
+                MainMenuBarBackpackButton.SlotHighlightTexture:Hide()
+            end
         else
-            MainMenuBarBackpackButton.SlotHighlightTexture:Hide()
+            MainMenuBarBackpackButton:SetChecked(open)
         end
     else
         local bagId = subContainer.ContainerId -1
@@ -194,10 +198,18 @@ local function UpdateBackpackHighlight(subContainer)
         end
         
         if (open) then
-            mainMenuBarButton.SlotHighlightTexture:Show()
+            if (mainMenuBarButton.SlotHighlightTexture) then
+                mainMenuBarButton.SlotHighlightTexture:Show()
+            else
+                mainMenuBarButton:SetChecked(true)
+            end
             baudBagBagButton.SlotHighlightTexture:Show()
         else
-            mainMenuBarButton.SlotHighlightTexture:Hide()
+            if (mainMenuBarButton.SlotHighlightTexture) then
+                mainMenuBarButton.SlotHighlightTexture:Hide()
+            else
+                mainMenuBarButton:SetChecked(false)
+            end
             baudBagBagButton.SlotHighlightTexture:Hide()
         end
     end
