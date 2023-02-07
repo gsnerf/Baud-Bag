@@ -368,7 +368,9 @@ function BaudBagBagsFrame_OnShow(self, event, ...)
         for Bag = 1, NUM_BANKBAGSLOTS do
             bagSet.BagButtons[Bag]:SetFrameLevel(Level)
         end
-        _G["BBReagentsBag"]:SetFrameLevel(Level)
+        if (AddOnTable.State.ReagentBankSupported) then
+            _G["BBReagentsBag"]:SetFrameLevel(Level)
+        end
     end
 end
 

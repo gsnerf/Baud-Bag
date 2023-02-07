@@ -56,14 +56,20 @@ if C_Container ~= nil then
         ResetCursor = ResetCursor,
         PickupBagFromSlot = PickupBagFromSlot,
         PutItemInBag = PutItemInBag,
+        IsReagentBankUnlocked = IsReagentBankUnlocked,
+        GetReagentBankCost = GetReagentBankCost,
     }
 
     if (AddOnTable.BlizzAPI.IsBattlePayItem == nil) then
         AddOnTable.BlizzAPI.IsBattlePayItem = function() return false end
     end
+
+    if (AddOnTable.BlizzAPI.IsReagentBankUnlocked == nil) then
+        AddOnTable.BlizzAPI.IsReagentBankUnlocked = function() return false end
+    end
 else
 
-    -- this is the API as introduced pre Dragonflight which currently covers vanilla and wotlk
+    -- this is the API as currently seen in vanilla
     AddOnTable.BlizzAPI = {
         ContainerIDToInventoryID = ContainerIDToInventoryID,
         GetContainerNumSlots = GetContainerNumSlots,
@@ -147,6 +153,8 @@ else
         ResetCursor = ResetCursor,
         PickupBagFromSlot = PickupBagFromSlot,
         PutItemInBag = PutItemInBag,
+        IsReagentBankUnlocked = function() return false end,
+        GetReagentBankCost = function() return 0 end,
     }    
 end
 

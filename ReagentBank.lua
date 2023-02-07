@@ -10,8 +10,8 @@ Func = function(self, event, ...)
     local slot = ...
     Funcs.DebugMessage("BankReagent", "Updating Slot", slot)
 
-    local bagCache = AddOnTable.Cache:GetBagCache(REAGENTBANK_CONTAINER)
-    local subBagObject = AddOnTable["SubBags"][-3]
+    local bagCache = AddOnTable.Cache:GetBagCache(AddOnTable.BlizzConstants.REAGENTBANK_CONTAINER)
+    local subBagObject = AddOnTable["SubBags"][AddOnTable.BlizzConstants.REAGENTBANK_CONTAINER]
     local rarityColor = BBConfig[2].RarityColor
 
     local _, newCacheEntry  = subBagObject.Items[slot]:UpdateContent(false)
@@ -28,9 +28,9 @@ Events.REAGENTBANK_PURCHASED = Func
 
 local function ReagentBankBagInitialize(self, BagContainer)
     -- create BagSlot for reagent bank!
-    BagSlot = CreateFrame("ItemButton", "BBReagentsBag", BagContainer, "ReagentBankSlotTemplate")
-    BagSlot:SetID(-3)
-    BagSlot.Bag = -3
+    local BagSlot = CreateFrame("ItemButton", "BBReagentsBag", BagContainer, "ReagentBankSlotTemplate")
+    BagSlot:SetID(AddOnTable.BlizzConstants.REAGENTBANK_CONTAINER)
+    BagSlot.Bag = AddOnTable.BlizzConstants.REAGENTBANK_CONTAINER
     BagSlot:SetPoint("TOPLEFT", 8 + mod(NUM_BANKBAGSLOTS, 2) * 39, -8 - floor(NUM_BANKBAGSLOTS / 2) * 39)
     BagSlot:HookScript("OnEnter",	BaudBag_BagSlot_OnEnter)
     BagSlot:HookScript("OnUpdate",	BaudBag_BagSlot_OnUpdate)
@@ -39,12 +39,24 @@ end
 hooksecurefunc(AddOnTable, "BankBags_Inititalize", ReagentBankBagInitialize)
 
 local function ReagentBankBagUpdate(self)
-    local ReagentsBought = IsReagentBankUnlocked()
     local bankSet = AddOnTable["Sets"][2]
 
-    if (not ReagentsBought) then
-        BagSlot = bankSet.BagButtons[REAGENTBANK_CONTAINER]
-        SetItemButtonTextureVertexColor(BagSlot, 1.0, 0.1, 0.1)
+    local reagentBank = bankSet.SubContainers[AddOnTable.BlizzConstants.REAGENTBANK_CONTAINER]
+    local reagentBankContainer = reagentBank.Frame:GetParent()
+
+    local unlockInfo = reagentBankContainer.UnlockInfo
+    local depositButton = reagentBankContainer.DepositButton
+    
+
+    if (not AddOnTable.BlizzAPI.IsReagentBankUnlocked()) then
+        local bagSlot = bankSet.BagButtons[AddOnTable.BlizzConstants.REAGENTBANK_CONTAINER]
+        bagSlot.Border:SetVertexColor(1.0, 0.1, 0.1)
+        unlockInfo:Show()
+        depositButton:Disable()
+        MoneyFrame_Update( unlockInfo.CostMoneyFrame, AddOnTable.BlizzAPI.GetReagentBankCost() )
+    else
+        unlockInfo:Hide()
+        depositButton:Enable()
     end
 end
 hooksecurefunc(AddOnTable, "BankBags_Update", ReagentBankBagUpdate)

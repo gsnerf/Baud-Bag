@@ -31,7 +31,6 @@ local Func = function(self, event, ...)
     
     -- everything coming now is only needed if the bank is visible
     local bankVisible = BBConfig[2].Enabled and (event == "BANKFRAME_OPENED")
-    --BaudBagBankBags_UpdateContent(bankVisible)
     AddOnTable:BankBags_UpdateContent(self, bankVisible)
     if not bankVisible then
         return
