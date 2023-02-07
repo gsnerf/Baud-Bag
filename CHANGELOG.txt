@@ -1,4 +1,10 @@
 ﻿=== Changelog ===
+v10.0.5.1
+  - fixed a number of issues with switching bags in the bank
+  - reworked and slimmed down bag buttons implementation (doesn't depend on itembutton any more) [wotlk compatibility]
+  - reworked a good number of calls to blizz api from direct calls to custom api wrapper
+  - moved more reagent bank related logic to reagent bank classes for easier deactivation [wotlk compatibility]
+  - reworked item button handling to hopefully better work with ItemButton (retail) as well as ItemButtonTemplate (wotlk) [wotlk compatibility]
 v10.0.5.0
   - fixed screwed bag update due to broken BAG_UPDATE_DELAYED event temporarily (apparently there is a real fix for that coming, and the temporary solution can be removed)
   - possibly fixed issue with bad timings on login/reload/portal use
