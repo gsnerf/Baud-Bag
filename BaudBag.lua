@@ -362,7 +362,9 @@ function BaudBagBagsFrame_OnShow(self, event, ...)
         for Bag = 0, 3 do
             backpackSet.BagButtons[Bag]:SetFrameLevel(Level)
         end
-        backpackSet.ReagentBagButtons[0]:SetFrameLevel(Level)
+        if (backpackSet.ReagentBagButtons[0]) then
+            backpackSet.ReagentBagButtons[0]:SetFrameLevel(Level)
+        end
     else
         local bagSet = AddOnTable["Sets"][2]
         for Bag = 1, NUM_BANKBAGSLOTS do
