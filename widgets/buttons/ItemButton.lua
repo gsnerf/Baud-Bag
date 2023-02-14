@@ -229,22 +229,21 @@ function Prototype:UpdateNewAndBattlepayoverlays(isNewItem, isBattlePayItem)
     end
 end
 
-function Prototype:UpdateTooltip()
-    AddOnTable.Functions.DebugMessage("Tooltip", "[ItemButton:UpdateTooltip] Updating tooltip for item button "..self:GetName())
-
+function Prototype:OnCustomEnter()
     local bagId = (self.isBag) and self.Bag or self:GetParent():GetID()
     local slotId = (not self.isBag) and self:GetID() or nil
-
+    
     if (self.Parent.BagSet.Id == BagSetType.Bank.Id) then
         AddOnTable.Functions.DebugMessage("Tooltip", "[ItemButton:UpdateTooltip] This button is part of the bank bags... reading from cache")
         self:UpdateTooltipFromCache(bagId, slotId)
     else
-        --[[if (ContainerFrameItemButton_OnUpdate ~= nil) then
+        if (ContainerFrameItemButton_OnUpdate ~= nil) then
             ContainerFrameItemButton_OnUpdate(self)
-        elseif (self.OnUpdate) then
+        elseif (ContainerFrameItemButton_OnEnter ~= nil) then
+            ContainerFrameItemButton_OnEnter(self)
+        else
             self:OnUpdate()
-        end]]
-        self:UpdateTooltipFromAPI(bagId, slotId)
+        end
     end
 end
 
@@ -318,7 +317,7 @@ function AddOnTable:CreateItemButton(subContainer, slotIndex, buttonTemplate)
     itemButton.Parent = subContainer
     itemButton.BorderFrame = itemButton:CreateTexture(itemButton.Name.."Border", "OVERLAY")
     itemButton.BorderFrame:Hide()
-    itemButton:SetScript("OnEnter", itemButton.UpdateTooltip)
+    itemButton:SetScript("OnEnter", itemButton.OnCustomEnter)
     itemButton.emptyBackgroundTexture = nil
     itemButton.emptyBackgroundAtlas = nil
     itemButton.ItemLevel = itemButton:CreateFontString(nil, "OVERLAY", "NumberFontNormalYellow")
