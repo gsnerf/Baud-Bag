@@ -75,7 +75,6 @@ ToggleBag = function(id)
         -- If there are tokens watched then show the bar
         if ( id == AddOnTable.BlizzConstants.BACKPACK_CONTAINER and BackpackTokenFrame_Update ) then
             BackpackTokenFrame_Update()
-            --ManageBackpackTokenFrame()
         end
     end
 end
