@@ -69,17 +69,13 @@ ToggleBag = function(id)
     if Container:IsShown() then
         AddOnTable.Functions.DebugMessage("BagOpening", "[ToggleBag] container open, closing (name)", Container:GetName())
         Container:Hide()
-        -- Hide the token bar if closing the backpack
-        if ( id == AddOnTable.BlizzConstants.BACKPACK_CONTAINER and BackpackTokenFrame ) then
-            BackpackTokenFrame:Hide()
-        end
     else
         AddOnTable.Functions.DebugMessage("BagOpening", "[ToggleBag] container closed, opening (name)", Container:GetName())
         Container:Show()
         -- If there are tokens watched then show the bar
-        if ( id == AddOnTable.BlizzConstants.BACKPACK_CONTAINER and ManageBackpackTokenFrame ) then
+        if ( id == AddOnTable.BlizzConstants.BACKPACK_CONTAINER and BackpackTokenFrame_Update ) then
             BackpackTokenFrame_Update()
-            ManageBackpackTokenFrame()
+            --ManageBackpackTokenFrame()
         end
     end
 end

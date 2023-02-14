@@ -440,12 +440,6 @@ function BaudBagContainer_OnShow(self, event, ...)
     if (self:GetID() == 1) then
         AddOnTable["Sets"][self.BagSet]:UpdateSlotInfo()
     end
-	
-    -- If there are tokens watched then decide if we should show the bar
-    -- [TAINT] can be problematic, but doesn't have to be
-    if ( ManageBackpackTokenFrame ) then
-        ManageBackpackTokenFrame()
-    end
 end
 
 
