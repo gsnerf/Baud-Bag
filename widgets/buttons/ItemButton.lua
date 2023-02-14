@@ -231,17 +231,20 @@ end
 
 function Prototype:UpdateTooltip()
     AddOnTable.Functions.DebugMessage("Tooltip", "[ItemButton:UpdateTooltip] Updating tooltip for item button "..self:GetName())
+
+    local bagId = (self.isBag) and self.Bag or self:GetParent():GetID()
+    local slotId = (not self.isBag) and self:GetID() or nil
+
     if (self.Parent.BagSet.Id == BagSetType.Bank.Id) then
         AddOnTable.Functions.DebugMessage("Tooltip", "[ItemButton:UpdateTooltip] This button is part of the bank bags... reading from cache")
-        local bagId = (self.isBag) and self.Bag or self:GetParent():GetID()
-        local slotId = (not self.isBag) and self:GetID() or nil
         self:UpdateTooltipFromCache(bagId, slotId)
     else
-        if (ContainerFrameItemButton_OnUpdate ~= nil) then
+        --[[if (ContainerFrameItemButton_OnUpdate ~= nil) then
             ContainerFrameItemButton_OnUpdate(self)
-        else
+        elseif (self.OnUpdate) then
             self:OnUpdate()
-        end
+        end]]
+        self:UpdateTooltipFromAPI(bagId, slotId)
     end
 end
 
@@ -257,6 +260,14 @@ function Prototype:UpdateTooltipFromCache(bagId, slotId)
     end
     AddOnTable.Functions.DebugMessage("Tooltip", "[ItemButton:UpdateTooltipFromCache] Showing cached item info [bagId, slotId, cachEntry]", bagId, slotId, slotCache.Link)
     AddOnTable.Functions.ShowLinkTooltip(self, slotCache.Link)
+    GameTooltip:Show()
+    CursorUpdate(self)
+end
+
+function Prototype:UpdateTooltipFromAPI(bagId, slotId)
+    GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
+    -- GameTooltip:SetInventoryItem("player", KeyRingButtonIDToInvSlotID(self:GetID()))
+    GameTooltip:SetBagItem(bagId, slotId)
     GameTooltip:Show()
     CursorUpdate(self)
 end
