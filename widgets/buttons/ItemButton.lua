@@ -230,10 +230,10 @@ function Prototype:UpdateNewAndBattlepayoverlays(isNewItem, isBattlePayItem)
 end
 
 function Prototype:OnCustomEnter()
-    local bagId = (self.isBag) and self.Bag or self:GetParent():GetID()
-    local slotId = (not self.isBag) and self:GetID() or nil
-    
+
     if (self.Parent.BagSet.Id == BagSetType.Bank.Id) then
+        local bagId = self:GetParent():GetID()
+        local slotId = self:GetID()
         AddOnTable.Functions.DebugMessage("Tooltip", "[ItemButton:UpdateTooltip] This button is part of the bank bags... reading from cache")
         self:UpdateTooltipFromCache(bagId, slotId)
     else
@@ -259,14 +259,6 @@ function Prototype:UpdateTooltipFromCache(bagId, slotId)
     end
     AddOnTable.Functions.DebugMessage("Tooltip", "[ItemButton:UpdateTooltipFromCache] Showing cached item info [bagId, slotId, cachEntry]", bagId, slotId, slotCache.Link)
     AddOnTable.Functions.ShowLinkTooltip(self, slotCache.Link)
-    GameTooltip:Show()
-    CursorUpdate(self)
-end
-
-function Prototype:UpdateTooltipFromAPI(bagId, slotId)
-    GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
-    -- GameTooltip:SetInventoryItem("player", KeyRingButtonIDToInvSlotID(self:GetID()))
-    GameTooltip:SetBagItem(bagId, slotId)
     GameTooltip:Show()
     CursorUpdate(self)
 end
