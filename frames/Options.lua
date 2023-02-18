@@ -566,6 +566,7 @@ function BaudBagOptionsMixin:Update()
             -- assign texture, id and get item to be shown
             Button.Icon:SetTexture(Texture or select(2, AddOnTable.BlizzAPI.GetInventorySlotInfo("BAG0SLOT")))
             Button:SetID(ContNum)
+            Button.SubContainerId = Bag
             Button:Show()
         end
         )
