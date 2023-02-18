@@ -37,34 +37,36 @@ end
     entry.func = ToggleContainerLock
     UIDropDownMenu_AddButton(entry)
 
-    -- cleanup ignore
-    if (DropDownContainer) then
-        local containerObject = AddOnTable.Sets[DropDownBagSet].Containers[DropDownContainer]
-        entry.text = BAG_FILTER_IGNORE
-        entry.checked = containerObject:GetCleanupIgnore()
-        entry.func = function(_, _, _, value) containerObject:SetCleanupIgnore(not value) end
-        UIDropDownMenu_AddButton(entry)
-    end
-
-    -- cleanup button first regular
-    if (DropDownBagSet == 1) then
-        entry.text = BAG_CLEANUP_BAGS
-        entry.func = AddOnTable.BlizzAPI.SortBags
-        entry.checked = false
-        UIDropDownMenu_AddButton(entry)
-    elseif (DropDownContainer and AddOnTable.State.BankOpen) then
-        if(_G["BaudBagContainer"..DropDownBagSet.."_"..DropDownContainer].Bags[1]:GetID() == -3) then
-            entry.text = BAG_CLEANUP_REAGENT_BANK
-            entry.func = AddOnTable.BlizzAPI.SortReagentBankBags
-        else
-            entry.text = BAG_CLEANUP_BANK
-            entry.func = AddOnTable.BlizzAPI.SortBankBags
+    if (AddOnTable.BlizzAPI.SupportsContainerSorting()) then
+        -- cleanup ignore
+        if (DropDownContainer) then
+            local containerObject = AddOnTable.Sets[DropDownBagSet].Containers[DropDownContainer]
+            entry.text = BAG_FILTER_IGNORE
+            entry.checked = containerObject:GetCleanupIgnore()
+            entry.func = function(_, _, _, value) containerObject:SetCleanupIgnore(not value) end
+            UIDropDownMenu_AddButton(entry)
         end
-        UIDropDownMenu_AddButton(entry)
-    end
 
-    if (DropDownBagSet ~= nil and DropDownContainer ~= nil) then
-        AddFilterOptions(DropDownBagSet, DropDownContainer, header)
+        -- cleanup button first regular
+        if (DropDownBagSet == 1) then
+            entry.text = BAG_CLEANUP_BAGS
+            entry.func = AddOnTable.BlizzAPI.SortBags
+            entry.checked = false
+            UIDropDownMenu_AddButton(entry)
+        elseif (DropDownContainer and AddOnTable.State.BankOpen) then
+            if(_G["BaudBagContainer"..DropDownBagSet.."_"..DropDownContainer].Bags[1]:GetID() == -3) then
+                entry.text = BAG_CLEANUP_REAGENT_BANK
+                entry.func = AddOnTable.BlizzAPI.SortReagentBankBags
+            else
+                entry.text = BAG_CLEANUP_BANK
+                entry.func = AddOnTable.BlizzAPI.SortBankBags
+            end
+            UIDropDownMenu_AddButton(entry)
+        end
+
+        if (DropDownBagSet ~= nil and DropDownContainer ~= nil) then
+            AddFilterOptions(DropDownBagSet, DropDownContainer, header)
+        end
     end
     
     -- category general

@@ -137,6 +137,11 @@ else
     
 end
 
+-- this 
+API.SupportsContainerSorting = function()
+    return GetExpansionLevel() >= 6
+end
+
 API.IsNewItem = C_NewItems and C_NewItems.IsNewItem or function() return false end
 
 if (API.IsBattlePayItem == nil) then
