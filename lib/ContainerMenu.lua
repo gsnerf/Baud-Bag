@@ -85,7 +85,7 @@ end
     UIDropDownMenu_AddButton(entry)
 
     -- increase backpack size
-    local needToShow = not (IsAccountSecured() and AddOnTable.BlizzAPI.GetContainerNumSlots(BACKPACK_CONTAINER) > BACKPACK_BASE_SIZE)
+    local needToShow = not (IsAccountSecured() and AddOnTable.BlizzAPI.GetContainerNumSlots(AddOnTable.BlizzConstants.BACKPACK_CONTAINER) > AddOnTable.BlizzConstants.BACKPACK_BASE_SIZE)
     if (needToShow) then
         entry.text = BACKPACK_AUTHENTICATOR_INCREASE_SIZE
         entry.func = BaudBag_AddSlotsClick
