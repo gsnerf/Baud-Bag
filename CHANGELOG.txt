@@ -5,6 +5,11 @@ v10.0.5.1
   - reworked a good number of calls to blizz api from direct calls to custom api wrapper
   - moved more reagent bank related logic to reagent bank classes for easier deactivation [wotlk compatibility]
   - reworked item button handling to hopefully better work with ItemButton (retail) as well as ItemButtonTemplate (wotlk) [wotlk compatibility]
+  - reworked filter and sorting functionality to only be shown when supported by expansion
+  - reworked token bar code to only run when supported by expansion
+  - fixed a number of tooltip related issues for wotlk
+  - fixed a number of reagent bag slot related issues in the options window (like showing reagent bags only when supported, bag slot highlights, etc.)
+  - fixed money line background issues in wotlk (and prob. classic)
 v10.0.5.0
   - fixed screwed bag update due to broken BAG_UPDATE_DELAYED event temporarily (apparently there is a real fix for that coming, and the temporary solution can be removed)
   - possibly fixed issue with bad timings on login/reload/portal use
