@@ -9,15 +9,29 @@ local staticPopupName = "BaudBag_Masque_Reload"
 ----------------------------------------------------------------------------------]]
 local function RegisterItemButton(groupName, button)
     local buttonData = {
-        Icon = button.icon,
-        Cooldown = button.Cooldown,
-        Pushed = button:GetPushedTexture(),
+        -- common regions:
+        -- Backdrop
+        Cooldown = button.Cooldown,  -- ContainerFrameItemButtonTemplate && BankItemButtonGenericTemplate
+        Count = button.Count,  -- ItemButton
+        -- Gloss
+        Icon = button.icon, -- ItemButton
+        -- Mask
         Normal = button:GetNormalTexture(),
-        Border = button.IconBorder,
-        Highlight = button.SlotHighlightTexture,
-        Count = button.Count,
+        -- Shadow
+        -- item buttons:
+        ContextOverlay = button.ItemContextOverlay,  -- ItemButton
+        Highlight = button.HighlightTexture,  -- ItemButton
+        IconBorder = button.IconBorder,  -- ItemButton
+        IconOverlay = button.IconOverlay,  -- ItemButton
+        IconOverlay2 = button.IconOverlay2,  -- ItemButton
+        JunkIcon = button.JunkIcon,  -- ContainerFrameItemButtonTemplate
+        NewItem = button.NewItemTexture,  -- ContainerFrameItemButtonTemplate
+        Pushed = button:GetPushedTexture(),  -- ItemButton
+        QuestBorder = button.IconQuestTexture, -- ContainerFrameItemButtonTemplate && BankItemButtonGenericTemplate
+        SearchOverlay = button.searchOverlay,  -- ItemButton
+        UpgradeIcon = button.UpgradeIcon, -- ContainerFrameItemButtonTemplate
     }
-    Masque:Group('BaudBag', groupName):AddButton(button, buttonData)
+    Masque:Group('BaudBag', groupName):AddButton(button, buttonData, "Item")
 end
 
 local function RegisterBagButton(groupName, button)
