@@ -82,6 +82,7 @@ function Prototype:UpdateContent(useCache, slotCache)
     self.Quality = containerItemInfo.quality
     self:UpdateNewAndBattlepayoverlays(isNewItem, isBattlePayItem)
     self:UpdateItemOverlay(containerItemInfo.itemID)
+    self:UpdateQuestOverlay(self.Parent.ContainerId)
     self.readable = containerItemInfo.isReadable
     if (self.JunkIcon) then
         self.JunkIcon:SetShown(containerItemInfo.quality == Enum.ItemQuality.Poor and not containerItemInfo.hasNoValue and MerchantFrame:IsShown())
@@ -151,8 +152,7 @@ end
 
 function Prototype:UpdateQuestOverlay(containerId)
     -- can only use this after DF launch and when/if classic ever gets an interface code update :(
-    --local questTexture = self.IconQuestTexture
-    local questTexture = _G[self:GetName().."IconQuestTexture"]
+    local questTexture = self.QuestOverlay
 
     if (questTexture) then
         local width, height = self.icon:GetSize()
@@ -315,7 +315,10 @@ function AddOnTable:CreateItemButton(subContainer, slotIndex, buttonTemplate)
     itemButton.ItemLevel = itemButton:CreateFontString(nil, "OVERLAY", "NumberFontNormalYellow")
     itemButton.ItemLevel:Hide()
     
-    itemButton.QuestOverlay = _G[itemButton.Name.."IconQuestTexture"]
+    itemButton.QuestOverlay = itemButton.IconQuestTexture
+    if (itemButton.QuestOverlay == nil) then
+        itemButton.QuestOverlay = _G[itemButton.Name.."IconQuestTexture"]
+    end
     
     if itemButton.UpgradeIcon then
         itemButton.UpgradeIcon:ClearAllPoints()
