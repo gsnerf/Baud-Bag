@@ -10,6 +10,7 @@ v10.0.5.1
   - fixed a number of tooltip related issues for wotlk
   - fixed a number of reagent bag slot related issues in the options window (like showing reagent bags only when supported, bag slot highlights, etc.)
   - fixed money line background issues in wotlk (and prob. classic)
+  - fixed broken quest overlay handling for bank items (as made evident by masque)
 v10.0.5.0
   - fixed screwed bag update due to broken BAG_UPDATE_DELAYED event temporarily (apparently there is a real fix for that coming, and the temporary solution can be removed)
   - possibly fixed issue with bad timings on login/reload/portal use
