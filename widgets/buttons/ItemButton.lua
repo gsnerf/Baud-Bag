@@ -34,10 +34,10 @@ function Prototype:UpdateContent(useCache, slotCache)
         if containerItemInfo.hyperlink then
             -- regular items ... 
             local texture, quality
-            if (strmatch(containerItemInfo.hyperlink, "|Hitem:")) then
+            if (LinkUtil.IsLinkType(containerItemInfo.hyperlink, "item")) then
                 _, _, quality, _, _, _, _, _, _, texture = AddOnTable.BlizzAPI.GetItemInfo(containerItemInfo.hyperlink)
                 -- ... or a caged battle pet ...
-            elseif (strmatch(containerItemInfo.hyperlink, "|Hbattlepet:")) then
+            elseif (LinkUtil.IsLinkType(containerItemInfo.hyperlink, "battlepet")) then
                 local _, speciesID, _, qualityString = strsplit(":", containerItemInfo.hyperlink)
                 _, texture = C_PetJournal.GetPetInfoBySpeciesID(speciesID)
                 quality = tonumber(qualityString)
@@ -333,6 +333,11 @@ function AddOnTable:CreateItemButton(subContainer, slotIndex, buttonTemplate)
     if itemButton.UpgradeIcon then
         itemButton.UpgradeIcon:ClearAllPoints()
         itemButton.UpgradeIcon:SetPoint("BOTTOMLEFT")
+    end
+
+    -- this is an override for the bank items which manually call UpdateTooltip
+    if (itemButton.UpdateTooltip) then
+        itemButton.UpdateTooltip = itemButton.OnCustomEnter
     end
     
     itemButton:ApplyBaseSkin()
