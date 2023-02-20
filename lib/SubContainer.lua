@@ -165,7 +165,7 @@ function Prototype:UpdateItemOverlays()
                 local texture = containerItemInfo and containerItemInfo.iconFileID
                 itemSlotObject:UpdateCooldown(texture)
             end
-            itemSlotObject:UpdateQuestOverlay(self.ContainerId)
+            itemSlotObject:UpdateQuestOverlay(self.ContainerId, containerItemInfo and containerItemInfo.hyperlink)
             itemSlotObject:UpdateItemOverlay(containerItemInfo and containerItemInfo.itemID)
         end
     end

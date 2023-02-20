@@ -65,7 +65,7 @@ function Prototype:UpdateContent(useCache, slotCache)
     SetItemButtonDesaturated(self, containerItemInfo.isLocked)
     local itemLevelText = ""
     if (containerItemInfo.hyperlink ~= nil and BBConfig.ShowItemLevel) then
-        local _, _, _, _, _, _, _, _, itemEquipLoc = AddOnTable.BlizzAPI.GetItemInfo(containerItemInfo.hyperlink)
+        local _, _, _, _, _, itemType, itemSubType, _, itemEquipLoc = AddOnTable.BlizzAPI.GetItemInfo(containerItemInfo.hyperlink)
         local effectiveItemLevel, _, _ = AddOnTable.BlizzAPI.GetDetailedItemLevelInfo(containerItemInfo.hyperlink)
         if effectiveItemLevel ~= nil and itemEquipLoc ~= "" and itemEquipLoc ~= INVTYPE_NON_EQUIP then
             itemLevelText = effectiveItemLevel
@@ -82,7 +82,7 @@ function Prototype:UpdateContent(useCache, slotCache)
     self.Quality = containerItemInfo.quality
     self:UpdateNewAndBattlepayoverlays(isNewItem, isBattlePayItem)
     self:UpdateItemOverlay(containerItemInfo.itemID)
-    self:UpdateQuestOverlay(self.Parent.ContainerId)
+    self:UpdateQuestOverlay(self.Parent.ContainerId, containerItemInfo.hyperlink)
     self.readable = containerItemInfo.isReadable
     if (self.JunkIcon) then
         self.JunkIcon:SetShown(containerItemInfo.quality == Enum.ItemQuality.Poor and not containerItemInfo.hasNoValue and MerchantFrame:IsShown())
@@ -150,7 +150,7 @@ function Prototype:UpdateCustomRarity(showColor, intensity)
     end
 end
 
-function Prototype:UpdateQuestOverlay(containerId)
+function Prototype:UpdateQuestOverlay(containerId, itemlink)
     -- can only use this after DF launch and when/if classic ever gets an interface code update :(
     local questTexture = self.QuestOverlay
 
@@ -165,6 +165,16 @@ function Prototype:UpdateQuestOverlay(containerId)
         local questInfo = AddOnTable.BlizzAPI.GetContainerItemQuestInfo(containerId, self.SlotIndex)
         local isQuestRelated = questInfo.questID ~= nil or questInfo.isQuestItem
 
+        if ( not isQuestRelated ) then
+            if (itemlink) then
+                local _, _, _, _, _, itemType, itemSubType = AddOnTable.BlizzAPI.GetItemInfo(itemlink)
+                isQuestRelated = itemType == "Quest" or itemSubType == "Quest"
+                if (self.Parent.ContainerId == 7 and self.SlotIndex == 26) then
+                    AddOnTable.Functions.DebugMessage("Temp", "gotten itemType and itemSubType", itemType, itemSubType, isQuestRelated)
+                end
+            end
+        end
+
         if ( isQuestRelated ) then
             self.IconBorder:SetVertexColor(1, 0.9, 0.4, 0.9)
             self.IconBorder:Show()
@@ -173,7 +183,7 @@ function Prototype:UpdateQuestOverlay(containerId)
             end
         end
 
-        if ( not questInfo.questID or questInfo.isActive ) then
+        if ( not isQuestRelated or questInfo.isActive ) then
             questTexture:Hide()
         end
     end
