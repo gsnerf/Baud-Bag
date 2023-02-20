@@ -114,7 +114,6 @@ else
     API.SortReagentBankBags = SortReagentBankBags
     API.SplitContainerItem = SplitContainerItem
     API.UseContainerItem = UseContainerItem
-    API.GetItemInfo = GetItemInfo
     API.GetDetailedItemLevelInfo = GetDetailedItemLevelInfo
     ---returns the number of watched tokens or the maximum number of watched tokens in old API
     ---@return integer
