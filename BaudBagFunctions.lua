@@ -176,14 +176,19 @@ AddOnTable.Functions.CopyTable = BaudBagCopyTable
 
 
 AddOnTable.Functions.ShowLinkTooltip = function(self, link)
+    -- update positioning
     if (self:GetRight() >= (GetScreenWidth() / 2)) then
         GameTooltip:SetAnchorType("ANCHOR_LEFT")
     else
         GameTooltip:SetAnchorType("ANCHOR_RIGHT")
     end
+
+    -- try to  update tooltip
     if ( LinkUtil.IsLinkType(link, "item") ) then
+        AddOnTable.Functions.DebugMessage("Tooltip", "calling SetHyperlink with "..link)
         GameTooltip:SetHyperlink(link)
     elseif (LinkUtil.IsLinkType(link, "battlepet")) then
+        AddOnTable.Functions.DebugMessage("Tooltip", "calling BattlePetToolTip_ShowLink with "..link)
         BattlePetToolTip_ShowLink(link)
     else
         return false

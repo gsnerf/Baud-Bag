@@ -10,7 +10,7 @@ local category = nil
 
 local SelectedBags      = 1
 local SelectedContainer = 1
-local SetSize           = {6, NUM_BANKBAGSLOTS + 2}
+local SetSize           = {1 + AddOnTable.BlizzConstants.BACKPACK_TOTAL_BAGS_NUM, 1 + AddOnTable.BlizzConstants.BANK_CONTAINER_NUM + (AddOnTable.State.ReagentBankSupported and 1 or 0)}
 
 local GlobalSliderBars = {
     { Text=Localized.RarityIntensity, Low=0.5, High=2.5, Step=0.1, SavedVar="RarityIntensity", Default=1, TooltipText=Localized.RarityIntensityTooltip, DependsOn="RarityColor" },
@@ -203,8 +203,8 @@ function BaudBagOptionsMixin:OnEvent(event, ...)
       ]]
     local Button, Container, Check
     for Bag = 1, MaxBags do
-        Button		= CreateFrame("ItemButton", Prefix.."Bag"..Bag,       self.GroupContainer.BagFrame, Prefix.."BagTemplate")
-        Container	= CreateFrame("Frame",      Prefix.."Container"..Bag, self.GroupContainer.BagFrame, Prefix.."ContainerTemplate")
+        Button		= CreateFrame("Button", Prefix.."Bag"..Bag,       self.GroupContainer.BagFrame, Prefix.."BagTemplate")
+        Container	= CreateFrame("Frame",  Prefix.."Container"..Bag, self.GroupContainer.BagFrame, Prefix.."ContainerTemplate")
         if (Bag == 1) then
             -- first bag only has a container
             Container:SetPoint("LEFT", _G[Prefix.."Bag1"], "LEFT", -6, 0)
@@ -535,7 +535,7 @@ function BaudBagOptionsMixin:Update()
             if (Index == 1) then
                 -- only the first bag needs its position set, since the others are anchored to it
                 Button:SetPoint("LEFT", bagParent, "CENTER", ((Bags / 2) * -44), 0)
-            elseif (Index == AddOnTable.BlizzConstants.BANK_CONTAINER_NUM + 2 or (SelectedBags == 1 and  Index == (AddOnTable.BlizzConstants.BACKPACK_LAST_CONTAINER + 1))) then
+            elseif (Index == AddOnTable.BlizzConstants.BANK_CONTAINER_NUM + 2 or (SelectedBags == 1 and AddOnTable.BlizzConstants.BACKPACK_FIRST_REAGENT_CONTAINER ~= nil and Index == (AddOnTable.BlizzConstants.BACKPACK_LAST_CONTAINER + 1))) then
                 -- the reagent bank and the reagent bag might not be joined with anything else (for the moment?)
                 _G[Prefix.."Container"..ContNum]:SetPoint("RIGHT", Prefix.."Bag"..(Index - 1), "RIGHT", 6,0)
                 ContNum = ContNum + 1
@@ -564,8 +564,9 @@ function BaudBagOptionsMixin:Update()
             end
 			
             -- assign texture, id and get item to be shown
-            Button.icon:SetTexture(Texture or select(2, AddOnTable.BlizzAPI.GetInventorySlotInfo("BAG0SLOT")))
+            Button.Icon:SetTexture(Texture or select(2, AddOnTable.BlizzAPI.GetInventorySlotInfo("BAG0SLOT")))
             Button:SetID(ContNum)
+            Button.SubContainerId = Bag
             Button:Show()
         end
         )

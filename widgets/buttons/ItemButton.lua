@@ -34,10 +34,10 @@ function Prototype:UpdateContent(useCache, slotCache)
         if containerItemInfo.hyperlink then
             -- regular items ... 
             local texture, quality
-            if (strmatch(containerItemInfo.hyperlink, "|Hitem:")) then
+            if (LinkUtil.IsLinkType(containerItemInfo.hyperlink, "item")) then
                 _, _, quality, _, _, _, _, _, _, texture = AddOnTable.BlizzAPI.GetItemInfo(containerItemInfo.hyperlink)
                 -- ... or a caged battle pet ...
-            elseif (strmatch(containerItemInfo.hyperlink, "|Hbattlepet:")) then
+            elseif (LinkUtil.IsLinkType(containerItemInfo.hyperlink, "battlepet")) then
                 local _, speciesID, _, qualityString = strsplit(":", containerItemInfo.hyperlink)
                 _, texture = C_PetJournal.GetPetInfoBySpeciesID(speciesID)
                 quality = tonumber(qualityString)
@@ -65,7 +65,7 @@ function Prototype:UpdateContent(useCache, slotCache)
     SetItemButtonDesaturated(self, containerItemInfo.isLocked)
     local itemLevelText = ""
     if (containerItemInfo.hyperlink ~= nil and BBConfig.ShowItemLevel) then
-        local _, _, _, _, _, _, _, _, itemEquipLoc = AddOnTable.BlizzAPI.GetItemInfo(containerItemInfo.hyperlink)
+        local _, _, _, _, _, itemType, itemSubType, _, itemEquipLoc = AddOnTable.BlizzAPI.GetItemInfo(containerItemInfo.hyperlink)
         local effectiveItemLevel, _, _ = AddOnTable.BlizzAPI.GetDetailedItemLevelInfo(containerItemInfo.hyperlink)
         if effectiveItemLevel ~= nil and itemEquipLoc ~= "" and itemEquipLoc ~= INVTYPE_NON_EQUIP then
             itemLevelText = effectiveItemLevel
@@ -82,6 +82,7 @@ function Prototype:UpdateContent(useCache, slotCache)
     self.Quality = containerItemInfo.quality
     self:UpdateNewAndBattlepayoverlays(isNewItem, isBattlePayItem)
     self:UpdateItemOverlay(containerItemInfo.itemID)
+    self:UpdateQuestOverlay(self.Parent.ContainerId, containerItemInfo.hyperlink)
     self.readable = containerItemInfo.isReadable
     if (self.JunkIcon) then
         self.JunkIcon:SetShown(containerItemInfo.quality == Enum.ItemQuality.Poor and not containerItemInfo.hasNoValue and MerchantFrame:IsShown())
@@ -149,10 +150,9 @@ function Prototype:UpdateCustomRarity(showColor, intensity)
     end
 end
 
-function Prototype:UpdateQuestOverlay(containerId)
+function Prototype:UpdateQuestOverlay(containerId, itemlink)
     -- can only use this after DF launch and when/if classic ever gets an interface code update :(
-    --local questTexture = self.IconQuestTexture
-    local questTexture = _G[self:GetName().."IconQuestTexture"]
+    local questTexture = self.QuestOverlay
 
     if (questTexture) then
         local width, height = self.icon:GetSize()
@@ -165,6 +165,16 @@ function Prototype:UpdateQuestOverlay(containerId)
         local questInfo = AddOnTable.BlizzAPI.GetContainerItemQuestInfo(containerId, self.SlotIndex)
         local isQuestRelated = questInfo.questID ~= nil or questInfo.isQuestItem
 
+        if ( not isQuestRelated ) then
+            if (itemlink) then
+                local _, _, _, _, _, itemType, itemSubType = AddOnTable.BlizzAPI.GetItemInfo(itemlink)
+                isQuestRelated = itemType == "Quest" or itemSubType == "Quest"
+                if (self.Parent.ContainerId == 7 and self.SlotIndex == 26) then
+                    AddOnTable.Functions.DebugMessage("Temp", "gotten itemType and itemSubType", itemType, itemSubType, isQuestRelated)
+                end
+            end
+        end
+
         if ( isQuestRelated ) then
             self.IconBorder:SetVertexColor(1, 0.9, 0.4, 0.9)
             self.IconBorder:Show()
@@ -173,17 +183,21 @@ function Prototype:UpdateQuestOverlay(containerId)
             end
         end
 
-        if ( not questInfo.questID or questInfo.isActive ) then
+        if ( not isQuestRelated or questInfo.isActive ) then
             questTexture:Hide()
         end
     end
 end
 
 function Prototype:UpdateItemOverlay(itemID)
-    if (itemID ~= nil) then
-        SetItemButtonOverlay(self, itemID, self.Quality)
+    if (SetItemButtonOverlay) then
+        if (itemID ~= nil) then
+            SetItemButtonOverlay(self, itemID, self.Quality)
+        else
+            ClearItemButtonOverlay(self)
+        end
     else
-        ClearItemButtonOverlay(self)
+        self.IconOverlay:Hide()
     end
 end
 
@@ -225,16 +239,18 @@ function Prototype:UpdateNewAndBattlepayoverlays(isNewItem, isBattlePayItem)
     end
 end
 
-function Prototype:UpdateTooltip()
-    AddOnTable.Functions.DebugMessage("Tooltip", "[ItemButton:UpdateTooltip] Updating tooltip for item button "..self:GetName())
+function Prototype:OnCustomEnter()
+
     if (self.Parent.BagSet.Id == BagSetType.Bank.Id) then
+        local bagId = self:GetParent():GetID()
+        local slotId = self:GetID()
         AddOnTable.Functions.DebugMessage("Tooltip", "[ItemButton:UpdateTooltip] This button is part of the bank bags... reading from cache")
-        local bagId = (self.isBag) and self.Bag or self:GetParent():GetID()
-        local slotId = (not self.isBag) and self:GetID() or nil
         self:UpdateTooltipFromCache(bagId, slotId)
     else
         if (ContainerFrameItemButton_OnUpdate ~= nil) then
             ContainerFrameItemButton_OnUpdate(self)
+        elseif (ContainerFrameItemButton_OnEnter ~= nil) then
+            ContainerFrameItemButton_OnEnter(self)
         else
             self:OnUpdate()
         end
@@ -289,7 +305,12 @@ end
 function AddOnTable:CreateItemButton(subContainer, slotIndex, buttonTemplate)
     local name = subContainer.Name.."Item"..slotIndex
 
-    local itemButton = CreateFrame("ItemButton", name, subContainer.Frame, buttonTemplate)
+    local itemButton
+    if (GetExpansionLevel() > 7) then
+        itemButton = CreateFrame("ItemButton", name, subContainer.Frame, buttonTemplate)
+    else
+        itemButton = CreateFrame("Button", name, subContainer.Frame, buttonTemplate)
+    end
     itemButton:SetID(slotIndex)
     itemButton = Mixin(itemButton, Prototype)
     
@@ -298,17 +319,25 @@ function AddOnTable:CreateItemButton(subContainer, slotIndex, buttonTemplate)
     itemButton.Parent = subContainer
     itemButton.BorderFrame = itemButton:CreateTexture(itemButton.Name.."Border", "OVERLAY")
     itemButton.BorderFrame:Hide()
-    itemButton:SetScript("OnEnter", itemButton.UpdateTooltip)
+    itemButton:SetScript("OnEnter", itemButton.OnCustomEnter)
     itemButton.emptyBackgroundTexture = nil
     itemButton.emptyBackgroundAtlas = nil
     itemButton.ItemLevel = itemButton:CreateFontString(nil, "OVERLAY", "NumberFontNormalYellow")
     itemButton.ItemLevel:Hide()
     
-    itemButton.QuestOverlay = _G[itemButton.Name.."IconQuestTexture"]
+    itemButton.QuestOverlay = itemButton.IconQuestTexture
+    if (itemButton.QuestOverlay == nil) then
+        itemButton.QuestOverlay = _G[itemButton.Name.."IconQuestTexture"]
+    end
     
     if itemButton.UpgradeIcon then
         itemButton.UpgradeIcon:ClearAllPoints()
         itemButton.UpgradeIcon:SetPoint("BOTTOMLEFT")
+    end
+
+    -- this is an override for the bank items which manually call UpdateTooltip
+    if (itemButton.UpdateTooltip) then
+        itemButton.UpdateTooltip = itemButton.OnCustomEnter
     end
     
     itemButton:ApplyBaseSkin()

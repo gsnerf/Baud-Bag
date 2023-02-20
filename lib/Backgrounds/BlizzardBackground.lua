@@ -201,19 +201,20 @@ function Prototype:RenderMoneyFrameBackground(helper, containerFrame, parentName
 
     local targetHeight = containerFrame.MoneyFrame:GetHeight()
     local moneyFrameName = containerFrame.MoneyFrame:GetName()
+    local heightOffset = GetExpansionLevel() < 6 and 15 or 0
 
     -- left part of ONLY the yellow border
-    local texture = helper:GetTexturePiece("MoneyLineLeft", 80,84, 228,246, nil, targetHeight)
+    local texture = helper:GetTexturePiece("MoneyLineLeft", 80,84, 228 - heightOffset,246 - heightOffset, nil, targetHeight)
     texture:SetPoint("LEFT", parentName.."Left", "RIGHT")
     texture:SetPoint("TOP", moneyFrameName, "TOP", 0, 0)
 
     -- right part of ONLY the yellow border
-    texture = helper:GetTexturePiece("MoneyLineRight", 240,244, 228,246, nil, targetHeight)
+    texture = helper:GetTexturePiece("MoneyLineRight", 240,244, 228 - heightOffset, 246 - heightOffset, nil, targetHeight)
     texture:SetPoint("RIGHT", parentName.."Right", "LEFT")
     texture:SetPoint("TOP", moneyFrameName, "TOP", 0, 0)
 
     -- center part of ONLY the yellow border
-    texture = helper:GetTexturePiece("MoneyLineCenter", 85,239, 228,246, nil, targetHeight)
+    texture = helper:GetTexturePiece("MoneyLineCenter", 85,239, 228 - heightOffset, 246 - heightOffset, nil, targetHeight)
     texture:SetPoint("LEFT", parentName.."MoneyLineLeft", "RIGHT")
     texture:SetPoint("RIGHT", parentName.."MoneyLineRight", "LEFT")
 end

@@ -165,7 +165,7 @@ function Prototype:UpdateItemOverlays()
                 local texture = containerItemInfo and containerItemInfo.iconFileID
                 itemSlotObject:UpdateCooldown(texture)
             end
-            itemSlotObject:UpdateQuestOverlay(self.ContainerId)
+            itemSlotObject:UpdateQuestOverlay(self.ContainerId, containerItemInfo and containerItemInfo.hyperlink)
             itemSlotObject:UpdateItemOverlay(containerItemInfo and containerItemInfo.itemID)
         end
     end
@@ -173,14 +173,15 @@ end
 
 local function UpdateBackpackHighlight(subContainer)
     local open = subContainer:IsOpen()
-    -- needed in this case???
-    subContainer.Frame:GetParent().UnlockInfo:Hide()
-
     if (subContainer.ContainerId == AddOnTable.BlizzConstants.BACKPACK_CONTAINER) then
-        if (open) then
-            MainMenuBarBackpackButton.SlotHighlightTexture:Show()
+        if (MainMenuBarBackpackButton.SlotHighlightTexture) then
+            if (open) then
+                MainMenuBarBackpackButton.SlotHighlightTexture:Show()
+            else
+                MainMenuBarBackpackButton.SlotHighlightTexture:Hide()
+            end
         else
-            MainMenuBarBackpackButton.SlotHighlightTexture:Hide()
+            MainMenuBarBackpackButton:SetChecked(open)
         end
     else
         local bagId = subContainer.ContainerId -1
@@ -194,10 +195,18 @@ local function UpdateBackpackHighlight(subContainer)
         end
         
         if (open) then
-            mainMenuBarButton.SlotHighlightTexture:Show()
+            if (mainMenuBarButton.SlotHighlightTexture) then
+                mainMenuBarButton.SlotHighlightTexture:Show()
+            else
+                mainMenuBarButton:SetChecked(true)
+            end
             baudBagBagButton.SlotHighlightTexture:Show()
         else
-            mainMenuBarButton.SlotHighlightTexture:Hide()
+            if (mainMenuBarButton.SlotHighlightTexture) then
+                mainMenuBarButton.SlotHighlightTexture:Hide()
+            else
+                mainMenuBarButton:SetChecked(false)
+            end
             baudBagBagButton.SlotHighlightTexture:Hide()
         end
     end
@@ -205,26 +214,12 @@ end
 
 local function UpdateBankBagHighlight(subContainer)
     local open = subContainer:IsOpen()
-    local parent = subContainer.Frame:GetParent()
-    local unlockInfo = parent.UnlockInfo
-    local depositButton = parent.DepositButton
-    local highlight = nil
-
-    unlockInfo:Hide()
-
+    
     if (subContainer.ContainerId == AddOnTable.BlizzConstants.REAGENTBANK_CONTAINER) then
-        if (open)   then
+        if (open) then
             _G["BBReagentsBag"].SlotHighlightTexture:Show()
         else
             _G["BBReagentsBag"].SlotHighlightTexture:Hide()
-        end
-        if (not IsReagentBankUnlocked()) then
-            unlockInfo:Show()
-            depositButton:Disable()
-            MoneyFrame_Update( unlockInfo.CostMoneyFrame, GetReagentBankCost() )
-        else
-            unlockInfo:Hide()
-            depositButton:Enable()
         end
         return
     end

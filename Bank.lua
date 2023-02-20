@@ -31,7 +31,6 @@ local Func = function(self, event, ...)
     
     -- everything coming now is only needed if the bank is visible
     local bankVisible = BBConfig[2].Enabled and (event == "BANKFRAME_OPENED")
-    --BaudBagBankBags_UpdateContent(bankVisible)
     AddOnTable:BankBags_UpdateContent(self, bankVisible)
     if not bankVisible then
         return
@@ -152,7 +151,7 @@ function AddOnTable:BankBags_UpdateContent(self, bankVisible)
     AddOnTable.SubBags[BANK_CONTAINER]:UpdateSlotContents()
     for Index = 1, NUM_BANKBAGSLOTS do
         local bankBagButton = AddOnTable["Sets"][2].BagButtons[Index]
-        BankFrameItemButton_Update(bankBagButton)
+        bankBagButton:UpdateContent()
     end
     
     BaudBagBankBags_Update()

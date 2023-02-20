@@ -143,13 +143,6 @@ function Prototype:UpdateSubContainers(col, row)
             container:UpdateSlotContents()
             col, row = container:UpdateSlotPositions(self.Frame, background, col, row, maxCols, slotLevel)
             container.Frame:Show()
-
-            -- last but not least update visibility for deposit button of reagent bank
-            if (container.ContainerId == REAGENTBANK_CONTAINER and AddOnTable.State.BankOpen) then
-                self.Frame.DepositButton:Show()
-            else
-                self.Frame.DepositButton:Hide()
-            end
         end
     end
 
@@ -171,9 +164,11 @@ function Prototype:UpdateBackground()
     backdrop:SetPoint("TOPLEFT", -left, top)
     backdrop:SetPoint("BOTTOMRIGHT", right, -bottom)
     self.Frame:SetHitRectInsets(-left, -right, -top, -bottom)
-    self.Frame.UnlockInfo:ClearAllPoints()
-    self.Frame.UnlockInfo:SetPoint("TOPLEFT", -10, 3)
-    self.Frame.UnlockInfo:SetPoint("BOTTOMRIGHT", 10, -3)
+    if (self.Frame.UnlockInfo) then
+        self.Frame.UnlockInfo:ClearAllPoints()
+        self.Frame.UnlockInfo:SetPoint("TOPLEFT", -10, 3)
+        self.Frame.UnlockInfo:SetPoint("BOTTOMRIGHT", 10, -3)
+    end
 end
 
 function Prototype:UpdateFreeSlotsOverview(free, overall)
@@ -257,7 +252,7 @@ end
 
 local Metatable = { __index = Prototype }
 
-function AddOnTable:CreateContainer(bagSetType, bbContainerId)
+function AddOnTable:CreateContainer(bagSetType, bbContainerId, isReagentBank)
     local container = _G.setmetatable({}, Metatable)
     container.Id = bbContainerId
     container.Name = AddOnName.."Container"..bagSetType.Id.."_"..bbContainerId
@@ -265,7 +260,8 @@ function AddOnTable:CreateContainer(bagSetType, bbContainerId)
     local frame = _G[container.Name]
     if (frame == nil) then
         AddOnTable.Functions.DebugMessage("Container", "Frame for container does not yet exist, creating new Frame (name)", name)
-        frame = CreateFrame("Frame", container.Name, BaudBagFrame, "BaudBagContainerTemplate")
+        local containerTemplate = isReagentBank and "BaudBagReagentBankTemplate" or "BaudBagContainerTemplate"
+        frame = CreateFrame("Frame", container.Name, BaudBagFrame, containerTemplate)
     end
     frame:SetID(bbContainerId)
     frame.BagSet = bagSetType.Id

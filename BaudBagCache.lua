@@ -108,12 +108,6 @@ function BaudBagUpdateCachedTooltip(tooltip, bagId, slotId)
         AddOnTable.Functions.DebugMessage("Tooltip", "[UpdateCachedTooltip] Cannot show cache for item because there is no cache entry [bagId, slotId]", bagId, slotId)
         return
     end
-
-    local ItemString = strmatch(slotCache.Link or "","(item[%d:%-]+)")
-    if not ItemString then
-        return;
-    end
-    GameTooltip:SetHyperlink(ItemString)
 end
 
 --[[ hook cached tooltip to item enter events ]]

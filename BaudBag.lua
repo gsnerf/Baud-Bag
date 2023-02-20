@@ -30,10 +30,12 @@ local function BackpackBagOverview_Initialize()
         backpackSet.BagButtons[backpackBagButton] = bagButton
 	end
 
-    for reagentBagButton = 0, AddOnTable.BlizzConstants.BACKPACK_REAGENT_BAG_NUM - 1 do
-        local bagButton = AddOnTable:CreateReagentBagButton(reagentBagButton, BBContainer1)
-        bagButton:SetPoint("TOPLEFT", 8, -8 - (#backpackSet.BagButtons + 1 + reagentBagButton) * bagButton:GetHeight())
-        backpackSet.ReagentBagButtons[reagentBagButton] = bagButton
+    if (GetExpansionLevel() >= 9) then
+        for reagentBagButton = 0, AddOnTable.BlizzConstants.BACKPACK_REAGENT_BAG_NUM - 1 do
+            local bagButton = AddOnTable:CreateReagentBagButton(reagentBagButton, BBContainer1)
+            bagButton:SetPoint("TOPLEFT", 8, -8 - (#backpackSet.BagButtons + 1 + reagentBagButton) * bagButton:GetHeight())
+            backpackSet.ReagentBagButtons[reagentBagButton] = bagButton
+        end
     end
 
     local firstBackpackBagButton = backpackSet.BagButtons[0]
@@ -163,7 +165,7 @@ Func = function(self, event, ...)
 
     -- this is the ID of the affected container as known to WoW
     local bagId = ...
-    if bagId ~= -2 then
+    if AddOnTable.Functions.IsBankContainer(bagId) or AddOnTable.Functions.IsInventory(bagId) then
         if collectedBagEvents[bagId] == nil then
             collectedBagEvents[bagId] = {}
         end
@@ -177,9 +179,10 @@ Func = function(self, event, ...)
     -- if there are new bank slots the whole view has to be updated
     if (event == "PLAYERBANKSLOTS_CHANGED") then
         -- bank bag slot
-        if (bagId > NUM_BANKGENERIC_SLOTS) then
-            local bankBagButton = AddOnTable["Sets"][2].BagButtons[bagId-NUM_BANKGENERIC_SLOTS]
-            BankFrameItemButton_Update(bankBagButton)
+        if (bagId > AddOnTable.BlizzConstants.BANK_SLOTS_NUM) then
+            local bankBagId = bagId-AddOnTable.BlizzConstants.BANK_SLOTS_NUM
+            local bankBagButton = AddOnTable["Sets"][2].BagButtons[bankBagId]
+            bankBagButton:UpdateContent()
             return
         end
 
@@ -359,13 +362,17 @@ function BaudBagBagsFrame_OnShow(self, event, ...)
         for Bag = 0, 3 do
             backpackSet.BagButtons[Bag]:SetFrameLevel(Level)
         end
-        backpackSet.ReagentBagButtons[0]:SetFrameLevel(Level)
+        if (backpackSet.ReagentBagButtons[0]) then
+            backpackSet.ReagentBagButtons[0]:SetFrameLevel(Level)
+        end
     else
         local bagSet = AddOnTable["Sets"][2]
         for Bag = 1, NUM_BANKBAGSLOTS do
             bagSet.BagButtons[Bag]:SetFrameLevel(Level)
         end
-        _G["BBReagentsBag"]:SetFrameLevel(Level)
+        if (AddOnTable.State.ReagentBankSupported) then
+            _G["BBReagentsBag"]:SetFrameLevel(Level)
+        end
     end
 end
 
@@ -432,12 +439,6 @@ function BaudBagContainer_OnShow(self, event, ...)
 
     if (self:GetID() == 1) then
         AddOnTable["Sets"][self.BagSet]:UpdateSlotInfo()
-    end
-	
-    -- If there are tokens watched then decide if we should show the bar
-    -- [TAINT] can be problematic, but doesn't have to be
-    if ( ManageBackpackTokenFrame ) then
-        ManageBackpackTokenFrame()
     end
 end
 
