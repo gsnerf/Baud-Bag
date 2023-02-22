@@ -252,6 +252,9 @@ EventFuncs.BAG_CONTAINER_UPDATE = function(self, event, ...)
     -- not sure how to identify what set is affected, so for now rebuild everything
     AddOnTable.Sets[1]:RebuildContainers()
     AddOnTable.Sets[2]:RebuildContainers()
+    if (BaudBagOptions:IsShown()) then
+        BaudBagOptions:Update()
+    end
 end
 
 local function HandleMerchantShow()
