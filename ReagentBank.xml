@@ -7,9 +7,6 @@
                 <Texture parentKey="SlotHighlightTexture" alphaMode="ADD" file="Interface\Buttons\CheckButtonHilight" setAllPoints="true" hidden="true"/>
             </Layer>
         </Layers>
-        <Frames>
-            <Cooldown name="$parentCooldown" parentKey="Cooldown" inherits="CooldownFrameTemplate"/>
-        </Frames>
         <Scripts>
             <OnLoad function="ReagentBankSlotButton_OnLoad"/>
             <OnEvent function="ReagentBankSlotButton_OnEvent"/>

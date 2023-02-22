@@ -35,6 +35,7 @@ local function ReagentBankBagInitialize(self, BagContainer)
     BagSlot:HookScript("OnEnter",	BaudBag_BagSlot_OnEnter)
     BagSlot:HookScript("OnUpdate",	BaudBag_BagSlot_OnUpdate)
     BagSlot:HookScript("OnLeave",	BaudBag_BagSlot_OnLeave)
+    AddOnTable.Sets[2].BagButtons[AddOnTable.BlizzConstants.REAGENTBANK_CONTAINER] = BagSlot
 end
 hooksecurefunc(AddOnTable, "BankBags_Inititalize", ReagentBankBagInitialize)
 
@@ -50,7 +51,7 @@ local function ReagentBankBagUpdate(self)
 
     if (not AddOnTable.BlizzAPI.IsReagentBankUnlocked()) then
         local bagSlot = bankSet.BagButtons[AddOnTable.BlizzConstants.REAGENTBANK_CONTAINER]
-        bagSlot.Border:SetVertexColor(1.0, 0.1, 0.1)
+        bagSlot.IconBorder:SetVertexColor(1.0, 0.1, 0.1)
         unlockInfo:Show()
         depositButton:Disable()
         MoneyFrame_Update( unlockInfo.CostMoneyFrame, AddOnTable.BlizzAPI.GetReagentBankCost() )
@@ -96,7 +97,7 @@ function ReagentBankSlotButton_OnClick(self, event, ...)
 end
 
 function BBReagentBank_UnlockInfo_Show(self, event, ...)
-    if(not IsReagentBankUnlocked()) then		
+    if(not AddOnTable.BlizzAPI.IsReagentBankUnlocked()) then
 		self:Show();
 		MoneyFrame_Update( self.CostMoneyFrame, GetReagentBankCost());
 	else
