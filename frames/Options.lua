@@ -2,7 +2,7 @@ local AddOnName, AddOnTable = ...
 local _
 
 local Localized = AddOnTable.Localized
-local MaxBags   = NUM_BANKBAGSLOTS + 2
+local MaxBags   = 1 + AddOnTable.BlizzConstants.BANK_CONTAINER_NUM + (AddOnTable.State.ReagentBankSupported and 1 or 0) -- 1 for bank + BANK_CONTAINER_NUM + 1 for reagent bank if supported
 local Prefix    = "BaudBagOptions"
 local Updating  = false
 local CfgBackup

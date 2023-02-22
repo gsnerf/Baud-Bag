@@ -38,10 +38,10 @@ Events.lua
 BaudBagConfig.lua
 BaudBagCache.lua
 BaudBagToolTips.lua
-frames/Options.xml
-TokenBar.xml
 Bank.lua
 ReagentBank.xml
+frames/Options.xml
+TokenBar.xml
 frames\BaudBagSearchFrame.xml
 Overrides.lua
 BaudBag.xml
