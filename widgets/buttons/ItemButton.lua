@@ -165,15 +165,12 @@ function Prototype:UpdateQuestOverlay(containerId, itemlink)
         local questInfo = AddOnTable.BlizzAPI.GetContainerItemQuestInfo(containerId, self.SlotIndex)
         local isQuestRelated = questInfo.questID ~= nil or questInfo.isQuestItem
 
-        if ( not isQuestRelated ) then
+        --[[if ( not isQuestRelated ) then
             if (itemlink) then
-                local _, _, _, _, _, itemType, itemSubType = AddOnTable.BlizzAPI.GetItemInfo(itemlink)
+                local _, _, _, _, _, itemType, itemSubType, _, _, _, _, classID, subclassID = AddOnTable.BlizzAPI.GetItemInfo(itemlink)
                 isQuestRelated = itemType == "Quest" or itemSubType == "Quest"
-                if (self.Parent.ContainerId == 7 and self.SlotIndex == 26) then
-                    AddOnTable.Functions.DebugMessage("Temp", "gotten itemType and itemSubType", itemType, itemSubType, isQuestRelated)
-                end
             end
-        end
+        end]]
 
         if ( isQuestRelated ) then
             self.IconBorder:SetVertexColor(1, 0.9, 0.4, 0.9)

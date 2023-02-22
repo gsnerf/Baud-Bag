@@ -2,7 +2,7 @@ local AddOnName, AddOnTable = ...
 local _
 
 local Localized = AddOnTable.Localized
-local MaxBags   = NUM_BANKBAGSLOTS + 2
+local MaxBags   = 1 + AddOnTable.BlizzConstants.BANK_CONTAINER_NUM + (AddOnTable.State.ReagentBankSupported and 1 or 0) -- 1 for bank + BANK_CONTAINER_NUM + 1 for reagent bank if supported
 local Prefix    = "BaudBagOptions"
 local Updating  = false
 local CfgBackup
@@ -541,8 +541,15 @@ function BaudBagOptionsMixin:Update()
                 ContNum = ContNum + 1
                 _G[Prefix.."Container"..ContNum]:SetPoint("LEFT", Prefix.."Bag"..Index, "LEFT", -6,0)
             else
-                -- all other bags may have a joined state
-                Check:SetChecked(BBConfig[SelectedBags].Joined[Index]~=false)
+                -- all other bag slots that are actually filled with bags may have a changeable joined state
+                if (AddOnTable.Sets[SelectedBags].SubContainers[Bag].Size == 0) then
+                    Check:SetChecked(true)
+                    Check:Disable()
+                else
+                    Check:SetChecked(BBConfig[SelectedBags].Joined[Index]~=false)
+                    Check:Enable()
+                end
+
                 if not Check:GetChecked() then
                     -- if not joined the last container needs to be aligned to the last bag and the current container needs to start here
                     _G[Prefix.."Container"..ContNum]:SetPoint("RIGHT", Prefix.."Bag"..(Index - 1), "RIGHT", 6,0)

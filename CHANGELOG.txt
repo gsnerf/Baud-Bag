@@ -1,4 +1,9 @@
 ﻿=== Changelog ===
+v10.0.5.2
+  - deactivated handling of quest overlay for offline bank, as it lead to issues with some useable items
+  - fixed handling of reagent bank bag button
+  - fixed handling of reagent bank in options window
+  - adapted handling of joined state for bag slots which contain no bag
 v10.0.5.1
   - fixed a number of issues with switching bags in the bank
   - reworked and slimmed down bag buttons implementation (doesn't depend on itembutton any more) [wotlk compatibility]
