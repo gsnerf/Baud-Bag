@@ -753,7 +753,7 @@ function BaudBag_ContainerFrameItemButton_OnClick(self, button)
         local itemId = AddOnTable.BlizzAPI.GetContainerItemID(self:GetParent():GetID(), self:GetID())
         local isReagent = (itemId and AddOnTable.Functions.IsCraftingReagent(itemId))
         local sourceIsBank = BaudBag_IsBankContainer(self:GetParent():GetID())
-        local targetReagentBank = IsReagentBankUnlocked() and isReagent
+        local targetReagentBank = AddOnTable.BlizzAPI.IsReagentBankUnlocked() and isReagent
         
         AddOnTable.Functions.DebugMessage("ItemHandle", "handling item (itemId, isReagent, targetReagentBank)", itemId, isReagent, targetReagentBank)
 
