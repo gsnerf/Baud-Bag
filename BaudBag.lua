@@ -283,11 +283,7 @@ end
 
 if PlayerInteractionFrameManager ~= nil then
     Func = function(self, event, ...)
-        -- todo: also call original manager when bank is deactivated in the settings!
         local type = ...
-        if type ~= Enum.PlayerInteractionType.Banker or not BBConfig[2].Enabled then
-            PlayerInteractionFrameManager:OnEvent(event, ...)
-        end
 
         if type == Enum.PlayerInteractionType.Merchant then
             if event == "PLAYER_INTERACTION_MANAGER_FRAME_SHOW" then
@@ -321,12 +317,6 @@ function BaudBag_OnLoad(self, event, ...)
     end
     BaudBag_RegisterBankEvents(self)
     AddOnTable.Functions.RegisterEvents(self)
-
-    -- ensure to de-register the default player interaction frame, just so that we can take over the bank opening...
-    if PlayerInteractionFrameManager ~= nil then
-        PlayerInteractionFrameManager:UnregisterEvent("PLAYER_INTERACTION_MANAGER_FRAME_SHOW")
-        PlayerInteractionFrameManager:UnregisterEvent("PLAYER_INTERACTION_MANAGER_FRAME_HIDE")
-    end
 
     -- the first container from each set (inventory/bank) is different and is created in the XML
     local Container
