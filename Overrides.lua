@@ -3,45 +3,62 @@ local AddOnName, AddOnTable = ...
 local Localized = AddOnTable.Localized
 local _
 
---[[ backpack specific original functions ]]--
-local orig_OpenBackpack = OpenBackpack
-OpenBackpack = function() 
-    AddOnTable.Functions.DebugMessage("BagOpening", "[OpenBackpack] called!")
-    if (not BBConfig or not BBConfig[1].Enabled) then
-        AddOnTable.Functions.DebugMessage("BagOpening", "[OpenBackpack] somethings not right, sending to blizz-bags!")
-        return orig_OpenBackpack()
-    end
-
-    OpenBag(AddOnTable.BlizzConstants.BACKPACK_CONTAINER)
+--[[ helpers ]]
+   
+local function IsBagShown(BagId)
+    local SubContainer = AddOnTable["SubBags"][BagId]
+    AddOnTable.Functions.DebugMessage("BagOpening", "Got SubContainer", SubContainer)
+    return SubContainer:IsOpen()
 end
 
-local orig_CloseBackpack = CloseBackpack
-CloseBackpack = function()
-    AddOnTable.Functions.DebugMessage("BagOpening", "[CloseBackpack] called!")
-    if (not BBConfig or not BBConfig[1].Enabled) then
-        AddOnTable.Functions.DebugMessage("BagOpening", "[CloseBackpack] somethings not right, sending to blizz-bags!")
-        return orig_CloseBackpack()
+local orig_IsBagOpen = IsBagOpen
+-- IsBagOpen = function(BagID)
+function BaudBag_IsBagOpen(BagId)
+    -- fallback
+    if (not BBConfig or not BaudBag_BagHandledByBaudBag(BagId)) then
+        AddOnTable.Functions.DebugMessage("BagOpening", "BaudBag is not responsible for this bag, calling default ui")
+        return orig_IsBagOpen(BagId)
     end
-
-    CloseBag(AddOnTable.BlizzConstants.BACKPACK_CONTAINER)
+    
+    local open = IsBagShown(BagId)
+    AddOnTable.Functions.DebugMessage("BagOpening", "[IsBagOpen] (BagId, open)", BagId, open)
+    return open
 end
+IsBagOpen = BaudBag_IsBagOpen
 
-local orig_ToggleBackpack = ToggleBackpack
-ToggleBackpack = function()
-    AddOnTable.Functions.DebugMessage("BagOpening", "[ToggleBackpack] called")
-    -- make sure original is called when BaudBag is disabled for the backpack
-    if (not BBConfig or not BBConfig[1].Enabled) then
-        AddOnTable.Functions.DebugMessage("BagOpening", "[ToggleBackpack] BaudBag disabled for inventory calling original UI")
-        return orig_ToggleBackpack()
-    end
+--[[ single bag stuff ]]--
+
+local orig_OpenBag = OpenBag
+OpenBag = function(id)
+    AddOnTable.Functions.DebugMessage("BagOpening", "[OpenBag] called on bag (id)", id)
 	
-    if not AddOnTable.BagsReady then
-        return
+    -- if there is no baud bag config we most likely do not work correctly => send to original bag frames
+    if (not BBConfig or not BaudBag_BagHandledByBaudBag(id)) then
+        AddOnTable.Functions.DebugMessage("BagOpening", "[OpenBag] no config or bag not handled by BaudBag, calling original")
+        return orig_OpenBag(id)
     end
-	
-    ToggleBag(AddOnTable.BlizzConstants.BACKPACK_CONTAINER)
+
+    -- if (not IsBagOpen(id)) then
+    if (not BaudBag_IsBagOpen(id)) then
+        local Container = _G[AddOnName.."SubBag"..id]:GetParent()
+        Container:Show()
+    end
 end
 
+local orig_CloseBag = CloseBag
+CloseBag = function(id)
+    AddOnTable.Functions.DebugMessage("BagOpening", "[CloseBag] called on bag (id)", id)
+    if (not BBConfig or not BaudBag_BagHandledByBaudBag(id)) then
+        AddOnTable.Functions.DebugMessage("BagOpening", "[CloseBag] no config or bag not handled by BaudBag, calling original")
+        return orig_CloseBag(id)
+    end
+
+    -- if (IsBagOpen(id)) then
+    if (BaudBag_IsBagOpen(id)) then
+        local Container = _G[AddOnName.."SubBag"..id]:GetParent()
+        Container:Hide()
+    end
+end
 
 local orig_ToggleBag = ToggleBag
 ToggleBag = function(id)
@@ -79,6 +96,7 @@ ToggleBag = function(id)
     end
 end
 
+--[[ "all" bag stuff ]]--
 
 local orig_OpenAllBags = OpenAllBags
 OpenAllBags = function(frame)
@@ -150,29 +168,7 @@ CloseAllBags = function(frame)
         end
     end
 end
-   
-local function IsBagShown(BagId)
-    local SubContainer = AddOnTable["SubBags"][BagId]
-    AddOnTable.Functions.DebugMessage("BagOpening", "Got SubContainer", SubContainer)
-    return SubContainer:IsOpen()
-end
 
-local orig_IsBagOpen = IsBagOpen
--- IsBagOpen = function(BagID)
-function BaudBag_IsBagOpen(BagId)
-    -- fallback
-    if (not BBConfig or not BaudBag_BagHandledByBaudBag(BagId)) then
-        AddOnTable.Functions.DebugMessage("BagOpening", "BaudBag is not responsible for this bag, calling default ui")
-        return orig_IsBagOpen(BagId)
-    end
-    
-    local open = IsBagShown(BagId)
-    AddOnTable.Functions.DebugMessage("BagOpening", "[IsBagOpen] (BagId, open)", BagId, open)
-    return open
-end
-IsBagOpen = BaudBag_IsBagOpen
-
---[[ this usually only applies to inventory bags ]]--
 local orig_ToggleAllBags = ToggleAllBags
 ToggleAllBags = function()
     AddOnTable.Functions.DebugMessage("BagOpening", "[ToggleAllBags] called")
@@ -209,39 +205,48 @@ ToggleAllBags = function()
     end
 end
 
-local orig_OpenBag = OpenBag
-OpenBag = function(id)
-    AddOnTable.Functions.DebugMessage("BagOpening", "[OpenBag] called on bag (id)", id)
+--[[ Backpack stuff ]]
+
+local orig_OpenBackpack = OpenBackpack
+OpenBackpack = function() 
+    AddOnTable.Functions.DebugMessage("BagOpening", "[OpenBackpack] called!")
+    if (not BBConfig or not BBConfig[1].Enabled) then
+        AddOnTable.Functions.DebugMessage("BagOpening", "[OpenBackpack] somethings not right, sending to blizz-bags!")
+        return orig_OpenBackpack()
+    end
+
+    OpenBag(AddOnTable.BlizzConstants.BACKPACK_CONTAINER)
+end
+
+local orig_CloseBackpack = CloseBackpack
+CloseBackpack = function()
+    AddOnTable.Functions.DebugMessage("BagOpening", "[CloseBackpack] called!")
+    if (not BBConfig or not BBConfig[1].Enabled) then
+        AddOnTable.Functions.DebugMessage("BagOpening", "[CloseBackpack] somethings not right, sending to blizz-bags!")
+        return orig_CloseBackpack()
+    end
+
+    CloseBag(AddOnTable.BlizzConstants.BACKPACK_CONTAINER)
+end
+
+local orig_ToggleBackpack = ToggleBackpack
+ToggleBackpack = function()
+    AddOnTable.Functions.DebugMessage("BagOpening", "[ToggleBackpack] called")
+    -- make sure original is called when BaudBag is disabled for the backpack
+    if (not BBConfig or not BBConfig[1].Enabled) then
+        AddOnTable.Functions.DebugMessage("BagOpening", "[ToggleBackpack] BaudBag disabled for inventory calling original UI")
+        return orig_ToggleBackpack()
+    end
 	
-    -- if there is no baud bag config we most likely do not work correctly => send to original bag frames
-    if (not BBConfig or not BaudBag_BagHandledByBaudBag(id)) then
-        AddOnTable.Functions.DebugMessage("BagOpening", "[OpenBag] no config or bag not handled by BaudBag, calling original")
-        return orig_OpenBag(id)
+    if not AddOnTable.BagsReady then
+        return
     end
-
-    -- if (not IsBagOpen(id)) then
-    if (not BaudBag_IsBagOpen(id)) then
-        local Container = _G[AddOnName.."SubBag"..id]:GetParent()
-        Container:Show()
-    end
-end
-
-local orig_CloseBag = CloseBag
-CloseBag = function(id)
-    AddOnTable.Functions.DebugMessage("BagOpening", "[CloseBag] called on bag (id)", id)
-    if (not BBConfig or not BaudBag_BagHandledByBaudBag(id)) then
-        AddOnTable.Functions.DebugMessage("BagOpening", "[CloseBag] no config or bag not handled by BaudBag, calling original")
-        return orig_CloseBag(id)
-    end
-
-    -- if (IsBagOpen(id)) then
-    if (BaudBag_IsBagOpen(id)) then
-        local Container = _G[AddOnName.."SubBag"..id]:GetParent()
-        Container:Hide()
-    end
+	
+    ToggleBag(AddOnTable.BlizzConstants.BACKPACK_CONTAINER)
 end
 
 
+--[[ BagSlot stuff ]]
 
 local pre_BagSlotButton_OnClick = BagSlotButton_OnClick
 BagSlotButton_OnClick = function(self, event, ...)
