@@ -76,6 +76,9 @@ local EventFuncs = {
             AddOnTable.Functions.DebugMessage("Bank", "BaudBag enabled for Bank, disable default bank event")
             BankFrame:UnregisterEvent("BANKFRAME_OPENED")
         end
+
+        AddOnTable:UpdateBankParents()
+        AddOnTable:UpdateBagParents()
     end,
 
     PLAYER_MONEY = function(self, event, ...)
@@ -822,5 +825,20 @@ function BaudBag_FixContainerClickForReagent(Bag, Slot)
             AddOnTable.BlizzAPI.PickupContainerItem(REAGENTBANK_CONTAINER, Value)
             return
         end
+    end
+end
+
+--[[ this method ensures that the bank bags are either placed as childs under UIParent or BaudBag ]]
+function AddOnTable:UpdateBagParents()
+    local newParent = UIParent
+    if AddOnTable.Functions.BagHandledByBaudBag(AddOnTable.BlizzConstants.BACKPACK_CONTAINER) then
+        newParent = BaudBag_OriginalBagsHideFrame
+    end
+
+    if (ContainerFrameCombinedBags) then
+        ContainerFrameCombinedBags:SetParent(newParent)
+    end
+    for i, frame in ContainerFrameUtil_EnumerateContainerFrames() do
+        frame:SetParent(newParent)
     end
 end

@@ -189,3 +189,12 @@ function BaudBagToggleBank(self)
         BaudBagAutoOpenSet(2, false)
     end
 end
+
+--[[ this method ensures that the bank bags are either placed as childs under UIParent or BaudBag ]]
+function AddOnTable:UpdateBankParents()
+    if AddOnTable.Functions.BagHandledByBaudBag(AddOnTable.BlizzConstants.BANK_CONTAINER) then
+        BankFrame:SetParent(BaudBag_OriginalBagsHideFrame)
+    else
+        BankFrame:SetParent(UIParent)
+    end
+end
