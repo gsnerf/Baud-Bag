@@ -27,6 +27,7 @@ local BaudBag_DebugCfg = {
     BagCreation    = { Name = "Bag Creation",       Active = false },
     BagHover       = { Name = "Bag Hover",          Active = false },
     BagOpening     = { Name = "Bag Opening",        Active = false },
+    BagTrigger     = { Name = "Bag Trigger",        Active = false },
     BagBackgrounds = { Name = "Bag Backgrounds",    Active = false },
     Container      = { Name = "Container",          Active = false },
     MenuDropDown   = { Name = "Menu DropDown",      Active = false },

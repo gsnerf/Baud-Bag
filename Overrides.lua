@@ -25,31 +25,32 @@ end
 --[[ single bag stuff ]]--
 
 local function openBag(id)
+    AddOnTable.Functions.DebugMessage("BagTrigger", "[OpenBag] called for bag with id "..id)
     if (not BBConfig or not AddOnTable.Functions.BagHandledByBaudBag(id)) then
         return
     end
 
-    if (not isBagShown(id)) then
-        local Container = _G[AddOnName.."SubBag"..id]:GetParent()
-        Container:Show()
-    end
+    local Container = _G[AddOnName.."SubBag"..id]:GetParent()
+    Container:Show()
 end
 hooksecurefunc("OpenBag", openBag)
 
 local function closeBag(id)
+    AddOnTable.Functions.DebugMessage("BagTrigger", "[CloseBag] called for bag with id "..id)
+
     if (not BBConfig or not AddOnTable.Functions.BagHandledByBaudBag(id)) then
         AddOnTable.Functions.DebugMessage("BagOpening", "[CloseBag] no config or bag not handled by BaudBag, calling original")
         return
     end
 
-    if (isBagShown(id)) then
-        local Container = _G[AddOnName.."SubBag"..id]:GetParent()
-        Container:Hide()
-    end
+    local Container = _G[AddOnName.."SubBag"..id]:GetParent()
+    Container:Hide()
 end
 hooksecurefunc("CloseBag", closeBag)
 
 local function toggleBag(id)
+    AddOnTable.Functions.DebugMessage("BagTrigger", "[ToggleBag] called for bag with id "..id)
+
     -- decide if the current bag needs to be opened by baudbag or blizzard
     if not AddOnTable.Functions.BagHandledByBaudBag(id) or not AddOnTable.BagsReady then
         return
@@ -76,7 +77,7 @@ hooksecurefunc("ToggleBag", toggleBag)
 --[[ "all" bag stuff ]]--
 
 local function openAllBags(triggerSourceFrame, forceUpdate)
-    AddOnTable.Functions.DebugMessage("BagOpening", "[OpenAllBags] called from frame", ((triggerSourceFrame ~= nil) and triggerSourceFrame:GetName() or "[none]"))
+    AddOnTable.Functions.DebugMessage("BagTrigger", "[OpenAllBags] called from frame", ((triggerSourceFrame ~= nil) and triggerSourceFrame:GetName() or "[none]"))
     
     -- call default bags if the addon is disabled for regular bags
     if (not BBConfig or not BBConfig[1].Enabled) then
@@ -106,16 +107,16 @@ local function openAllBags(triggerSourceFrame, forceUpdate)
     for Bag = AddOnTable.BlizzConstants.BACKPACK_FIRST_CONTAINER, AddOnTable.BlizzConstants.BACKPACK_LAST_CONTAINER do
         AddOnTable.Functions.DebugMessage("BagOpening", "[OpenAllBags] analyzing bag (ID)", Bag)
         Container = _G[AddOnName.."SubBag"..Bag]:GetParent()
-        if (AddOnTable.BlizzAPI.GetContainerNumSlots(Bag) > 0) and not Container:IsShown()then
+        if (AddOnTable.BlizzAPI.GetContainerNumSlots(Bag) > 0) then
             AddOnTable.Functions.DebugMessage("BagOpening", "[OpenAllBags] showing bag")
             Container:Show()
         end
     end
 end
-hooksecurefunc("OpenAllBags", openAllBags)
+--hooksecurefunc("OpenAllBags", openAllBags)
 
 local function closeAllBags(triggerSourceFrame, forceUpdate)
-    AddOnTable.Functions.DebugMessage("BagOpening", "[CloseAllBags] (sourceName)", ((triggerSourceFrame ~= nil) and triggerSourceFrame:GetName() or "[none]"))
+    AddOnTable.Functions.DebugMessage("BagTrigger", "[CloseAllBags] (sourceName)", ((triggerSourceFrame ~= nil) and triggerSourceFrame:GetName() or "[none]"))
 
         -- call default bags if the addon is disabled for regular bags
         if (not BBConfig or not BBConfig[1].Enabled) then
@@ -138,16 +139,16 @@ local function closeAllBags(triggerSourceFrame, forceUpdate)
     for Bag = AddOnTable.BlizzConstants.BACKPACK_FIRST_CONTAINER, AddOnTable.BlizzConstants.BACKPACK_LAST_CONTAINER do
         AddOnTable.Functions.DebugMessage("BagOpening", "[CloseAllBags] analyzing bag (id)", Bag)
         local Container = _G[AddOnName.."SubBag"..Bag]:GetParent()
-        if (AddOnTable.BlizzAPI.GetContainerNumSlots(Bag) > 0) and Container:IsShown() then
+        if (AddOnTable.BlizzAPI.GetContainerNumSlots(Bag) > 0) then
             AddOnTable.Functions.DebugMessage("BagOpening", "[CloseAllBags] hiding  bag")
             Container:Hide()
         end
     end
 end
-hooksecurefunc("CloseAllBags", closeAllBags)
+--hooksecurefunc("CloseAllBags", closeAllBags)
 
 local function toggleAllBags()
-    AddOnTable.Functions.DebugMessage("BagOpening", "[ToggleAllBags] called")
+    AddOnTable.Functions.DebugMessage("BagTrigger", "[ToggleAllBags] called")
 
     if (not BBConfig or not BBConfig[1].Enabled) then
         AddOnTable.Functions.DebugMessage("BagOpening", "[ToggleAllBags] no config found or addon deactivated for inventory, calling original")
@@ -180,11 +181,12 @@ local function toggleAllBags()
         end
     end
 end
-hooksecurefunc("ToggleAllBags", toggleAllBags)
+-- hooksecurefunc("ToggleAllBags", toggleAllBags)
 
 --[[ Backpack stuff ]]
 
 local function openBackpack()
+    AddOnTable.Functions.DebugMessage("BagTrigger", "[OpenBackpack] called")
     if (not BBConfig or not BBConfig[1].Enabled) then
         AddOnTable.Functions.DebugMessage("BagOpening", "[OpenBackpack] bags apparently not enabled, skipping")
         return
@@ -192,9 +194,10 @@ local function openBackpack()
 
     openBag(AddOnTable.BlizzConstants.BACKPACK_CONTAINER)
 end
-hooksecurefunc("OpenBackpack", openBackpack)
+--hooksecurefunc("OpenBackpack", openBackpack)
 
 local function closeBackpack()
+    AddOnTable.Functions.DebugMessage("BagTrigger", "[CloseBackpack] called")
     if (not BBConfig or not BBConfig[1].Enabled) then
         AddOnTable.Functions.DebugMessage("BagOpening", "[CloseBackpack] bags apparently not enabled, skipping")
         return
@@ -202,9 +205,10 @@ local function closeBackpack()
 
     closeBag(AddOnTable.BlizzConstants.BACKPACK_CONTAINER)
 end
-hooksecurefunc("CloseBackpack", closeBackpack)
+--hooksecurefunc("CloseBackpack", closeBackpack)
 
 local function toggleBackpack()
+    AddOnTable.Functions.DebugMessage("BagTrigger", "[ToggleBackpack] called")
     if (not BBConfig or not BBConfig[1].Enabled) then
         AddOnTable.Functions.DebugMessage("BagOpening", "[ToggleBackpack] bags apparently not enabled, skipping")
         return
@@ -216,7 +220,7 @@ local function toggleBackpack()
 
     toggleBag(AddOnTable.BlizzConstants.BACKPACK_CONTAINER)
 end
-hooksecurefunc("ToggleBackpack", toggleBackpack)
+--hooksecurefunc("ToggleBackpack", toggleBackpack)
 
 
 --[[ BagSlot stuff ]]
