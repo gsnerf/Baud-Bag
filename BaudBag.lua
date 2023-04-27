@@ -532,6 +532,12 @@ function BaudBagAutoOpenSet(BagSet, Close)
         if autoOpen then
             Container = _G[Prefix.."Container"..BagSet.."_"..ContNum]
             if not Close then
+                if not BBConfig[BagSet].Enabled then
+                    Container.AutoOpened = true
+                    OpenAllBags()
+                    return
+                end
+
                 if not Container:IsShown() then
                     AddOnTable.Functions.DebugMessage("BagOpening", "[AutoOpenSet FOR (IsShown)] FALSE")
                     Container.AutoOpened = true
@@ -541,6 +547,12 @@ function BaudBagAutoOpenSet(BagSet, Close)
                 end
                 BaudBagUpdateContainer(Container)
             elseif Container.AutoOpened then
+                if not BBConfig[BagSet].Enabled then
+                    Container.AutoOpened = false
+                    CloseAllBags()
+                    return
+                end
+                
                 AddOnTable.Functions.DebugMessage("BagOpening", "[AutoOpenSet FOR (AutoOpened)] TRUE")
                 Container.AutoOpened = false
                 if BBConfig[BagSet][ContNum].AutoClose then
@@ -677,6 +689,7 @@ end
 
 -- TODO: after changes there is some weird behavior after applying changes (like changing the name)
 -- Seems to be in Background drawing for Slot Count
+--[[ this can probably be removed as this is only called on classic and a new way to bubble updates needs to be found ]]
 function BaudBagUpdateFromBBConfig()
     BaudUpdateJoinedBags()
     BaudBagUpdateBagFrames()
@@ -687,6 +700,8 @@ function BaudBagUpdateFromBBConfig()
             AddOnTable.Sets[bagSet]:Close()
         end
     end
+    AddOnTable:UpdateBagParents()
+    AddOnTable:UpdateBankParents()
 end
 
 function BaudBagSearchButton_Click(self, event, ...)

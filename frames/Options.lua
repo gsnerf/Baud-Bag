@@ -233,6 +233,7 @@ function BaudBagOptionsMixin:OnRefresh(event, ...)
     self:Update()
 end
 
+--[[ this event is never called in retail, and probably even for classic it isn't necessary anymore as changes to BBConfig seem to be automatically written to BaudBag_Cfg ]]
 function BaudBagOptionsMixin:OnOkay(event, ...)
     AddOnTable.Functions.DebugMessage("Options", "'Okay' pressed, saving BBConfig.")
     CfgBackup = BBConfig
@@ -281,14 +282,8 @@ function BaudBagEnabledCheck_OnClick(self, event, ...)
     end
 
     BBConfig[SelectedBags].Enabled = self:GetChecked()
-    -- TODO: move to BaudBagBBConfig save?
-    if BBConfig and (BBConfig[2].Enabled == true) then BankFrame:UnregisterEvent("BANKFRAME_OPENED") end
-    if BBConfig and (BBConfig[2].Enabled == false) then BankFrame:RegisterEvent("BANKFRAME_OPENED") end
-    if (BackpackTokenFrame_Update ~= nil) then
-        BackpackTokenFrame_Update()
-    else
-        BackpackTokenFrame:Update()
-    end
+    AddOnTable.UpdateBagParents()
+    AddOnTable.UpdateBankParents()
 end
 
 function BaudBagCloseAllCheck_OnClick(self, event, ...)
