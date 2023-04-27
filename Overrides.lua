@@ -3,25 +3,6 @@ local AddOnName, AddOnTable = ...
 local Localized = AddOnTable.Localized
 local _
 
---[[ helpers ]]
-   
-local function isBagShown(BagId)
-    local SubContainer = AddOnTable["SubBags"][BagId]
-    AddOnTable.Functions.DebugMessage("BagOpening", "Got SubContainer", SubContainer)
-    return SubContainer:IsOpen()
-end
-
-function BaudBag_IsBagOpen(BagId)
-    if (not BBConfig or not BaudBag_BagHandledByBaudBag(BagId)) then
-        AddOnTable.Functions.DebugMessage("BagOpening", "BaudBag is not responsible for this bag, calling default ui")
-        return false
-    end
-
-    local open = isBagShown(BagId)
-    AddOnTable.Functions.DebugMessage("BagOpening", "[IsBagOpen] (BagId, open)", BagId, open)
-    return open
-end
-
 --[[ single bag stuff ]]--
 
 local function openBag(id)
