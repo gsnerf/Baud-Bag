@@ -169,23 +169,23 @@ function AddOnTable:BankBags_UpdateContent(self, bankVisible)
         bagCache.BagCount = GetInventoryItemCount("player", inventoryId)
     end
     
-    local BBContainer2_1 = _G[Prefix.."Container2_1"]
-    if BBContainer2_1:IsShown() then
-        -- TODO we need direct access to the Container Object here in the future!
-        BaudBagUpdateContainer(BBContainer2_1)
+    local firstBankContainer = AddOnTable.Sets[2].Containers[1]
+    if firstBankContainer.Frame:IsShown() then
+        firstBankContainer:Update()
         AddOnTable["Sets"][2]:UpdateSlotInfo()
     else
-        BBContainer2_1.AutoOpened = true
-        BBContainer2_1:Show()
+        firstBankContainer.Frame.AutoOpened = true
+        firstBankContainer.Frame:Show()
     end
 end
 
 function BaudBagToggleBank(self)
-    if _G[Prefix.."Container2_1"]:IsShown() then
-        _G[Prefix.."Container2_1"]:Hide()
+    local firstBankContainer = AddOnTable.Sets[2].Containers[1]
+    if firstBankContainer.Frame:IsShown() then
+        firstBankContainer.Frame:Hide()
         BaudBagAutoOpenSet(2, true)
     else
-        _G[Prefix.."Container2_1"]:Show()
+        firstBankContainer.Frame:Show()
         BaudBagAutoOpenSet(2, false)
     end
 end

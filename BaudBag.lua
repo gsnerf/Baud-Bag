@@ -530,7 +530,8 @@ function BaudBagAutoOpenSet(BagSet, Close)
         AddOnTable.Functions.DebugMessage("BagOpening", "[AutoOpenSet FOR] (ContNum, AutoOpen)", ContNum, autoOpen)
 
         if autoOpen then
-            Container = _G[Prefix.."Container"..BagSet.."_"..ContNum]
+            local containerObject = AddOnTable.Sets[BagSet].Containers[ContNum]
+            Container = containerObject.Frame
             if not Close then
                 if not BBConfig[BagSet].Enabled then
                     Container.AutoOpened = true
@@ -545,7 +546,7 @@ function BaudBagAutoOpenSet(BagSet, Close)
                 else
                     AddOnTable.Functions.DebugMessage("BagOpening", "[AutoOpenSet FOR (IsShown)] TRUE")
                 end
-                BaudBagUpdateContainer(Container)
+                containerObject:Update()
             elseif Container.AutoOpened then
                 if not BBConfig[BagSet].Enabled then
                     Container.AutoOpened = false
@@ -563,7 +564,7 @@ function BaudBagAutoOpenSet(BagSet, Close)
                 end
             else
                 AddOnTable.Functions.DebugMessage("BagOpening", "[AutoOpenSet FOR (AutoOpened)] FALSE")
-                BaudBagUpdateContainer(Container)
+                containerObject:Update()
             end
         end
     end
@@ -659,13 +660,6 @@ function BaudBagUpdateBagFrames()
             BagFrame:Hide()
         end
     end
-end
-
---[[ DEPRECATED this WILL be moved to Container:Update()]]
-function BaudBagUpdateContainer(Container)
-    AddOnTable.Functions.DebugMessage("Bags", "Updating Container (name)", Container:GetName())
-    local ContainerObject = AddOnTable["Sets"][Container.BagSet].Containers[Container:GetID()]
-    ContainerObject:Update()
 end
 
 function BaudBag_OnModifiedClick(self, button)

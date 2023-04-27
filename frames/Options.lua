@@ -396,7 +396,7 @@ function BaudBagOptionsCheckButton_OnClick(self, event, ...)
         -- make sure options who need it (visible things) update the affected container
         if (SavedVar == "BlankTop") or (SavedVar == "RarityColor") then -- or (SavedVar == "RarityColorAltern") then
             AddOnTable.Functions.DebugMessage("Options", "Want to update container: "..Prefix.."Container"..SelectedBags.."_"..SelectedContainer)
-            BaudBagUpdateContainer(_G["BaudBagContainer"..SelectedBags.."_"..SelectedContainer]) -- TODO: move to BaudBagBBConfig save?
+            AddOnTable.Sets[SelectedBags].Containers[SelectedContainer]:Update() -- TODO: move to BaudBagBBConfig save?
         end
     end
     BaudBagOptions:Update()
