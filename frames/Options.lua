@@ -277,7 +277,7 @@ end
 function BaudBagEnabledCheck_OnClick(self, event, ...)
     PlayCheckBoxSound(self)
     if (not self:GetChecked()) then
-        BaudBagCloseBagSet(SelectedBags) -- TODO: move to BaudBagConfig save?
+        AddOnTable.Sets[SelectedBags]:Close()  -- TODO: move to BaudBagConfig save?
     end
 
     BBConfig[SelectedBags].Enabled = self:GetChecked()

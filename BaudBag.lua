@@ -465,7 +465,7 @@ function BaudBagContainer_OnHide(self, event, ...)
             -- [TAINT] can be problematic, but doesn't have to be
             CloseBankFrame()
         end
-        BaudBagCloseBagSet(self.BagSet)
+        AddOnTable.Sets[self.BagSet]:Close()
     end
 
     self:Show()
@@ -555,10 +555,6 @@ function BaudBagAutoOpenSet(BagSet, Close)
             end
         end
     end
-end
-
-function BaudBagCloseBagSet(BagSet)
-    AddOnTable.Sets[BagSet]:Close()
 end
 
 local function IsBagShown(BagId)
@@ -684,14 +680,11 @@ end
 function BaudBagUpdateFromBBConfig()
     BaudUpdateJoinedBags()
     BaudBagUpdateBagFrames()
-	
-    for BagSet = 1, 2 do
+
+    for bagSet = 1, 2 do
         -- make sure the enabled states are current
-        if (BBConfig[BagSet].Enabled ~= true) then
-            BaudBagCloseBagSet(BagSet)
-            if (BagSet == 2) then BankFrame:RegisterEvent("BANKFRAME_OPENED") end
-        elseif (BagSet == 2) then
-            BankFrame:UnregisterEvent("BANKFRAME_OPENED")
+        if (BBConfig[bagSet].Enabled ~= true) then
+            AddOnTable.Sets[bagSet]:Close()
         end
     end
 end
