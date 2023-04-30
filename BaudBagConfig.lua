@@ -62,7 +62,7 @@ function BaudBagRestoreCfg()
         end
 
         local Container = 0;
-        BaudBagForEachBag(BagSet, function(Bag, Index)
+        AddOnTable.Functions.ForEachBag(BagSet, function(Bag, Index)
 
             if (Container == 0) or (BBConfig[BagSet].Joined[Index] == false) then
                 Container = Container + 1;
@@ -76,7 +76,7 @@ function BaudBagRestoreCfg()
                     if isBackpack or isReagentBank or isReagentBag then
                         BBConfig[BagSet][Container] = {};
                     else
-                        BBConfig[BagSet][Container] = BaudBagCopyTable(BBConfig[BagSet][Container-1]);
+                        BBConfig[BagSet][Container] = AddOnTable.Functions.CopyTable(BBConfig[BagSet][Container-1]);
                     end
                 end
 
@@ -138,7 +138,7 @@ function ConvertOldConfig()
         BBConfig.ShowNewItems = BBConfig[1][1].ShowNewItems;
         for BagSet = 1, 2 do
             local Container = 0;
-            BaudBagForEachBag(BagSet, function(Bag, Index)
+            AddOnTable.Functions.ForEachBag(BagSet, function(Bag, Index)
                 if (Container == 0) or (BBConfig[BagSet].Joined[Index] == false) then
                     Container = Container + 1;
                     if (type(BBConfig[BagSet][Container].ShowNewItems) == "boolean") then
@@ -152,7 +152,7 @@ end
 
 function BaudBagSaveCfg()
     AddOnTable.Functions.DebugMessage("Config", "Saving configuration");
-    BaudBag_Cfg = BaudBagCopyTable(BBConfig);
+    BaudBag_Cfg = AddOnTable.Functions.CopyTable(BBConfig);
     ReloadConfigDependant();
     AddOnTable:Configuration_Updated()
 end

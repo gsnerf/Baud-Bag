@@ -90,7 +90,7 @@ function BaudBagOptionsMixin:OnEvent(event, ...)
     AddOnTable:InitCache()
     BaudBagRestoreCfg()
     ConvertOldConfig()
-    CfgBackup	= BaudBagCopyTable(BBConfig)
+    CfgBackup	= AddOnTable.Functions.CopyTable(BBConfig)
 	
     -- add to options windows
     self.name			= "Baud Bag"
@@ -318,7 +318,7 @@ function BaudBagOptionsJoinCheck_OnClick(self, event, ...)
     if self:GetChecked() then
         tremove(BBConfig[SelectedBags], ContNum)
     else
-        tinsert(BBConfig[SelectedBags], ContNum, BaudBagCopyTable(BBConfig[SelectedBags][ContNum-1]))
+        tinsert(BBConfig[SelectedBags], ContNum, AddOnTable.Functions.CopyTable(BBConfig[SelectedBags][ContNum-1]))
     end
     BaudBagOptions:Update()
     BaudUpdateJoinedBags()
@@ -382,7 +382,7 @@ function BaudBagOptionsCheckButton_OnClick(self, event, ...)
         BBConfig[SavedVar] = self:GetChecked()
 
         if (SavedVar == "RarityColor") then
-            BaudBagForEachOpenContainer(
+            AddOnTable.Functions.ForEachOpenContainer(
                 function (container)
                     container:Update()
                 end
@@ -447,7 +447,7 @@ function BaudBagOptionsSliderTemplateMixin:OnValueChanged()
         AddOnTable.Functions.DebugMessage("Options", "The variable associated with this value is "..SavedVar)
         BBConfig[SavedVar] = self:GetValue()
 
-        BaudBagForEachOpenContainer(
+        AddOnTable.Functions.ForEachOpenContainer(
             function (container)
                 container:Update()
             end

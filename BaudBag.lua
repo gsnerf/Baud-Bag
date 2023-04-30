@@ -114,7 +114,7 @@ local EventFuncs = {
             local containerItemInfo = AddOnTable.BlizzAPI.GetContainerItemInfo(Bag, Slot)
             local itemLock = AddOnTable.State.ItemLock
             if ((not containerItemInfo.isLocked) and itemLock.Move) then
-                if (itemLock.IsReagent and (BaudBag_IsBankContainer(Bag)) and (Bag ~= REAGENTBANK_CONTAINER)) then
+                if (itemLock.IsReagent and (AddOnTable.Functions.IsBankContainer(Bag)) and (Bag ~= REAGENTBANK_CONTAINER)) then
                     BaudBag_FixContainerClickForReagent(Bag, Slot)
                 end
                 itemLock.Move      = false
@@ -267,7 +267,7 @@ local function HandleMerchantShow()
     AddOnTable.Functions.DebugMessage("Junk", "MerchandFrame was shown checking if we need to sell junk")
     if (BBConfig.SellJunk and MerchantFrame:IsShown()) then
         AddOnTable.Functions.DebugMessage("Junk", "junk selling active and merchant frame is shown, identifiyng junk now")
-        BaudBagForEachBag(1,
+        AddOnTable.Functions.ForEachBag(1,
             function(Bag, Index)
                 for Slot = 1, AddOnTable.BlizzAPI.GetContainerNumSlots(Bag) do
                     local containerItemInfo = AddOnTable.BlizzAPI.GetContainerItemInfo(Bag, Slot)
@@ -620,7 +620,7 @@ SubBagEvents.UPDATE_INVENTORY_ALERTS = Func
 
 --[[ xml defined (called) BaudBagSubBag event handlers ]]--
 function BaudBagSubBag_OnLoad(self, event, ...)
-    if BaudBag_IsBankDefaultContainer(self:GetID()) then
+    if AddOnTable.Functions.IsDefaultContainer(self:GetID()) then
         return
     end
 
@@ -631,7 +631,7 @@ end
 
 
 function BaudBagSubBag_OnEvent(self, event, ...)
-    if not self:GetParent():IsShown() or BaudBag_IsBankDefaultContainer(Bag) or (self:GetID() >= 5) and not AddOnTable.State.BankOpen then
+    if not self:GetParent():IsShown() or AddOnTable.Functions.IsDefaultContainer(Bag) or (self:GetID() >= 5) and not AddOnTable.State.BankOpen then
         return
     end
     SubBagEvents[event](self, event, ...)
@@ -747,7 +747,7 @@ function BaudBag_ContainerFrameItemButton_OnClick(self, button)
     if (button ~= "LeftButton" and AddOnTable.State.BankOpen) then
         local itemId = AddOnTable.BlizzAPI.GetContainerItemID(self:GetParent():GetID(), self:GetID())
         local isReagent = (itemId and AddOnTable.Functions.IsCraftingReagent(itemId))
-        local sourceIsBank = BaudBag_IsBankContainer(self:GetParent():GetID())
+        local sourceIsBank = AddOnTable.Functions.IsBankContainer(self:GetParent():GetID())
         local targetReagentBank = AddOnTable.BlizzAPI.IsReagentBankUnlocked() and isReagent
         
         AddOnTable.Functions.DebugMessage("ItemHandle", "handling item (itemId, isReagent, targetReagentBank)", itemId, isReagent, targetReagentBank)

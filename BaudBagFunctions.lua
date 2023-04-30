@@ -60,7 +60,7 @@ AddOnTable.Functions.DebugMessage = function(type, msg, ...)
         if (... ~= nil) then
             for n=1,select('#',...) do
                 local dumpValue = select(n,...)
-                BaudBag_Vardump(dumpValue)
+                AddOnTable.Functions.Vardump(dumpValue)
             end
         end
     end
@@ -69,7 +69,7 @@ AddOnTable.Functions.DebugMessage = function(type, msg, ...)
     end
 end
 
-function BaudBag_Vardump(value, depth, key)
+local function BaudBag_Vardump(value, depth, key)
     local linePrefix = "";
     local spaces = "";
 
@@ -82,12 +82,12 @@ function BaudBag_Vardump(value, depth, key)
     else
         depth = depth + 1;
         for i=1, depth do
-            spaces = spaces .. "  "; 
+            spaces = spaces .. "  ";
         end
     end
 
     if type(value) == 'table' then
-        mTable = getmetatable(value);
+        local mTable = getmetatable(value);
         if mTable == nil then
             DEFAULT_CHAT_FRAME:AddMessage(GetTime().." BaudBag (vardump): "..spaces..linePrefix.."(table) ");
         else
@@ -110,7 +110,8 @@ AddOnTable.Functions.Vardump = BaudBag_Vardump
     This function takes a set of bags and a function, and then applies the function to each bag of the set.
     The function gets the parameters: 1. Bag, 2. Index
   ]]
-function BaudBagForEachBag(BagSet, Func)
+--[[ TODO: I have the feeling, that this should be a function of BagSet instead of a addon wide global function ]]
+local function BaudBagForEachBag(BagSet, Func)
     --[[
         BagsSet Indices:
             1 == inventory
@@ -150,7 +151,7 @@ AddOnTable.Functions.ForEachContainer = function(func)
     end
 end
 
-function BaudBagForEachOpenContainer(Func)
+local function BaudBagForEachOpenContainer(Func)
     for _, set in pairs(AddOnTable.Sets) do
         for _, container in pairs(set.Containers) do
             if (container.Frame:IsShown()) then
@@ -162,7 +163,7 @@ end
 AddOnTable.Functions.ForEachOpenContainer = BaudBagForEachOpenContainer
 
 
-function BaudBagCopyTable(Value)
+local function BaudBagCopyTable(Value)
     -- end of possible recursion
     if (type(Value) ~= "table") then
         return Value;
@@ -197,7 +198,7 @@ AddOnTable.Functions.ShowLinkTooltip = function(self, link)
     return true
 end
 
-function BaudBag_InitTexturePiece(Texture, File, Width, Height, MinX, MaxX, MinY, MaxY, Layer)
+local function BaudBag_InitTexturePiece(Texture, File, Width, Height, MinX, MaxX, MinY, MaxY, Layer)
     Texture:ClearAllPoints();
     -- Texture:SetTexture(1.0, 0, 0, 1);
     Texture:SetTexture(File);
@@ -210,7 +211,7 @@ end
 AddOnTable.Functions.InitTexturePiece = BaudBag_InitTexturePiece
 
 --[[ this function determines if the given bag is currently handled by baudbag or not ]]--
-function BaudBag_BagHandledByBaudBag(id)
+local function BaudBag_BagHandledByBaudBag(id)
     --[[
         BagsSet Indices:
             1 == inventory
@@ -228,7 +229,7 @@ function BaudBag_BagHandledByBaudBag(id)
             NUM_TOTAL_EQUIPPED_BAG_SLOTS (first bank bag)
             NUM_BANKBAGSLOTS (number of bank bags)
       ]]
-    return (BaudBag_IsBankContainer(id) and BBConfig[2].Enabled) or (BaudBag_IsInventory(id) and BBConfig[1].Enabled);
+    return (AddOnTable.Functions.IsBankContainer(id) and BBConfig[2].Enabled) or (AddOnTable.Functions.IsInventory(id) and BBConfig[1].Enabled);
 end
 AddOnTable.Functions.BagHandledByBaudBag = BaudBag_BagHandledByBaudBag
 
@@ -241,8 +242,8 @@ AddOnTable.Functions.BagHandledByBaudBag = BaudBag_BagHandledByBaudBag
         1. the special bank containers to stand on their own
         2. the rest bank
   ]]
-function BaudBag_IsBankContainer(bagId)
-    return BaudBag_IsBankDefaultContainer(bagId) or (AddOnTable.BlizzConstants.BANK_FIRST_CONTAINER <= bagId and bagId <= AddOnTable.BlizzConstants.BANK_LAST_CONTAINER);
+local function BaudBag_IsBankContainer(bagId)
+    return AddOnTable.Functions.IsDefaultContainer(bagId) or (AddOnTable.BlizzConstants.BANK_FIRST_CONTAINER <= bagId and bagId <= AddOnTable.BlizzConstants.BANK_LAST_CONTAINER);
 end
 AddOnTable.Functions.IsBankContainer = BaudBag_IsBankContainer
 
@@ -251,7 +252,7 @@ AddOnTable.Functions.IsBankContainer = BaudBag_IsBankContainer
         -3 == REAGENTBANK_CONTAINER
         -1 == BANK_CONTAINER
   ]]
-function BaudBag_IsBankDefaultContainer(bagId)
+local function BaudBag_IsBankDefaultContainer(bagId)
     -- replacing REAGENTBANK_CONTAINER constant with it's value (-3) as we aren't sure that this code is run on retail
     local ReagentBankContainer = -3
     return (bagId == AddOnTable.BlizzConstants.BANK_CONTAINER or bagId == AddOnTable.BlizzConstants.REAGENTBANK_CONTAINER);
@@ -263,7 +264,7 @@ AddOnTable.Functions.IsDefaultContainer = BaudBag_IsBankDefaultContainer
         0   == BACKPACK_CONTAINER
         1-5 == regular bags defined by blizz constants
   ]]
-function BaudBag_IsInventory(bagId)
+local function BaudBag_IsInventory(bagId)
     return (AddOnTable.BlizzConstants.BACKPACK_FIRST_CONTAINER <= bagId and bagId <= AddOnTable.BlizzConstants.BACKPACK_LAST_CONTAINER);
 end
 AddOnTable.Functions.IsInventory = BaudBag_IsInventory
