@@ -57,6 +57,7 @@ hooksecurefunc("ToggleBag", toggleBag)
 
 --[[ BagSlot stuff ]]
 
+--[[ TODO: check if this can be a hook now ]]
 local pre_BagSlotButton_OnClick = BagSlotButton_OnClick
 BagSlotButton_OnClick = function(self, event, ...)
 
@@ -70,6 +71,7 @@ BagSlotButton_OnClick = function(self, event, ...)
 end
 
 --self is hooked to be able to replace the original bank box with this one
+--[[ TODO: still needed??? ]]
 local orig_BankFrame_OnEvent = BankFrame_OnEvent
 BankFrame_OnEvent = function(self, event, ...)
     if BBConfig and(BBConfig[2].Enabled == false) then
