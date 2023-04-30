@@ -12,6 +12,7 @@
 ## Title-zhCN: 背包整合 Baud Bag
 ## Title-zhTW: 背包整合 Baud Bag
 ## Version: 10.0.5.3-DEV
+## IconAtlas: bag-main
 
 # english has to be the first locale!
 localization\Localization.en.lua
