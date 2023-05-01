@@ -250,6 +250,12 @@ local function HandleMerchantShow()
                     local containerItemInfo = AddOnTable.BlizzAPI.GetContainerItemInfo(Bag, Slot)
                     if (containerItemInfo and containerItemInfo.quality and containerItemInfo.quality == 0) then
                         AddOnTable.Functions.DebugMessage("Junk", "Found junk (Container, Slot)", Bag, Slot)
+                        --[[
+                            TODO: additionally check if this is something that can be collected for transmog and optionally skip that
+                            - transmog stuff was introduced with legion
+                            - transmog base info can be retrieved from C_TransmogCollection.GetItemInfo through itemID/link/name
+                            - if it is already collected can be found from C_TransmogCollection.GetAppearanceSourceInfo and C_TransmogCollection.PlayerCanCollectSource
+                        ]]
                         AddOnTable.BlizzAPI.UseContainerItem(Bag, Slot)
                     end
                 end
