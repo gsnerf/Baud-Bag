@@ -151,6 +151,60 @@ function Prototype:Close()
     end
 end
 
+function Prototype:AutoOpen()
+    AddOnTable.Functions.DebugMessage("BagTrigger", "[BagSet:AutoOpen] auto opening", self.Type.Name)
+    for index, container in ipairs(self.Containers) do
+        local autoOpenConfigured = BBConfig[self.Type.Id][index].AutoOpen
+        AddOnTable.Functions.DebugMessage("BagOpening", "[BagSet:AutoOpen] Considering container configured as (containerId, autoOpenConfigured)", index, autoOpenConfigured)
+
+        if autoOpenConfigured then
+            if not BBConfig[self.Type.Id].Enabled then
+                container.Frame.AutoOpened = true
+                return
+            end
+
+            if not container.Frame:IsShown() then
+                AddOnTable.Functions.DebugMessage("BagOpening", "[BagSet:AutoOpen] IsShown == FALSE")
+                container.Frame.AutoOpened = true
+                container.Frame:Show()
+            else
+                AddOnTable.Functions.DebugMessage("BagOpening", "[BagSet:AutoOpen] IsShown == TRUE")
+            end
+            container:Update()
+        end
+    end
+end
+
+function Prototype:AutoClose()
+    AddOnTable.Functions.DebugMessage("BagTrigger", "[BagSet:AutoClose] auto closing ", self.Type.Name)
+    for index, container in ipairs(self.Containers) do
+        local autoOpenConfigured = BBConfig[self.Type.Id][index].AutoOpen
+        local autoCloseConfigured = BBConfig[self.Type.Id][index].AutoClose
+        AddOnTable.Functions.DebugMessage("BagOpening", "[BagSet:AutoClose] Considering container configured as (containerId, autoOpenConfigured, autoCloseConfigured)", index, autoOpenConfigured, autoCloseConfigured)
+
+        if autoOpenConfigured then
+            if container.Frame.AutoOpened then
+                if not BBConfig[self.Type.Id].Enabled then
+                    container.Frame.AutoOpened = false
+                    return
+                end
+                
+                AddOnTable.Functions.DebugMessage("BagOpening", "[BagSet:AutoClose] AutoOpened == TRUE")
+                container.Frame.AutoOpened = false
+                if autoCloseConfigured then
+                    AddOnTable.Functions.DebugMessage("BagOpening", "[BagSet:AutoClose] AutoClose set, hiding!")
+                    container.Frame:Hide()
+                else
+                    AddOnTable.Functions.DebugMessage("BagOpening", "[BagSet:AutoClose] AutoClose not set, ignoring hide!")
+                end
+            else
+                AddOnTable.Functions.DebugMessage("BagOpening", "[AutoOpBagSet:AutoCloseenSet] FALSE")
+                container:Update()
+            end
+        end
+    end
+end
+
 local Metatable = { __index = Prototype }
 
 function AddOnTable:CreateBagSet(type)

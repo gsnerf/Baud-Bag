@@ -17,7 +17,7 @@ local EventFuncs = {
                 AddOnTable.Sets[2].Containers[ContNum]:UpdateName()
             end
         end
-        BaudBagAutoOpenSet(1, true)
+        AddOnTable.Sets[1]:AutoClose()
     end,
 }
 
@@ -36,10 +36,10 @@ local Func = function(self, event, ...)
         return
     end
     
-    -- make sure current bag inforations are processed
+    -- make sure current bag information are processed
     AddOnTable.Sets[2]:RebuildContainers()
-    BaudBagAutoOpenSet(1)
-    BaudBagAutoOpenSet(2)
+    AddOnTable.Sets[1]:AutoOpen()
+    AddOnTable.Sets[2]:AutoOpen()
 end
 EventFuncs.BANKFRAME_OPENED = Func
 EventFuncs.PLAYERBANKBAGSLOTS_CHANGED = Func
@@ -183,10 +183,10 @@ function BaudBagToggleBank(self)
     local firstBankContainer = AddOnTable.Sets[2].Containers[1]
     if firstBankContainer.Frame:IsShown() then
         firstBankContainer.Frame:Hide()
-        BaudBagAutoOpenSet(2, true)
+        AddOnTable.Sets[2]:AutoClose()
     else
         firstBankContainer.Frame:Show()
-        BaudBagAutoOpenSet(2, false)
+        AddOnTable.Sets[2]:AutoOpen()
     end
 end
 

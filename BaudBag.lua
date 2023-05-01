@@ -147,21 +147,6 @@ local EventFuncs = {
 }
 
 --[[ here come functions that will be hooked up to multiple events ]]--
-Func = function(self, event, ...)
-    AddOnTable.Functions.DebugMessage("Bags", "Event fired (event)", event)
-    BaudBagAutoOpenSet(1, false)
-end
-EventFuncs.MAIL_SHOW = Func
-EventFuncs.AUCTION_HOUSE_SHOW = Func
-
-Func = function(self, event, ...)
-    AddOnTable.Functions.DebugMessage("Bags", "Event fired", event)
-    BaudBagAutoOpenSet(1, true)
-end
-EventFuncs.MERCHANT_CLOSED = Func
-EventFuncs.MAIL_CLOSED = Func
-EventFuncs.AUCTION_HOUSE_CLOSED = Func
-
 local collectedBagEvents = {}
 Func = function(self, event, ...)
     AddOnTable.Functions.DebugMessage("Bags", "Event fired (event, source)", event, self:GetName())
@@ -258,45 +243,6 @@ EventFuncs.BAG_CONTAINER_UPDATE = function(self, event, ...)
     if (BaudBagOptions:IsShown()) then
         BaudBagOptions:Update()
     end
-end
-
-local function HandleMerchantShow()
-    AddOnTable.Functions.DebugMessage("Bags", "MerchandFrame was shown, opening bags")
-    BaudBagAutoOpenSet(1, false)
-
-    AddOnTable.Functions.DebugMessage("Junk", "MerchandFrame was shown checking if we need to sell junk")
-    if (BBConfig.SellJunk and MerchantFrame:IsShown()) then
-        AddOnTable.Functions.DebugMessage("Junk", "junk selling active and merchant frame is shown, identifiyng junk now")
-        AddOnTable.Functions.ForEachBag(1,
-            function(Bag, Index)
-                for Slot = 1, AddOnTable.BlizzAPI.GetContainerNumSlots(Bag) do
-                    local containerItemInfo = AddOnTable.BlizzAPI.GetContainerItemInfo(Bag, Slot)
-                    if (containerItemInfo and containerItemInfo.quality and containerItemInfo.quality == 0) then
-                        AddOnTable.Functions.DebugMessage("Junk", "Found junk (Container, Slot)", Bag, Slot)
-                        AddOnTable.BlizzAPI.UseContainerItem(Bag, Slot)
-                    end
-                end
-            end
-        )
-    end
-end
-
-if PlayerInteractionFrameManager ~= nil then
-    Func = function(self, event, ...)
-        local type = ...
-
-        if type == Enum.PlayerInteractionType.Merchant then
-            if event == "PLAYER_INTERACTION_MANAGER_FRAME_SHOW" then
-                HandleMerchantShow()
-            end
-
-            --[[if event == "PLAYER_INTERACTION_MANAGER_FRAME_HIDE" then
-                -- for the moment still handled via MERCHANT_CLOSED
-            end]]
-        end
-    end
-    EventFuncs.PLAYER_INTERACTION_MANAGER_FRAME_SHOW = Func
-    EventFuncs.PLAYER_INTERACTION_MANAGER_FRAME_HIDE = Func
 end
 --[[ END OF NON XML EVENT HANDLERS ]]--
 
@@ -508,65 +454,6 @@ function BaudBagUpdateOpenBagHighlight()
     AddOnTable.Functions.DebugMessage("Bags", "[BaudBagUpdateOpenBagHighlight]")
     for _, SubContainer in pairs(AddOnTable["SubBags"]) do
         SubContainer:UpdateOpenBagHighlight()
-    end
-end
-
---[[
-    this function opens or closes a bag set (main bag with sub bags)
-    BagSet (int): BagSet to open or close (1 - default bags, 2 - bank bags)
-    Close (bool): should the set be closed instead of opened?
-]]--
-function BaudBagAutoOpenSet(BagSet, Close)
-    -- debug messages:
-    local closeState = Close and "true" or "false"
-    AddOnTable.Functions.DebugMessage("BagOpening", "[AutoOpenSet Entry] (BagSet, Close)", BagSet, closeState)
-    
-    -- Set 2 doesn't need container 1 to be shown because that's a given
-    local Container
-    for ContNum = BagSet, NumCont[BagSet] do
-
-        --[[ DEBUG ]]--
-        local autoOpen = BBConfig[BagSet][ContNum].AutoOpen
-        AddOnTable.Functions.DebugMessage("BagOpening", "[AutoOpenSet FOR] (ContNum, AutoOpen)", ContNum, autoOpen)
-
-        if autoOpen then
-            local containerObject = AddOnTable.Sets[BagSet].Containers[ContNum]
-            Container = containerObject.Frame
-            if not Close then
-                if not BBConfig[BagSet].Enabled then
-                    Container.AutoOpened = true
-                    OpenAllBags()
-                    return
-                end
-
-                if not Container:IsShown() then
-                    AddOnTable.Functions.DebugMessage("BagOpening", "[AutoOpenSet FOR (IsShown)] FALSE")
-                    Container.AutoOpened = true
-                    Container:Show()
-                else
-                    AddOnTable.Functions.DebugMessage("BagOpening", "[AutoOpenSet FOR (IsShown)] TRUE")
-                end
-                containerObject:Update()
-            elseif Container.AutoOpened then
-                if not BBConfig[BagSet].Enabled then
-                    Container.AutoOpened = false
-                    CloseAllBags()
-                    return
-                end
-                
-                AddOnTable.Functions.DebugMessage("BagOpening", "[AutoOpenSet FOR (AutoOpened)] TRUE")
-                Container.AutoOpened = false
-                if BBConfig[BagSet][ContNum].AutoClose then
-                    AddOnTable.Functions.DebugMessage("BagOpening", "[AutoOpenSet FOR (AutoOpened)] AutoClose set, hiding!")
-                    Container:Hide()
-                else
-                    AddOnTable.Functions.DebugMessage("BagOpening", "[AutoOpenSet FOR (AutoOpened)] AutoClose not set, ignoring hide!")
-                end
-            else
-                AddOnTable.Functions.DebugMessage("BagOpening", "[AutoOpenSet FOR (AutoOpened)] FALSE")
-                containerObject:Update()
-            end
-        end
     end
 end
 
