@@ -239,6 +239,38 @@ EventFuncs.BAG_CONTAINER_UPDATE = function(self, event, ...)
         BaudBagOptions:Update()
     end
 end
+
+local function HandleMerchantShow()
+    AddOnTable.Functions.DebugMessage("Junk", "MerchandFrame was shown checking if we need to sell junk")
+    if (BBConfig.SellJunk and BBConfig[1].Enabled and MerchantFrame:IsShown()) then
+        AddOnTable.Functions.DebugMessage("Junk", "junk selling active and merchant frame is shown, identifiyng junk now")
+        AddOnTable.Functions.ForEachBag(1,
+            function(Bag, Index)
+                for Slot = 1, AddOnTable.BlizzAPI.GetContainerNumSlots(Bag) do
+                    local containerItemInfo = AddOnTable.BlizzAPI.GetContainerItemInfo(Bag, Slot)
+                    if (containerItemInfo and containerItemInfo.quality and containerItemInfo.quality == 0) then
+                        AddOnTable.Functions.DebugMessage("Junk", "Found junk (Container, Slot)", Bag, Slot)
+                        AddOnTable.BlizzAPI.UseContainerItem(Bag, Slot)
+                    end
+                end
+            end
+        )
+    end
+end
+
+if PlayerInteractionFrameManager ~= nil then
+    Func = function(self, event, ...)
+        local type = ...
+
+        if type == Enum.PlayerInteractionType.Merchant then
+            if event == "PLAYER_INTERACTION_MANAGER_FRAME_SHOW" then
+                HandleMerchantShow()
+            end
+        end
+    end
+    EventFuncs.PLAYER_INTERACTION_MANAGER_FRAME_SHOW = Func
+    EventFuncs.PLAYER_INTERACTION_MANAGER_FRAME_HIDE = Func
+end
 --[[ END OF NON XML EVENT HANDLERS ]]--
 
 
