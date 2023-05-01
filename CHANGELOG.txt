@@ -1,4 +1,9 @@
 ﻿=== Changelog ===
+v10.1.0.0
+  - reworked the way baud bag hooks into the client to hopefully reduce taint by a significant amount (should fix at least item upgrading, probably also anima depositing and LFG tool usage)
+  - fixed more call to global with indirection through API wrapper [wotlk compatibility]
+  - added support for new icon in addon list
+  - cleaned out (now) unnecessary code and reworked other parts to be better understandable
 v10.0.5.2
   - deactivated handling of quest overlay for offline bank, as it lead to issues with some useable items
   - fixed handling of reagent bank bag button
