@@ -14,7 +14,6 @@ local FadeTime = 0.2
 
 -- this is supposed to be deprecated and should be removed in the future this does not have to be global
 local Prefix = "BaudBag" -- this should be identical to "AddOnName"
-local NumCont = {}
 
 --[[ Local helper methods used in event handling ]]
 local function BackpackBagOverview_Initialize()
@@ -72,10 +71,6 @@ local EventFuncs = {
         BackpackBagOverview_Initialize()
         BaudBagUpdateFromBBConfig()
         BaudBagBankBags_Initialize()
-        if BBConfig and (BBConfig[2].Enabled == true) then 
-            AddOnTable.Functions.DebugMessage("Bank", "BaudBag enabled for Bank, disable default bank event")
-            BankFrame:UnregisterEvent("BANKFRAME_OPENED")
-        end
 
         AddOnTable:UpdateBankParents()
         AddOnTable:UpdateBagParents()
@@ -436,7 +431,7 @@ function BaudUpdateJoinedBags()
     AddOnTable.Functions.DebugMessage("Bags", "Updating joined bags...")
     
     for bagSet = 1, 2 do
-        NumCont[bagSet] = AddOnTable["Sets"][bagSet]:RebuildContainers()
+        AddOnTable["Sets"][bagSet]:RebuildContainers()
     end
 
     AddOnTable.BagsReady = true
