@@ -17,7 +17,7 @@ local EventFuncs = {
                 AddOnTable.Sets[2].Containers[ContNum]:UpdateName()
             end
         end
-        BaudBagAutoOpenSet(1, true)
+        AddOnTable.Sets[1]:AutoClose()
     end,
 }
 
@@ -36,10 +36,10 @@ local Func = function(self, event, ...)
         return
     end
     
-    -- make sure current bag inforations are processed
+    -- make sure current bag information are processed
     AddOnTable.Sets[2]:RebuildContainers()
-    BaudBagAutoOpenSet(1)
-    BaudBagAutoOpenSet(2)
+    AddOnTable.Sets[1]:AutoOpen()
+    AddOnTable.Sets[2]:AutoOpen()
 end
 EventFuncs.BANKFRAME_OPENED = Func
 EventFuncs.PLAYERBANKBAGSLOTS_CHANGED = Func
@@ -169,23 +169,32 @@ function AddOnTable:BankBags_UpdateContent(self, bankVisible)
         bagCache.BagCount = GetInventoryItemCount("player", inventoryId)
     end
     
-    local BBContainer2_1 = _G[Prefix.."Container2_1"]
-    if BBContainer2_1:IsShown() then
-        -- TODO we need direct access to the Container Object here in the future!
-        BaudBagUpdateContainer(BBContainer2_1)
+    local firstBankContainer = AddOnTable.Sets[2].Containers[1]
+    if firstBankContainer.Frame:IsShown() then
+        firstBankContainer:Update()
         AddOnTable["Sets"][2]:UpdateSlotInfo()
     else
-        BBContainer2_1.AutoOpened = true
-        BBContainer2_1:Show()
+        firstBankContainer.Frame.AutoOpened = true
+        firstBankContainer.Frame:Show()
     end
 end
 
 function BaudBagToggleBank(self)
-    if _G[Prefix.."Container2_1"]:IsShown() then
-        _G[Prefix.."Container2_1"]:Hide()
-        BaudBagAutoOpenSet(2, true)
+    local firstBankContainer = AddOnTable.Sets[2].Containers[1]
+    if firstBankContainer.Frame:IsShown() then
+        firstBankContainer.Frame:Hide()
+        AddOnTable.Sets[2]:AutoClose()
     else
-        _G[Prefix.."Container2_1"]:Show()
-        BaudBagAutoOpenSet(2, false)
+        firstBankContainer.Frame:Show()
+        AddOnTable.Sets[2]:AutoOpen()
+    end
+end
+
+--[[ this method ensures that the bank bags are either placed as childs under UIParent or BaudBag ]]
+function AddOnTable:UpdateBankParents()
+    if AddOnTable.Functions.BagHandledByBaudBag(AddOnTable.BlizzConstants.BANK_CONTAINER) then
+        BankFrame:SetParent(BaudBag_OriginalBagsHideFrame)
+    else
+        BankFrame:SetParent(UIParent)
     end
 end

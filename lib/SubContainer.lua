@@ -256,7 +256,7 @@ function Prototype:GetSlotInfo()
 
         -- if we don't have a hit in the cache make sure to return values that make sense
         local link = cache.BagLink
-        if not BaudBag_IsBankDefaultContainer(self.ContainerId) and (not link or (GetItemFamily(link) ~= 0)) then
+        if not AddOnTable.Functions.IsDefaultContainer(self.ContainerId) and (not link or (GetItemFamily(link) ~= 0)) then
             return 0, 0
         end
 
@@ -311,7 +311,7 @@ function AddOnTable:CreateSubContainer(bagSetType, containerId)
     local subContainer = _G.setmetatable({}, Metatable)
     -- TODO this is a really nasty workaround... I don't like it AT ALL... but I don't see a good way right now :(
     local templateName = "BaudBagSubBagTemplate"
-    if (BaudBag_IsBankDefaultContainer(containerId)) then
+    if (AddOnTable.Functions.IsDefaultContainer(containerId)) then
         templateName = nil
     end
     subContainer.Name = AddOnName.."SubBag"..containerId

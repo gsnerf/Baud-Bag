@@ -90,7 +90,7 @@ function BaudBagOptionsMixin:OnEvent(event, ...)
     AddOnTable:InitCache()
     BaudBagRestoreCfg()
     ConvertOldConfig()
-    CfgBackup	= BaudBagCopyTable(BBConfig)
+    CfgBackup	= AddOnTable.Functions.CopyTable(BBConfig)
 	
     -- add to options windows
     self.name			= "Baud Bag"
@@ -233,6 +233,7 @@ function BaudBagOptionsMixin:OnRefresh(event, ...)
     self:Update()
 end
 
+--[[ this event is never called in retail, and probably even for classic it isn't necessary anymore as changes to BBConfig seem to be automatically written to BaudBag_Cfg ]]
 function BaudBagOptionsMixin:OnOkay(event, ...)
     AddOnTable.Functions.DebugMessage("Options", "'Okay' pressed, saving BBConfig.")
     CfgBackup = BBConfig
@@ -277,18 +278,12 @@ end
 function BaudBagEnabledCheck_OnClick(self, event, ...)
     PlayCheckBoxSound(self)
     if (not self:GetChecked()) then
-        BaudBagCloseBagSet(SelectedBags) -- TODO: move to BaudBagConfig save?
+        AddOnTable.Sets[SelectedBags]:Close()  -- TODO: move to BaudBagConfig save?
     end
 
     BBConfig[SelectedBags].Enabled = self:GetChecked()
-    -- TODO: move to BaudBagBBConfig save?
-    if BBConfig and (BBConfig[2].Enabled == true) then BankFrame:UnregisterEvent("BANKFRAME_OPENED") end
-    if BBConfig and (BBConfig[2].Enabled == false) then BankFrame:RegisterEvent("BANKFRAME_OPENED") end
-    if (BackpackTokenFrame_Update ~= nil) then
-        BackpackTokenFrame_Update()
-    else
-        BackpackTokenFrame:Update()
-    end
+    AddOnTable.UpdateBagParents()
+    AddOnTable.UpdateBankParents()
 end
 
 function BaudBagCloseAllCheck_OnClick(self, event, ...)
@@ -323,7 +318,7 @@ function BaudBagOptionsJoinCheck_OnClick(self, event, ...)
     if self:GetChecked() then
         tremove(BBConfig[SelectedBags], ContNum)
     else
-        tinsert(BBConfig[SelectedBags], ContNum, BaudBagCopyTable(BBConfig[SelectedBags][ContNum-1]))
+        tinsert(BBConfig[SelectedBags], ContNum, AddOnTable.Functions.CopyTable(BBConfig[SelectedBags][ContNum-1]))
     end
     BaudBagOptions:Update()
     BaudUpdateJoinedBags()
@@ -387,7 +382,7 @@ function BaudBagOptionsCheckButton_OnClick(self, event, ...)
         BBConfig[SavedVar] = self:GetChecked()
 
         if (SavedVar == "RarityColor") then
-            BaudBagForEachOpenContainer(
+            AddOnTable.Functions.ForEachOpenContainer(
                 function (container)
                     container:Update()
                 end
@@ -401,7 +396,7 @@ function BaudBagOptionsCheckButton_OnClick(self, event, ...)
         -- make sure options who need it (visible things) update the affected container
         if (SavedVar == "BlankTop") or (SavedVar == "RarityColor") then -- or (SavedVar == "RarityColorAltern") then
             AddOnTable.Functions.DebugMessage("Options", "Want to update container: "..Prefix.."Container"..SelectedBags.."_"..SelectedContainer)
-            BaudBagUpdateContainer(_G["BaudBagContainer"..SelectedBags.."_"..SelectedContainer]) -- TODO: move to BaudBagBBConfig save?
+            AddOnTable.Sets[SelectedBags].Containers[SelectedContainer]:Update() -- TODO: move to BaudBagBBConfig save?
         end
     end
     BaudBagOptions:Update()
@@ -452,7 +447,7 @@ function BaudBagOptionsSliderTemplateMixin:OnValueChanged()
         AddOnTable.Functions.DebugMessage("Options", "The variable associated with this value is "..SavedVar)
         BBConfig[SavedVar] = self:GetValue()
 
-        BaudBagForEachOpenContainer(
+        AddOnTable.Functions.ForEachOpenContainer(
             function (container)
                 container:Update()
             end
