@@ -1,6 +1,10 @@
 ﻿=== Changelog ===
 v10.1.0.0
-  - reworked the way baud bag hooks into the client to hopefully reduce taint by a significant amount (should fix at least item upgrading, probably also anima depositing and LFG tool usage)
+  - reworked the way baud bag hooks into the client to hopefully reduce taint by a significant amount
+    - should fix item upgrading
+    - should fix anima depositing
+    - should fix LFG tool usage (wotlk)
+    - should fix "only bank from BaudBag" use case
   - fixed more call to global with indirection through API wrapper [wotlk compatibility]
   - added support for new icon in addon list
   - cleaned out (now) unnecessary code and reworked other parts to be better understandable
