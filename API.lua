@@ -57,7 +57,6 @@ if C_Container ~= nil then
     API.SortReagentBankBags = C_Container.SortReagentBankBags
     API.SplitContainerItem = C_Container.SplitContainerItem
     API.UseContainerItem = C_Container.UseContainerItem
-    API.EnumerateBagGearFilters = ContainerFrameUtil_EnumerateBagGearFilters
     API.GetBagSlotFlag = C_Container.GetBagSlotFlag
     API.SetBagSlotFlag = C_Container.SetBagSlotFlag
     -- it is NOT a typo, that the BankBagSlot references the same method as the BagSlots!
@@ -118,15 +117,6 @@ else
     ---returns the number of watched tokens or the maximum number of watched tokens in old API
     ---@return integer
     API.GetNumWatchedTokens = function() return MAX_WATCHED_TOKENS end
-    API.EnumerateBagGearFilters = function()
-        return ipairs({
-            2, --Enum.BagSlotFlags.PriorityEquipment (1),
-            3, --Enum.BagSlotFlags.PriorityConsumables (4),
-            4, --Enum.BagSlotFlags.PriorityTradeGoods (8),
-            5, --Enum.BagSlotFlags.PriorityJunk (16),
-            --seemingly does not exist before DF: Enum.BagSlotFlags.PriorityQuestItems (32)
-        })
-    end
     API.GetIgnoreCleanupFlag = function() return LE_BAG_FILTER_FLAG_IGNORE_CLEANUP end
     API.GetJunkFlag = function() return LE_BAG_FILTER_FLAG_JUNK end
     API.GetBagSlotFlag = GetBagSlotFlag
@@ -135,6 +125,17 @@ else
     API.SetBankBagSlotFlag = SetBankBagSlotFlag
     
 end
+
+local localEnumerateBagGearFilters = function()
+    return ipairs({
+        2, --Enum.BagSlotFlags.PriorityEquipment (1),
+        3, --Enum.BagSlotFlags.PriorityConsumables (4),
+        4, --Enum.BagSlotFlags.PriorityTradeGoods (8),
+        5, --Enum.BagSlotFlags.PriorityJunk (16),
+        --seemingly does not exist before DF: Enum.BagSlotFlags.PriorityQuestItems (32)
+    })
+end
+API.EnumerateBagGearFilters = ContainerFrameUtil_EnumerateBagGearFilters and ContainerFrameUtil_EnumerateBagGearFilters or localEnumerateBagGearFilters
 
 -- this 
 API.SupportsContainerSorting = function()

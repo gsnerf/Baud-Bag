@@ -750,7 +750,7 @@ function AddOnTable:UpdateBagParents()
     if (ContainerFrameCombinedBags) then
         ContainerFrameCombinedBags:SetParent(newParent)
     end
-    for i, frame in ContainerFrameUtil_EnumerateContainerFrames() do
-        frame:SetParent(newParent)
+    for i = AddOnTable.BlizzConstants.BACKPACK_FIRST_CONTAINER, AddOnTable.BlizzConstants.BACKPACK_LAST_CONTAINER do
+        _G["ContainerFrame"..(i + 1)]:SetParent(newParent)
     end
 end
