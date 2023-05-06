@@ -8,7 +8,9 @@ BagSetType = {
         Id = 1,
         Name = Localized.Inventory,
         IsSubContainerOf = function(containerId)
-            return (AddOnTable.BlizzConstants.BACKPACK_FIRST_CONTAINER <= containerId and containerId <= AddOnTable.BlizzConstants.BACKPACK_LAST_CONTAINER)
+            local isBackpackContainer = AddOnTable.BlizzConstants.BACKPACK_FIRST_CONTAINER <= containerId and containerId <= AddOnTable.BlizzConstants.BACKPACK_LAST_CONTAINER
+            local isKeyring = containerId == AddOnTable.BlizzConstants.KEYRING_CONTAINER
+            return isBackpackContainer or isKeyring
         end,
         ContainerIterationOrder = {}
     },
@@ -41,6 +43,9 @@ BagSetType = {
 for bag = AddOnTable.BlizzConstants.BACKPACK_FIRST_CONTAINER, AddOnTable.BlizzConstants.BACKPACK_LAST_CONTAINER do
     table.insert(BagSetType.Backpack.ContainerIterationOrder, bag)
 end
+if (AddOnTable.State.KeyringSupported) then
+    table.insert(BagSetType.Backpack.ContainerIterationOrder, AddOnTable.BlizzConstants.KEYRING_CONTAINER)
+end
 -- * Bank:
 table.insert(BagSetType.Bank.ContainerIterationOrder, AddOnTable.BlizzConstants.BANK_CONTAINER)
 for bag = AddOnTable.BlizzConstants.BANK_FIRST_CONTAINER, AddOnTable.BlizzConstants.BANK_LAST_CONTAINER do
@@ -63,6 +68,9 @@ idIndexMap[AddOnTable.BlizzConstants.BANK_CONTAINER] = 1
 idIndexMap[AddOnTable.BlizzConstants.REAGENTBANK_CONTAINER] = AddOnTable.BlizzConstants.BANK_CONTAINER_NUM + 2
 for id = AddOnTable.BlizzConstants.BACKPACK_FIRST_CONTAINER, AddOnTable.BlizzConstants.BACKPACK_LAST_CONTAINER do
     idIndexMap[id] = id + 1
+end
+if (AddOnTable.State.KeyringSupported) then
+    idIndexMap[AddOnTable.BlizzConstants.KEYRING_CONTAINER] = AddOnTable.BlizzConstants.BACKPACK_LAST_CONTAINER + 2
 end
 for id = AddOnTable.BlizzConstants.BANK_FIRST_CONTAINER, AddOnTable.BlizzConstants.BANK_LAST_CONTAINER do
     idIndexMap[id] = id - AddOnTable.BlizzConstants.BACKPACK_LAST_CONTAINER + 1
