@@ -205,6 +205,26 @@ function Prototype:AutoClose()
     end
 end
 
+
+--[[
+    This function takes a function, and then applies the function to each bag of the set.
+    The function gets the parameters: 1. ID of the bag, 2. Index of the bag (as provided by ContainerIterationOrder)
+
+    Bag IDs are expected to be:
+        -3 == reagent bank
+        -2 == keyring & currency
+        -1 == bank
+        0 == backpack
+        1-4 == inventory bags
+        5 == reagent bag [from DF onwards]
+        6-12 == bank bags [before DF -1]
+  ]]
+function Prototype:ForEachBag(func)
+    for index, bagId in ipairs(self.Type.ContainerIterationOrder) do
+        func(bagId, index)
+    end
+end
+
 local Metatable = { __index = Prototype }
 
 function AddOnTable:CreateBagSet(type)

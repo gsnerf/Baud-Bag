@@ -108,10 +108,10 @@ AddOnTable.Functions.Vardump = BaudBag_Vardump
 
 --[[
     This function takes a set of bags and a function, and then applies the function to each bag of the set.
-    The function gets the parameters: 1. Bag, 2. Index
-  ]]
---[[ TODO: I have the feeling, that this should be a function of BagSet instead of a addon wide global function ]]
-local function BaudBagForEachBag(BagSet, Func)
+        The function gets the parameters: 1. Bag, 2. Index
+            ]]
+--[[ TODO: Before we can get rid of this (in favor of BagSet:ForEachBag) we need to ensure that the bag sets are available everywhere (looking at you, config!) ]]
+AddOnTable.Functions.ForEachBag = function(BagSet, Func)
     --[[
         BagsSet Indices:
             1 == inventory
@@ -141,7 +141,6 @@ local function BaudBagForEachBag(BagSet, Func)
         end
     end
 end
-AddOnTable.Functions.ForEachBag = BaudBagForEachBag
 
 AddOnTable.Functions.ForEachContainer = function(func)
     for setId, set in pairs(AddOnTable.Sets) do
