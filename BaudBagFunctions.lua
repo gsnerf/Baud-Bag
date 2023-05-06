@@ -5,6 +5,7 @@ AddOnTable.Functions = {}
 AddOnTable.State = {
     -- switches, intended for differentiation of functions between addon versions (classic/retail, etc.)
     ReagentBankSupported = false,
+    KeyringSupported = false,
     -- runtime state
     ItemLock = {
         Move = false,
