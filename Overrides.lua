@@ -78,3 +78,23 @@ BankFrame_OnEvent = function(self, event, ...)
         return orig_BankFrame_OnEvent(self, event, ...)
     end
 end
+
+--[[ Classic specific stuff ]]
+if (GetExpansionLevel() < 9) then
+    --[[
+        This is necessary, as the orriginal ToggleBackpack only calls ToggleBag if the bag was closed before.
+        If it was open, it instead manually iterates over all container frames and closes them directly via frame:Hide().
+
+        Seems dump at first glance, but probably is an "optimized" way of closing bags, as _every_ other close/toggle/open iterates over all container frames, so calling close 5x would iterate over all 13 containers 5 times.
+        If someone from the blizz team should read this: There is no reason to hold the container frames dynamic this way. It just complicates things and serves no valuable purpose.
+        The number of frames are fixed, the content of the frame not freed on close, so here isn't even memory usage limitation at work. Just revert to the retail way please!
+    ]]
+    local function handleBackpackClosing()
+        local backpackOpen = IsBagOpen(Enum.BagIndex.Backpack)
+        AddOnTable.Functions.DebugMessage("BagTrigger", "[handleBackpackClosing] backpack toggled with state "..(backpackOpen and "open" or "closed"))
+        if (not backpackOpen) then
+            toggleBag(Enum.BagIndex.Backpack)
+        end
+    end
+    hooksecurefunc("ToggleBackpack", handleBackpackClosing)
+end
