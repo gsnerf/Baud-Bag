@@ -29,6 +29,11 @@ local function closeBag(id)
 end
 hooksecurefunc("CloseBag", closeBag)
 
+local function closeBackpack()
+    closeBag(AddOnTable.BlizzConstants.BACKPACK_CONTAINER)
+end
+hooksecurefunc("CloseBackpack", closeBackpack)
+
 local function toggleBag(id)
     AddOnTable.Functions.DebugMessage("BagTrigger", "[ToggleBag] called for bag with id "..id)
 
