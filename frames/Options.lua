@@ -522,7 +522,7 @@ function BaudBagOptionsMixin:Update()
             _G[Prefix.."JoinCheck"..(AddOnTable.BlizzConstants.BACKPACK_FIRST_REAGENT_CONTAINER+1)]:Show()
         end
     end
-    AddOnTable.Functions.ForEachBag(SelectedBags,
+    AddOnTable.Sets[SelectedBags]:ForEachBag(
         function(Bag, Index)
             Button	= _G[Prefix.."Bag"..Index]
             Check	= _G[Prefix.."JoinCheck"..Index]

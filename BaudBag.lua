@@ -244,8 +244,8 @@ local function HandleMerchantShow()
     AddOnTable.Functions.DebugMessage("Junk", "MerchandFrame was shown checking if we need to sell junk")
     if (BBConfig.SellJunk and BBConfig[1].Enabled and MerchantFrame:IsShown()) then
         AddOnTable.Functions.DebugMessage("Junk", "junk selling active and merchant frame is shown, identifiyng junk now")
-        AddOnTable.Functions.ForEachBag(1,
-            function(Bag, Index)
+        AddOnTable.Sets[1]:ForEachBag(
+            function(Bag, _)
                 for Slot = 1, AddOnTable.BlizzAPI.GetContainerNumSlots(Bag) do
                     local containerItemInfo = AddOnTable.BlizzAPI.GetContainerItemInfo(Bag, Slot)
                     if (containerItemInfo and containerItemInfo.quality and containerItemInfo.quality == 0) then

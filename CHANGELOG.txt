@@ -1,4 +1,6 @@
 ﻿=== Changelog ===
+v10.1.0.1
+  - fixed opening/closing of bags/backpack for wotlk and retail in different scenarios (might not have catched all possibilities yet)
 v10.1.0.0
   - reworked the way baud bag hooks into the client to hopefully reduce taint by a significant amount
     - should fix item upgrading
