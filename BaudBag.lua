@@ -476,7 +476,6 @@ function BaudUpdateJoinedBags()
 end
 
 function BaudBagUpdateOpenBags()
-    local Open, Frame, Slot, ItemButton, QuestTexture
     for _, subContainer in pairs(AddOnTable["SubBags"]) do
         subContainer:UpdateItemOverlays()
     end
@@ -489,38 +488,6 @@ function BaudBagUpdateOpenBagHighlight()
         SubContainer:UpdateOpenBagHighlight()
     end
 end
-
-local function IsBagShown(BagId)
-    local SubContainer = AddOnTable["SubBags"][BagId]
-    AddOnTable.Functions.DebugMessage("BagOpening", "Got SubContainer", SubContainer)
-    return SubContainer:IsOpen()
-end
-
-local function UpdateThisHighlight(self)
-    if BBConfig and (BBConfig[1].Enabled == false) then
-        return
-    end
-    if IsBagShown(self:GetID() - CharacterBag0Slot:GetID() + 1) then
-        self.SlotHighlightTexture:Show()
-    else
-        self.SlotHighlightTexture:Hide()
-    end
-end
-
---These function hooks override the bag button highlight changes that Blizzard does
---hooksecurefunc("BagSlotButton_OnClick", UpdateThisHighlight)
---hooksecurefunc("BagSlotButton_OnDrag", UpdateThisHighlight)
---hooksecurefunc("BagSlotButton_OnModifiedClick", UpdateThisHighlight)
---[[hooksecurefunc("BackpackButton_OnClick", function(self)
-    if BBConfig and(BBConfig[1].Enabled == false)then
-        return
-    end
-    if (IsBagShown(0)) then
-        self.SlotHighlightTexture:Show()
-    else
-        self.SlotHighlightTexture:Hide()
-    end
-end)]]
 
 --[[ custom defined BaudBagSubBag event handlers ]]--
 local SubBagEvents = {}
