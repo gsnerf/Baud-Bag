@@ -138,7 +138,7 @@ local EventFuncs = {
 
 --[[ here come functions that will be hooked up to multiple events ]]--
 local collectedBagEvents = {}
-Func = function(self, event, ...)
+local Func = function(self, event, ...)
     AddOnTable.Functions.DebugMessage("Bags", "Event fired (event, source)", event, self:GetName())
 
     -- this is the ID of the affected container as known to WoW
