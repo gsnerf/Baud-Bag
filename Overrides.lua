@@ -75,15 +75,6 @@ BagSlotButton_OnClick = function(self, event, ...)
     end
 end
 
---self is hooked to be able to replace the original bank box with this one
---[[ TODO: still needed??? ]]
-local orig_BankFrame_OnEvent = BankFrame_OnEvent
-BankFrame_OnEvent = function(self, event, ...)
-    if BBConfig and(BBConfig[2].Enabled == false) then
-        return orig_BankFrame_OnEvent(self, event, ...)
-    end
-end
-
 --[[ Classic specific stuff ]]
 if (GetExpansionLevel() < 9) then
     --[[
