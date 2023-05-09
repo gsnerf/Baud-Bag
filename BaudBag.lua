@@ -76,11 +76,6 @@ local EventFuncs = {
         AddOnTable:UpdateBagParents()
     end,
 
-    PLAYER_MONEY = function(self, event, ...)
-        AddOnTable.Functions.DebugMessage("Bags", "Event PLAYER_MONEY fired")
-        BaudBagBankBags_Update()
-    end,
-
     ITEM_LOCK_CHANGED = function(self, event, ...)
         local Bag, Slot = ...
 
