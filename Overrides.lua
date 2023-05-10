@@ -19,11 +19,6 @@ hooksecurefunc("OpenBag", openBag)
 local function closeBag(id)
     AddOnTable.Functions.DebugMessage("BagTrigger", "[CloseBag] called for bag with id "..id)
 
-    if (not BBConfig or not AddOnTable.Functions.BagHandledByBaudBag(id)) then
-        AddOnTable.Functions.DebugMessage("BagOpening", "[CloseBag] no config or bag not handled by BaudBag, calling original")
-        return
-    end
-
     local Container = _G[AddOnName.."SubBag"..id]:GetParent()
     Container:Hide()
 end
