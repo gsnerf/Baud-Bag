@@ -78,6 +78,30 @@ BagSlotButton_OnClick = function(self, event, ...)
     end
 end
 
+EventRegistry:RegisterCallback("ContainerFrame.OpenAllBags", function()
+    for i = AddOnTable.BlizzConstants.BACKPACK_FIRST_CONTAINER, AddOnTable.BlizzConstants.BACKPACK_LAST_CONTAINER do
+        openBag(i)
+    end
+
+    if AddOnTable.Sets[2].Containers[1].Frame:IsShown() then
+        for i = AddOnTable.BlizzConstants.BANK_FIRST_CONTAINER,  AddOnTable.BlizzConstants.BANK_LAST_CONTAINER do
+            openBag(i)
+        end
+    end
+end)
+
+EventRegistry:RegisterCallback("ContainerFrame.CloseAllBags", function()
+    for i = AddOnTable.BlizzConstants.BACKPACK_FIRST_CONTAINER, AddOnTable.BlizzConstants.BACKPACK_LAST_CONTAINER do
+        closeBag(i)
+    end
+
+    if AddOnTable.Sets[2].Containers[1].Frame:IsShown() then
+        for i = AddOnTable.BlizzConstants.BANK_FIRST_CONTAINER,  AddOnTable.BlizzConstants.BANK_LAST_CONTAINER do
+            closeBag(i)
+        end
+    end
+end)
+
 --[[ Classic specific stuff ]]
 if (GetExpansionLevel() < 9) then
     --[[
