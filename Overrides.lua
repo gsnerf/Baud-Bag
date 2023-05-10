@@ -55,6 +55,14 @@ local function toggleBag(id)
 end
 hooksecurefunc("ToggleBag", toggleBag)
 
+--[[
+    This needs to cover the case that the original bags are combined and the backpack was originally open and should be closed.
+    Default ToggleBackpack_Combined is only calling OpenBackpack but hiding the frame itself ]]
+local function toggleCombinedBackpackClose()
+    closeBackpack()
+end
+hooksecurefunc(ContainerFrameCombinedBags, "Hide", toggleCombinedBackpackClose)
+
 --[[ BagSlot stuff ]]
 
 --[[ TODO: check if this can be a hook now ]]
