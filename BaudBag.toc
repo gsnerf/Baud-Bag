@@ -39,6 +39,7 @@ Events.lua
 BaudBagConfig.lua
 BaudBagCache.lua
 BaudBagToolTips.lua
+Backpack.lua
 Bank.lua
 ReagentBank.xml
 frames/Options.xml

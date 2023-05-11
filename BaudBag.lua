@@ -15,33 +15,6 @@ local FadeTime = 0.2
 -- this is supposed to be deprecated and should be removed in the future this does not have to be global
 local Prefix = "BaudBag" -- this should be identical to "AddOnName"
 
---[[ Local helper methods used in event handling ]]
-local function BackpackBagOverview_Initialize()
-    -- create BagSlots for the bag overview in the inventory (frame that pops out and only shows the available bags)
-    AddOnTable.Functions.DebugMessage("Bags", "Creating bag slot buttons.")
-    local backpackSet = AddOnTable["Sets"][1]
-    local BBContainer1 = _G[Prefix.."Container1_1BagsFrame"]
-
-    -- this is one container less, as the backpack itself doesn't get a button
-    for backpackBagButton = 0, AddOnTable.BlizzConstants.BACKPACK_CONTAINER_NUM - 1 do
-        local bagButton = AddOnTable:CreateBackpackBagButton(backpackBagButton, BBContainer1)
-        bagButton:SetPoint("TOPLEFT", 8, -8 - backpackBagButton * bagButton:GetHeight())
-        backpackSet.BagButtons[backpackBagButton] = bagButton
-	end
-
-    if (GetExpansionLevel() >= 9) then
-        for reagentBagButton = 0, AddOnTable.BlizzConstants.BACKPACK_REAGENT_BAG_NUM - 1 do
-            local bagButton = AddOnTable:CreateReagentBagButton(reagentBagButton, BBContainer1)
-            bagButton:SetPoint("TOPLEFT", 8, -8 - (#backpackSet.BagButtons + 1 + reagentBagButton) * bagButton:GetHeight())
-            backpackSet.ReagentBagButtons[reagentBagButton] = bagButton
-        end
-    end
-
-    local firstBackpackBagButton = backpackSet.BagButtons[0]
-    BBContainer1:SetWidth(15 + firstBackpackBagButton:GetWidth())
-    BBContainer1:SetHeight(15 + AddOnTable.BlizzConstants.BACKPACK_TOTAL_BAGS_NUM * firstBackpackBagButton:GetHeight())
-end
-
 --[[ NON XML EVENT HANDLERS ]]--
 --[[ these are the custom defined BaudBagFrame event handlers attached to a single event type]]--
 
@@ -235,43 +208,6 @@ EventFuncs.BAG_CONTAINER_UPDATE = function(self, event, ...)
     end
 end
 
-local function HandleMerchantShow()
-    AddOnTable.Functions.DebugMessage("Junk", "MerchandFrame was shown checking if we need to sell junk")
-    if (BBConfig.SellJunk and BBConfig[1].Enabled and MerchantFrame:IsShown()) then
-        AddOnTable.Functions.DebugMessage("Junk", "junk selling active and merchant frame is shown, identifiyng junk now")
-        AddOnTable.Sets[1]:ForEachBag(
-            function(Bag, _)
-                for Slot = 1, AddOnTable.BlizzAPI.GetContainerNumSlots(Bag) do
-                    local containerItemInfo = AddOnTable.BlizzAPI.GetContainerItemInfo(Bag, Slot)
-                    if (containerItemInfo and containerItemInfo.quality and containerItemInfo.quality == 0) then
-                        AddOnTable.Functions.DebugMessage("Junk", "Found junk (Container, Slot)", Bag, Slot)
-                        --[[
-                            TODO: additionally check if this is something that can be collected for transmog and optionally skip that
-                            - transmog stuff was introduced with legion
-                            - transmog base info can be retrieved from C_TransmogCollection.GetItemInfo through itemID/link/name
-                            - if it is already collected can be found from C_TransmogCollection.GetAppearanceSourceInfo and C_TransmogCollection.PlayerCanCollectSource
-                        ]]
-                        AddOnTable.BlizzAPI.UseContainerItem(Bag, Slot)
-                    end
-                end
-            end
-        )
-    end
-end
-
-if PlayerInteractionFrameManager ~= nil then
-    Func = function(self, event, ...)
-        local type = ...
-
-        if type == Enum.PlayerInteractionType.Merchant then
-            if event == "PLAYER_INTERACTION_MANAGER_FRAME_SHOW" then
-                HandleMerchantShow()
-            end
-        end
-    end
-    EventFuncs.PLAYER_INTERACTION_MANAGER_FRAME_SHOW = Func
-    EventFuncs.PLAYER_INTERACTION_MANAGER_FRAME_HIDE = Func
-end
 --[[ END OF NON XML EVENT HANDLERS ]]--
 
 
@@ -290,6 +226,7 @@ function BaudBag_OnLoad(self, event, ...)
         self:RegisterEvent(Key)
     end
     BaudBag_RegisterBankEvents(self)
+    BaudBag_RegisterBackpackEvents(self)
     AddOnTable.Functions.RegisterEvents(self)
 
     -- the first container from each set (inventory/bank) is different and is created in the XML
@@ -315,6 +252,7 @@ end
 --[[ this will call the correct event handler]]--
 function BaudBag_OnEvent(self, event, ...)
     BaudBag_OnBankEvent(self, event, ...)
+    BaudBag_OnBackpackEvent(self, event, ...)
     if EventFuncs[event] then
         EventFuncs[event](self, event, ...)
     end
@@ -390,7 +328,7 @@ end
 
 
 function BaudBagContainer_OnShow(self, event, ...)
-    AddOnTable.Functions.DebugMessage("Bags", "BaudBagContainer_OnShow was called", self:GetName())
+    AddOnTable.Functions.DebugMessage("BagOpening", "BaudBagContainer_OnShow was called", self:GetName())
 	
     -- check if the container was open before and closing now
     if self.FadeStart then
@@ -414,6 +352,7 @@ end
 
 
 function BaudBagContainer_OnHide(self, event, ...)
+    AddOnTable.Functions.DebugMessage("BagOpening", "BaudBagContainer_OnHide was called", self:GetName())
     -- correctly handle if this is called while the container is still fading out
     if self.Closing then
         if self.FadeStart then
@@ -699,20 +638,5 @@ function BaudBag_FixContainerClickForReagent(Bag, Slot)
             AddOnTable.BlizzAPI.PickupContainerItem(REAGENTBANK_CONTAINER, Value)
             return
         end
-    end
-end
-
---[[ this method ensures that the bank bags are either placed as childs under UIParent or BaudBag ]]
-function AddOnTable:UpdateBagParents()
-    local newParent = UIParent
-    if AddOnTable.Functions.BagHandledByBaudBag(AddOnTable.BlizzConstants.BACKPACK_CONTAINER) then
-        newParent = BaudBag_OriginalBagsHideFrame
-    end
-
-    if (ContainerFrameCombinedBags) then
-        ContainerFrameCombinedBags:SetParent(newParent)
-    end
-    for i = AddOnTable.BlizzConstants.BACKPACK_FIRST_CONTAINER, AddOnTable.BlizzConstants.BACKPACK_LAST_CONTAINER do
-        _G["ContainerFrame"..(i + 1)]:SetParent(newParent)
     end
 end
