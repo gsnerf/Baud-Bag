@@ -1,6 +1,9 @@
 local AddOnName, AddOnTable = ...
 local _
 
+-- -> possibly move this to default config?
+local FadeTime = 0.2
+
 local Prototype = {
     Id = nil,
     Name = "DefaultContainer",
@@ -274,4 +277,119 @@ end
 
 function AddOnTable:Container_Updated(bagSet, containerId)
     -- just an empty hook for other addons
+end
+
+
+--[[ Container events - TO BE MOVED TO MIXIN ]]--
+function BaudBagContainer_OnLoad(self, event, ...)
+    -- that's to make the frame closable through the ESC key
+    tinsert(UISpecialFrames, self:GetName())
+    self:RegisterForDrag("LeftButton")
+end
+
+function BaudBagContainer_OnUpdate(self, event, ...)
+
+    local containerObject = AddOnTable["Sets"][self.BagSet].Containers[self:GetID()]
+
+    if (self.Refresh) then
+        containerObject:Update()
+        BaudBagUpdateOpenBagHighlight()
+    end
+
+    if (self.UpdateSlots) then
+        AddOnTable["Sets"][self.BagSet]:UpdateSlotInfo()
+    end
+
+    if (self.FadeStart) then
+        local Alpha = (GetTime() - self.FadeStart) / FadeTime
+        if not BBConfig.EnableFadeAnimation then
+            -- immediate show/hide without animation
+            Alpha = 1.1
+        end
+        if self.Closing then
+            Alpha = 1 - Alpha
+            if (Alpha < 0) then
+                self.FadeStart = nil
+                self:Hide()
+                self.Closing = nil
+                return
+            end
+        elseif (Alpha > 1) then
+            self:SetAlpha(1)
+            self.FadeStart = nil
+            return
+        end
+        self:SetAlpha(Alpha)
+    end
+end
+
+
+function BaudBagContainer_OnShow(self, event, ...)
+    AddOnTable.Functions.DebugMessage("BagOpening", "BaudBagContainer_OnShow was called", self:GetName())
+	
+    -- check if the container was open before and closing now
+    if self.FadeStart then
+        return
+    end
+	
+    -- container seems to not be visible, open and update
+    self.FadeStart = GetTime()
+    PlaySound(SOUNDKIT.IG_BACKPACK_OPEN)
+    local bagSet = AddOnTable["Sets"][self.BagSet]
+    local containerObject = bagSet.Containers[self:GetID()]
+    containerObject:Update()
+    if (containerObject.Frame.Slots > 0) then
+        containerObject:UpdateBagHighlight()
+    end
+
+    if (self:GetID() == 1) then
+        AddOnTable["Sets"][self.BagSet]:UpdateSlotInfo()
+    end
+end
+
+
+function BaudBagContainer_OnHide(self, event, ...)
+    AddOnTable.Functions.DebugMessage("BagOpening", "BaudBagContainer_OnHide was called", self:GetName())
+    -- correctly handle if this is called while the container is still fading out
+    if self.Closing then
+        if self.FadeStart then
+            self:Show()
+        end
+        return
+    end
+
+    -- set vars for fading out ans start process
+    self.FadeStart = GetTime()
+    self.Closing = true
+    PlaySound(SOUNDKIT.IG_BACKPACK_CLOSE)
+    self.AutoOpened = false
+    BaudBagUpdateOpenBagHighlight()
+
+    --[[TODO: look into merging the set specific close handling!!!]]--
+    --[[
+    if the option entry requires it close all remaining containers of the bag set
+    (first the bag set so the "offline" title doesn't show up before closing and then the bank to disconnect)
+    ]]--
+    if (self:GetID() == 1) and (BBConfig[self.BagSet].Enabled) and (BBConfig[self.BagSet].CloseAll) then
+        if (self.BagSet == 2) and AddOnTable.State.BankOpen then
+            -- [TAINT] can be problematic, but doesn't have to be
+            CloseBankFrame()
+        end
+        AddOnTable.Sets[self.BagSet]:Close()
+    end
+
+    self:Show()
+end
+
+
+function BaudBagContainer_OnDragStart(self, event, ...)
+    if not BBConfig[self.BagSet][self:GetID()].Locked then
+        self:StartMoving()
+    end
+end
+
+
+function BaudBagContainer_OnDragStop(self, event, ...)
+    self:StopMovingOrSizing()
+    AddOnTable["Sets"][self.BagSet].Containers[self:GetID()]:SaveCoordsToConfig()
 end
