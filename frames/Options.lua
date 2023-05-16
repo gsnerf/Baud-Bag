@@ -416,7 +416,6 @@ function BaudBagOptionsSliderTemplateMixin:OnValueChanged()
     if not self._onsetting then   -- is single threaded 
         self._onsetting = true
         self:SetValue(self:GetValue())
-        value = self:GetValue()     -- cant use original 'value' parameter
         self._onsetting = false
     else
         return
