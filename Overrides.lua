@@ -19,15 +19,15 @@ hooksecurefunc("OpenBag", openBag)
 local function closeBag(id)
     AddOnTable.Functions.DebugMessage("BagTrigger", "[CloseBag] called for bag with id "..id)
 
-    if (not BBConfig or not AddOnTable.Functions.BagHandledByBaudBag(id)) then
-        AddOnTable.Functions.DebugMessage("BagOpening", "[CloseBag] no config or bag not handled by BaudBag, calling original")
-        return
-    end
-
     local Container = _G[AddOnName.."SubBag"..id]:GetParent()
     Container:Hide()
 end
 hooksecurefunc("CloseBag", closeBag)
+
+local function openBackpack()
+    openBag(AddOnTable.BlizzConstants.BACKPACK_CONTAINER)
+end
+hooksecurefunc("OpenBackpack", openBackpack)
 
 local function closeBackpack()
     closeBag(AddOnTable.BlizzConstants.BACKPACK_CONTAINER)
@@ -60,6 +60,16 @@ local function toggleBag(id)
 end
 hooksecurefunc("ToggleBag", toggleBag)
 
+--[[
+    This needs to cover the case that the original bags are combined and the backpack was originally open and should be closed.
+    Default ToggleBackpack_Combined is only calling OpenBackpack but hiding the frame itself ]]
+if (ContainerFrameCombinedBags) then
+    local function toggleCombinedBackpackClose()
+        closeBackpack()
+    end
+    hooksecurefunc(ContainerFrameCombinedBags, "Hide", toggleCombinedBackpackClose)
+end
+
 --[[ BagSlot stuff ]]
 
 --[[ TODO: check if this can be a hook now ]]
@@ -75,14 +85,29 @@ BagSlotButton_OnClick = function(self, event, ...)
     end
 end
 
---self is hooked to be able to replace the original bank box with this one
---[[ TODO: still needed??? ]]
-local orig_BankFrame_OnEvent = BankFrame_OnEvent
-BankFrame_OnEvent = function(self, event, ...)
-    if BBConfig and(BBConfig[2].Enabled == false) then
-        return orig_BankFrame_OnEvent(self, event, ...)
+EventRegistry:RegisterCallback("ContainerFrame.OpenAllBags", function()
+    for i = AddOnTable.BlizzConstants.BACKPACK_FIRST_CONTAINER, AddOnTable.BlizzConstants.BACKPACK_LAST_CONTAINER do
+        openBag(i)
     end
-end
+
+    if AddOnTable.Sets[2].Containers[1].Frame:IsShown() then
+        for i = AddOnTable.BlizzConstants.BANK_FIRST_CONTAINER,  AddOnTable.BlizzConstants.BANK_LAST_CONTAINER do
+            openBag(i)
+        end
+    end
+end)
+
+EventRegistry:RegisterCallback("ContainerFrame.CloseAllBags", function()
+    for i = AddOnTable.BlizzConstants.BACKPACK_FIRST_CONTAINER, AddOnTable.BlizzConstants.BACKPACK_LAST_CONTAINER do
+        closeBag(i)
+    end
+
+    if AddOnTable.Sets[2].Containers[1].Frame:IsShown() then
+        for i = AddOnTable.BlizzConstants.BANK_FIRST_CONTAINER,  AddOnTable.BlizzConstants.BANK_LAST_CONTAINER do
+            closeBag(i)
+        end
+    end
+end)
 
 --[[ Classic specific stuff ]]
 if (GetExpansionLevel() < 9) then

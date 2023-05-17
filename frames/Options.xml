@@ -300,7 +300,7 @@
 						</Scripts>
 					</EditBox>
 
-					<Frame inherits="UIDropDownMenuTemplate" parentKey="BackgroundSelection" enableMouse="true">
+					<Frame inherits="UIDropDownMenuTemplate" name="$parentBackgroundSelection" parentKey="BackgroundSelection" enableMouse="true">
 						<Size x="160" y="25" />
 						<Anchors>
 							<Anchor point="LEFT" relativeKey="$parent.NameInput" relativePoint="RIGHT" x="5" y="-2" />

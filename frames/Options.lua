@@ -256,19 +256,19 @@ function BaudBagOptionsSetDropDown_Initialize()
 
     -- inventory set
     info.text		= Localized.Inventory
-    info.value		= 1
-    info.checked	= (info.value == SelectedBags) and 1 or nil
+    info.arg1       = 1
+    info.checked	= (info.arg1 == SelectedBags)
     UIDropDownMenu_AddButton(info)
 
     -- bank set
     info.text		= Localized.BankBox
-    info.value		= 2
-    info.checked    = (info.value == SelectedBags) and 1 or nil
+    info.arg1       = 2
+    info.checked    = (info.arg1 == SelectedBags)
     UIDropDownMenu_AddButton(info)
 end
 
-function BaudBagOptionsSetDropDown_OnClick(self)
-    SelectedBags = self.value
+function BaudBagOptionsSetDropDown_OnClick(self, newValue)
+    SelectedBags = newValue
     BaudBagOptions:Update()
 end
 
@@ -353,16 +353,22 @@ function BaudBagOptionsBackgroundDropDown_Initialize()
 	
     for Key, Value in pairs(TextureNames)do
         info.text		= Value
-        info.value		= Key
-        info.checked	= (Key == Selected) and 1 or nil
+        info.arg1       = Key
+        info.checked	= (Key == Selected)
         UIDropDownMenu_AddButton(info)
     end
 end
 
 -- onclick
-function BaudBagOptionsBackgroundDropDown_OnClick(self)
-    BBConfig[SelectedBags][SelectedContainer].Background = self.value
-    UIDropDownMenu_SetSelectedValue(BaudBagOptions.GroupContainer.BackgroundSelection, self.value)
+function BaudBagOptionsBackgroundDropDown_OnClick(self, newValue)
+    -- todo: I'm unsure which one is better, testing out the relative one now
+    local dropdown = self:GetParent().dropdown
+    -- local dropdown = BaudBagOptions.GroupContainer.BackgroundSelection
+
+    dropdown.selectedValue = newValue
+    BBConfig[SelectedBags][SelectedContainer].Background = newValue
+    UIDropDownMenu_SetText(dropdown, TextureNames[newValue])
+
     local container = AddOnTable["Sets"][SelectedBags].Containers[SelectedContainer]
     container:Rebuild()
     container:Update()
@@ -416,7 +422,6 @@ function BaudBagOptionsSliderTemplateMixin:OnValueChanged()
     if not self._onsetting then   -- is single threaded 
         self._onsetting = true
         self:SetValue(self:GetValue())
-        value = self:GetValue()     -- cant use original 'value' parameter
         self._onsetting = false
     else
         return
@@ -486,7 +491,7 @@ function BaudBagOptionsMixin:Update()
     -- first reload the drop down (weird problems if not done)
     local containerDropDown = self.GroupContainer.SetSelection
     UIDropDownMenu_Initialize(containerDropDown, BaudBagOptionsSetDropDown_Initialize)
-    UIDropDownMenu_SetSelectedValue(containerDropDown, SelectedBags)
+    UIDropDownMenu_SetText(containerDropDown, SelectedBags == 1 and Localized.Inventory or Localized.BankBox)
 
     -- is the box enabled
     self.GroupContainer.EnabledCheck:SetChecked(BBConfig[SelectedBags].Enabled~=false)
@@ -617,7 +622,7 @@ function BaudBagOptionsMixin:Update()
     -- load background state (initialized here to work around some strange behavior)
     local backgroundDropDown = self.GroupContainer.BackgroundSelection
     UIDropDownMenu_Initialize(backgroundDropDown, BaudBagOptionsBackgroundDropDown_Initialize)
-    UIDropDownMenu_SetSelectedValue(backgroundDropDown, BBConfig[SelectedBags][SelectedContainer].Background)
+    UIDropDownMenu_SetText(backgroundDropDown, TextureNames[BBConfig[SelectedBags][SelectedContainer].Background])
 
     -- load slider values
     for Key, Value in ipairs(ContainerSliderBars) do

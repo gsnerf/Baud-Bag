@@ -19,6 +19,11 @@ local EventFuncs = {
         end
         AddOnTable.Sets[1]:AutoClose()
     end,
+
+    PLAYER_MONEY = function(self, event, ...)
+        AddOnTable.Functions.DebugMessage("Bags", "Event PLAYER_MONEY fired")
+        BaudBagBankBags_Update()
+    end,
 }
 
 local Func = function(self, event, ...)

@@ -9,38 +9,8 @@ AddOnTable["Sets"] = {}
 AddOnTable["SubBags"] = {}
 AddOnTable["Backgrounds"] = {}
 
--- -> possibly move this to default config?
-local FadeTime = 0.2
-
 -- this is supposed to be deprecated and should be removed in the future this does not have to be global
 local Prefix = "BaudBag" -- this should be identical to "AddOnName"
-
---[[ Local helper methods used in event handling ]]
-local function BackpackBagOverview_Initialize()
-    -- create BagSlots for the bag overview in the inventory (frame that pops out and only shows the available bags)
-    AddOnTable.Functions.DebugMessage("Bags", "Creating bag slot buttons.")
-    local backpackSet = AddOnTable["Sets"][1]
-    local BBContainer1 = _G[Prefix.."Container1_1BagsFrame"]
-
-    -- this is one container less, as the backpack itself doesn't get a button
-    for backpackBagButton = 0, AddOnTable.BlizzConstants.BACKPACK_CONTAINER_NUM - 1 do
-        local bagButton = AddOnTable:CreateBackpackBagButton(backpackBagButton, BBContainer1)
-        bagButton:SetPoint("TOPLEFT", 8, -8 - backpackBagButton * bagButton:GetHeight())
-        backpackSet.BagButtons[backpackBagButton] = bagButton
-	end
-
-    if (GetExpansionLevel() >= 9) then
-        for reagentBagButton = 0, AddOnTable.BlizzConstants.BACKPACK_REAGENT_BAG_NUM - 1 do
-            local bagButton = AddOnTable:CreateReagentBagButton(reagentBagButton, BBContainer1)
-            bagButton:SetPoint("TOPLEFT", 8, -8 - (#backpackSet.BagButtons + 1 + reagentBagButton) * bagButton:GetHeight())
-            backpackSet.ReagentBagButtons[reagentBagButton] = bagButton
-        end
-    end
-
-    local firstBackpackBagButton = backpackSet.BagButtons[0]
-    BBContainer1:SetWidth(15 + firstBackpackBagButton:GetWidth())
-    BBContainer1:SetHeight(15 + AddOnTable.BlizzConstants.BACKPACK_TOTAL_BAGS_NUM * firstBackpackBagButton:GetHeight())
-end
 
 --[[ NON XML EVENT HANDLERS ]]--
 --[[ these are the custom defined BaudBagFrame event handlers attached to a single event type]]--
@@ -74,11 +44,6 @@ local EventFuncs = {
 
         AddOnTable:UpdateBankParents()
         AddOnTable:UpdateBagParents()
-    end,
-
-    PLAYER_MONEY = function(self, event, ...)
-        AddOnTable.Functions.DebugMessage("Bags", "Event PLAYER_MONEY fired")
-        BaudBagBankBags_Update()
     end,
 
     ITEM_LOCK_CHANGED = function(self, event, ...)
@@ -143,7 +108,7 @@ local EventFuncs = {
 
 --[[ here come functions that will be hooked up to multiple events ]]--
 local collectedBagEvents = {}
-Func = function(self, event, ...)
+local Func = function(self, event, ...)
     AddOnTable.Functions.DebugMessage("Bags", "Event fired (event, source)", event, self:GetName())
 
     -- this is the ID of the affected container as known to WoW
@@ -240,43 +205,6 @@ EventFuncs.BAG_CONTAINER_UPDATE = function(self, event, ...)
     end
 end
 
-local function HandleMerchantShow()
-    AddOnTable.Functions.DebugMessage("Junk", "MerchandFrame was shown checking if we need to sell junk")
-    if (BBConfig.SellJunk and BBConfig[1].Enabled and MerchantFrame:IsShown()) then
-        AddOnTable.Functions.DebugMessage("Junk", "junk selling active and merchant frame is shown, identifiyng junk now")
-        AddOnTable.Sets[1]:ForEachBag(
-            function(Bag, _)
-                for Slot = 1, AddOnTable.BlizzAPI.GetContainerNumSlots(Bag) do
-                    local containerItemInfo = AddOnTable.BlizzAPI.GetContainerItemInfo(Bag, Slot)
-                    if (containerItemInfo and containerItemInfo.quality and containerItemInfo.quality == 0) then
-                        AddOnTable.Functions.DebugMessage("Junk", "Found junk (Container, Slot)", Bag, Slot)
-                        --[[
-                            TODO: additionally check if this is something that can be collected for transmog and optionally skip that
-                            - transmog stuff was introduced with legion
-                            - transmog base info can be retrieved from C_TransmogCollection.GetItemInfo through itemID/link/name
-                            - if it is already collected can be found from C_TransmogCollection.GetAppearanceSourceInfo and C_TransmogCollection.PlayerCanCollectSource
-                        ]]
-                        AddOnTable.BlizzAPI.UseContainerItem(Bag, Slot)
-                    end
-                end
-            end
-        )
-    end
-end
-
-if PlayerInteractionFrameManager ~= nil then
-    Func = function(self, event, ...)
-        local type = ...
-
-        if type == Enum.PlayerInteractionType.Merchant then
-            if event == "PLAYER_INTERACTION_MANAGER_FRAME_SHOW" then
-                HandleMerchantShow()
-            end
-        end
-    end
-    EventFuncs.PLAYER_INTERACTION_MANAGER_FRAME_SHOW = Func
-    EventFuncs.PLAYER_INTERACTION_MANAGER_FRAME_HIDE = Func
-end
 --[[ END OF NON XML EVENT HANDLERS ]]--
 
 
@@ -295,6 +223,7 @@ function BaudBag_OnLoad(self, event, ...)
         self:RegisterEvent(Key)
     end
     BaudBag_RegisterBankEvents(self)
+    BaudBag_RegisterBackpackEvents(self)
     AddOnTable.Functions.RegisterEvents(self)
 
     -- the first container from each set (inventory/bank) is different and is created in the XML
@@ -320,6 +249,7 @@ end
 --[[ this will call the correct event handler]]--
 function BaudBag_OnEvent(self, event, ...)
     BaudBag_OnBankEvent(self, event, ...)
+    BaudBag_OnBackpackEvent(self, event, ...)
     if EventFuncs[event] then
         EventFuncs[event](self, event, ...)
     end
@@ -351,119 +281,6 @@ function BaudBagBagsFrame_OnShow(self, event, ...)
     end
 end
 
---[[ Container events ]]--
-function BaudBagContainer_OnLoad(self, event, ...)
-    tinsert(UISpecialFrames, self:GetName()) -- <- needed?
-    self:RegisterForDrag("LeftButton")
-end
-
-function BaudBagContainer_OnUpdate(self, event, ...)
-
-    local containerObject = AddOnTable["Sets"][self.BagSet].Containers[self:GetID()]
-
-    if (self.Refresh) then
-        containerObject:Update()
-        BaudBagUpdateOpenBagHighlight()
-    end
-
-    if (self.UpdateSlots) then
-        AddOnTable["Sets"][self.BagSet]:UpdateSlotInfo()
-    end
-
-    if (self.FadeStart) then
-        local Alpha = (GetTime() - self.FadeStart) / FadeTime
-        if not BBConfig.EnableFadeAnimation then
-            -- immediate show/hide without animation
-            Alpha = 1.1
-        end
-        if self.Closing then
-            Alpha = 1 - Alpha
-            if (Alpha < 0) then
-                self.FadeStart = nil
-                self:Hide()
-                self.Closing = nil
-                return
-            end
-        elseif (Alpha > 1) then
-            self:SetAlpha(1)
-            self.FadeStart = nil
-            return
-        end
-        self:SetAlpha(Alpha)
-    end
-end
-
-
-function BaudBagContainer_OnShow(self, event, ...)
-    AddOnTable.Functions.DebugMessage("Bags", "BaudBagContainer_OnShow was called", self:GetName())
-	
-    -- check if the container was open before and closing now
-    if self.FadeStart then
-        return
-    end
-	
-    -- container seems to not be visible, open and update
-    self.FadeStart = GetTime()
-    PlaySound(SOUNDKIT.IG_BACKPACK_OPEN)
-    local bagSet = AddOnTable["Sets"][self.BagSet]
-    local containerObject = bagSet.Containers[self:GetID()]
-    containerObject:Update()
-    if (containerObject.Frame.Slots > 0) then
-        containerObject:UpdateBagHighlight()
-    end
-
-    if (self:GetID() == 1) then
-        AddOnTable["Sets"][self.BagSet]:UpdateSlotInfo()
-    end
-end
-
-
-function BaudBagContainer_OnHide(self, event, ...)
-    -- correctly handle if this is called while the container is still fading out
-    if self.Closing then
-        if self.FadeStart then
-            self:Show()
-        end
-        return
-    end
-
-    -- set vars for fading out ans start process
-    self.FadeStart = GetTime()
-    self.Closing = true
-    PlaySound(SOUNDKIT.IG_BACKPACK_CLOSE)
-    self.AutoOpened = false
-    BaudBagUpdateOpenBagHighlight()
-
-    --[[TODO: look into merging the set specific close handling!!!]]--
-    --[[
-    if the option entry requires it close all remaining containers of the bag set
-    (first the bag set so the "offline" title doesn't show up before closing and then the bank to disconnect)
-    ]]--
-    if (self:GetID() == 1) and (BBConfig[self.BagSet].Enabled) and (BBConfig[self.BagSet].CloseAll) then
-        if (self.BagSet == 2) and AddOnTable.State.BankOpen then
-            -- [TAINT] can be problematic, but doesn't have to be
-            CloseBankFrame()
-        end
-        AddOnTable.Sets[self.BagSet]:Close()
-    end
-
-    self:Show()
-end
-
-
-function BaudBagContainer_OnDragStart(self, event, ...)
-    if not BBConfig[self.BagSet][self:GetID()].Locked then
-        self:StartMoving()
-    end
-end
-
-
-function BaudBagContainer_OnDragStop(self, event, ...)
-    self:StopMovingOrSizing()
-    AddOnTable["Sets"][self.BagSet].Containers[self:GetID()]:SaveCoordsToConfig()
-end
-
-
 --[[ This function updates the parent containers for each bag, according to the options setup ]]--
 function BaudUpdateJoinedBags()
     AddOnTable.Functions.DebugMessage("Bags", "Updating joined bags...")
@@ -476,7 +293,6 @@ function BaudUpdateJoinedBags()
 end
 
 function BaudBagUpdateOpenBags()
-    local Open, Frame, Slot, ItemButton, QuestTexture
     for _, subContainer in pairs(AddOnTable["SubBags"]) do
         subContainer:UpdateItemOverlays()
     end
@@ -489,38 +305,6 @@ function BaudBagUpdateOpenBagHighlight()
         SubContainer:UpdateOpenBagHighlight()
     end
 end
-
-local function IsBagShown(BagId)
-    local SubContainer = AddOnTable["SubBags"][BagId]
-    AddOnTable.Functions.DebugMessage("BagOpening", "Got SubContainer", SubContainer)
-    return SubContainer:IsOpen()
-end
-
-local function UpdateThisHighlight(self)
-    if BBConfig and (BBConfig[1].Enabled == false) then
-        return
-    end
-    if IsBagShown(self:GetID() - CharacterBag0Slot:GetID() + 1) then
-        self.SlotHighlightTexture:Show()
-    else
-        self.SlotHighlightTexture:Hide()
-    end
-end
-
---These function hooks override the bag button highlight changes that Blizzard does
---hooksecurefunc("BagSlotButton_OnClick", UpdateThisHighlight)
---hooksecurefunc("BagSlotButton_OnDrag", UpdateThisHighlight)
---hooksecurefunc("BagSlotButton_OnModifiedClick", UpdateThisHighlight)
---[[hooksecurefunc("BackpackButton_OnClick", function(self)
-    if BBConfig and(BBConfig[1].Enabled == false)then
-        return
-    end
-    if (IsBagShown(0)) then
-        self.SlotHighlightTexture:Show()
-    else
-        self.SlotHighlightTexture:Hide()
-    end
-end)]]
 
 --[[ custom defined BaudBagSubBag event handlers ]]--
 local SubBagEvents = {}
@@ -737,20 +521,5 @@ function BaudBag_FixContainerClickForReagent(Bag, Slot)
             AddOnTable.BlizzAPI.PickupContainerItem(REAGENTBANK_CONTAINER, Value)
             return
         end
-    end
-end
-
---[[ this method ensures that the bank bags are either placed as childs under UIParent or BaudBag ]]
-function AddOnTable:UpdateBagParents()
-    local newParent = UIParent
-    if AddOnTable.Functions.BagHandledByBaudBag(AddOnTable.BlizzConstants.BACKPACK_CONTAINER) then
-        newParent = BaudBag_OriginalBagsHideFrame
-    end
-
-    if (ContainerFrameCombinedBags) then
-        ContainerFrameCombinedBags:SetParent(newParent)
-    end
-    for i = AddOnTable.BlizzConstants.BACKPACK_FIRST_CONTAINER, AddOnTable.BlizzConstants.BACKPACK_LAST_CONTAINER do
-        _G["ContainerFrame"..(i + 1)]:SetParent(newParent)
     end
 end

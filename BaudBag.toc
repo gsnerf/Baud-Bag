@@ -11,7 +11,7 @@
 ## Title: Baud Bag
 ## Title-zhCN: 背包整合 Baud Bag
 ## Title-zhTW: 背包整合 Baud Bag
-## Version: 10.1.0.1
+## Version: 10.1.0.2_beta_1
 ## IconAtlas: bag-main
 
 # english has to be the first locale!
@@ -39,6 +39,7 @@ Events.lua
 BaudBagConfig.lua
 BaudBagCache.lua
 BaudBagToolTips.lua
+Backpack.lua
 Bank.lua
 ReagentBank.xml
 frames/Options.xml

@@ -134,6 +134,18 @@ function BaudBagSearchFrame_ShowFrame(ParentContainer, Scale, Background)
     EditBox:SetFocus()
 end
 
+local function isSupportedBag(bagId)
+    if (bagId == AddOnTable.BlizzConstants.KEYRING_CONTAINER) then
+        return false
+    end
+
+    if (bagId == AddOnTable.BlizzConstants.REAGENTBANK_CONTAINER and not AddOnTable.State.ReagentBankSupported) then
+        return false
+    end
+    
+    return true
+end
+
 function BaudBagSearchFrameEditBox_OnTextChanged(self, isUserInput)
     AddOnTable.Functions.DebugMessage("Search", "Changed search phrase, searching open bags")
     local compareString = self:GetText()
@@ -149,7 +161,7 @@ function BaudBagSearchFrameEditBox_OnTextChanged(self, isUserInput)
     local Status, Result
     local bagCache, slotCache
     for Bag = AddOnTable.BlizzConstants.REAGENTBANK_CONTAINER, LastBagID do
-        if not (Bag == AddOnTable.BlizzConstants.KEYRING_CONTAINER) then
+        if isSupportedBag(Bag) then
             SubBagObject = AddOnTable.SubBags[Bag]
             SubBag = SubBagObject.Frame
             Open	= SubBag:IsShown()and SubBag:GetParent():IsShown() and not SubBag:GetParent().Closing
