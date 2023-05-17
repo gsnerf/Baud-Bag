@@ -256,19 +256,19 @@ function BaudBagOptionsSetDropDown_Initialize()
 
     -- inventory set
     info.text		= Localized.Inventory
-    info.value		= 1
-    info.checked	= (info.value == SelectedBags) and 1 or nil
+    info.arg1       = 1
+    info.checked	= (info.arg1 == SelectedBags)
     UIDropDownMenu_AddButton(info)
 
     -- bank set
     info.text		= Localized.BankBox
-    info.value		= 2
-    info.checked    = (info.value == SelectedBags) and 1 or nil
+    info.arg1       = 2
+    info.checked    = (info.arg1 == SelectedBags)
     UIDropDownMenu_AddButton(info)
 end
 
-function BaudBagOptionsSetDropDown_OnClick(self)
-    SelectedBags = self.value
+function BaudBagOptionsSetDropDown_OnClick(self, newValue)
+    SelectedBags = newValue
     BaudBagOptions:Update()
 end
 
@@ -491,7 +491,7 @@ function BaudBagOptionsMixin:Update()
     -- first reload the drop down (weird problems if not done)
     local containerDropDown = self.GroupContainer.SetSelection
     UIDropDownMenu_Initialize(containerDropDown, BaudBagOptionsSetDropDown_Initialize)
-    UIDropDownMenu_SetSelectedValue(containerDropDown, SelectedBags)
+    UIDropDownMenu_SetText(containerDropDown, SelectedBags == 1 and Localized.Inventory or Localized.BankBox)
 
     -- is the box enabled
     self.GroupContainer.EnabledCheck:SetChecked(BBConfig[SelectedBags].Enabled~=false)
@@ -623,7 +623,7 @@ function BaudBagOptionsMixin:Update()
     local backgroundDropDown = self.GroupContainer.BackgroundSelection
     UIDropDownMenu_Initialize(backgroundDropDown, BaudBagOptionsBackgroundDropDown_Initialize)
     UIDropDownMenu_SetText(backgroundDropDown, TextureNames[BBConfig[SelectedBags][SelectedContainer].Background])
-    
+
     -- load slider values
     for Key, Value in ipairs(ContainerSliderBars) do
         local Slider = self.GroupContainer["Slider"..Key]
