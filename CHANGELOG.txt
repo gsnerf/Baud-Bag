@@ -1,4 +1,9 @@
 ﻿=== Changelog ===
+v10.1.0.2
+  - fixed more scenarios for opening/closing of backs/backpacks for both retail and wotlk
+    - opening backpack and then toggeling all bags still shows weird behavior, but the rest should work fine
+  - fixed bag search for wotlk
+  - tried to fix drop down tainting issue for (mostly) wotlk tainting half of wow
 v10.1.0.1
   - fixed opening/closing of bags/backpack for wotlk and retail in different scenarios (might not have catched all possibilities yet)
 v10.1.0.0
