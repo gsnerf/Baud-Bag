@@ -353,16 +353,22 @@ function BaudBagOptionsBackgroundDropDown_Initialize()
 	
     for Key, Value in pairs(TextureNames)do
         info.text		= Value
-        info.value		= Key
-        info.checked	= (Key == Selected) and 1 or nil
+        info.arg1       = Key
+        info.checked	= (Key == Selected)
         UIDropDownMenu_AddButton(info)
     end
 end
 
 -- onclick
-function BaudBagOptionsBackgroundDropDown_OnClick(self)
-    BBConfig[SelectedBags][SelectedContainer].Background = self.value
-    UIDropDownMenu_SetSelectedValue(BaudBagOptions.GroupContainer.BackgroundSelection, self.value)
+function BaudBagOptionsBackgroundDropDown_OnClick(self, newValue)
+    -- todo: I'm unsure which one is better, testing out the relative one now
+    local dropdown = self:GetParent().dropdown
+    -- local dropdown = BaudBagOptions.GroupContainer.BackgroundSelection
+
+    dropdown.selectedValue = newValue
+    BBConfig[SelectedBags][SelectedContainer].Background = newValue
+    UIDropDownMenu_SetText(dropdown, TextureNames[newValue])
+
     local container = AddOnTable["Sets"][SelectedBags].Containers[SelectedContainer]
     container:Rebuild()
     container:Update()
@@ -616,8 +622,8 @@ function BaudBagOptionsMixin:Update()
     -- load background state (initialized here to work around some strange behavior)
     local backgroundDropDown = self.GroupContainer.BackgroundSelection
     UIDropDownMenu_Initialize(backgroundDropDown, BaudBagOptionsBackgroundDropDown_Initialize)
-    UIDropDownMenu_SetSelectedValue(backgroundDropDown, BBConfig[SelectedBags][SelectedContainer].Background)
-
+    UIDropDownMenu_SetText(backgroundDropDown, TextureNames[BBConfig[SelectedBags][SelectedContainer].Background])
+    
     -- load slider values
     for Key, Value in ipairs(ContainerSliderBars) do
         local Slider = self.GroupContainer["Slider"..Key]
