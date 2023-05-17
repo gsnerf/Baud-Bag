@@ -24,6 +24,11 @@ local function closeBag(id)
 end
 hooksecurefunc("CloseBag", closeBag)
 
+local function openBackpack()
+    openBag(AddOnTable.BlizzConstants.BACKPACK_CONTAINER)
+end
+hooksecurefunc("OpenBackpack", openBackpack)
+
 local function closeBackpack()
     closeBag(AddOnTable.BlizzConstants.BACKPACK_CONTAINER)
 end
