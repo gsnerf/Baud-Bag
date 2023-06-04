@@ -1,0 +1,103 @@
+<Ui xmlns="http://www.blizzard.com/wow/ui/"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.blizzard.com/wow/ui/ ..\FrameXML\UI.xsd">
+	<Script file="ContainerMenu.lua" />
+
+	<Frame name="BaudBagContainerMenuHeaderTemplate" virtual="true">
+		<Size y="18" />
+		<Layers>
+			<Layer level="BACKGROUND">
+				<FontString parentKey="Label" inherits="GameFontNormal" justifyH="LEFT">
+					<Anchors>
+						<Anchor point="TOPLEFT" x="10" />
+						<Anchor point="BOTTOM" />
+					</Anchors>
+				</FontString>
+			</Layer>
+		</Layers>
+	</Frame>
+
+	<CheckButton name="BaudBagContainerMenuCheckButtonTemplate" mixin="BaudBagContainerMenuButtonMixin" inherits="UICheckButtonTemplate" virtual="true">
+		<Size x="26" y="26" />
+		<Anchors>
+			<Anchor point="LEFT"/>
+		</Anchors>
+		<HitRectInsets>
+			<AbsInset left="0" right="0" top="0" bottom="0" />
+		</HitRectInsets>
+	</CheckButton>
+
+	<Frame name="BaudBagContainerMenuTemplate" mixin="BaudBagContainerMenuMixin" virtual="true">
+		<Size x="123" y="156" />
+		<Frames>
+			<Frame parentKey="BagSpecific">
+				<Anchors>
+					<Anchor point="TOP"/>
+					<Anchor point="LEFT"/>
+					<Anchor point="RIGHT"/>
+				</Anchors>
+				<Frames>
+					<Frame parentKey="Header" inherits="BaudBagContainerMenuHeaderTemplate">
+						<Anchors>
+							<Anchor point="TOPLEFT" />
+							<Anchor point="RIGHT" />
+						</Anchors>
+					</Frame>
+
+					<CheckButton parentKey="Lock" inherits="BaudBagContainerMenuCheckButtonTemplate">
+						<Anchors>
+							<Anchor point="TOP" relativeKey="$parent.Header" relativePoint="BOTTOM" />
+						</Anchors>
+						<Scripts>
+							<OnClick method="ToggleContainerLock" />
+						</Scripts>
+					</CheckButton>
+
+					<Frame parentKey="SortingFunctions">
+						<Frames>
+							<!--
+								to be added dynamically:
+							     * cleanup ignore
+								 * cleanup (only for backpack, backpack containers, reagent bank and reagent bank containers, NO bank and probably NO keyring)
+								 * filter options
+							-->
+						</Frames>
+					</Frame>
+				</Frames>
+			</Frame>
+
+			<Frame parentKey="General">
+				<Anchors>
+					<Anchor point="TOP" relativeKey="$parent.BagSpecific" relativePoint="BOTTOM"  />
+					<Anchor point="LEFT"/>
+					<Anchor point="RIGHT"/>
+				</Anchors>
+				<Frames>
+					<Frame parentKey="Header" inherits="BaudBagContainerMenuHeaderTemplate">
+						<Anchors>
+							<Anchor point="TOPLEFT" />
+							<Anchor point="RIGHT" />
+						</Anchors>
+					</Frame>
+
+					<CheckButton parentKey="ShowOptions" inherits="BaudBagContainerMenuCheckButtonTemplate">
+						<Anchors>
+							<Anchor point="TOP" relativeKey="$parent.Header" relativePoint="BOTTOM" />
+						</Anchors>
+						<Scripts>
+							<OnClick method="JumpToOptions" />
+						</Scripts>
+					</CheckButton>
+					<!--
+						to be added dynamically:
+						* show bank button (only on backpack and it's containers but only visible when bank is not already shown)
+						* increase backpack size option (only when account is not secured by authenticator and we are in an environment where this feature exists)
+					-->
+				</Frames>
+			</Frame>
+		</Frames>
+
+		<Scripts>
+			<OnShow method="OnShow" />
+		</Scripts>
+	</Frame>
+</Ui>

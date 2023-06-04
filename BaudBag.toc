@@ -35,6 +35,7 @@ lib\Backgrounds\SimpleBackground.lua
 lib\Backgrounds\BackgroundRegistration.lua
 widgets\buttons\BagButton.xml
 widgets\buttons\ItemButton.lua
+frames\ContainerMenu.xml
 Events.lua
 BaudBagConfig.lua
 BaudBagCache.lua

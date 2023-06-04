@@ -272,6 +272,9 @@ function AddOnTable:CreateContainer(bagSetType, bbContainerId, isReagentBank)
     container.Frame = frame
     container.SubContainers = {}
     container.BagSet = bagSetType
+    if (container.Menu == nil) then
+        container.Menu = AddOnTable:CreateContainerMenuFrame(container)
+    end
     return container
 end
 

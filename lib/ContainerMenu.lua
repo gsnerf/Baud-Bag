@@ -16,6 +16,9 @@ function BaudBagContainerDropDown_Show(self, event, ...)
     local Container = self:GetParent()
     DropDownContainer = Container:GetID()
     DropDownBagSet = Container.BagSet
+    local containerMenu = AddOnTable.Sets[Container.BagSet].Containers[Container:GetID()].Menu
+    containerMenu:SetPoint("BOTTOM", self, "TOP")
+    containerMenu:Toggle()
     ToggleDropDownMenu(1, nil, BaudBagContainerDropDown, self:GetName(), 0, 0)
 end
 
