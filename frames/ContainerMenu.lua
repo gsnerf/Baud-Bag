@@ -3,6 +3,17 @@ local Localized = AddOnTable.Localized
 local _
 
 BaudBagContainerMenuMixin = {
+    backdropInfo = {
+        bgFile = "Interface\\Tooltips\\UI-Tooltip-Background",
+         edgeFile = "Interface\\Tooltips\\UI-Tooltip-Border",
+         tile = true,
+         tileEdge = true,
+         tileSize = 8,
+         edgeSize = 8,
+         insets = { left = 2, right = 2, top = 2, bottom = 2 },
+    },
+    backdropColor = CreateColor( 0.0, 0.0, 0.0 ),
+    backdropColorAlpha = 0.5
 }
 
 function BaudBagContainerMenuMixin:SetupBagSpecific()
