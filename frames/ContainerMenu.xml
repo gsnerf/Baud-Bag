@@ -3,12 +3,12 @@
 	<Script file="ContainerMenu.lua" />
 
 	<Frame name="BaudBagContainerMenuHeaderTemplate" virtual="true">
-		<Size y="18" />
+		<Size y="23" />
 		<Layers>
 			<Layer level="BACKGROUND">
-				<FontString parentKey="Label" inherits="GameFontNormal" justifyH="LEFT">
+				<FontString parentKey="Label" inherits="GameFontNormalSmall" justifyH="LEFT">
 					<Anchors>
-						<Anchor point="TOPLEFT" x="10" />
+						<Anchor point="TOPLEFT" x="10" y="-5" />
 						<Anchor point="BOTTOM" />
 					</Anchors>
 				</FontString>
@@ -16,14 +16,30 @@
 		</Layers>
 	</Frame>
 
-	<CheckButton name="BaudBagContainerMenuCheckButtonTemplate" mixin="BaudBagContainerMenuButtonMixin" inherits="UICheckButtonTemplate" virtual="true">
-		<Size x="26" y="26" />
+	<CheckButton name="BaudBagContainerMenuCheckButtonTemplate" mixin="BaudBagContainerMenuButtonMixin" virtual="true">
+		<Size x="16" y="16" />
 		<Anchors>
-			<Anchor point="LEFT"/>
+			<Anchor point="LEFT" x="10" />
 		</Anchors>
-		<HitRectInsets>
-			<AbsInset left="0" right="0" top="0" bottom="0" />
-		</HitRectInsets>
+		<Layers>
+			<Layer level="BACKGROUND">
+				<FontString name="$parentText" inherits="GameFontNormalSmall" parentKey="Text">
+					<Anchors>
+						<Anchor point="LEFT" relativePoint="RIGHT" x="5" y="0" />
+					</Anchors>
+					<Color r="1" g="1" b="1" a="1" />
+				</FontString>
+			</Layer>
+		</Layers>
+		<NormalTexture file="Interface\Buttons\UI-RadioButton">
+			<TexCoords left="0" right="0.25" top="0" bottom="1"/>
+		</NormalTexture>
+		<HighlightTexture file="Interface\Buttons\UI-RadioButton" alphaMode="ADD">
+			<TexCoords left="0.5" right="0.75" top="0" bottom="1"/>
+		</HighlightTexture>
+		<CheckedTexture file="Interface\Buttons\UI-RadioButton">
+			<TexCoords left="0.25" right="0.5" top="0" bottom="1"/>
+		</CheckedTexture>
 	</CheckButton>
 
 	<Frame name="BaudBagContainerMenuTemplate" mixin="BaudBagContainerMenuMixin" virtual="true" inherits="BackdropTemplate">
