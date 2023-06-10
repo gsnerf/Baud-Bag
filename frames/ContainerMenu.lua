@@ -79,6 +79,7 @@ local function updateHeight(frame)
     for i, child in ipairs(children) do
         targetHeight = targetHeight + child:GetHeight()
     end
+    targetHeight = targetHeight + 5 -- this is for the bottom "padding" between the frames border and the content
     frame:SetHeight(targetHeight)
 end
 
