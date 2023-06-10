@@ -23,7 +23,7 @@
 		</Anchors>
 		<Layers>
 			<Layer level="BACKGROUND">
-				<FontString name="$parentText" inherits="GameFontNormalSmall" parentKey="Text">
+				<FontString inherits="GameFontNormalSmall" parentKey="Text">
 					<Anchors>
 						<Anchor point="LEFT" relativePoint="RIGHT" x="5" y="0" />
 					</Anchors>
