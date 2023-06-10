@@ -21,6 +21,16 @@ function BaudBagContainerMenuMixin:SetupBagSpecific()
     self.BagSpecific.Lock.Text:SetText(Localized.LockPosition)
     
     -- create sorting stuff if applicable
+    if (AddOnTable.BlizzAPI.SupportsContainerSorting()) then
+        AddOnTable.Functions.DebugMessage("ContainerMenu", "Creating sorting buttons for container", self.BagSet, self.ContainerId, self.Container)
+        local cleanupIgnoreButton = CreateFrame("CheckButton", nil, self.BagSpecific.SortingFunctions, "BaudBagContainerMenuCheckButtonTemplate")
+        self.BagSpecific.SortingFunctions.CleanupIgnore = cleanupIgnoreButton
+        cleanupIgnoreButton:SetScript("OnClick", function() self.Container:SetCleanupIgnore( not self.Container:GetCleanupIgnore()) end)
+        cleanupIgnoreButton.Text:SetText(BAG_FILTER_IGNORE)
+        
+        -- TODO: these kind of operations cannot be done on initialization, because the container can't have that information yet
+        --cleanupIgnoreButton:SetChecked(container:GetCleanupIgnore())
+    end
 end
 
 function BaudBagContainerMenuMixin:SetupGeneral()
@@ -88,11 +98,13 @@ function AddOnTable:CreateContainerMenuFrame(parentContainer)
     menu:Hide()
     menu.BagSet = parentContainer.BagSet.Id
     menu.ContainerId = parentContainer.Id
+    menu.Container = parentContainer
 
     menu:SetupBagSpecific()
     menu:SetupGeneral()
 
     -- set size based on children
+    updateHeight(menu.BagSpecific.SortingFunctions)
     updateHeight(menu.BagSpecific)
     updateHeight(menu.General)
     updateHeight(menu)
