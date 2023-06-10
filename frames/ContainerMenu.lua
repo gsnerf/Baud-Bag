@@ -93,6 +93,26 @@ local function updateHeight(frame)
     frame:SetHeight(targetHeight)
 end
 
+local function getCheckboxWidth(checkbox)
+    if (checkbox) then
+        return checkbox:GetWidth() + 20 + checkbox.Text:GetWidth()
+    end
+    return 0
+end
+
+local function updateWidth(frame)
+    local widths = {}
+    table.insert(widths, getCheckboxWidth(frame.BagSpecific.Lock))
+    table.insert(widths, getCheckboxWidth(frame.BagSpecific.SortingFunctions.CleanupIgnore))
+    table.insert(widths, getCheckboxWidth(frame.General.ShowOptions))
+
+    local targetWidth = 0
+    for _, width in ipairs(widths) do
+        targetWidth = (width > targetWidth) and width or targetWidth
+    end
+    frame:SetWidth(targetWidth + 10)
+end
+
 function AddOnTable:CreateContainerMenuFrame(parentContainer)
     local menu = CreateFrame("Frame", name, parentContainer.Frame, "BaudBagContainerMenuTemplate")
     menu:Hide()
@@ -108,5 +128,6 @@ function AddOnTable:CreateContainerMenuFrame(parentContainer)
     updateHeight(menu.BagSpecific)
     updateHeight(menu.General)
     updateHeight(menu)
+    updateWidth(menu)
     return menu
 end

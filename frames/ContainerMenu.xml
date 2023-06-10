@@ -69,6 +69,11 @@
 					</CheckButton>
 
 					<Frame parentKey="SortingFunctions">
+						<Anchors>
+							<Anchor point="LEFT" />
+							<Anchor point="TOP" relativeKey="$parent.Lock" relativePoint="BOTTOM" />
+							<Anchor point="RIGHT" />
+						</Anchors>
 						<Frames>
 							<!--
 								to be added dynamically:
