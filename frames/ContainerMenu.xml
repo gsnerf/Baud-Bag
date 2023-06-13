@@ -42,23 +42,27 @@
 		</CheckedTexture>
 	</CheckButton>
 
+	<Frame name="BaudBagContainerMenuSublistTemplate" virtual="true">
+		<Anchors>
+			<Anchor point="TOP"/>
+			<Anchor point="LEFT"/>
+			<Anchor point="RIGHT"/>
+		</Anchors>
+		<Frames>
+			<Frame parentKey="Header" inherits="BaudBagContainerMenuHeaderTemplate">
+				<Anchors>
+					<Anchor point="TOPLEFT" />
+					<Anchor point="RIGHT" />
+				</Anchors>
+			</Frame>
+		</Frames>
+	</Frame>
+
 	<Frame name="BaudBagContainerMenuTemplate" mixin="BaudBagContainerMenuMixin" virtual="true" inherits="BackdropTemplate">
 		<Size x="123" y="156" />
 		<Frames>
-			<Frame parentKey="BagSpecific">
-				<Anchors>
-					<Anchor point="TOP"/>
-					<Anchor point="LEFT"/>
-					<Anchor point="RIGHT"/>
-				</Anchors>
+			<Frame parentKey="BagSpecific" inherits="BaudBagContainerMenuSublistTemplate">
 				<Frames>
-					<Frame parentKey="Header" inherits="BaudBagContainerMenuHeaderTemplate">
-						<Anchors>
-							<Anchor point="TOPLEFT" />
-							<Anchor point="RIGHT" />
-						</Anchors>
-					</Frame>
-
 					<CheckButton parentKey="Lock" inherits="BaudBagContainerMenuCheckButtonTemplate">
 						<Anchors>
 							<Anchor point="TOP" relativeKey="$parent.Header" relativePoint="BOTTOM" />
@@ -86,20 +90,11 @@
 				</Frames>
 			</Frame>
 
-			<Frame parentKey="General">
+			<Frame parentKey="General" inherits="BaudBagContainerMenuSublistTemplate">
 				<Anchors>
 					<Anchor point="TOP" relativeKey="$parent.BagSpecific" relativePoint="BOTTOM"  />
-					<Anchor point="LEFT"/>
-					<Anchor point="RIGHT"/>
 				</Anchors>
 				<Frames>
-					<Frame parentKey="Header" inherits="BaudBagContainerMenuHeaderTemplate">
-						<Anchors>
-							<Anchor point="TOPLEFT" />
-							<Anchor point="RIGHT" />
-						</Anchors>
-					</Frame>
-
 					<CheckButton parentKey="ShowOptions" inherits="BaudBagContainerMenuCheckButtonTemplate">
 						<Anchors>
 							<Anchor point="TOP" relativeKey="$parent.Header" relativePoint="BOTTOM" />
