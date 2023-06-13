@@ -58,6 +58,23 @@ function BaudBagContainerMenuMixin:SetupGeneral()
     self.General.ShowOptions.Text:SetText(Localized.Options)
 
     -- create general buttons if applicable
+
+    if (self.BagSet == BagSetType.Backpack.Id) then
+        local showBankButton = CreateFrame("CheckButton", nil, self.General, "BaudBagContainerMenuCheckButtonTemplate")
+        showBankButton.Text:SetText(Localized.ShowBank)
+        showBankButton:SetScript("OnClick", showBankButton.ToggleBank)
+        showBankButton:SetPoint("TOP", self.General.ShowOptions, "BOTTOM")
+
+        
+        local backpackCanBeExtended = not (IsAccountSecured() and AddOnTable.BlizzAPI.GetContainerNumSlots(AddOnTable.BlizzConstants.BACKPACK_CONTAINER) > AddOnTable.BlizzConstants.BACKPACK_BASE_SIZE)
+        if (backpackCanBeExtended) then
+            local extendBackpack = CreateFrame("CheckButton", nil, self.General, "BaudBagContainerMenuCheckButtonTemplate")
+            extendBackpack.Text:SetText(AddonTable.BlizzConstants.BACKPACK_AUTHENTICATOR_INCREASE_SIZE)
+            extendBackpack:SetScript("OnClick", extendBackpack.AddSlots)
+            extendBackpack:SetPoint("TOP", showBankButton, "BOTTOM")
+        end
+    end
+
 end
 
 function BaudBagContainerMenuMixin:Toggle()
@@ -101,6 +118,21 @@ function BaudBagContainerMenuButtonMixin:JumpToOptions()
     InterfaceOptionsFrame_OpenToCategory("Baud Bag")
 
     containerMenu:Hide()
+end
+
+function BaudBagContainerMenuButtonMixin:ToggleBank()
+    local firstBankContainer = AddOnTable.Sets[2].Containers[1]
+    if firstBankContainer.Frame:IsShown() then
+        firstBankContainer.Frame:Hide()
+        AddOnTable.Sets[2]:AutoClose()
+    else
+        firstBankContainer.Frame:Show()
+        AddOnTable.Sets[2]:AutoOpen()
+    end
+end
+
+function BaudBagContainerMenuButtonMixin:AddSlots()
+    StaticPopup_Show("BACKPACK_INCREASE_SIZE")
 end
 
 local function updateHeight(frame, bottomOffset)
