@@ -45,25 +45,6 @@ end
 
 local function setupFilterOptions(self)
     
-    --[[
-    local numberOfSubContainers = table.getn(containerObject.SubContainers)
-    local firstSubContainerId = containerObject.SubContainers[1].ContainerId
-    if (numberOfSubContainers == 1 and
-        (
-            firstSubContainerId == AddOnTable.BlizzConstants.BACKPACK_CONTAINER
-            or
-            firstSubContainerId == AddOnTable.BlizzConstants.BANK_CONTAINER
-            or
-            firstSubContainerId == AddOnTable.BlizzConstants.REAGENTBANK_CONTAINER
-            or
-            IsInventoryItemProfessionBag("player", AddOnTable.BlizzAPI.ContainerIDToInventoryID(firstSubContainerId))
-        )
-    ) then
-        -- the backpack, bank or reagent bank themselves cannot have filters!
-        return
-    end
-    ]]
-    
     local toggleFilter = function(button, type, value)
         value = not value
         self.Container:SetFilterType(type, value)
@@ -144,6 +125,80 @@ function BaudBagContainerMenuMixin:OnShow()
     self.General.ShowOptions:SetChecked(false)
 end
 
+local function updateHeight(frame, bottomOffset)
+    bottomOffset = bottomOffset or 0
+    local children = { frame:GetChildren() }
+    local targetHeight = 0
+    for i, child in ipairs(children) do
+        targetHeight = targetHeight + (child:IsShown() and child:GetHeight() or 0)
+    end
+    targetHeight = targetHeight + bottomOffset
+    frame:SetHeight(targetHeight)
+end
+
+local function getCheckboxWidth(checkbox)
+    if (checkbox) then
+        return checkbox:GetWidth() + 20 + checkbox.Text:GetWidth()
+    end
+    return 0
+end
+
+local function updateWidth(frame)
+    local widths = {}
+    table.insert(widths, getCheckboxWidth(frame.BagSpecific.Lock))
+    table.insert(widths, getCheckboxWidth(frame.BagSpecific.Cleanup.CleanupIgnore))
+    table.insert(widths, getCheckboxWidth(frame.General.ShowOptions))
+
+    local targetWidth = 0
+    for _, width in ipairs(widths) do
+        targetWidth = (width > targetWidth) and width or targetWidth
+    end
+    frame:SetWidth(targetWidth + 10)
+end
+
+local function updateSize(menu)
+    -- set size based on children
+    updateHeight(menu.BagSpecific.Cleanup)
+    updateHeight(menu.BagSpecific.Filter)
+    updateHeight(menu.BagSpecific)
+    updateHeight(menu.General)
+    updateHeight(menu, 5)
+    updateWidth(menu)
+end
+
+local function updateFilterVisibility(menu, container)
+    if next(container.SubContainers) == nil then
+        return
+    end
+    
+    -- update visibility based on container content
+    local numberOfSubContainers = table.getn(container.SubContainers)
+    local firstSubContainerId = container.SubContainers[1].ContainerId
+    local shouldShowFilters = true
+    if (numberOfSubContainers == 1 and
+        (
+            firstSubContainerId == AddOnTable.BlizzConstants.BACKPACK_CONTAINER
+            or
+            firstSubContainerId == AddOnTable.BlizzConstants.BANK_CONTAINER
+            or
+            firstSubContainerId == AddOnTable.BlizzConstants.REAGENTBANK_CONTAINER
+            or
+            AddOnTable.BlizzAPI.IsInventoryItemProfessionBag("player", AddOnTable.BlizzAPI.ContainerIDToInventoryID(firstSubContainerId))
+        )
+    ) then
+        -- the backpack, bank or reagent bank themselves cannot have filters!
+        shouldShowFilters = false
+    end
+
+    menu.BagSpecific.Filter:SetShown(shouldShowFilters)
+end
+
+function BaudBagContainerMenuMixin:Update()
+    updateFilterVisibility(self, self.Container)
+    updateSize(self)
+end
+
+
 BaudBagContainerMenuButtonMixin = {}
 
 function BaudBagContainerMenuButtonMixin:ToggleContainerLock()
@@ -188,37 +243,6 @@ function BaudBagContainerMenuButtonMixin:AddSlots()
     StaticPopup_Show("BACKPACK_INCREASE_SIZE")
 end
 
-local function updateHeight(frame, bottomOffset)
-    bottomOffset = bottomOffset or 0
-    local children = { frame:GetChildren() }
-    local targetHeight = 0
-    for i, child in ipairs(children) do
-        targetHeight = targetHeight + child:GetHeight()
-    end
-    targetHeight = targetHeight + bottomOffset
-    frame:SetHeight(targetHeight)
-end
-
-local function getCheckboxWidth(checkbox)
-    if (checkbox) then
-        return checkbox:GetWidth() + 20 + checkbox.Text:GetWidth()
-    end
-    return 0
-end
-
-local function updateWidth(frame)
-    local widths = {}
-    table.insert(widths, getCheckboxWidth(frame.BagSpecific.Lock))
-    table.insert(widths, getCheckboxWidth(frame.BagSpecific.Cleanup.CleanupIgnore))
-    table.insert(widths, getCheckboxWidth(frame.General.ShowOptions))
-
-    local targetWidth = 0
-    for _, width in ipairs(widths) do
-        targetWidth = (width > targetWidth) and width or targetWidth
-    end
-    frame:SetWidth(targetWidth + 10)
-end
-
 function AddOnTable:CreateContainerMenuFrame(parentContainer)
     local menu = CreateFrame("Frame", name, parentContainer.Frame, "BaudBagContainerMenuTemplate")
     menu:Hide()
@@ -228,13 +252,8 @@ function AddOnTable:CreateContainerMenuFrame(parentContainer)
 
     menu:SetupBagSpecific()
     menu:SetupGeneral()
-
-    -- set size based on children
-    updateHeight(menu.BagSpecific.Cleanup)
-    updateHeight(menu.BagSpecific.Filter)
-    updateHeight(menu.BagSpecific)
-    updateHeight(menu.General)
-    updateHeight(menu, 5)
-    updateWidth(menu)
+    
+    updateSize(menu)
+    
     return menu
 end

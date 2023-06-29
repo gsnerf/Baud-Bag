@@ -17,6 +17,7 @@ AddOnTable.BlizzAPI = {
     -- introduced somewhere around BfA but removed in DF
     IsContainerItemAnUpgrade = IsContainerItemAnUpgrade and IsContainerItemAnUpgrade or function() return false end,
     IsInventoryItemLocked = IsInventoryItemLocked,
+    IsInventoryItemProfessionBag = IsInventoryItemProfessionBag,
     GetInventoryItemTexture = GetInventoryItemTexture,
     GetInventoryItemQuality = GetInventoryItemQuality,
     GetInventoryItemLink = GetInventoryItemLink,
