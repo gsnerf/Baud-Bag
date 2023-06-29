@@ -172,6 +172,7 @@ AddOnTable.BlizzConstants = {
     BAG_CLEANUP_BAGS = BAG_CLEANUP_BAGS, -- localized string for "cleanup bag"
     BAG_CLEANUP_REAGENT_BANK = BAG_CLEANUP_REAGENT_BANK, -- localized string for "cleanup reagent bank"
     BAG_CLEANUP_BANK = BAG_CLEANUP_BANK, -- localized string for "cleanup bank"
+    BAG_FILTER_ASSIGN_TO = BAG_FILTER_ASSIGN_TO, -- localized string for filter assignment
     BACKPACK_AUTHENTICATOR_INCREASE_SIZE = BACKPACK_AUTHENTICATOR_INCREASE_SIZE, -- localized string for backpack extension through securing account
 }
 

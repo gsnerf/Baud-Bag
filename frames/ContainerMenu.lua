@@ -16,37 +16,90 @@ BaudBagContainerMenuMixin = {
     backdropColorAlpha = 0.5
 }
 
+local function setupCleanupOptions(self)
+    local cleanupIgnoreButton = CreateFrame("CheckButton", nil, self.BagSpecific.Cleanup, "BaudBagContainerMenuCheckButtonTemplate")
+    cleanupIgnoreButton:SetPoint("TOP")
+    cleanupIgnoreButton:SetScript("OnClick", function() self.Container:SetCleanupIgnore( not self.Container:GetCleanupIgnore()) end)
+    cleanupIgnoreButton.Text:SetText(AddOnTable.BlizzConstants.BAG_FILTER_IGNORE)
+    self.BagSpecific.Cleanup.CleanupIgnore = cleanupIgnoreButton
+
+    if (self.BagSet == BagSetType.Backpack.Id) then
+        local cleanupBagsButton = CreateFrame("CheckButton", nil, self.BagSpecific.Cleanup, "BaudBagContainerMenuCheckButtonTemplate")
+        cleanupBagsButton:SetPoint("TOP", self.BagSpecific.Cleanup.CleanupIgnore, "BOTTOM", 0, 0)
+        cleanupBagsButton.Text:SetText(AddOnTable.BlizzConstants.BAG_CLEANUP_BAGS)
+        cleanupBagsButton:SetScript("OnClick", AddOnTable.BlizzAPI.SortBags)
+        self.BagSpecific.Cleanup.CleanupBags = cleanupBagsButton
+    elseif (self.BagSet == BagSetType.Bank.Id and AddOnTable.State.BankOpen) then
+        local cleanupBagsButton = CreateFrame("CheckButton", nil, self.BagSpecific.Cleanup, "BaudBagContainerMenuCheckButtonTemplate")
+        cleanupBagsButton:SetPoint("TOP", self.BagSpecific.Cleanup.CleanupIgnore, "BOTTOM", 0, 0)
+        if self.ContainerId == AddOnTable.BlizzConstants.REAGENTBANK_CONTAINER then
+            cleanupBagsButton.Text:SetText(AddOnTable.BlizzConstants.BAG_CLEANUP_REAGENT_BANK)
+            cleanupBagsButton:SetScript("OnClick", AddOnTable.BlizzAPI.SortReagentBankBags)
+        else
+            cleanupBagsButton.Text:SetText(AddOnTable.BlizzConstants.BAG_CLEANUP_BANK)
+            cleanupBagsButton:SetScript("OnClick", AddOnTable.BlizzAPI.SortBankBags)
+        end
+        self.BagSpecific.Cleanup.CleanupBags = cleanupBagsButton
+    end
+end
+
+local function setupFilterOptions(self)
+    
+    --[[
+    local numberOfSubContainers = table.getn(containerObject.SubContainers)
+    local firstSubContainerId = containerObject.SubContainers[1].ContainerId
+    if (numberOfSubContainers == 1 and
+        (
+            firstSubContainerId == AddOnTable.BlizzConstants.BACKPACK_CONTAINER
+            or
+            firstSubContainerId == AddOnTable.BlizzConstants.BANK_CONTAINER
+            or
+            firstSubContainerId == AddOnTable.BlizzConstants.REAGENTBANK_CONTAINER
+            or
+            IsInventoryItemProfessionBag("player", AddOnTable.BlizzAPI.ContainerIDToInventoryID(firstSubContainerId))
+        )
+    ) then
+        -- the backpack, bank or reagent bank themselves cannot have filters!
+        return
+    end
+    ]]
+    
+    local toggleFilter = function(button, type, value)
+        value = not value
+        self.Container:SetFilterType(type, value)
+        button:SetChecked(value)
+        if (value) then
+            -- todo: optionally show some kind of visualization
+            --frame.FilterIcon.Icon:SetAtlas(BAG_FILTER_ICONS[i])
+            --frame.FilterIcon:Show()
+        else
+            -- todo: hide optional visualization again
+            --frame.FilterIcon:Hide()
+        end
+    end
+
+    local lastButton = self.BagSpecific.Filter.Header
+    for _, flag in AddOnTable.BlizzAPI.EnumerateBagGearFilters() do
+        local filterButton = CreateFrame("CheckButton", nil, self.BagSpecific.Filter, "BaudBagContainerMenuCheckButtonTemplate")
+        filterButton:SetPoint("TOP", lastButton, "BOTTOM", 0, 0)
+        filterButton:SetChecked(self.Container:GetFilterType() == flag)
+        filterButton:SetScript("OnClick", function() toggleFilter(filterButton, flag, self.Container:GetFilterType() == flag) end)
+        filterButton.Text:SetText(AddOnTable.BlizzConstants.BAG_FILTER_LABELS[flag])
+        lastButton = filterButton
+    end
+end
+
 function BaudBagContainerMenuMixin:SetupBagSpecific()
     self.BagSpecific.Header.Label:SetText(Localized.MenuCatSpecific)
     self.BagSpecific.Lock.Text:SetText(Localized.LockPosition)
+    self.BagSpecific.Filter.Header.Label:SetText(AddOnTable.BlizzConstants.BAG_FILTER_ASSIGN_TO)
     
     -- create sorting stuff if applicable
     if (AddOnTable.BlizzAPI.SupportsContainerSorting()) then
         AddOnTable.Functions.DebugMessage("ContainerMenu", "Creating sorting buttons for container", self.BagSet, self.ContainerId, self.Container)
-        local cleanupIgnoreButton = CreateFrame("CheckButton", nil, self.BagSpecific.SortingFunctions, "BaudBagContainerMenuCheckButtonTemplate")
-        cleanupIgnoreButton:SetPoint("TOP")
-        cleanupIgnoreButton:SetScript("OnClick", function() self.Container:SetCleanupIgnore( not self.Container:GetCleanupIgnore()) end)
-        cleanupIgnoreButton.Text:SetText(AddOnTable.BlizzConstants.BAG_FILTER_IGNORE)
-        self.BagSpecific.SortingFunctions.CleanupIgnore = cleanupIgnoreButton
-
-        if (self.BagSet == BagSetType.Backpack.Id) then
-            local cleanupBagsButton = CreateFrame("CheckButton", nil, self.BagSpecific.SortingFunctions, "BaudBagContainerMenuCheckButtonTemplate")
-            cleanupBagsButton:SetPoint("TOP", self.BagSpecific.SortingFunctions.CleanupIgnore, "BOTTOM", 0, 0)
-            cleanupBagsButton.Text:SetText(AddOnTable.BlizzConstants.BAG_CLEANUP_BAGS)
-            cleanupBagsButton:SetScript("OnClick", AddOnTable.BlizzAPI.SortBags)
-            self.BagSpecific.SortingFunctions.CleanupBags = cleanupBagsButton
-        elseif (self.BagSet == BagSetType.Bank.Id and AddOnTable.State.BankOpen) then
-            local cleanupBagsButton = CreateFrame("CheckButton", nil, self.BagSpecific.SortingFunctions, "BaudBagContainerMenuCheckButtonTemplate")
-            cleanupBagsButton:SetPoint("TOP", self.BagSpecific.SortingFunctions.CleanupIgnore, "BOTTOM", 0, 0)
-            if self.ContainerId == AddOnTable.BlizzConstants.REAGENTBANK_CONTAINER then
-                cleanupBagsButton.Text:SetText(AddOnTable.BlizzConstants.BAG_CLEANUP_REAGENT_BANK)
-                cleanupBagsButton:SetScript("OnClick", AddOnTable.BlizzAPI.SortReagentBankBags)
-            else
-                cleanupBagsButton.Text:SetText(AddOnTable.BlizzConstants.BAG_CLEANUP_BANK)
-                cleanupBagsButton:SetScript("OnClick", AddOnTable.BlizzAPI.SortBankBags)
-            end
-            self.BagSpecific.SortingFunctions.CleanupBags = cleanupBagsButton
-        end
+        
+        setupCleanupOptions(self)
+        setupFilterOptions(self)
         
         -- TODO: these kind of operations cannot be done on initialization, because the container can't have that information yet
         --cleanupIgnoreButton:SetChecked(container:GetCleanupIgnore())
@@ -156,7 +209,7 @@ end
 local function updateWidth(frame)
     local widths = {}
     table.insert(widths, getCheckboxWidth(frame.BagSpecific.Lock))
-    table.insert(widths, getCheckboxWidth(frame.BagSpecific.SortingFunctions.CleanupIgnore))
+    table.insert(widths, getCheckboxWidth(frame.BagSpecific.Cleanup.CleanupIgnore))
     table.insert(widths, getCheckboxWidth(frame.General.ShowOptions))
 
     local targetWidth = 0
@@ -177,7 +230,8 @@ function AddOnTable:CreateContainerMenuFrame(parentContainer)
     menu:SetupGeneral()
 
     -- set size based on children
-    updateHeight(menu.BagSpecific.SortingFunctions)
+    updateHeight(menu.BagSpecific.Cleanup)
+    updateHeight(menu.BagSpecific.Filter)
     updateHeight(menu.BagSpecific)
     updateHeight(menu.General)
     updateHeight(menu, 5)

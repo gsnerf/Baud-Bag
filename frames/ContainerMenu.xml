@@ -72,7 +72,7 @@
 						</Scripts>
 					</CheckButton>
 
-					<Frame parentKey="SortingFunctions">
+					<Frame parentKey="Cleanup">
 						<Anchors>
 							<Anchor point="LEFT" />
 							<Anchor point="TOP" relativeKey="$parent.Lock" relativePoint="BOTTOM" />
@@ -83,6 +83,16 @@
 								to be added dynamically:
 							     * cleanup ignore
 								 * cleanup (only for backpack, backpack containers, reagent bank and reagent bank containers, NO bank and probably NO keyring)
+							-->
+						</Frames>
+					</Frame>
+					<Frame parentKey="Filter" inherits="BaudBagContainerMenuSublistTemplate">
+						<Anchors>
+							<Anchor point="TOP" relativeKey="$parent.Cleanup" relativePoint="BOTTOM" />
+						</Anchors>
+						<Frames>
+							<!--
+								to be added dynamically:
 								 * filter options
 							-->
 						</Frames>
