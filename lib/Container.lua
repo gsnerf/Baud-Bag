@@ -186,16 +186,14 @@ function Prototype:UpdateFreeSlotsOverview(free, overall)
 end
 
 function Prototype:UpdateBagHighlight()
-    local subContainer
     for _, subContainer in pairs(self.SubContainers) do
         subContainer:UpdateOpenBagHighlight()
     end
 end
 
 function Prototype:GetFilterType()
-    local id, container
     for _, container in pairs(self.SubContainers) do
-        id = container.ContainerId
+        local id = container.ContainerId
         if (id ~= BACKPACK_CONTAINER) and (id ~= BANK_CONTAINER) and (id ~= REAGENTBANK_CONTAINER) then
             return container:GetFilterType()
         end
