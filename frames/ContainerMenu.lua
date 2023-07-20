@@ -43,30 +43,27 @@ local function setupCleanupOptions(self)
     end
 end
 
-local function setupFilterOptions(self)
-    
-    local toggleFilter = function(button, type, value)
-        value = not value
-        self.Container:SetFilterType(type, value)
-        button:SetChecked(value)
-        if (value) then
-            -- todo: optionally show some kind of visualization
-            --frame.FilterIcon.Icon:SetAtlas(BAG_FILTER_ICONS[i])
-            --frame.FilterIcon:Show()
-        else
-            -- todo: hide optional visualization again
-            --frame.FilterIcon:Hide()
-        end
+local function updateFilterSelection(self)
+    for index, flag in AddOnTable.BlizzAPI.EnumerateBagGearFilters() do
+        self.BagSpecific.Filter["FilterButton"..index]:SetChecked(self.Container:GetFilterType() == flag)
+    end
+end
+
+local function setupFilterOptions(menu)
+    local updateFilter = function(filterType, newValue)
+        AddOnTable.Functions.DebugMessage("ContainerMenu", "Toggelling filter '"..AddOnTable.BlizzConstants.BAG_FILTER_LABELS[filterType].."' with value for container '"..menu.Container.Id.."'", newValue)
+        menu.Container:SetFilterType(filterType, newValue)
+        menu:Hide()
     end
 
-    local lastButton = self.BagSpecific.Filter.Header
-    for _, flag in AddOnTable.BlizzAPI.EnumerateBagGearFilters() do
-        local filterButton = CreateFrame("CheckButton", nil, self.BagSpecific.Filter, "BaudBagContainerMenuCheckButtonTemplate")
+    local lastButton = menu.BagSpecific.Filter.Header
+    for index, filterType in AddOnTable.BlizzAPI.EnumerateBagGearFilters() do
+        local filterButton = CreateFrame("CheckButton", nil, menu.BagSpecific.Filter, "BaudBagContainerMenuCheckButtonTemplate")
         filterButton:SetPoint("TOP", lastButton, "BOTTOM", 0, 0)
-        filterButton:SetChecked(self.Container:GetFilterType() == flag)
-        filterButton:SetScript("OnClick", function() toggleFilter(filterButton, flag, self.Container:GetFilterType() == flag) end)
-        filterButton.Text:SetText(AddOnTable.BlizzConstants.BAG_FILTER_LABELS[flag])
+        filterButton:HookScript("OnClick", function(button) updateFilter(filterType, button:GetChecked()) end)
+        filterButton.Text:SetText(AddOnTable.BlizzConstants.BAG_FILTER_LABELS[filterType])
         lastButton = filterButton
+        menu.BagSpecific.Filter["FilterButton"..index] = filterButton
     end
 end
 
@@ -123,6 +120,7 @@ end
 function BaudBagContainerMenuMixin:OnShow()
     AddOnTable.Functions.DebugMessage("ContainerMenu", "Called OnShow")
     self.General.ShowOptions:SetChecked(false)
+    updateFilterSelection(self)
 end
 
 local function updateHeight(frame, bottomOffset)
@@ -166,7 +164,7 @@ local function updateSize(menu)
     updateWidth(menu)
 end
 
-local function updateFilterVisibility(menu, container)
+local function updateFilter(menu, container)
     if next(container.SubContainers) == nil then
         return
     end
@@ -191,13 +189,21 @@ local function updateFilterVisibility(menu, container)
     end
 
     menu.BagSpecific.Filter:SetShown(shouldShowFilters)
+
+    if (shouldShowFilters) then
+        updateFilterSelection(menu)
+    end
 end
 
 function BaudBagContainerMenuMixin:Update()
-    updateFilterVisibility(self, self.Container)
+    updateFilter(self, self.Container)
     updateSize(self)
 end
 
+function BaudBagContainerMenuMixin:OnEvent(event, ...)
+    AddOnTable.Functions.DebugMessage("ContainerMenu", "OnEvent was called with '"..event.."' event, with values",  ...)
+    self:Update()
+end
 
 BaudBagContainerMenuButtonMixin = {}
 
@@ -252,6 +258,13 @@ function AddOnTable:CreateContainerMenuFrame(parentContainer)
 
     menu:SetupBagSpecific()
     menu:SetupGeneral()
+
+    if (parentContainer.BagSet.Id == BagSetType.Backpack.Id) then
+        menu:RegisterEvent("BAG_SLOT_FLAGS_UPDATED")
+    elseif (parentContainer.BagSet.Id == BagSetType.Bank.Id) then
+        menu:RegisterEvent("BANK_BAG_SLOT_FLAGS_UPDATED")
+    end
+    menu:SetScript("OnEvent", menu.OnEvent)
     
     updateSize(menu)
     

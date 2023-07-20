@@ -81,6 +81,7 @@ function Prototype:Rebuild()
     if (numberOfSlots > 0) then
         self:UpdateBackground()
     end
+    self.Menu:Update()
 end
 
 function Prototype:Update()
