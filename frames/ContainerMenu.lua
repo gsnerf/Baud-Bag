@@ -2,6 +2,68 @@ local AddOnName, AddOnTable = ...
 local Localized = AddOnTable.Localized
 local _
 
+-- ------------------------------------------------------------------------------
+--  check button for usage in container menu   
+-- ------------------------------------------------------------------------------
+
+BaudBagContainerMenuButtonMixin = {}
+
+function BaudBagContainerMenuButtonMixin:ToggleContainerLock()
+    local containerMenu = self:GetParent():GetParent()
+
+    local bagSet = containerMenu.BagSet
+    local containerId = containerMenu.ContainerId
+    local currentValue = AddOnTable.Config[bagSet][containerId].Locked
+
+    AddOnTable.Functions.DebugMessage("ContainerMenu", "toggeling container lock (bagSet, containerId, currentConfig)", bagSet, containerId, currentValue)
+
+    AddOnTable.Config[bagSet][containerId].Locked = not currentValue
+    containerMenu:Hide()
+end
+
+function BaudBagContainerMenuButtonMixin:JumpToOptions()
+    local containerMenu = self:GetParent():GetParent()
+
+    local bagSet = containerMenu.BagSet
+    local containerId = containerMenu.ContainerId
+
+    BaudBagOptionsSelectContainer(bagSet, containerId)
+    -- working around what seems to be a bug in blizzards code, preventing this to work on the first try..
+    InterfaceOptionsFrame_OpenToCategory("Baud Bag")
+    InterfaceOptionsFrame_OpenToCategory("Baud Bag")
+
+    containerMenu:Hide()
+end
+
+function BaudBagContainerMenuButtonMixin:ToggleBank()
+    local firstBankContainer = AddOnTable.Sets[2].Containers[1]
+    if firstBankContainer.Frame:IsShown() then
+        firstBankContainer.Frame:Hide()
+        AddOnTable.Sets[2]:AutoClose()
+    else
+        firstBankContainer.Frame:Show()
+        AddOnTable.Sets[2]:AutoOpen()
+    end
+
+    local containerMenu = self:GetParent():GetParent()
+    containerMenu:Hide()
+end
+
+function BaudBagContainerMenuButtonMixin:AddSlots()
+    StaticPopup_Show("BACKPACK_INCREASE_SIZE")
+
+    local containerMenu = self:GetParent():GetParent()
+    containerMenu:Hide()
+end
+
+function BaudBagContainerMenuButtonMixin:GetMinimumWidth()
+    return self.textureWidth + 5 + self.Text:GetWidth()
+end
+
+-- ------------------------------------------------------------------------------
+--  container menu itself  
+-- ------------------------------------------------------------------------------
+
 BaudBagContainerMenuMixin = {
     backdropInfo = {
         bgFile = "Interface\\Tooltips\\UI-Tooltip-Background",
@@ -208,59 +270,9 @@ function BaudBagContainerMenuMixin:OnEvent(event, ...)
     self:Update()
 end
 
-BaudBagContainerMenuButtonMixin = {}
-
-function BaudBagContainerMenuButtonMixin:ToggleContainerLock()
-    local containerMenu = self:GetParent():GetParent()
-
-    local bagSet = containerMenu.BagSet
-    local containerId = containerMenu.ContainerId
-    local currentValue = AddOnTable.Config[bagSet][containerId].Locked
-
-    AddOnTable.Functions.DebugMessage("ContainerMenu", "toggeling container lock (bagSet, containerId, currentConfig)", bagSet, containerId, currentValue)
-
-    AddOnTable.Config[bagSet][containerId].Locked = not currentValue
-    containerMenu:Hide()
-end
-
-function BaudBagContainerMenuButtonMixin:JumpToOptions()
-    local containerMenu = self:GetParent():GetParent()
-
-    local bagSet = containerMenu.BagSet
-    local containerId = containerMenu.ContainerId
-
-    BaudBagOptionsSelectContainer(bagSet, containerId)
-    -- working around what seems to be a bug in blizzards code, preventing this to work on the first try..
-    InterfaceOptionsFrame_OpenToCategory("Baud Bag")
-    InterfaceOptionsFrame_OpenToCategory("Baud Bag")
-
-    containerMenu:Hide()
-end
-
-function BaudBagContainerMenuButtonMixin:ToggleBank()
-    local firstBankContainer = AddOnTable.Sets[2].Containers[1]
-    if firstBankContainer.Frame:IsShown() then
-        firstBankContainer.Frame:Hide()
-        AddOnTable.Sets[2]:AutoClose()
-    else
-        firstBankContainer.Frame:Show()
-        AddOnTable.Sets[2]:AutoOpen()
-    end
-
-    local containerMenu = self:GetParent():GetParent()
-    containerMenu:Hide()
-end
-
-function BaudBagContainerMenuButtonMixin:AddSlots()
-    StaticPopup_Show("BACKPACK_INCREASE_SIZE")
-
-    local containerMenu = self:GetParent():GetParent()
-    containerMenu:Hide()
-end
-
-function BaudBagContainerMenuButtonMixin:GetMinimumWidth()
-    return self.textureWidth + 5 + self.Text:GetWidth()
-end
+-- ------------------------------------------------------------------------------
+--  creator in addon name space
+-- ------------------------------------------------------------------------------
 
 function AddOnTable:CreateContainerMenuFrame(parentContainer)
     local menu = CreateFrame("Frame", name, parentContainer.Frame, "BaudBagContainerMenuTemplate")
