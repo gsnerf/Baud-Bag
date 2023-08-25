@@ -20,23 +20,23 @@ local function setupCleanupOptions(self)
     local cleanupIgnoreButton = CreateFrame("CheckButton", nil, self.BagSpecific.Cleanup, "BaudBagContainerMenuCheckButtonTemplate")
     cleanupIgnoreButton:SetPoint("TOP")
     cleanupIgnoreButton:SetScript("OnClick", function() self.Container:SetCleanupIgnore( not self.Container:GetCleanupIgnore()) end)
-    cleanupIgnoreButton.Text:SetText(AddOnTable.BlizzConstants.BAG_FILTER_IGNORE)
+    cleanupIgnoreButton:SetText(AddOnTable.BlizzConstants.BAG_FILTER_IGNORE)
     self.BagSpecific.Cleanup.CleanupIgnore = cleanupIgnoreButton
 
     if (self.BagSet == BagSetType.Backpack.Id) then
         local cleanupBagsButton = CreateFrame("CheckButton", nil, self.BagSpecific.Cleanup, "BaudBagContainerMenuCheckButtonTemplate")
         cleanupBagsButton:SetPoint("TOP", self.BagSpecific.Cleanup.CleanupIgnore, "BOTTOM", 0, 0)
-        cleanupBagsButton.Text:SetText(AddOnTable.BlizzConstants.BAG_CLEANUP_BAGS)
+        cleanupBagsButton:SetText(AddOnTable.BlizzConstants.BAG_CLEANUP_BAGS)
         cleanupBagsButton:SetScript("OnClick", AddOnTable.BlizzAPI.SortBags)
         self.BagSpecific.Cleanup.CleanupBags = cleanupBagsButton
     elseif (self.BagSet == BagSetType.Bank.Id and AddOnTable.State.BankOpen) then
         local cleanupBagsButton = CreateFrame("CheckButton", nil, self.BagSpecific.Cleanup, "BaudBagContainerMenuCheckButtonTemplate")
         cleanupBagsButton:SetPoint("TOP", self.BagSpecific.Cleanup.CleanupIgnore, "BOTTOM", 0, 0)
         if self.ContainerId == AddOnTable.BlizzConstants.REAGENTBANK_CONTAINER then
-            cleanupBagsButton.Text:SetText(AddOnTable.BlizzConstants.BAG_CLEANUP_REAGENT_BANK)
+            cleanupBagsButton:SetText(AddOnTable.BlizzConstants.BAG_CLEANUP_REAGENT_BANK)
             cleanupBagsButton:SetScript("OnClick", AddOnTable.BlizzAPI.SortReagentBankBags)
         else
-            cleanupBagsButton.Text:SetText(AddOnTable.BlizzConstants.BAG_CLEANUP_BANK)
+            cleanupBagsButton:SetText(AddOnTable.BlizzConstants.BAG_CLEANUP_BANK)
             cleanupBagsButton:SetScript("OnClick", AddOnTable.BlizzAPI.SortBankBags)
         end
         self.BagSpecific.Cleanup.CleanupBags = cleanupBagsButton
@@ -61,7 +61,7 @@ local function setupFilterOptions(menu)
         local filterButton = CreateFrame("CheckButton", nil, menu.BagSpecific.Filter, "BaudBagContainerMenuCheckButtonTemplate")
         filterButton:SetPoint("TOP", lastButton, "BOTTOM", 0, 0)
         filterButton:HookScript("OnClick", function(button) updateFilter(filterType, button:GetChecked()) end)
-        filterButton.Text:SetText(AddOnTable.BlizzConstants.BAG_FILTER_LABELS[filterType])
+        filterButton:SetText(AddOnTable.BlizzConstants.BAG_FILTER_LABELS[filterType])
         lastButton = filterButton
         menu.BagSpecific.Filter["FilterButton"..index] = filterButton
     end
@@ -69,7 +69,7 @@ end
 
 function BaudBagContainerMenuMixin:SetupBagSpecific()
     self.BagSpecific.Header.Label:SetText(Localized.MenuCatSpecific)
-    self.BagSpecific.Lock.Text:SetText(Localized.LockPosition)
+    self.BagSpecific.Lock:SetText(Localized.LockPosition)
     self.BagSpecific.Filter.Header.Label:SetText(AddOnTable.BlizzConstants.BAG_FILTER_ASSIGN_TO)
     
     -- create sorting stuff if applicable
@@ -86,13 +86,13 @@ end
 
 function BaudBagContainerMenuMixin:SetupGeneral()
     self.General.Header.Label:SetText(Localized.MenuCatGeneral)
-    self.General.ShowOptions.Text:SetText(Localized.Options)
+    self.General.ShowOptions:SetText(Localized.Options)
 
     -- create general buttons if applicable
 
     if (self.BagSet == BagSetType.Backpack.Id) then
         local showBankButton = CreateFrame("CheckButton", nil, self.General, "BaudBagContainerMenuCheckButtonTemplate")
-        showBankButton.Text:SetText(Localized.ShowBank)
+        showBankButton:SetText(Localized.ShowBank)
         showBankButton:SetScript("OnClick", showBankButton.ToggleBank)
         showBankButton:SetPoint("TOP", self.General.ShowOptions, "BOTTOM")
 
@@ -100,7 +100,7 @@ function BaudBagContainerMenuMixin:SetupGeneral()
         local backpackCanBeExtended = not (IsAccountSecured() and AddOnTable.BlizzAPI.GetContainerNumSlots(AddOnTable.BlizzConstants.BACKPACK_CONTAINER) > AddOnTable.BlizzConstants.BACKPACK_BASE_SIZE)
         if (backpackCanBeExtended) then
             local extendBackpack = CreateFrame("CheckButton", nil, self.General, "BaudBagContainerMenuCheckButtonTemplate")
-            extendBackpack.Text:SetText(AddonTable.BlizzConstants.BACKPACK_AUTHENTICATOR_INCREASE_SIZE)
+            extendBackpack:SetText(AddOnTable.BlizzConstants.BACKPACK_AUTHENTICATOR_INCREASE_SIZE)
             extendBackpack:SetScript("OnClick", extendBackpack.AddSlots)
             extendBackpack:SetPoint("TOP", showBankButton, "BOTTOM")
         end

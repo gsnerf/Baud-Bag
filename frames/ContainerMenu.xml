@@ -21,16 +21,7 @@
 		<Anchors>
 			<Anchor point="LEFT" x="10" />
 		</Anchors>
-		<Layers>
-			<Layer level="BACKGROUND">
-				<FontString inherits="GameFontNormalSmall" parentKey="Text">
-					<Anchors>
-						<Anchor point="LEFT" relativePoint="RIGHT" x="5" y="0" />
-					</Anchors>
-					<Color r="1" g="1" b="1" a="1" />
-				</FontString>
-			</Layer>
-		</Layers>
+		<!-- icon part -->
 		<NormalTexture file="Interface\Buttons\UI-RadioButton">
 			<TexCoords left="0" right="0.25" top="0" bottom="1"/>
 		</NormalTexture>
@@ -40,6 +31,13 @@
 		<CheckedTexture file="Interface\Buttons\UI-RadioButton">
 			<TexCoords left="0.25" right="0.5" top="0" bottom="1"/>
 		</CheckedTexture>
+		<!-- text part -->
+		<ButtonText inherits="GameFontNormalSmall" parentKey="Text">
+			<Anchors>
+				<Anchor point="LEFT" relativePoint="LEFT" x="21" y="0" />
+			</Anchors>
+			<Color r="1" g="1" b="1" a="1" />
+		</ButtonText>
 	</CheckButton>
 
 	<Frame name="BaudBagContainerMenuSublistTemplate" virtual="true">
