@@ -17,18 +17,29 @@
 	</Frame>
 
 	<CheckButton name="BaudBagContainerMenuCheckButtonTemplate" mixin="BaudBagContainerMenuButtonMixin" virtual="true">
-		<Size x="16" y="16" />
+		<KeyValues>
+			<KeyValue key="textureWidth" value="16" type="number"/>
+		</KeyValues>
+		<Size y="16" />
 		<Anchors>
 			<Anchor point="LEFT" x="10" />
 		</Anchors>
 		<!-- icon part -->
 		<NormalTexture file="Interface\Buttons\UI-RadioButton">
+			<Size x="16" y="16" />
+			<Anchors><Anchor point="LEFT" x="0" /></Anchors>
 			<TexCoords left="0" right="0.25" top="0" bottom="1"/>
 		</NormalTexture>
-		<HighlightTexture file="Interface\Buttons\UI-RadioButton" alphaMode="ADD">
-			<TexCoords left="0.5" right="0.75" top="0" bottom="1"/>
+		<HighlightTexture file="Interface\Buttons\UI-Listbox-Highlight" alphaMode="ADD" alpha="0.5">
+			<Size y="16" />
+			<Anchors>
+				<Anchor point="LEFT" x="0" />
+				<Anchor point="RIGHT" x="0" />
+			</Anchors>
 		</HighlightTexture>
 		<CheckedTexture file="Interface\Buttons\UI-RadioButton">
+			<Size x="16" y="16" />
+			<Anchors><Anchor point="LEFT" x="0" /></Anchors>
 			<TexCoords left="0.25" right="0.5" top="0" bottom="1"/>
 		</CheckedTexture>
 		<!-- text part -->

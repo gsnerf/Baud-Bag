@@ -13,7 +13,8 @@ BaudBagContainerMenuMixin = {
          insets = { left = 2, right = 2, top = 2, bottom = 2 },
     },
     backdropColor = CreateColor( 0.0, 0.0, 0.0 ),
-    backdropColorAlpha = 0.5
+    backdropColorAlpha = 0.5,
+    checkButtons = {}
 }
 
 local function setupCleanupOptions(self)
@@ -22,6 +23,7 @@ local function setupCleanupOptions(self)
     cleanupIgnoreButton:SetScript("OnClick", function() self.Container:SetCleanupIgnore( not self.Container:GetCleanupIgnore()) end)
     cleanupIgnoreButton:SetText(AddOnTable.BlizzConstants.BAG_FILTER_IGNORE)
     self.BagSpecific.Cleanup.CleanupIgnore = cleanupIgnoreButton
+    table.insert(self.checkButtons, cleanupIgnoreButton)
 
     if (self.BagSet == BagSetType.Backpack.Id) then
         local cleanupBagsButton = CreateFrame("CheckButton", nil, self.BagSpecific.Cleanup, "BaudBagContainerMenuCheckButtonTemplate")
@@ -29,6 +31,7 @@ local function setupCleanupOptions(self)
         cleanupBagsButton:SetText(AddOnTable.BlizzConstants.BAG_CLEANUP_BAGS)
         cleanupBagsButton:SetScript("OnClick", AddOnTable.BlizzAPI.SortBags)
         self.BagSpecific.Cleanup.CleanupBags = cleanupBagsButton
+        table.insert(self.checkButtons, cleanupBagsButton)
     elseif (self.BagSet == BagSetType.Bank.Id and AddOnTable.State.BankOpen) then
         local cleanupBagsButton = CreateFrame("CheckButton", nil, self.BagSpecific.Cleanup, "BaudBagContainerMenuCheckButtonTemplate")
         cleanupBagsButton:SetPoint("TOP", self.BagSpecific.Cleanup.CleanupIgnore, "BOTTOM", 0, 0)
@@ -40,6 +43,7 @@ local function setupCleanupOptions(self)
             cleanupBagsButton:SetScript("OnClick", AddOnTable.BlizzAPI.SortBankBags)
         end
         self.BagSpecific.Cleanup.CleanupBags = cleanupBagsButton
+        table.insert(self.checkButtons, cleanupBagsButton)
     end
 end
 
@@ -64,6 +68,7 @@ local function setupFilterOptions(menu)
         filterButton:SetText(AddOnTable.BlizzConstants.BAG_FILTER_LABELS[filterType])
         lastButton = filterButton
         menu.BagSpecific.Filter["FilterButton"..index] = filterButton
+        table.insert(menu.checkButtons, filterButton)
     end
 end
 
@@ -71,6 +76,8 @@ function BaudBagContainerMenuMixin:SetupBagSpecific()
     self.BagSpecific.Header.Label:SetText(Localized.MenuCatSpecific)
     self.BagSpecific.Lock:SetText(Localized.LockPosition)
     self.BagSpecific.Filter.Header.Label:SetText(AddOnTable.BlizzConstants.BAG_FILTER_ASSIGN_TO)
+
+    table.insert(self.checkButtons, self.BagSpecific.Lock)
     
     -- create sorting stuff if applicable
     if (AddOnTable.BlizzAPI.SupportsContainerSorting()) then
@@ -88,6 +95,8 @@ function BaudBagContainerMenuMixin:SetupGeneral()
     self.General.Header.Label:SetText(Localized.MenuCatGeneral)
     self.General.ShowOptions:SetText(Localized.Options)
 
+    table.insert(self.checkButtons, self.General.ShowOptions)
+
     -- create general buttons if applicable
 
     if (self.BagSet == BagSetType.Backpack.Id) then
@@ -95,7 +104,7 @@ function BaudBagContainerMenuMixin:SetupGeneral()
         showBankButton:SetText(Localized.ShowBank)
         showBankButton:SetScript("OnClick", showBankButton.ToggleBank)
         showBankButton:SetPoint("TOP", self.General.ShowOptions, "BOTTOM")
-
+        table.insert(self.checkButtons, showBankButton)
         
         local backpackCanBeExtended = not (IsAccountSecured() and AddOnTable.BlizzAPI.GetContainerNumSlots(AddOnTable.BlizzConstants.BACKPACK_CONTAINER) > AddOnTable.BlizzConstants.BACKPACK_BASE_SIZE)
         if (backpackCanBeExtended) then
@@ -103,6 +112,7 @@ function BaudBagContainerMenuMixin:SetupGeneral()
             extendBackpack:SetText(AddOnTable.BlizzConstants.BACKPACK_AUTHENTICATOR_INCREASE_SIZE)
             extendBackpack:SetScript("OnClick", extendBackpack.AddSlots)
             extendBackpack:SetPoint("TOP", showBankButton, "BOTTOM")
+            table.insert(self.checkButtons, extendBackpack)
         end
     end
 
@@ -134,18 +144,11 @@ local function updateHeight(frame, bottomOffset)
     frame:SetHeight(targetHeight)
 end
 
-local function getCheckboxWidth(checkbox)
-    if (checkbox) then
-        return checkbox:GetWidth() + 20 + checkbox.Text:GetWidth()
-    end
-    return 0
-end
-
 local function updateWidth(frame)
     local widths = {}
-    table.insert(widths, getCheckboxWidth(frame.BagSpecific.Lock))
-    table.insert(widths, getCheckboxWidth(frame.BagSpecific.Cleanup.CleanupIgnore))
-    table.insert(widths, getCheckboxWidth(frame.General.ShowOptions))
+    for _, checkButton in ipairs (frame.checkButtons) do
+        table.insert(widths, checkButton:GetMinimumWidth())
+    end
 
     local targetWidth = 0
     for _, width in ipairs(widths) do
@@ -247,6 +250,10 @@ end
 
 function BaudBagContainerMenuButtonMixin:AddSlots()
     StaticPopup_Show("BACKPACK_INCREASE_SIZE")
+end
+
+function BaudBagContainerMenuButtonMixin:GetMinimumWidth()
+    return self.textureWidth + 5 + self.Text:GetWidth()
 end
 
 function AddOnTable:CreateContainerMenuFrame(parentContainer)
