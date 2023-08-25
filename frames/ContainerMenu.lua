@@ -246,10 +246,16 @@ function BaudBagContainerMenuButtonMixin:ToggleBank()
         firstBankContainer.Frame:Show()
         AddOnTable.Sets[2]:AutoOpen()
     end
+
+    local containerMenu = self:GetParent():GetParent()
+    containerMenu:Hide()
 end
 
 function BaudBagContainerMenuButtonMixin:AddSlots()
     StaticPopup_Show("BACKPACK_INCREASE_SIZE")
+
+    local containerMenu = self:GetParent():GetParent()
+    containerMenu:Hide()
 end
 
 function BaudBagContainerMenuButtonMixin:GetMinimumWidth()
