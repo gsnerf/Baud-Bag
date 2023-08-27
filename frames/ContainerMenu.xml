@@ -133,6 +133,8 @@
 
 		<Scripts>
 			<OnShow method="OnShow" />
+			<OnEvent method="OnEvent" />
+			<OnHide method="OnHide" />
 		</Scripts>
 	</Frame>
 </Ui>

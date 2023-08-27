@@ -223,8 +223,26 @@ end
 
 function BaudBagContainerMenuMixin:OnShow()
     AddOnTable.Functions.DebugMessage("ContainerMenu", "Called OnShow")
+
+    -- events
+    if (self.BagSet == BagSetType.Backpack.Id) then
+        self:RegisterEvent("BAG_SLOT_FLAGS_UPDATED")
+    elseif (self.BagSet == BagSetType.Bank.Id) then
+        self:RegisterEvent("BANK_BAG_SLOT_FLAGS_UPDATED")
+    end
+    self:RegisterEvent("GLOBAL_MOUSE_DOWN")
+
+    -- value reset
     self.General.ShowOptions:SetChecked(false)
+
+    -- content update
     self:Update()
+end
+
+function BaudBagContainerMenuMixin:OnHide()
+    self:UnregisterEvent("BAG_SLOT_FLAGS_UPDATED")
+    self:UnregisterEvent("BANK_BAG_SLOT_FLAGS_UPDATED")
+    self:UnregisterEvent("GLOBAL_MOUSE_DOWN")
 end
 
 local function updateHeight(frame, bottomOffset)
@@ -301,6 +319,11 @@ end
 function BaudBagContainerMenuMixin:OnEvent(event, ...)
     AddOnTable.Functions.DebugMessage("ContainerMenu", "OnEvent was called with '"..event.."' event, with values",  ...)
     self:Update()
+    if (event == "GLOBAL_MOUSE_DOWN") then
+        if not self:IsMouseOver() then
+            self:Hide()
+        end
+    end
 end
 
 -- ------------------------------------------------------------------------------
@@ -317,13 +340,6 @@ function AddOnTable:CreateContainerMenuFrame(parentContainer)
     menu:SetupBagSpecific()
     menu:SetupGeneral()
 
-    if (parentContainer.BagSet.Id == BagSetType.Backpack.Id) then
-        menu:RegisterEvent("BAG_SLOT_FLAGS_UPDATED")
-    elseif (parentContainer.BagSet.Id == BagSetType.Bank.Id) then
-        menu:RegisterEvent("BANK_BAG_SLOT_FLAGS_UPDATED")
-    end
-    menu:SetScript("OnEvent", menu.OnEvent)
-    
     updateSize(menu)
     
     return menu
