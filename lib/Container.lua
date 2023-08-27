@@ -381,6 +381,7 @@ function BaudBagContainer_OnHide(self, event, ...)
     end
 
     self:Show()
+    AddOnTable.Sets[self.BagSet].Containers[self:GetID()].Menu:Hide()
 end
 
 
