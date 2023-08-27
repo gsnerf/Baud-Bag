@@ -121,26 +121,6 @@ local function setupCleanupOptions(self)
     table.insert(self.checkButtons, cleanupBagsButton)
 end
 
-local function updateCleanupButton(self)
-    if (self.BagSet == BagSetType.Bank.Id) then
-        local container = self.Container
-        local cleanupBagsButton = self.BagSpecific.Cleanup.CleanupBags
-        if container.SubContainers[1]:GetID() == AddOnTable.BlizzConstants.REAGENTBANK_CONTAINER then
-            cleanupBagsButton:SetText(AddOnTable.BlizzConstants.BAG_CLEANUP_REAGENT_BANK)
-            cleanupBagsButton:SetScript("OnClick", cleanupBagsButton.SortReagentBankBags)
-        else
-            cleanupBagsButton:SetText(AddOnTable.BlizzConstants.BAG_CLEANUP_BANK)
-            cleanupBagsButton:SetScript("OnClick", cleanupBagsButton.SortBankBags)
-        end
-
-        if (AddOnTable.State.BankOpen) then
-            cleanupBagsButton:Show()
-        else
-            cleanupBagsButton:Hide()
-        end
-    end
-end
-
 local function updateFilterSelection(self)
     for index, flag in AddOnTable.BlizzAPI.EnumerateBagGearFilters() do
         self.BagSpecific.Filter["FilterButton"..index]:SetChecked(self.Container:GetFilterType() == flag)
@@ -179,9 +159,6 @@ function BaudBagContainerMenuMixin:SetupBagSpecific()
         
         setupCleanupOptions(self)
         setupFilterOptions(self)
-        
-        -- TODO: these kind of operations cannot be done on initialization, because the container can't have that information yet
-        --cleanupIgnoreButton:SetChecked(container:GetCleanupIgnore())
     end
 end
 
@@ -198,6 +175,7 @@ function BaudBagContainerMenuMixin:SetupGeneral()
         showBankButton:SetText(Localized.ShowBank)
         showBankButton:SetScript("OnClick", showBankButton.ToggleBank)
         showBankButton:SetPoint("TOP", self.General.ShowOptions, "BOTTOM")
+        self.General.ShowBankButton = showBankButton
         table.insert(self.checkButtons, showBankButton)
         
         local backpackCanBeExtended = not (IsAccountSecured() and AddOnTable.BlizzAPI.GetContainerNumSlots(AddOnTable.BlizzConstants.BACKPACK_CONTAINER) > AddOnTable.BlizzConstants.BACKPACK_BASE_SIZE)
@@ -221,6 +199,19 @@ function BaudBagContainerMenuMixin:Toggle()
     end
 end
 
+local function finishCleanupButtonSetup(menu)
+    if (menu.BagSet == BagSetType.Bank.Id) then
+        local container = menu.Container
+        local cleanupBagsButton = menu.BagSpecific.Cleanup.CleanupBags
+        
+        local isReagentBank = container.SubContainers[1]:GetID() == AddOnTable.BlizzConstants.REAGENTBANK_CONTAINER
+
+        cleanupBagsButton:SetShown(AddOnTable.State.BankOpen)
+        cleanupBagsButton:SetText(isReagentBank and AddOnTable.BlizzConstants.BAG_CLEANUP_REAGENT_BANK or AddOnTable.BlizzConstants.BAG_CLEANUP_BANK)
+        cleanupBagsButton:SetScript("OnClick", isReagentBank and cleanupBagsButton.SortReagentBankBags or cleanupBagsButton.SortBankBags)
+    end
+end
+
 function BaudBagContainerMenuMixin:OnShow()
     AddOnTable.Functions.DebugMessage("ContainerMenu", "Called OnShow")
 
@@ -233,9 +224,16 @@ function BaudBagContainerMenuMixin:OnShow()
     self:RegisterEvent("GLOBAL_MOUSE_DOWN")
 
     -- value reset
+    self.BagSpecific.Lock:SetChecked(AddOnTable.Config[self.BagSet][self.ContainerId].Locked)
+    self.BagSpecific.Cleanup.CleanupIgnore:SetChecked(self.Container:GetCleanupIgnore())
+    self.BagSpecific.Cleanup.CleanupBags:SetChecked(false)
     self.General.ShowOptions:SetChecked(false)
-
+    if (self.General.ShowBankButton) then
+        self.General.ShowBankButton:SetChecked(false)
+    end
+    
     -- content update
+    finishCleanupButtonSetup(self)
     self:Update()
 end
 
@@ -311,7 +309,6 @@ local function updateFilter(menu, container)
 end
 
 function BaudBagContainerMenuMixin:Update()
-    updateCleanupButton(self)
     updateFilter(self, self.Container)
     updateSize(self)
 end
