@@ -67,7 +67,7 @@
 		</Frames>
 	</Frame>
 
-	<Frame name="BaudBagContainerMenuTemplate" mixin="BaudBagContainerMenuMixin" virtual="true" inherits="BackdropTemplate">
+	<Frame name="BaudBagContainerMenuTemplate" mixin="BaudBagContainerMenuMixin" virtual="true" inherits="BackdropTemplate" frameStrata="TOOLTIP">
 		<Size x="123" y="156" />
 		<Frames>
 			<Frame parentKey="BagSpecific" inherits="BaudBagContainerMenuSublistTemplate">
