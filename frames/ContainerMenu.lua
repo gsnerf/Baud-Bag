@@ -96,7 +96,7 @@ BaudBagContainerMenuMixin = {
          insets = { left = 2, right = 2, top = 2, bottom = 2 },
     },
     backdropColor = CreateColor( 0.0, 0.0, 0.0 ),
-    backdropColorAlpha = 0.5,
+    backdropColorAlpha = 0.9,
     checkButtons = {}
 }
 
