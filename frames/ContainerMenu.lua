@@ -347,3 +347,11 @@ function AddOnTable:CreateContainerMenuFrame(parentContainer)
     
     return menu
 end
+
+-- this is supposed to be a temporary event handler, until container has been rewritten to use mixins
+function BaudBagContainerMenu_Show(self)
+    local Container = self:GetParent()
+    local containerMenu = AddOnTable.Sets[Container.BagSet].Containers[Container:GetID()].Menu
+    containerMenu:SetPoint("TOPLEFT", self, "BOTTOMLEFT")
+    containerMenu:Toggle()
+end

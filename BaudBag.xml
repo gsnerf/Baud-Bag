@@ -52,7 +52,7 @@
 					<Anchor point="TOPRIGHT" relativeTo="$parentCloseButton" relativePoint="TOPLEFT" x="0" y="-8" />
 				</Anchors>
 				<Scripts>
-					<OnClick function="BaudBagContainerDropDown_Show" />
+					<OnClick function="BaudBagContainerMenu_Show" />
 				</Scripts>
 				<NormalTexture file="Interface\Buttons\UI-PlusButton-Up" />
 				<PushedTexture file="Interface\Buttons\UI-PlusButton-Down" />
@@ -158,12 +158,6 @@
 		</Scripts>
 	</Frame>
 	
-	<Frame name="BaudBagContainerDropDown" inherits="UIDropDownMenuTemplate" hidden="true" id="1">
-		<Scripts>
-			<OnLoad function="BaudBagContainerDropDown_OnLoad" />
-		</Scripts>
-	</Frame>
-
 	<Frame name="BaudBagContainer1_1" inherits="BaudBagFirstContainerTemplate">
 		<Frames>
 			<Frame name="$parentBagsFrame" parentKey="BagsFrame" inherits="BaudBagBagsFrameTemplate">
