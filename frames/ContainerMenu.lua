@@ -212,35 +212,35 @@ local function finishCleanupButtonSetup(menu)
     end
 end
 
-function BaudBagContainerMenuMixin:OnShow()
-    AddOnTable.Functions.DebugMessage("ContainerMenu", "Called OnShow")
-
-    -- events
-    if (self.BagSet == BagSetType.Backpack.Id) then
-        self:RegisterEvent("BAG_SLOT_FLAGS_UPDATED")
-    elseif (self.BagSet == BagSetType.Bank.Id) then
-        self:RegisterEvent("BANK_BAG_SLOT_FLAGS_UPDATED")
-    end
-    self:RegisterEvent("GLOBAL_MOUSE_DOWN")
-
-    -- value reset
-    self.BagSpecific.Lock:SetChecked(AddOnTable.Config[self.BagSet][self.ContainerId].Locked)
-    self.BagSpecific.Cleanup.CleanupIgnore:SetChecked(self.Container:GetCleanupIgnore())
-    self.BagSpecific.Cleanup.CleanupBags:SetChecked(false)
-    self.General.ShowOptions:SetChecked(false)
-    if (self.General.ShowBankButton) then
-        self.General.ShowBankButton:SetChecked(false)
+local function finishFilterSetup(menu, container)
+    if next(container.SubContainers) == nil then
+        return
     end
     
-    -- content update
-    finishCleanupButtonSetup(self)
-    self:Update()
-end
+    -- update visibility based on container content
+    local numberOfSubContainers = table.getn(container.SubContainers)
+    local firstSubContainerId = container.SubContainers[1].ContainerId
+    local shouldShowFilters = true
+    if (numberOfSubContainers == 1 and
+        (
+            firstSubContainerId == AddOnTable.BlizzConstants.BACKPACK_CONTAINER
+            or
+            firstSubContainerId == AddOnTable.BlizzConstants.BANK_CONTAINER
+            or
+            firstSubContainerId == AddOnTable.BlizzConstants.REAGENTBANK_CONTAINER
+            or
+            AddOnTable.BlizzAPI.IsInventoryItemProfessionBag("player", AddOnTable.BlizzAPI.ContainerIDToInventoryID(firstSubContainerId))
+        )
+    ) then
+        -- the backpack, bank or reagent bank themselves cannot have filters!
+        shouldShowFilters = false
+    end
 
-function BaudBagContainerMenuMixin:OnHide()
-    self:UnregisterEvent("BAG_SLOT_FLAGS_UPDATED")
-    self:UnregisterEvent("BANK_BAG_SLOT_FLAGS_UPDATED")
-    self:UnregisterEvent("GLOBAL_MOUSE_DOWN")
+    menu.BagSpecific.Filter:SetShown(shouldShowFilters)
+
+    if (shouldShowFilters) then
+        updateFilterSelection(menu)
+    end
 end
 
 local function updateHeight(frame, bottomOffset)
@@ -277,45 +277,51 @@ local function updateSize(menu)
     updateWidth(menu)
 end
 
-local function updateFilter(menu, container)
-    if next(container.SubContainers) == nil then
-        return
+function BaudBagContainerMenuMixin:OnShow()
+    AddOnTable.Functions.DebugMessage("ContainerMenu", "Called OnShow")
+
+    -- events
+    if (self.BagSet == BagSetType.Backpack.Id) then
+        self:RegisterEvent("BAG_SLOT_FLAGS_UPDATED")
+    elseif (self.BagSet == BagSetType.Bank.Id) then
+        self:RegisterEvent("BANK_BAG_SLOT_FLAGS_UPDATED")
+    end
+    self:RegisterEvent("GLOBAL_MOUSE_DOWN")
+
+    -- value reset
+    self.BagSpecific.Lock:SetChecked(AddOnTable.Config[self.BagSet][self.ContainerId].Locked)
+    self.BagSpecific.Cleanup.CleanupIgnore:SetChecked(self.Container:GetCleanupIgnore())
+    self.BagSpecific.Cleanup.CleanupBags:SetChecked(false)
+    self.General.ShowOptions:SetChecked(false)
+    if (self.General.ShowBankButton) then
+        self.General.ShowBankButton:SetChecked(false)
     end
     
-    -- update visibility based on container content
-    local numberOfSubContainers = table.getn(container.SubContainers)
-    local firstSubContainerId = container.SubContainers[1].ContainerId
-    local shouldShowFilters = true
-    if (numberOfSubContainers == 1 and
-        (
-            firstSubContainerId == AddOnTable.BlizzConstants.BACKPACK_CONTAINER
-            or
-            firstSubContainerId == AddOnTable.BlizzConstants.BANK_CONTAINER
-            or
-            firstSubContainerId == AddOnTable.BlizzConstants.REAGENTBANK_CONTAINER
-            or
-            AddOnTable.BlizzAPI.IsInventoryItemProfessionBag("player", AddOnTable.BlizzAPI.ContainerIDToInventoryID(firstSubContainerId))
-        )
-    ) then
-        -- the backpack, bank or reagent bank themselves cannot have filters!
-        shouldShowFilters = false
-    end
+    -- content update
+    finishCleanupButtonSetup(self)
+    finishFilterSetup(self, self.Container)
+    updateSize(self)
+end
 
-    menu.BagSpecific.Filter:SetShown(shouldShowFilters)
-
-    if (shouldShowFilters) then
-        updateFilterSelection(menu)
-    end
+function BaudBagContainerMenuMixin:OnHide()
+    self:UnregisterEvent("BAG_SLOT_FLAGS_UPDATED")
+    self:UnregisterEvent("BANK_BAG_SLOT_FLAGS_UPDATED")
+    self:UnregisterEvent("GLOBAL_MOUSE_DOWN")
 end
 
 function BaudBagContainerMenuMixin:Update()
-    updateFilter(self, self.Container)
-    updateSize(self)
+    if self.BagSpecific.Filter:IsShown() then
+        updateFilterSelection(self)
+    end
 end
 
 function BaudBagContainerMenuMixin:OnEvent(event, ...)
     AddOnTable.Functions.DebugMessage("ContainerMenu", "OnEvent was called with '"..event.."' event, with values",  ...)
-    self:Update()
+    
+    if (event == "BAG_SLOT_FLAGS_UPDATED" or event == "BANK_BAG_SLOT_FLAGS_UPDATED") then
+        self:Update()
+    end
+
     if (event == "GLOBAL_MOUSE_DOWN") then
         if not self:IsMouseOver() then
             self:Hide()
