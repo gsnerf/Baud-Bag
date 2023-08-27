@@ -17,6 +17,7 @@ AddOnTable.BlizzAPI = {
     -- introduced somewhere around BfA but removed in DF
     IsContainerItemAnUpgrade = IsContainerItemAnUpgrade and IsContainerItemAnUpgrade or function() return false end,
     IsInventoryItemLocked = IsInventoryItemLocked,
+    IsInventoryItemProfessionBag = IsInventoryItemProfessionBag,
     GetInventoryItemTexture = GetInventoryItemTexture,
     GetInventoryItemQuality = GetInventoryItemQuality,
     GetInventoryItemLink = GetInventoryItemLink,
@@ -168,6 +169,12 @@ AddOnTable.BlizzConstants = {
     BAG_FILTER_ASSIGNED_TO = BAG_FILTER_ASSIGNED_TO, -- localized "Assigned To:"
     BAG_FILTER_LABELS = BAG_FILTER_LABELS, -- list of localized filter names, like "Consumables", "Trade Goods", etc.
     BAG_ITEM_QUALITY_COLORS = BAG_ITEM_QUALITY_COLORS, -- list of quality colors, index is quality id
+    BAG_FILTER_IGNORE = BAG_FILTER_IGNORE, -- localized string for "ignore bag" filter
+    BAG_CLEANUP_BAGS = BAG_CLEANUP_BAGS, -- localized string for "cleanup bag"
+    BAG_CLEANUP_REAGENT_BANK = BAG_CLEANUP_REAGENT_BANK, -- localized string for "cleanup reagent bank"
+    BAG_CLEANUP_BANK = BAG_CLEANUP_BANK, -- localized string for "cleanup bank"
+    BAG_FILTER_ASSIGN_TO = BAG_FILTER_ASSIGN_TO, -- localized string for filter assignment
+    BACKPACK_AUTHENTICATOR_INCREASE_SIZE = BACKPACK_AUTHENTICATOR_INCREASE_SIZE, -- localized string for backpack extension through securing account
 }
 
 if (GetExpansionLevel() >= 9) then

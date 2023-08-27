@@ -34,6 +34,21 @@
             ]
         },
         {
+            "label": "copy to xptr",
+            "type": "shell",
+            "command": "copy",
+            "args": [
+                "-Path",
+                "${workspaceRoot}\\*",
+                "-Destination",
+                "C:\\Program Files (x86)\\World of Warcraft\\_xptr_\\Interface\\addons\\BaudBag",
+                "-Recurse",
+                "-Force",
+                "-Exclude",
+                ".*"
+            ]
+        },
+        {
             "label": "copy to beta",
             "type": "shell",
             "command": "copy",

@@ -69,7 +69,7 @@ if PlayerInteractionFrameManager ~= nil then
         end
     end
 
-    Func = function(self, event, ...)
+    local Func = function(self, event, ...)
         local type = ...
 
         if type == Enum.PlayerInteractionType.Merchant then

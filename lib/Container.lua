@@ -81,6 +81,7 @@ function Prototype:Rebuild()
     if (numberOfSlots > 0) then
         self:UpdateBackground()
     end
+    self.Menu:Update()
 end
 
 function Prototype:Update()
@@ -185,16 +186,14 @@ function Prototype:UpdateFreeSlotsOverview(free, overall)
 end
 
 function Prototype:UpdateBagHighlight()
-    local subContainer
     for _, subContainer in pairs(self.SubContainers) do
         subContainer:UpdateOpenBagHighlight()
     end
 end
 
 function Prototype:GetFilterType()
-    local id, container
     for _, container in pairs(self.SubContainers) do
-        id = container.ContainerId
+        local id = container.ContainerId
         if (id ~= BACKPACK_CONTAINER) and (id ~= BANK_CONTAINER) and (id ~= REAGENTBANK_CONTAINER) then
             return container:GetFilterType()
         end
@@ -272,6 +271,9 @@ function AddOnTable:CreateContainer(bagSetType, bbContainerId, isReagentBank)
     container.Frame = frame
     container.SubContainers = {}
     container.BagSet = bagSetType
+    if (container.Menu == nil) then
+        container.Menu = AddOnTable:CreateContainerMenuFrame(container)
+    end
     return container
 end
 
@@ -379,6 +381,7 @@ function BaudBagContainer_OnHide(self, event, ...)
     end
 
     self:Show()
+    AddOnTable.Sets[self.BagSet].Containers[self:GetID()].Menu:Hide()
 end
 
 

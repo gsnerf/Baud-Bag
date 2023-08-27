@@ -472,11 +472,6 @@ function BaudBagOptionsSliderTemplateMixin:OnValueChanged()
             AddOnTable.Sets[SelectedBags].Containers[SelectedContainer]:Rebuild()
             AddOnTable.Sets[SelectedBags].Containers[SelectedContainer]:Update()
         end
-        if (BackpackTokenFrame_Update ~= nil) then
-            BackpackTokenFrame_Update()
-        else
-            BackpackTokenFrame:Update()
-        end
     end
 end
 
