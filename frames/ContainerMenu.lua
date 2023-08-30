@@ -97,10 +97,19 @@ BaudBagContainerMenuMixin = {
     },
     backdropColor = CreateColor( 0.0, 0.0, 0.0 ),
     backdropColorAlpha = 0.9,
+    headers = {},
     checkButtons = {}
 }
 
+function BaudBagContainerMenuMixin:CollectHeaders()
+    table.insert(self.headers, self.BagSpecific.Header.Label)
+    table.insert(self.headers, self.BagSpecific.Filter.Header.Label)
+    table.insert(self.headers, self.General.Header.Label)
+end
+
 local function setupCleanupOptions(self)
+    self.BagSpecific.Cleanup:Show()
+
     local cleanupIgnoreButton = CreateFrame("CheckButton", nil, self.BagSpecific.Cleanup, "BaudBagContainerMenuCheckButtonTemplate")
     cleanupIgnoreButton.Menu = self
     cleanupIgnoreButton:SetPoint("TOP")
@@ -133,6 +142,8 @@ local function setupFilterOptions(menu)
         menu.Container:SetFilterType(filterType, newValue)
         menu:Hide()
     end
+
+    menu.BagSpecific.Filter:Show()
 
     local lastButton = menu.BagSpecific.Filter.Header
     for index, filterType in AddOnTable.BlizzAPI.EnumerateBagGearFilters() do
@@ -256,6 +267,9 @@ end
 
 local function updateWidth(frame)
     local widths = {}
+    for _, header in ipairs (frame.headers) do
+        table.insert(widths, header:GetWidth() + 10) -- width + offset (for padding)
+    end
     for _, checkButton in ipairs (frame.checkButtons) do
         table.insert(widths, checkButton:GetMinimumWidth())
     end
@@ -288,18 +302,21 @@ function BaudBagContainerMenuMixin:OnShow()
     end
     self:RegisterEvent("GLOBAL_MOUSE_DOWN")
 
-    -- value reset
+    -- general stuff
     self.BagSpecific.Lock:SetChecked(AddOnTable.Config[self.BagSet][self.ContainerId].Locked)
-    self.BagSpecific.Cleanup.CleanupIgnore:SetChecked(self.Container:GetCleanupIgnore())
-    self.BagSpecific.Cleanup.CleanupBags:SetChecked(false)
     self.General.ShowOptions:SetChecked(false)
     if (self.General.ShowBankButton) then
         self.General.ShowBankButton:SetChecked(false)
     end
     
-    -- content update
-    finishCleanupButtonSetup(self)
-    finishFilterSetup(self, self.Container)
+    -- expansion specific feature container sorting
+    if (AddOnTable.BlizzAPI.SupportsContainerSorting()) then
+        self.BagSpecific.Cleanup.CleanupIgnore:SetChecked(self.Container:GetCleanupIgnore())
+        self.BagSpecific.Cleanup.CleanupBags:SetChecked(false)
+
+        finishCleanupButtonSetup(self)
+        finishFilterSetup(self, self.Container)
+    end
     updateSize(self)
 end
 
@@ -310,7 +327,7 @@ function BaudBagContainerMenuMixin:OnHide()
 end
 
 function BaudBagContainerMenuMixin:Update()
-    if self.BagSpecific.Filter:IsShown() then
+    if self.BagSpecific.Filter:IsShown() and AddOnTable.BlizzAPI.SupportsContainerSorting() then
         updateFilterSelection(self)
     end
 end
@@ -340,6 +357,7 @@ function AddOnTable:CreateContainerMenuFrame(parentContainer)
     menu.ContainerId = parentContainer.Id
     menu.Container = parentContainer
 
+    menu:CollectHeaders()
     menu:SetupBagSpecific()
     menu:SetupGeneral()
 

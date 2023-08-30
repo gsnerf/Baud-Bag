@@ -67,7 +67,7 @@
 		</Frames>
 	</Frame>
 
-	<Frame name="BaudBagContainerMenuTemplate" mixin="BaudBagContainerMenuMixin" virtual="true" inherits="BackdropTemplate" frameStrata="TOOLTIP">
+	<Frame name="BaudBagContainerMenuTemplate" mixin="BaudBagContainerMenuMixin" virtual="true" inherits="BackdropTemplate" frameStrata="TOOLTIP" clampedToScreen="true">
 		<Size x="123" y="156" />
 		<Frames>
 			<Frame parentKey="BagSpecific" inherits="BaudBagContainerMenuSublistTemplate">
@@ -81,7 +81,7 @@
 						</Scripts>
 					</CheckButton>
 
-					<Frame parentKey="Cleanup">
+					<Frame parentKey="Cleanup" hidden="true">
 						<Anchors>
 							<Anchor point="LEFT" />
 							<Anchor point="TOP" relativeKey="$parent.Lock" relativePoint="BOTTOM" />
@@ -95,7 +95,7 @@
 							-->
 						</Frames>
 					</Frame>
-					<Frame parentKey="Filter" inherits="BaudBagContainerMenuSublistTemplate">
+					<Frame parentKey="Filter" inherits="BaudBagContainerMenuSublistTemplate" hidden="true">
 						<Anchors>
 							<Anchor point="TOP" relativeKey="$parent.Cleanup" relativePoint="BOTTOM" />
 						</Anchors>
