@@ -11,7 +11,7 @@
 ## Title: Baud Bag
 ## Title-zhCN: 背包整合 Baud Bag
 ## Title-zhTW: 背包整合 Baud Bag
-## Version: 10.1.7.0
+## Version: 10.1.7.1-DEV
 ## IconAtlas: bag-main
 
 # english has to be the first locale!
