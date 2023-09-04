@@ -1,5 +1,5 @@
 ﻿=== Changelog ===
-v10.1.5.0
+v10.1.7.0
   - fixed more scenarios for opening/closing of backs/backpacks for both retail and wotlk
     - opening backpack and then toggeling all bags still shows weird behavior, but the rest should work fine
   - fixed bag search for wotlk
