@@ -4,6 +4,7 @@ local _
 -- -> possibly move this to default config?
 local FadeTime = 0.2
 
+---@class Container
 local Prototype = {
     Id = nil,
     Name = "DefaultContainer",

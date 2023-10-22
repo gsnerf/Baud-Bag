@@ -3,7 +3,9 @@ local _
 local Localized = AddOnTable.Localized
 
 -- Definition
+---@enum BagSetType
 BagSetType = {
+    ---@class BagSetTypeClass
     Backpack = {
         Id = 1,
         Name = Localized.Inventory,
@@ -57,6 +59,7 @@ if (GetExpansionLevel() >= 5) then
 end
 
 -- Definition
+---@enum ContainerType
 ContainerType = {
     Joined,
     Tabbed

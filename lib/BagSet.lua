@@ -2,6 +2,7 @@ local AddOnName, AddOnTable = ...
 local _
 
 local Prototype = {
+    ---@type BagSetTypeClass
     Type = nil,
     MaxContainerNumber = 0,
     ContainerNumber = 0,

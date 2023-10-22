@@ -1,6 +1,7 @@
 local _
 local AddOnName, AddOnTable = ...
 
+---@class BlizzAPI
 AddOnTable.BlizzAPI = {
     GetInventorySlotInfo = GetInventorySlotInfo,
     GetItemInfo = GetItemInfo,
@@ -148,7 +149,7 @@ API.IsNewItem = C_NewItems and C_NewItems.IsNewItem or function() return false e
 if (API.IsBattlePayItem == nil) then
     API.IsBattlePayItem = function() return false end
 end
-
+---@emum BlizzConstants
 AddOnTable.BlizzConstants = {
     REAGENTBANK_CONTAINER = -3, -- REAGENTBANK_CONTAINER (from WoD onwards)
     KEYRING_CONTAINER = -2, -- KEYRING_CONTAINER (only in BC? and WotLK)
