@@ -46,7 +46,7 @@ function Prototype:Update(containerFrame, backdrop, shiftName)
     self:CreateSlotBackgrounds(helper, containerFrame, cols, startColumn)
     self:ImproveCornerGaps(helper, containerFrame, ParentTextureName, blanks, blanksOnTop, cols)
     if (containerFrame:GetID() == 1) then
-        local bottomOffset = self:AddBottomInfoBar(helper, containerFrame, bottom, ParentTextureName)
+        local bottomOffset = self:AddBottomInfoBar(helper, containerFrame, ParentTextureName)
         bottom = bottom + bottomOffset
     end
     self:UpdateBagPicture(containerFrame, ParentTextureName, backdrop)
@@ -180,21 +180,20 @@ function Prototype:ImproveCornerGaps(helper, containerFrame, parentName, blanks,
 end
 
 --[[ this returns the bottom offset to add to the bottom variable ]]
-function Prototype:AddBottomInfoBar(helper, containerFrame, bottom, parentName)
-    if (containerFrame.TokenFrame.shouldShow == 1 and containerFrame:GetName() == "BaudBagContainer1_1") then
-        self:RenderMoneyFrameBackground(helper, containerFrame, parentName, false)
-        containerFrame.TokenFrame:RenderBackground(parentName)
-        return 43
-    else
-        -- make sure the window gets big enough and the correct texture is chosen
+function Prototype:AddBottomInfoBar(helper, containerFrame, parentName)
+    local bottomOffset = 0
+    if (containerFrame.MoneyFrame) then
         self:RenderMoneyFrameBackground(helper, containerFrame, parentName)
-        return 21
+        bottomOffset = bottomOffset + 21
     end
+    if (containerFrame.TokenFrame and containerFrame.TokenFrame.shouldShow == 1 and containerFrame:GetName() == "BaudBagContainer1_1") then
+        containerFrame.TokenFrame:RenderBackground(parentName)
+        bottomOffset = bottomOffset + 22
+    end
+    return bottomOffset
 end
 
-function Prototype:RenderMoneyFrameBackground(helper, containerFrame, parentName, renderMoneyFrameOnly)
-    renderMoneyFrameOnly = renderMoneyFrameOnly or true
-
+function Prototype:RenderMoneyFrameBackground(helper, containerFrame, parentName)
     helper.Parent = _G[parentName]
     helper.File = "Interface\\ContainerFrame\\UI-BackpackBackground.blp"
     helper.Width, helper.Height = 256, 256
@@ -250,12 +249,12 @@ function Prototype:AdjustPositioning(helper, containerFrame, backdrop, shiftName
     containerFrame.CloseButton:SetPoint("TOPRIGHT", backdrop, "TOPRIGHT", 3, 3)
     helper.Parent:Show()
     if (containerFrame:GetID() == 1) then
-        if (containerFrame.TokenFrame.shouldShow == 1 and containerFrame:GetName() == "BaudBagContainer1_1") then
+        if (containerFrame.TokenFrame and containerFrame.TokenFrame.shouldShow == 1 and containerFrame:GetName() == "BaudBagContainer1_1") then
             containerFrame.TokenFrame:SetPoint("BOTTOMLEFT",  backdrop, "BOTTOMLEFT", 0, 6)
             containerFrame.TokenFrame:SetPoint("BOTTOMRIGHT", backdrop, "BOTTOMRIGHT", 0, 6)
             containerFrame.MoneyFrame:SetPoint("BOTTOMRIGHT", containerFrame.TokenFrame, "TOPRIGHT", 0, -1)
             containerFrame.FreeSlots:SetPoint("BOTTOMLEFT",   containerFrame.TokenFrame, "TOPLEFT", 0, 4)
-        else
+        elseif (containerFrame.MoneyFrame) then
             containerFrame.FreeSlots:SetPoint("BOTTOMLEFT",   backdrop, "BOTTOMLEFT", 12, 7)
             containerFrame.MoneyFrame:SetPoint("BOTTOMRIGHT", backdrop, "BOTTOMRIGHT", 0, 3)
         end
