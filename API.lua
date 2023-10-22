@@ -30,6 +30,8 @@ AddOnTable.BlizzAPI = {
     -- introduced with warlords of draenor
     IsReagentBankUnlocked = IsReagentBankUnlocked and IsReagentBankUnlocked or function() return false end,
     GetReagentBankCost = GetReagentBankCost and GetReagentBankCost or function() return 0 end,
+    -- introduced with wotlk
+    GetKeyRingSize = GetKeyRingSize and GetKeyRingSize or function() return 0 end,
 }
 
 local API = AddOnTable.BlizzAPI

@@ -27,6 +27,9 @@ function Prototype:GetFrame()
 end
 
 function Prototype:GetSize()
+    if self.ContainerId == AddOnTable.BlizzConstants.KEYRING_CONTAINER then
+        return AddOnTable.BlizzAPI.GetKeyRingSize()
+    end
     local isBankBag = self.BagSet.Id == BagSetType.Bank.Id
     local useCache = isBankBag and not AddOnTable.State.BankOpen
     if useCache and (self.ContainerId ~= -3) then
