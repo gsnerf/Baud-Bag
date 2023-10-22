@@ -78,6 +78,54 @@
                 ".*"
             ],
             "problemMatcher": []
+        },
+        {
+            "label": "copy to wotlk ptr",
+            "type": "shell",
+            "command": "copy",
+            "args": [
+                "-Path",
+                "${workspaceRoot}\\*",
+                "-Destination",
+                "C:\\Program Files (x86)\\World of Warcraft\\_classic_ptr_\\Interface\\addons\\BaudBag",
+                "-Recurse",
+                "-Force",
+                "-Exclude",
+                ".*"
+            ],
+            "problemMatcher": []
+        },
+        {
+            "label": "copy to vanilla",
+            "type": "shell",
+            "command": "copy",
+            "args": [
+                "-Path",
+                "${workspaceRoot}\\*",
+                "-Destination",
+                "C:\\Program Files (x86)\\World of Warcraft\\_classic_era_\\Interface\\addons\\BaudBag",
+                "-Recurse",
+                "-Force",
+                "-Exclude",
+                ".*"
+            ],
+            "problemMatcher": []
+        },
+        {
+            "label": "copy to vanilla ptr",
+            "type": "shell",
+            "command": "copy",
+            "args": [
+                "-Path",
+                "${workspaceRoot}\\*",
+                "-Destination",
+                "C:\\Program Files (x86)\\World of Warcraft\\_classic_era_ptr_\\Interface\\addons\\BaudBag",
+                "-Recurse",
+                "-Force",
+                "-Exclude",
+                ".*"
+            ],
+            "problemMatcher": []
         }
     ]
 }
