@@ -104,7 +104,7 @@
 		</Scripts>
 	</CheckButton>
 
-	<Slider name="BaudBagOptionsSliderTemplate" inherits="UISliderTemplate" mixin="BaudBagOptionsSliderTemplateMixin" virtual="true">
+	<Slider name="BaudBagOptionsSliderTemplate" inherits="MinimalSliderTemplate" mixin="BaudBagOptionsSliderTemplateMixin" virtual="true">
 		<Size x="200" y="18" />
 		<Layers>
 			<Layer level="ARTWORK">
