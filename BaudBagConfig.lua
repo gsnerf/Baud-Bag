@@ -42,7 +42,7 @@ function BaudBagRestoreCfg()
         BBConfig[Value.SavedVar] = checkValue(BBConfig[Value.SavedVar], "number", Value.Default, "- Global Slider["..Value.SavedVar.."] data damaged or missing, creating now");
     end
 
-    for BagSet = 1, 2 do
+    for BagSet = 1, 3 do
         BBConfig[BagSet]          = checkValue(BBConfig[BagSet],          "table",   {},   "- BBConfig for BagSet "..BagSet.." damaged or missing, creating now");
 		BBConfig[BagSet].Enabled  = checkValue(BBConfig[BagSet].Enabled,  "boolean", true, "- enabled state for BagSet "..BagSet.." damaged or missing, creating now");
         BBConfig[BagSet].CloseAll = checkValue(BBConfig[BagSet].CloseAll, "boolean", true, "- close all state for BagSet "..BagSet.." damaged or missing, creating now");
@@ -70,10 +70,11 @@ function BaudBagRestoreCfg()
                 local isBackpack = Container == 1
                 local isReagentBank = Bag == AddOnTable.BlizzConstants.REAGENTBANK_CONTAINER
                 local isReagentBag = AddOnTable.BlizzConstants.BACKPACK_FIRST_REAGENT_CONTAINER ~= nil and AddOnTable.BlizzConstants.BACKPACK_FIRST_REAGENT_CONTAINER <= Bag and Bag <= AddOnTable.BlizzConstants.BACKPACK_LAST_CONTAINER
+                local isKeyring = Bag == AddOnTable.BlizzConstants.KEYRING_CONTAINER
 
                 if (type(BBConfig[BagSet][Container]) ~= "table") then
                     AddOnTable.Functions.DebugMessage("Config", "- BagSet["..BagSet.."], Bag["..Bag.."], Container["..Container.."] container data damaged or missing, creating now");
-                    if isBackpack or isReagentBank or isReagentBag then
+                    if isBackpack or isReagentBank or isReagentBag or isKeyring then
                         BBConfig[BagSet][Container] = {};
                     else
                         BBConfig[BagSet][Container] = AddOnTable.Functions.CopyTable(BBConfig[BagSet][Container-1]);
@@ -94,6 +95,10 @@ function BaudBagRestoreCfg()
                     if ( isReagentBank ) then
                         nameAddition = Localized.ReagentBankBox
                     end
+
+                    if (BagSet == 3) then
+                        nameAddition = Localized.KeyRing
+                    end
                     
                     BBConfig[BagSet][Container].Name = UnitName("player")..Localized.Of..nameAddition
                 end
@@ -102,10 +107,13 @@ function BaudBagRestoreCfg()
                     AddOnTable.Functions.DebugMessage("Config", "- BagSet["..BagSet.."], Bag["..Bag.."], Container["..Container.."] container background damaged or missing, creating now");
                     if (BagSet == 2) then
                         -- bank containers have "blizz bank" default
-                        BBConfig[BagSet][Container].Background = 2;
+                        BBConfig[BagSet][Container].Background = 2
+                    elseif (BagSet == 3) then
+                        -- keyring containers have "blizz keyring" default
+                        BBConfig[BagSet][Container].Background = 3
                     else
                         -- default contains have "blizz inventory" default
-                        BBConfig[BagSet][Container].Background = 1;
+                        BBConfig[BagSet][Container].Background = 1
                     end
                 end
 

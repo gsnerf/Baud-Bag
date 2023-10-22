@@ -10,15 +10,19 @@ local category = nil
 
 local SelectedBags      = 1
 local SelectedContainer = 1
-local SetSize           = {1 + AddOnTable.BlizzConstants.BACKPACK_TOTAL_BAGS_NUM, 1 + AddOnTable.BlizzConstants.BANK_CONTAINER_NUM + (AddOnTable.State.ReagentBankSupported and 1 or 0)}
+local SetSize           = {
+    1 + AddOnTable.BlizzConstants.BACKPACK_TOTAL_BAGS_NUM,
+    1 + AddOnTable.BlizzConstants.BANK_CONTAINER_NUM + (AddOnTable.State.ReagentBankSupported and 1 or 0),
+    1
+}
 
 local GlobalSliderBars = {
     { Text=Localized.RarityIntensity, Low=0.5, High=2.5, Step=0.1, SavedVar="RarityIntensity", Default=1, TooltipText=Localized.RarityIntensityTooltip, DependsOn="RarityColor" },
 }
 
 local ContainerSliderBars = {
-    {Text=Localized.Columns,	Low="2",	High="40",		Step=1,		SavedVar="Columns",		Default={8,14},		TooltipText = Localized.ColumnsTooltip},
-    {Text=Localized.Scale,		Low="50%",	High="200%",	Step=1,		SavedVar="Scale",		Default={100,100},	TooltipText = Localized.ScaleTooltip}
+    {Text=Localized.Columns,	Low="2",	High="40",		Step=1,		SavedVar="Columns",		Default={8,14,4},		TooltipText = Localized.ColumnsTooltip},
+    {Text=Localized.Scale,		Low="50%",	High="200%",	Step=1,		SavedVar="Scale",		Default={100,100,100},	TooltipText = Localized.ScaleTooltip}
 }
 
 local GlobalCheckButtons = {
@@ -265,6 +269,14 @@ function BaudBagOptionsSetDropDown_Initialize()
     info.arg1       = 2
     info.checked    = (info.arg1 == SelectedBags)
     UIDropDownMenu_AddButton(info)
+
+    if (AddOnTable.State.KeyringSupported) then
+        -- keyring
+        info.text		= Localized.KeyRing
+        info.arg1       = 3
+        info.checked    = (info.arg1 == SelectedBags)
+        UIDropDownMenu_AddButton(info)
+    end
 end
 
 function BaudBagOptionsSetDropDown_OnClick(self, newValue)
@@ -486,7 +498,7 @@ function BaudBagOptionsMixin:Update()
     -- first reload the drop down (weird problems if not done)
     local containerDropDown = self.GroupContainer.SetSelection
     UIDropDownMenu_Initialize(containerDropDown, BaudBagOptionsSetDropDown_Initialize)
-    UIDropDownMenu_SetText(containerDropDown, SelectedBags == 1 and Localized.Inventory or Localized.BankBox)
+    UIDropDownMenu_SetText(containerDropDown, SelectedBags == 1 and Localized.Inventory or SelectedBags == 2 and Localized.BankBox or Localized.KeyRing)
 
     -- is the box enabled
     self.GroupContainer.EnabledCheck:SetChecked(BBConfig[SelectedBags].Enabled~=false)
