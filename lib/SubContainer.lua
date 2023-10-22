@@ -228,10 +228,12 @@ local function UpdateBankBagHighlight(subContainer)
 
     if (subContainer.ContainerId ~= AddOnTable.BlizzConstants.BANK_CONTAINER) then
         local button = AddOnTable["Sets"][2].BagButtons[subContainer.ContainerId - AddOnTable.BlizzConstants.BACKPACK_LAST_CONTAINER]
-        if (open) then
-            button.SlotHighlightTexture:Show()
-        else
-            button.SlotHighlightTexture:Hide()
+        if (button) then
+            if (open) then
+                button.SlotHighlightTexture:Show()
+            else
+                button.SlotHighlightTexture:Hide()
+            end
         end
     end
 end
