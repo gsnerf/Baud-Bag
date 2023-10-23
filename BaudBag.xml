@@ -217,6 +217,8 @@
 		</Frames>
 	</Frame>
 
+	<Frame name="BaudBagContainer3_1" inherits="BaudBagContainerTemplate" />
+
 	<Frame name="BaudBagFrame">
 		<Scripts>
 			<OnLoad function="BaudBag_OnLoad" />

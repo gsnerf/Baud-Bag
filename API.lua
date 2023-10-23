@@ -1,6 +1,7 @@
 local _
 local AddOnName, AddOnTable = ...
 
+---@class BlizzAPI
 AddOnTable.BlizzAPI = {
     GetInventorySlotInfo = GetInventorySlotInfo,
     GetItemInfo = GetItemInfo,
@@ -29,6 +30,8 @@ AddOnTable.BlizzAPI = {
     -- introduced with warlords of draenor
     IsReagentBankUnlocked = IsReagentBankUnlocked and IsReagentBankUnlocked or function() return false end,
     GetReagentBankCost = GetReagentBankCost and GetReagentBankCost or function() return 0 end,
+    -- introduced with wotlk
+    GetKeyRingSize = GetKeyRingSize and GetKeyRingSize or function() return 0 end,
 }
 
 local API = AddOnTable.BlizzAPI
@@ -148,7 +151,7 @@ API.IsNewItem = C_NewItems and C_NewItems.IsNewItem or function() return false e
 if (API.IsBattlePayItem == nil) then
     API.IsBattlePayItem = function() return false end
 end
-
+---@emum BlizzConstants
 AddOnTable.BlizzConstants = {
     REAGENTBANK_CONTAINER = -3, -- REAGENTBANK_CONTAINER (from WoD onwards)
     KEYRING_CONTAINER = -2, -- KEYRING_CONTAINER (only in BC? and WotLK)

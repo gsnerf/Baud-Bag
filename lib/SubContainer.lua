@@ -27,6 +27,9 @@ function Prototype:GetFrame()
 end
 
 function Prototype:GetSize()
+    if self.ContainerId == AddOnTable.BlizzConstants.KEYRING_CONTAINER then
+        return AddOnTable.BlizzAPI.GetKeyRingSize()
+    end
     local isBankBag = self.BagSet.Id == BagSetType.Bank.Id
     local useCache = isBankBag and not AddOnTable.State.BankOpen
     if useCache and (self.ContainerId ~= -3) then
@@ -225,10 +228,12 @@ local function UpdateBankBagHighlight(subContainer)
 
     if (subContainer.ContainerId ~= AddOnTable.BlizzConstants.BANK_CONTAINER) then
         local button = AddOnTable["Sets"][2].BagButtons[subContainer.ContainerId - AddOnTable.BlizzConstants.BACKPACK_LAST_CONTAINER]
-        if (open) then
-            button.SlotHighlightTexture:Show()
-        else
-            button.SlotHighlightTexture:Hide()
+        if (button) then
+            if (open) then
+                button.SlotHighlightTexture:Show()
+            else
+                button.SlotHighlightTexture:Hide()
+            end
         end
     end
 end

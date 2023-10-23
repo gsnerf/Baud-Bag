@@ -1,6 +1,6 @@
 ## Author: Thurmal (Author), Suddendeath2000 (Former Author), Baudzila (Original Author)
 ## DefaultState: Enabled
-## Interface: 30403
+## Interface: 11404
 ## LoadOnDemand: 0
 ## OptionalDeps: CaedronWardrobe, Masque, Pawn
 ## Notes: Allows you to combine bags as well as customize their display.
@@ -41,7 +41,6 @@ frames/Options.xml
 TokenBar.xml
 Backpack.lua
 Bank.lua
-Keyring.lua
 frames\BaudBagSearchFrame.xml
 Overrides.lua
 BaudBag.xml

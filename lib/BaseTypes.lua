@@ -3,12 +3,15 @@ local _
 local Localized = AddOnTable.Localized
 
 -- Definition
+---@enum BagSetType
 BagSetType = {
+    ---@class BagSetTypeClass
     Backpack = {
         Id = 1,
         Name = Localized.Inventory,
         IsSubContainerOf = function(containerId)
-            return (AddOnTable.BlizzConstants.BACKPACK_FIRST_CONTAINER <= containerId and containerId <= AddOnTable.BlizzConstants.BACKPACK_LAST_CONTAINER)
+            local isBackpackContainer = AddOnTable.BlizzConstants.BACKPACK_FIRST_CONTAINER <= containerId and containerId <= AddOnTable.BlizzConstants.BACKPACK_LAST_CONTAINER
+            return isBackpackContainer
         end,
         ContainerIterationOrder = {}
     },
@@ -21,6 +24,14 @@ BagSetType = {
             return isBankDefaultContainer or isBankSubContainer
         end,
         ContainerIterationOrder = {}
+    },
+    Keyring = {
+        Id = 3,
+        Name = Localized.KeyRing,
+        IsSubContainerOf = function(containerId)
+            return containerId == AddOnTable.BlizzConstants.KEYRING_CONTAINER
+        end,
+        ContainerIterationOrder = { AddOnTable.BlizzConstants.KEYRING_CONTAINER }
     } --[[,
     GuildBank = {
         Id = 3,
@@ -52,6 +63,7 @@ if (GetExpansionLevel() >= 5) then
 end
 
 -- Definition
+---@enum ContainerType
 ContainerType = {
     Joined,
     Tabbed
@@ -63,6 +75,9 @@ idIndexMap[AddOnTable.BlizzConstants.BANK_CONTAINER] = 1
 idIndexMap[AddOnTable.BlizzConstants.REAGENTBANK_CONTAINER] = AddOnTable.BlizzConstants.BANK_CONTAINER_NUM + 2
 for id = AddOnTable.BlizzConstants.BACKPACK_FIRST_CONTAINER, AddOnTable.BlizzConstants.BACKPACK_LAST_CONTAINER do
     idIndexMap[id] = id + 1
+end
+if (AddOnTable.State.KeyringSupported) then
+    idIndexMap[AddOnTable.BlizzConstants.KEYRING_CONTAINER] = 1
 end
 for id = AddOnTable.BlizzConstants.BANK_FIRST_CONTAINER, AddOnTable.BlizzConstants.BANK_LAST_CONTAINER do
     idIndexMap[id] = id - AddOnTable.BlizzConstants.BACKPACK_LAST_CONTAINER + 1

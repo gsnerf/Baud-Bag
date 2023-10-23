@@ -1,4 +1,8 @@
 ﻿=== Changelog ===
+v10.1.7.1
+  - re-added keyring functionality for wotlk classic
+  - added support for vanilla classic (classic era)
+  - started reworking settings page for more consistent look between wow flavors and to better integrate with new settings system
 v10.1.7.0
   - fixed more scenarios for opening/closing of backs/backpacks for both retail and wotlk
     - opening backpack and then toggeling all bags still shows weird behavior, but the rest should work fine

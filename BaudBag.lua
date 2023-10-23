@@ -238,6 +238,10 @@ function BaudBag_OnLoad(self, event, ...)
     AddOnTable.Functions.DebugMessage("Bags", "Create BagSets")
     BackpackSet = AddOnTable:CreateBagSet(BagSetType.Backpack)
     BankSet = AddOnTable:CreateBagSet(BagSetType.Bank)
+    if (AddOnTable.State.KeyringSupported) then
+        Keyring = AddOnTable:CreateBagSet(BagSetType.Keyring)
+        Keyring:PerformInitialBuild()
+    end
 
     -- create all necessary SubBags now with basic initialization, correct referencing later when config is available
     AddOnTable.Functions.DebugMessage("Bags", "Creating sub bags")
@@ -289,6 +293,10 @@ function BaudUpdateJoinedBags()
         AddOnTable["Sets"][bagSet]:RebuildContainers()
     end
 
+    if (AddOnTable.State.KeyringSupported) then
+        AddOnTable["Sets"][3]:RebuildContainers()
+    end
+
     AddOnTable.BagsReady = true
 end
 
@@ -335,7 +343,7 @@ end
 
 
 function BaudBagSubBag_OnEvent(self, event, ...)
-    if not self:GetParent():IsShown() or AddOnTable.Functions.IsDefaultContainer(Bag) or (self:GetID() >= 5) and not AddOnTable.State.BankOpen then
+    if not self:GetParent():IsShown() or AddOnTable.Functions.IsDefaultContainer(self:GetID()) or (self:GetID() >= 5) and not AddOnTable.State.BankOpen then
         return
     end
     SubBagEvents[event](self, event, ...)
