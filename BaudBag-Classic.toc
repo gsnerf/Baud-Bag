@@ -10,7 +10,7 @@
 ## Title: Baud Bag
 ## Title-zhCN: 背包整合 Baud Bag
 ## Title-zhTW: 背包整合 Baud Bag
-## Version: 10.1.7.1-DEV
+## Version: 10.1.7.1-beta-1
 
 # english has to be the first locale!
 localization\Localization.en.lua
