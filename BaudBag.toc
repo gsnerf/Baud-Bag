@@ -36,6 +36,7 @@ widgets\buttons\BagButton.xml
 widgets\buttons\ItemButton.lua
 frames\ContainerMenu.xml
 Events.lua
+config\ConfigOptions.lua
 BaudBagConfig.lua
 BaudBagCache.lua
 BaudBagToolTips.lua
