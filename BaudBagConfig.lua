@@ -6,10 +6,38 @@ local Localized	= AddOnTable.Localized
 BBConfig = {}
 -- TODO: somehow changes of BBConfig are not getting stored in AddOnTable.Config, propably something to do with resetting BBConfig at later points...
 
+---@class ContainerConfig
+---@field Columns integer the number of columns to render in a container
+---@field Scale integer the scale in percentage to use for defining the size
+---@field AutoOpen boolean whether to automatically open the container when going to a merchant, post, bank or whatever
+---@field AutoClose boolean whether to automatically close the container if it has been opened automatically before
+---@field BlankTop boolean wheter to show "blank" items (when number of items / columns != 0) on the top or bottom of the container
 
---[[ helper method to minify the code, checks the given variable and possibly returns a default value ]]
+---@class BagSetConfig
+---@field Enabled boolean whether to cover this bag set with baud bag or leave it to stock UI
+---@field CloseAll boolean whether to close all containers when the first one in the set has been closed
+---@field Joined table<integer,boolean?> for each container defines if it is joined with the previous one or not, if the value is nil it cannot be joined!
+---@field ShowBags boolean 
+---@field [integer] ContainerConfig the configuration for the container with ID == value
+
+---@class Config
+---@field ShowNewItems boolean whether to highlight new items in the bags or not
+---@field SellJunk boolean whether to automatically sell junk or not
+---@field UseMasque boolean whether to integrate with the Masque skinning addon or not
+---@field RarityColor boolean whether to show a rarity border around items
+---@field ShowItemLevel boolean whether to show an item level on top of an item or not
+---@field EnableFadeAnimation boolean whether to show a fading animation when opening/closing a container or not
+---@field RarityIntensity number the intensity of the rarity border to use
+---@field [integer] BagSetConfig the configuration of bag set with ID == value
+
 AddOnTable.Config = BBConfig
 
+--- helper method to minify the code, checks the given variable and possibly returns a default value
+---@param toCheck table|boolean|number|string a variable to check
+---@param compareWith type a type definition to check the variable against
+---@param default table|boolean|number|string a default value to apply if the type of toCheck doesn't match
+---@param log string any string to put into the log
+---@return table|boolean|number|string checkResult toCheck if type matches or default value if it doesn't
 local function checkValue(toCheck, compareWith, default, log)
     -- default check if applied, return default value
     if (type(toCheck) ~= compareWith) then
