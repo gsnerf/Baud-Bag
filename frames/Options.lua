@@ -15,31 +15,6 @@ local SetSize           = {
     1 + AddOnTable.BlizzConstants.BANK_CONTAINER_NUM + (AddOnTable.State.ReagentBankSupported and 1 or 0),
     1
 }
-
-local GlobalSliderBars = {
-    { Text=Localized.RarityIntensity, Low=0.5, High=2.5, Step=0.1, SavedVar="RarityIntensity", Default=1, TooltipText=Localized.RarityIntensityTooltip, DependsOn="RarityColor" },
-}
-
-local ContainerSliderBars = {
-    {Text=Localized.Columns,	Low="2",	High="40",		Step=1,		SavedVar="Columns",		Default={8,14,4},		TooltipText = Localized.ColumnsTooltip},
-    {Text=Localized.Scale,		Low="50%",	High="200%",	Step=1,		SavedVar="Scale",		Default={100,100,100},	TooltipText = Localized.ScaleTooltip}
-}
-
-local GlobalCheckButtons = {
-    {Text=Localized.ShowNewItems,        SavedVar="ShowNewItems",        Default=true,  TooltipText=Localized.ShowNewItemsTooltip,        DependsOn=nil, CanBeSet=true,                      UnavailableText = "" },
-    {Text=Localized.SellJunk,            SavedVar="SellJunk",            Default=false, TooltipText=Localized.SellJunkTooltip,            DependsOn=nil, CanBeSet=true,                      UnavailableText = "" },
-    {Text=Localized.UseMasque,           SavedVar="UseMasque",           Default=false, TooltipText=Localized.UseMasqueTooltp,            DependsOn=nil, CanBeSet=IsAddOnLoaded("Masque"),   UnavailableText = Localized.UseMasqueUnavailable},
-    {Text=Localized.RarityColoring,      SavedVar="RarityColor",         Default=true,  TooltipText=Localized.RarityColoringTooltip,      DependsOn=nil, CanBeSet=true,                      UnavailableText = "" },
-    {Text=Localized.ShowItemLevel,       SavedVar="ShowItemLevel",       Default=false, TooltipText=Localized.ShowItemLevelTooltip,       DependsOn=nil, CanBeSet=true,                      UnavailableText = "" },
-    {Text=Localized.EnableFadeAnimation, SavedVar="EnableFadeAnimation", Default=false, TooltipText=Localized.EnableFadeAnimationTooltip, DependsOn=nil, CanBeSet=true,                      UnavailableText = "" },
-}
-
-local ContainerCheckButtons = {
-    {Text=Localized.AutoOpen,       SavedVar="AutoOpen",     Default=false, TooltipText=Localized.AutoOpenTooltip,          DependsOn=nil},
-    {Text=Localized.AutoClose,      SavedVar="AutoClose",    Default=true,  TooltipText=Localized.AutoCloseTooltip,         DependsOn="AutoOpen"},
-    {Text=Localized.BlankOnTop,     SavedVar="BlankTop",     Default=false, TooltipText=Localized.BlankOnTopTooltip,        DependsOn=nil},
-}
-
 BaudBagIcons = {
     [0]	    = "Interface\\Buttons\\Button-Backpack-Up",
     [-1]	= "Interface\\Icons\\INV_Box_02",
@@ -79,7 +54,6 @@ BaudBagOptionsMixin = {}
 --[[ BaudBagOptions frame related events and methods ]]
 function BaudBagOptionsMixin:OnLoad(event, ...)
     -- the config needs a reference to this
-    BaudBagSetCfgPreReq(GlobalSliderBars, ContainerSliderBars, GlobalCheckButtons, ContainerCheckButtons)
     self:RegisterEvent("ADDON_LOADED")
 end
 
@@ -141,7 +115,7 @@ function BaudBagOptionsMixin:OnEvent(event, ...)
     self.GroupContainer.ResetPositionButton.tooltipText = Localized.OptionsResetContainerPositionTooltip
 
     -- localized global checkbox labels
-    for Key, Value in ipairs(GlobalCheckButtons) do
+    for Key, Value in ipairs(AddOnTable.ConfigOptions.Global.CheckButtons) do
         local checkButton = self.GroupGlobal["CheckButton"..Key]
         if (checkButton.text == nil) then
             checkButton.text = _G[checkButton:GetName().."Text"]
@@ -155,7 +129,7 @@ function BaudBagOptionsMixin:OnEvent(event, ...)
             checkButton.text:SetText(Value.Text.." ("..Value.UnavailableText..")")
         end
     end
-    for Key, Value in ipairs(GlobalSliderBars) do
+    for Key, Value in ipairs(AddOnTable.ConfigOptions.Global.SliderBars) do
         local slider = self.GroupGlobal["Slider"..Key]
         slider.Low:SetText(Value.Low)
         slider.High:SetText(Value.High)
@@ -164,7 +138,7 @@ function BaudBagOptionsMixin:OnEvent(event, ...)
     end
     
     -- localized checkbox labels
-    for Key, Value in ipairs(ContainerCheckButtons) do
+    for Key, Value in ipairs(AddOnTable.ConfigOptions.Container.CheckButtons) do
         local checkButton = self.GroupContainer["CheckButton"..Key]
         if (checkButton.text == nil) then
             checkButton.text = _G[checkButton:GetName().."Text"]
@@ -174,7 +148,7 @@ function BaudBagOptionsMixin:OnEvent(event, ...)
     end
 
     -- set slider bounds
-    for Key, Value in ipairs(ContainerSliderBars) do
+    for Key, Value in ipairs(AddOnTable.ConfigOptions.Container.SliderBars) do
         local slider = self.GroupContainer["Slider"..Key]
         slider.Low:SetText(Value.Low)
         slider.High:SetText(Value.High)
@@ -395,7 +369,7 @@ function BaudBagOptionsCheckButton_OnClick(self, event, ...)
     -- apply change based on group
     local SavedVar
     if (self:GetParent() == BaudBagOptions.GroupGlobal) then
-        SavedVar = GlobalCheckButtons[self:GetID()].SavedVar
+        SavedVar = AddOnTable.ConfigOptions.Global.CheckButtons[self:GetID()].SavedVar
         AddOnTable.Functions.DebugMessage("Options", "Update global variable: "..SavedVar)
         BBConfig[SavedVar] = self:GetChecked()
 
@@ -407,7 +381,7 @@ function BaudBagOptionsCheckButton_OnClick(self, event, ...)
             )
         end
     else
-        SavedVar = ContainerCheckButtons[self:GetID()].SavedVar
+        SavedVar = AddOnTable.ConfigOptions.Container.CheckButtons[self:GetID()].SavedVar
         AddOnTable.Functions.DebugMessage("Options", "Update container variable: "..SavedVar)
         BBConfig[SelectedBags][SelectedContainer][SavedVar] = self:GetChecked()
 
@@ -443,10 +417,10 @@ function BaudBagOptionsSliderTemplateMixin:OnValueChanged()
     -- update description of slider
     if (self:GetParent() == BaudBagOptions.GroupGlobal) then
         local sliderText = BaudBagOptions.GroupGlobal["Slider"..self:GetID()].Text
-        sliderText:SetText( format( GlobalSliderBars[self:GetID()].Text, self:GetValue() ) )
+        sliderText:SetText( format( AddOnTable.ConfigOptions.Global.SliderBars[self:GetID()].Text, self:GetValue() ) )
     else
         local sliderText = BaudBagOptions.GroupContainer["Slider"..self:GetID()].Text
-        sliderText:SetText( format( ContainerSliderBars[self:GetID()].Text, self:GetValue() ) )
+        sliderText:SetText( format( AddOnTable.ConfigOptions.Container.SliderBars[self:GetID()].Text, self:GetValue() ) )
     end
     
     
@@ -460,7 +434,7 @@ function BaudBagOptionsSliderTemplateMixin:OnValueChanged()
         AddOnTable.Functions.DebugMessage("Options", "Updating value of global slider with id "..self:GetID().." to "..self:GetValue())
         
         -- save BBConfig entry
-        local SavedVar = GlobalSliderBars[self:GetID()].SavedVar
+        local SavedVar = AddOnTable.ConfigOptions.Global.SliderBars[self:GetID()].SavedVar
         AddOnTable.Functions.DebugMessage("Options", "The variable associated with this value is "..SavedVar)
         BBConfig[SavedVar] = self:GetValue()
 
@@ -473,7 +447,7 @@ function BaudBagOptionsSliderTemplateMixin:OnValueChanged()
         AddOnTable.Functions.DebugMessage("Options", "Updating value of container slider with id "..self:GetID().." to "..self:GetValue())
 
         -- save BBConfig entry
-        local SavedVar = ContainerSliderBars[self:GetID()].SavedVar
+        local SavedVar = AddOnTable.ConfigOptions.Container.SliderBars[self:GetID()].SavedVar
         AddOnTable.Functions.DebugMessage("Options", "The variable associated with this value is "..SavedVar)
         BBConfig[SelectedBags][SelectedContainer][SavedVar] = self:GetValue()
 
@@ -505,11 +479,11 @@ function BaudBagOptionsMixin:Update()
     self.GroupContainer.CloseAllCheck:SetChecked(BBConfig[SelectedBags].CloseAll~=false)
 
     -- load global checkbox and slider values
-    for Key, Value in ipairs(GlobalCheckButtons) do
+    for Key, Value in ipairs(AddOnTable.ConfigOptions.Global.CheckButtons) do
         local Button = self.GroupGlobal["CheckButton"..Key]
         Button:SetChecked(BBConfig[Value.SavedVar])
     end
-    for Key, Value in ipairs(GlobalSliderBars) do
+    for Key, Value in ipairs(AddOnTable.ConfigOptions.Global.SliderBars) do
         local slider = self.GroupGlobal["Slider"..Key]
         slider:SetValue(BBConfig[Value.SavedVar])
 
@@ -632,19 +606,19 @@ function BaudBagOptionsMixin:Update()
     UIDropDownMenu_SetText(backgroundDropDown, TextureNames[BBConfig[SelectedBags][SelectedContainer].Background])
 
     -- load slider values
-    for Key, Value in ipairs(ContainerSliderBars) do
+    for Key, Value in ipairs(AddOnTable.ConfigOptions.Container.SliderBars) do
         local Slider = self.GroupContainer["Slider"..Key]
         Slider:SetValue(BBConfig[SelectedBags][SelectedContainer][Value.SavedVar])
     end
 
     -- load checkbox values
-    for Key, Value in ipairs(ContainerCheckButtons) do
+    for Key, Value in ipairs(AddOnTable.ConfigOptions.Container.CheckButtons) do
         local Button = self.GroupContainer["CheckButton"..Key]
         Button:SetChecked(BBConfig[SelectedBags][SelectedContainer][Value.SavedVar])
     end
 	
     -- load checkbox enabled
-    for Key, Value in ipairs(ContainerCheckButtons) do
+    for Key, Value in ipairs(AddOnTable.ConfigOptions.Container.CheckButtons) do
         local Button = self.GroupContainer["CheckButton"..Key]
         local ButtonText = _G[Button:GetName().."Text"]
         if (Value.DependsOn ~= nil and not BBConfig[SelectedBags][SelectedContainer][Value.DependsOn]) then
