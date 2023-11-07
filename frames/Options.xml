@@ -130,6 +130,9 @@
 		</Scripts>
 	</Slider>
 
+	<Frame name="BaudBagOptionsBagSetTemplate" mixin="BaudBagOptionsBagSetMixin" virtual="true">
+	</Frame>
+
 	<!-- actual frame -->
 	<Frame name="BaudBagOptions" mixin="BaudBagOptionsMixin">
 		<Layers>
@@ -217,6 +220,66 @@
 					</Button>
 
 				</Frames>
+			</Frame>
+
+			<Frame parentKey="GroupBagSet" mixin="BaudBagOptionsGroupBagSetMixin">
+				<Anchors>
+					<Anchor point="TOPLEFT" relativeKey="$parent.GroupGlobal" relativePoint="BOTTOMLEFT" y="-5" />
+					<Anchor point="BOTTOMRIGHT" x="-10" y="10" />
+				</Anchors>
+				<Size y="200" />
+				<Layers>
+					<Layer level="BACKGROUND">
+						<FontString inherits="GameFontHighlightLarge" text="Bag Specific Stuff">
+							<Anchors>
+								<Anchor point="TOPLEFT"/>
+							</Anchors>
+						</FontString>
+					</Layer>
+				</Layers>
+				<Frames>
+					<Frame parentKey="NineSlice" inherits="NineSlicePanelTemplate">
+						<KeyValues>
+							<KeyValue key="layoutType" value="UniqueCornersLayout" type="string"/>
+							<KeyValue key="layoutTextureKit" value="OptionsFrame" type="string"/>
+						</KeyValues>
+						<Anchors>
+							<Anchor point="TOPLEFT" x="-12" y="-14"/>
+							<Anchor point="BOTTOMRIGHT" x="-6" y="-16"/>
+						</Anchors>
+					</Frame>
+					<!--
+						there will be buttons generated automatically in the OnLoad script of the group frame, that are similar to this:
+						<Button parentKey="BagSetTab" inherits="MinimalTabTemplate">
+						    <Size y="37"/>
+							<KeyValues>
+								<KeyValue key="tabText" value="BagSetName" />
+							</KeyValues>
+							<Anchors>
+								<Anchor point="TOPRIGHT" relativePoint="TOPRIGHT" x="-30" y="10"/>
+							</Anchors>
+						</Button>
+
+						Above is the anchor for the first tab button, all following tab buttons will be anchored to the previous one like this:
+						<Anchor point="TOPRIGHT" relativeKey="$parent.BagSetTab" relativePoint="TOPLEFT" x="0" y="0"/>
+					-->
+
+					<!--
+						there will be frames generated automatically in the OnLoad script of the group frame, that are similar to this:
+						
+						<Frame parentKey="BagSetOptions" inherits="BaudBagOptionsBagSetTemplate" setAllPoints="true">
+							<KeyValues>
+								<KeyValue key="bagSetId" value="BagSetId" type="number" />
+							</KeyValues>
+							<Frames>
+								...
+							</Frames>
+						</Frame>
+					-->
+				</Frames>
+				<Scripts>
+					<OnLoad  method="OnLoad" />
+				</Scripts>
 			</Frame>
 
 			<Frame name="$parentGroupContainer" parentKey="GroupContainer">

@@ -660,3 +660,62 @@ function PositionResetMixin:ResetPosition()
     end
 end
 
+
+BaudBagOptionsGroupBagSetMixin = {}
+
+---Creates a tab button for a bag set by it's BagSetType, structure can be seen as comment in the GroupBagSet in XML
+---@param bagSetTypeName string the name of the bag set type as used in BagSetType global as key
+---@param bagSetType BagSetTypeClass the bag set type as used in BagSetType global as value
+---@param lastTabButton Button the previous tab button used as an anchor for the new one
+---@return Button|MinimalTabTemplate
+local function CreateBagSetTabButton(parent, bagSetType, lastTabButton)
+    local tabButton = CreateFrame("Button", "BagSet"..bagSetType.TypeName.."Tab", parent, "MinimalTabTemplate")
+    tabButton:SetHeight(37)
+    tabButton.tabText = bagSetType.Name
+    if (lastTabButton) then
+        tabButton:SetPoint("TOPRIGHT", lastTabButton, "TOPLEFT", 0, 0)
+    else
+        tabButton:SetPoint("TOPRIGHT", parent, "TOPRIGHT", -30, 10)
+    end
+    tabButton:OnLoad()
+    return tabButton
+end
+
+function BaudBagOptionsGroupBagSetMixin:OnLoad()
+    self.tabButtons = {}
+    self.tabFrames = {}
+    local lastTabButton
+    AddOnTable.Functions.DebugMessage("Temp", "loading tabs based on BagSetType", BagSetTypeArray)
+    for _, type in pairs(BagSetTypeArray) do
+        if type.IsSupported() then
+            AddOnTable.Functions.DebugMessage("Temp", "creating new frame for BagSetType", type)
+            local tabButton = CreateBagSetTabButton(self, type, lastTabButton)
+
+            local tabFrame = CreateFrame("Frame", "BagSet"..type.TypeName.."Options", self, "BaudBagOptionsBagSetTemplate")
+            tabFrame.bagSetId = type.Id
+            tabFrame:SetAllPoints()
+
+            table.insert(self.tabButtons, tabButton)
+            table.insert(self.tabFrames, tabFrame)
+            lastTabButton = tabButton
+        end
+    end
+
+    self.tabsGroup = CreateRadioButtonGroup()
+    self.tabsGroup:AddButtons(self.tabButtons)
+    self.tabsGroup:SelectAtIndex(1)
+    self.tabsGroup:RegisterCallback(ButtonGroupBaseMixin.Event.Selected, self.OnTabSelected, self)
+end
+
+function BaudBagOptionsGroupBagSetMixin:OnTabSelected(tab, tabIndex)
+	self:EvaluateVisibility(tabIndex);
+	PlaySound(SOUNDKIT.IG_CHARACTER_INFO_TAB);
+end
+
+function BaudBagOptionsGroupBagSetMixin:EvaluateVisibility(tabIndex)
+    for tabFrameIndex, tabFrame in ipairs(self.tabFrames) do
+        tabFrame:SetShown(tabIndex == tabFrameIndex)
+    end
+end
+
+BaudBagOptionsBagSetMixin = {}
