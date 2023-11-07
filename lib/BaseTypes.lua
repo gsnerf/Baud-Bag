@@ -9,6 +9,8 @@ BagSetType = {
     Backpack = {
         Id = 1,
         Name = Localized.Inventory,
+        TypeName = "Backpack",
+        IsSupported = function() return true end,
         IsSubContainerOf = function(containerId)
             local isBackpackContainer = AddOnTable.BlizzConstants.BACKPACK_FIRST_CONTAINER <= containerId and containerId <= AddOnTable.BlizzConstants.BACKPACK_LAST_CONTAINER
             return isBackpackContainer
@@ -18,6 +20,8 @@ BagSetType = {
     Bank = {
         Id = 2,
         Name = Localized.BankBox,
+        TypeName = "Bank",
+        IsSupported = function() return true end,
         IsSubContainerOf = function(containerId)
             local isBankDefaultContainer = (containerId == AddOnTable.BlizzConstants.BANK_CONTAINER) or (containerId == AddOnTable.BlizzConstants.REAGENTBANK_CONTAINER)
             local isBankSubContainer = (AddOnTable.BlizzConstants.BANK_FIRST_CONTAINER <= containerId) and (containerId <= AddOnTable.BlizzConstants.BANK_LAST_CONTAINER)
@@ -28,24 +32,27 @@ BagSetType = {
     Keyring = {
         Id = 3,
         Name = Localized.KeyRing,
+        TypeName = "Keyring",
+        IsSupported = function() return AddOnTable.State.KeyringSupported end,
         IsSubContainerOf = function(containerId)
             return containerId == AddOnTable.BlizzConstants.KEYRING_CONTAINER
         end,
         ContainerIterationOrder = { AddOnTable.BlizzConstants.KEYRING_CONTAINER }
     } --[[,
     GuildBank = {
-        Id = 3,
+        Id = 4,
         IsSubContainerOf = function(containerId)
             return false
         end
     },
     VoidStorage = {
-        Id = 4,
+        Id = 5,
         IsSubContainerOf = function(containerId)
             return false
         end
     } ]]
 }
+BagSetTypeArray = { BagSetType.Backpack, BagSetType.Bank, BagSetType.Keyring }
 
 -- INITIALIZATION of BagSetType:
 -- * Backpack:
