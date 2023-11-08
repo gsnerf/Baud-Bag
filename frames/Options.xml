@@ -245,7 +245,7 @@
 						</KeyValues>
 						<Anchors>
 							<Anchor point="TOPLEFT" x="-12" y="-14"/>
-							<Anchor point="BOTTOMRIGHT" x="-6" y="-16"/>
+							<Anchor point="BOTTOMRIGHT" x="6" y="-16"/>
 						</Anchors>
 					</Frame>
 					<!--

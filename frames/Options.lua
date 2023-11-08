@@ -693,7 +693,8 @@ function BaudBagOptionsGroupBagSetMixin:OnLoad()
 
             local tabFrame = CreateFrame("Frame", "BagSet"..type.TypeName.."Options", self, "BaudBagOptionsBagSetTemplate")
             tabFrame.bagSetId = type.Id
-            tabFrame:SetAllPoints()
+            tabFrame:SetPoint("TOPLEFT", 5, -30)
+            tabFrame:SetPoint("BOTTOMRIGHT", -11, 1)
 
             table.insert(self.tabButtons, tabButton)
             table.insert(self.tabFrames, tabFrame)
