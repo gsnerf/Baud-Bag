@@ -263,19 +263,12 @@
 						Above is the anchor for the first tab button, all following tab buttons will be anchored to the previous one like this:
 						<Anchor point="TOPRIGHT" relativeKey="$parent.BagSetTab" relativePoint="TOPLEFT" x="0" y="0"/>
 					-->
-
-					<!--
-						there will be frames generated automatically in the OnLoad script of the group frame, that are similar to this:
-						
-						<Frame parentKey="BagSetOptions" inherits="BaudBagOptionsBagSetTemplate" setAllPoints="true">
-							<KeyValues>
-								<KeyValue key="bagSetId" value="BagSetId" type="number" />
-							</KeyValues>
-							<Frames>
-								...
-							</Frames>
-						</Frame>
-					-->
+					<Frame parentKey="Options" inherits="BaudBagOptionsBagSetTemplate">
+						<Anchors>
+							<Anchor point="TOPLEFT" x="5" y="-30" />
+							<Anchor point="BOTTOMRIGHT" x="-11" y="1" />
+						</Anchors>
+					</Frame>
 				</Frames>
 				<Scripts>
 					<OnLoad  method="OnLoad" />

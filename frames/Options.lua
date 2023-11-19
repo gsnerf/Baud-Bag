@@ -685,19 +685,10 @@ function BaudBagOptionsGroupBagSetMixin:OnLoad()
     self.tabButtons = {}
     self.tabFrames = {}
     local lastTabButton
-    AddOnTable.Functions.DebugMessage("Temp", "loading tabs based on BagSetType", BagSetTypeArray)
     for _, type in pairs(BagSetTypeArray) do
         if type.IsSupported() then
-            AddOnTable.Functions.DebugMessage("Temp", "creating new frame for BagSetType", type)
             local tabButton = CreateBagSetTabButton(self, type, lastTabButton)
-
-            local tabFrame = CreateFrame("Frame", "BagSet"..type.TypeName.."Options", self, "BaudBagOptionsBagSetTemplate")
-            tabFrame.bagSetId = type.Id
-            tabFrame:SetPoint("TOPLEFT", 5, -30)
-            tabFrame:SetPoint("BOTTOMRIGHT", -11, 1)
-
             table.insert(self.tabButtons, tabButton)
-            table.insert(self.tabFrames, tabFrame)
             lastTabButton = tabButton
         end
     end
@@ -709,14 +700,12 @@ function BaudBagOptionsGroupBagSetMixin:OnLoad()
 end
 
 function BaudBagOptionsGroupBagSetMixin:OnTabSelected(tab, tabIndex)
-	self:EvaluateVisibility(tabIndex);
-	PlaySound(SOUNDKIT.IG_CHARACTER_INFO_TAB);
+    self.Options:ChangeBagSet(tabIndex)
+	PlaySound(SOUNDKIT.IG_CHARACTER_INFO_TAB)
 end
 
-function BaudBagOptionsGroupBagSetMixin:EvaluateVisibility(tabIndex)
-    for tabFrameIndex, tabFrame in ipairs(self.tabFrames) do
-        tabFrame:SetShown(tabIndex == tabFrameIndex)
-    end
-end
 
 BaudBagOptionsBagSetMixin = {}
+
+function BaudBagOptionsBagSetMixin:ChangeBagSet(bagSetId)
+end
