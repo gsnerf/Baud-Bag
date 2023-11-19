@@ -49,30 +49,7 @@
 		<Size x="1" y="50" />
 	</Frame>
 
-	<!-- This is the checkbox between two bags that marks if the box is joined or not -->
-	<CheckButton name="BaudBagOptionsJoinCheckTemplate" inherits="BaudBagOptionsCheckButtonTemplate" virtual="true">
-		<Size x="26" y="26" />
-		<HitRectInsets>
-			<AbsInset left="0" right="0" top="0" bottom="0" />
-		</HitRectInsets>
-		<Scripts>
-			<OnClick function="BaudBagOptionsJoinCheck_OnClick" />
-		</Scripts>
-	</CheckButton>
-
-
 	<!-- TEMPLATES USED IN THE XML DECLARATION OF THE FRAME-->
-
-	<CheckButton name="BaudBagGeneralOptionsCheckButtonTemplate" inherits="BaudBagOptionsCheckButtonTemplate" virtual="true">
-		<Size x="26" y="26" />
-		<HitRectInsets>
-			<AbsInset left="0" right="0" top="0" bottom="0" />
-		</HitRectInsets>
-		<Scripts>
-			<OnClick function="BaudBagOptionsCheckButton_OnClick" />
-		</Scripts>
-	</CheckButton>
-
 	<CheckButton name="BaudBagOptionsCheckButtonTemplate" mixin="BaudBagOptionsCheckButtonMixin" virtual="true">
 		<Size y="26" />
 		<Anchors>
@@ -113,6 +90,30 @@
 			<OnLeave method="OnLeave" />
 			<OnClick method="OnClick" />
 		</Scripts>
+	</CheckButton>
+
+	<CheckButton name="BaudBagOptionsGlobalCheckButtonTemplate" inherits="BaudBagOptionsCheckButtonTemplate" virtual="true">
+		<KeyValues>
+			<KeyValue key="settingsType" value="Global" type="string" />
+		</KeyValues>
+	</CheckButton>
+
+	<CheckButton name="BaudBagOptionsBagSetCheckButtonTemplate" inherits="BaudBagOptionsCheckButtonTemplate" virtual="true">
+		<KeyValues>
+			<KeyValue key="settingsType" value="BagSet" type="string" />
+		</KeyValues>
+	</CheckButton>
+
+	<CheckButton name="BaudBagOptionsContainerCheckButtonTemplate" inherits="BaudBagOptionsCheckButtonTemplate" virtual="true">
+		<KeyValues>
+			<KeyValue key="settingsType" value="Container" type="string" />
+		</KeyValues>
+	</CheckButton>
+
+	<CheckButton name="BaudBagOptionsBagJoinCheckButtonTemplate" inherits="BaudBagOptionsCheckButtonTemplate" virtual="true">
+		<KeyValues>
+			<KeyValue key="settingsType" value="BagJoin" type="string" />
+		</KeyValues>
 	</CheckButton>
 
 	<Slider name="BaudBagOptionsSliderTemplate" inherits="MinimalSliderTemplate" mixin="BaudBagOptionsSliderTemplateMixin" virtual="true">
@@ -178,37 +179,37 @@
 					</Frame>
 
 
-					<CheckButton name="$parentCheckButton1" parentKey="CheckButton1" inherits="BaudBagGeneralOptionsCheckButtonTemplate" id="1">
+					<CheckButton name="$parentCheckButton1" parentKey="CheckButton1" inherits="BaudBagOptionsGlobalCheckButtonTemplate" id="1">
 						<Anchors>
 							<Anchor point="TOPLEFT" relativeKey="$parent.Header" relativePoint="BOTTOMLEFT" x="20" y="-7" />
 						</Anchors>
 					</CheckButton>
 
-					<CheckButton name="$parentCheckButton2" parentKey="CheckButton2" inherits="BaudBagGeneralOptionsCheckButtonTemplate" id="2">
+					<CheckButton name="$parentCheckButton2" parentKey="CheckButton2" inherits="BaudBagOptionsGlobalCheckButtonTemplate" id="2">
 						<Anchors>
 							<Anchor point="TOPLEFT" relativeKey="$parent.CheckButton1" relativePoint="BOTTOMLEFT" y="-4" />
 						</Anchors>
 					</CheckButton>
 
-					<CheckButton name="$parentCheckButton3" parentKey="CheckButton3" inherits="BaudBagGeneralOptionsCheckButtonTemplate" id="3">
+					<CheckButton name="$parentCheckButton3" parentKey="CheckButton3" inherits="BaudBagOptionsGlobalCheckButtonTemplate" id="3">
 						<Anchors>
 							<Anchor point="TOPLEFT" relativeKey="$parent.CheckButton2" relativePoint="BOTTOMLEFT" y="-4" />
 						</Anchors>
 					</CheckButton>
 
-					<CheckButton name="$parentCheckButton4" parentKey="CheckButton4" inherits="BaudBagGeneralOptionsCheckButtonTemplate" id="4">
+					<CheckButton name="$parentCheckButton4" parentKey="CheckButton4" inherits="BaudBagOptionsGlobalCheckButtonTemplate" id="4">
 						<Anchors>
 							<Anchor point="TOPLEFT" relativeKey="$parent.CheckButton3" relativePoint="BOTTOMLEFT" y="-4" />
 						</Anchors>
 					</CheckButton>
 
-					<CheckButton name="$parentCheckButton5" parentKey="CheckButton5" inherits="BaudBagGeneralOptionsCheckButtonTemplate" id="5">
+					<CheckButton name="$parentCheckButton5" parentKey="CheckButton5" inherits="BaudBagOptionsGlobalCheckButtonTemplate" id="5">
 						<Anchors>
 							<Anchor point="TOPLEFT" relativeKey="$parent.CheckButton4" relativePoint="BOTTOMLEFT" y="-4" />
 						</Anchors>
 					</CheckButton>
 
-					<CheckButton name="$parentCheckButton6" parentKey="CheckButton6" inherits="BaudBagGeneralOptionsCheckButtonTemplate" id="6">
+					<CheckButton name="$parentCheckButton6" parentKey="CheckButton6" inherits="BaudBagOptionsGlobalCheckButtonTemplate" id="6">
 						<Anchors>
 							<Anchor point="TOPLEFT" relativeKey="$parent.CheckButton5" relativePoint="BOTTOMLEFT" y="-4" />
 						</Anchors>
@@ -317,7 +318,7 @@
 						</Layers>
 					</Frame>
 
-					<CheckButton name="$parentEnabledCheck" parentKey="EnabledCheck" inherits="BaudBagOptionsCheckButtonTemplate" id="Enabled">
+					<CheckButton name="$parentEnabledCheck" parentKey="EnabledCheck" inherits="BaudBagOptionsBagSetCheckButtonTemplate" id="Enabled">
 						<Anchors>
 							<Anchor point="TOPLEFT" relativeKey="$parent.SetSelection" relativePoint="TOPRIGHT" x="5" y="-2" />
 						</Anchors>
@@ -326,7 +327,7 @@
 						</Scripts>
 					</CheckButton>
 
-					<CheckButton name="$parentCloseAllCheck" parentKey="CloseAllCheck" inherits="BaudBagOptionsCheckButtonTemplate" id="CloseAll">
+					<CheckButton name="$parentCloseAllCheck" parentKey="CloseAllCheck" inherits="BaudBagOptionsBagSetCheckButtonTemplate" id="CloseAll">
 						<Anchors>
 							<Anchor point="TOPLEFT" relativeTo="$parentEnabledCheck" relativePoint="TOPRIGHT" x="10" y="6" />
 						</Anchors>
@@ -383,19 +384,19 @@
 						</Layers>
 					</Frame>
 
-					<CheckButton name="$parentCheckButton1" parentKey="CheckButton1" inherits="BaudBagGeneralOptionsCheckButtonTemplate" id="1">
+					<CheckButton name="$parentCheckButton1" parentKey="CheckButton1" inherits="BaudBagOptionsContainerCheckButtonTemplate" id="1">
 						<Anchors>
 							<Anchor point="TOPLEFT" relativeKey="$parent.BackgroundSelection" relativePoint="BOTTOMLEFT" x="20" y="-7" />
 						</Anchors>
 					</CheckButton>
 
-					<CheckButton name="$parentCheckButton2" parentKey="CheckButton2" inherits="BaudBagGeneralOptionsCheckButtonTemplate" id="2">
+					<CheckButton name="$parentCheckButton2" parentKey="CheckButton2" inherits="BaudBagOptionsContainerCheckButtonTemplate" id="2">
 						<Anchors>
 							<Anchor point="TOPLEFT" relativeKey="$parent.CheckButton1" relativePoint="BOTTOMLEFT" x="0" y="8" />
 						</Anchors>
 					</CheckButton>
 
-					<CheckButton name="$parentCheckButton3" parentKey="CheckButton3" inherits="BaudBagGeneralOptionsCheckButtonTemplate" id="3">
+					<CheckButton name="$parentCheckButton3" parentKey="CheckButton3" inherits="BaudBagOptionsContainerCheckButtonTemplate" id="3">
 						<Anchors>
 							<Anchor point="TOPLEFT" relativeKey="$parent.CheckButton2" relativePoint="BOTTOMLEFT" x="0" y="8" />
 						</Anchors>

@@ -176,8 +176,9 @@ function BaudBagOptionsMixin:OnEvent(event, ...)
         else
             -- all other bags also have a button to mark joins with the previous bags
             Button:SetPoint("LEFT", Prefix.."Bag"..(Bag-1), "RIGHT", 8, 0)
-            Check = CreateFrame("CheckButton", Prefix.."JoinCheck"..Bag, Button, Prefix.."JoinCheckTemplate")
-            Check:SetPoint("BOTTOM", Button, "TOPLEFT", -4, 4)
+            Check = CreateFrame("CheckButton", Prefix.."JoinCheck"..Bag, Button, "BaudBagOptionsBagJoinCheckButtonTemplate")
+            Check:SetPoint("BOTTOM", Button, "TOP", 0, 4)
+            Check:SetPoint("LEFT", Button, "LEFT", -4, 0)
             Check:SetID(Bag)
             Check.tooltipText = Localized.CheckTooltip
 
@@ -278,25 +279,6 @@ function BaudBagOptionsBag_OnClick(self, event, ...)
     BaudBagOptions:Update()
 end
 
-function BaudBagOptionsJoinCheck_OnClick(self, event, ...)
-    PlayCheckBoxSound(self)
-
-    BBConfig[SelectedBags].Joined[self:GetID()] = self:GetChecked() and true or false
-    local ContNum = 2
-    for Bag = 2,(self:GetID()-1) do
-        if (BBConfig[SelectedBags].Joined[Bag] == false) then
-            ContNum = ContNum + 1
-        end
-    end
-    if self:GetChecked() then
-        tremove(BBConfig[SelectedBags], ContNum)
-    else
-        tinsert(BBConfig[SelectedBags], ContNum, AddOnTable.Functions.CopyTable(BBConfig[SelectedBags][ContNum-1]))
-    end
-    BaudBagOptions:Update()
-    BaudUpdateJoinedBags()
-end
-
 function PlayCheckBoxSound(self)
     if (self:GetChecked()) then
         PlaySound(SOUNDKIT.IG_MAINMENU_OPTION_CHECKBOX_OFF)
@@ -345,40 +327,6 @@ function BaudBagOptionsBackgroundDropDown_OnClick(self, newValue)
     local container = AddOnTable["Sets"][SelectedBags].Containers[SelectedContainer]
     container:Rebuild()
     container:Update()
-end
-
-
---[[ CheckBox (non "enabled") functions ]]
-function BaudBagOptionsCheckButton_OnClick(self, event, ...)
-    -- make the apropriate sound
-    PlaySound(self:GetChecked() and SOUNDKIT.IG_MAINMENU_OPTION_CHECKBOX_OFF or SOUNDKIT.IG_MAINMENU_OPTION_CHECKBOX_ON)
-    
-    -- apply change based on group
-    local SavedVar
-    if (self:GetParent() == BaudBagOptions.GroupGlobal) then
-        SavedVar = AddOnTable.ConfigOptions.Global.CheckButtons[self:GetID()].SavedVar
-        AddOnTable.Functions.DebugMessage("Options", "Update global variable: "..SavedVar)
-        BBConfig[SavedVar] = self:GetChecked()
-
-        if (SavedVar == "RarityColor") then
-            AddOnTable.Functions.ForEachOpenContainer(
-                function (container)
-                    container:Update()
-                end
-            )
-        end
-    else
-        SavedVar = AddOnTable.ConfigOptions.Container.CheckButtons[self:GetID()].SavedVar
-        AddOnTable.Functions.DebugMessage("Options", "Update container variable: "..SavedVar)
-        BBConfig[SelectedBags][SelectedContainer][SavedVar] = self:GetChecked()
-
-        -- make sure options who need it (visible things) update the affected container
-        if (SavedVar == "BlankTop") or (SavedVar == "RarityColor") then -- or (SavedVar == "RarityColorAltern") then
-            AddOnTable.Functions.DebugMessage("Options", "Want to update container: "..Prefix.."Container"..SelectedBags.."_"..SelectedContainer)
-            AddOnTable.Sets[SelectedBags].Containers[SelectedContainer]:Update() -- TODO: move to BaudBagBBConfig save?
-        end
-    end
-    BaudBagOptions:Update()
 end
 
 
@@ -718,5 +666,54 @@ function BaudBagOptionsCheckButtonMixin:OnLeave()
 end
 
 function BaudBagOptionsCheckButtonMixin:OnClick()
-    -- TODO migrate stuff from global method here somehow
+    if self.settingsType == "Global" then
+        local savedVar = AddOnTable.ConfigOptions.Global.CheckButtons[self:GetID()].SavedVar
+        AddOnTable.Functions.DebugMessage("Options", "Update global variable: "..savedVar)
+        BBConfig[savedVar] = self:GetChecked()
+
+        if (savedVar == "RarityColor") then
+            AddOnTable.Functions.ForEachOpenContainer(
+                function (container)
+                    container:Update()
+                end
+            )
+        end
+    elseif self.settingsType == "BagSet" then
+        local savedVar = self:GetID()
+        
+        BBConfig[SelectedBags][savedVar] = self:GetChecked()
+
+        if (savedVar == "Enabled") then
+            if (not self:GetChecked()) then
+                AddOnTable.Sets[SelectedBags]:Close()
+            end        
+            AddOnTable.UpdateBagParents()
+            AddOnTable.UpdateBankParents()
+        end
+    elseif self.settingsType == "Container" then
+        local savedVar = AddOnTable.ConfigOptions.Container.CheckButtons[self:GetID()].SavedVar
+        AddOnTable.Functions.DebugMessage("Options", "Update container variable: "..savedVar)
+        BBConfig[SelectedBags][SelectedContainer][savedVar] = self:GetChecked()
+
+        -- make sure options who need it (visible things) update the affected container
+        if (savedVar == "BlankTop") or (savedVar == "RarityColor") then -- or (SavedVar == "RarityColorAltern") then
+            AddOnTable.Functions.DebugMessage("Options", "Want to update container: "..Prefix.."Container"..SelectedBags.."_"..SelectedContainer)
+            AddOnTable.Sets[SelectedBags].Containers[SelectedContainer]:Update() -- TODO: move to BaudBagBBConfig save?
+        end
+    elseif self.settingsType == "BagJoin" then
+        BBConfig[SelectedBags].Joined[self:GetID()] = self:GetChecked() and true or false
+        local ContNum = 2
+        for Bag = 2,(self:GetID()-1) do
+            if (BBConfig[SelectedBags].Joined[Bag] == false) then
+                ContNum = ContNum + 1
+            end
+        end
+        if self:GetChecked() then
+            tremove(BBConfig[SelectedBags], ContNum)
+        else
+            tinsert(BBConfig[SelectedBags], ContNum, AddOnTable.Functions.CopyTable(BBConfig[SelectedBags][ContNum-1]))
+        end
+        BaudUpdateJoinedBags()
+    end
+    BaudBagOptions:Update()
 end
