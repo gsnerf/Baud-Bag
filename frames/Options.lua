@@ -105,28 +105,19 @@ function BaudBagOptionsMixin:OnEvent(event, ...)
     self.GroupContainer.SetSelection.Label:SetText(Localized.BagSet)
     self.GroupContainer.NameInput.Text:SetText(Localized.ContainerName)
     self.GroupContainer.BackgroundSelection.Label:SetText(Localized.Background)
-    self.GroupContainer.EnabledCheck.tooltipText  = Localized.EnabledTooltip
-    self.GroupContainer.CloseAllCheck.tooltipText = Localized.CloseAllTooltip
-    self.GroupContainer.EnabledCheck.text:SetText(Localized.Enabled)
-    self.GroupContainer.CloseAllCheck.text:SetText(Localized.CloseAll)
-    self.GroupContainer.EnabledCheck:SetHitRectInsets(0, -self.GroupContainer.EnabledCheck.text:GetWidth() - 10, 0, 0)
-    self.GroupContainer.CloseAllCheck:SetHitRectInsets(0, -self.GroupContainer.CloseAllCheck.text:GetWidth() - 10, 0, 0)
+    self.GroupContainer.EnabledCheck:UpdateText(Localized.Enabled, Localized.EnabledTooltip)
+    self.GroupContainer.CloseAllCheck:UpdateText(Localized.CloseAll, Localized.CloseAllTooltip)
     self.GroupContainer.ResetPositionButton.Text:SetText(Localized.OptionsResetContainerPosition)
     self.GroupContainer.ResetPositionButton.tooltipText = Localized.OptionsResetContainerPositionTooltip
 
     -- localized global checkbox labels
     for Key, Value in ipairs(AddOnTable.ConfigOptions.Global.CheckButtons) do
         local checkButton = self.GroupGlobal["CheckButton"..Key]
-        if (checkButton.text == nil) then
-            checkButton.text = _G[checkButton:GetName().."Text"]
-        end
-        checkButton.text:SetText(Value.Text)
-        checkButton.tooltipText = Value.TooltipText
+        checkButton:UpdateText(Value.Text, Value.TooltipText)
 
         if (not Value.CanBeSet) then
             checkButton:Disable()
-            checkButton.text:SetFontObject("GameFontDisable")
-            checkButton.text:SetText(Value.Text.." ("..Value.UnavailableText..")")
+            checkButton:SetText(Value.Text.." ("..Value.UnavailableText..")")
         end
     end
     for Key, Value in ipairs(AddOnTable.ConfigOptions.Global.SliderBars) do
@@ -140,11 +131,7 @@ function BaudBagOptionsMixin:OnEvent(event, ...)
     -- localized checkbox labels
     for Key, Value in ipairs(AddOnTable.ConfigOptions.Container.CheckButtons) do
         local checkButton = self.GroupContainer["CheckButton"..Key]
-        if (checkButton.text == nil) then
-            checkButton.text = _G[checkButton:GetName().."Text"]
-        end
-        checkButton.text:SetText(Value.Text)
-        checkButton.tooltipText = Value.TooltipText
+        checkButton:UpdateText(Value.Text, Value.TooltipText)
     end
 
     -- set slider bounds
@@ -620,13 +607,10 @@ function BaudBagOptionsMixin:Update()
     -- load checkbox enabled
     for Key, Value in ipairs(AddOnTable.ConfigOptions.Container.CheckButtons) do
         local Button = self.GroupContainer["CheckButton"..Key]
-        local ButtonText = _G[Button:GetName().."Text"]
         if (Value.DependsOn ~= nil and not BBConfig[SelectedBags][SelectedContainer][Value.DependsOn]) then
             Button:Disable()
-            ButtonText:SetFontObject("GameFontDisable")
         else
             Button:Enable()
-            ButtonText:SetFontObject("GameFontNormal")
         end
     end
 
@@ -708,4 +692,31 @@ end
 BaudBagOptionsBagSetMixin = {}
 
 function BaudBagOptionsBagSetMixin:ChangeBagSet(bagSetId)
+end
+
+BaudBagOptionsCheckButtonMixin = {}
+
+function BaudBagOptionsCheckButtonMixin:UpdateText(text, tooltip)
+    self:SetText(text)
+    self.tooltipText = tooltip
+    self:SetWidth(self:GetNormalTexture():GetWidth() + self.Text:GetWidth() + 5) -- first 5 is the offset between text and texture, the second 5 is extra spacing that the text seems to need
+end
+
+function BaudBagOptionsCheckButtonMixin:OnEnter()
+    if ( self.tooltipText ) then
+        GetAppropriateTooltip():SetOwner(self, self.tooltipOwnerPoint or "ANCHOR_RIGHT")
+        GetAppropriateTooltip():SetText(self.tooltipText, nil, nil, nil, nil, true)
+    end
+    if ( self.tooltipRequirement ) then
+        GetAppropriateTooltip():AddLine(self.tooltipRequirement, 1.0, 1.0, 1.0, true)
+        GetAppropriateTooltip():Show()
+    end
+end
+
+function BaudBagOptionsCheckButtonMixin:OnLeave()
+    GetAppropriateTooltip():Hide()
+end
+
+function BaudBagOptionsCheckButtonMixin:OnClick()
+    -- TODO migrate stuff from global method here somehow
 end

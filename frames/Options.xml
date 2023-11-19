@@ -73,34 +73,45 @@
 		</Scripts>
 	</CheckButton>
 
-	<CheckButton name="BaudBagOptionsCheckButtonTemplate" virtual="true" inherits="UICheckButtonTemplate">
-		<Size x="26" y="26"/>
-		<HitRectInsets>
-			<AbsInset left="0" right="-100" top="0" bottom="0"/>
-		</HitRectInsets>
-		
+	<CheckButton name="BaudBagOptionsCheckButtonTemplate" mixin="BaudBagOptionsCheckButtonMixin" virtual="true">
+		<Size y="26" />
+		<Anchors>
+			<Anchor point="LEFT" x="0" />
+		</Anchors>
+		<!-- this is taken and adapted from UICheckButtonArtTemplate -->
+		<NormalTexture file="Interface\Buttons\UI-CheckBox-Up">
+			<Size x="26" y="26" />
+			<Anchors><Anchor point="LEFT" x="0" /></Anchors>
+		</NormalTexture>
+		<PushedTexture file="Interface\Buttons\UI-CheckBox-Down">
+			<Size x="26" y="26" />
+			<Anchors><Anchor point="LEFT" x="0" /></Anchors>
+		</PushedTexture>
+		<HighlightTexture file="Interface\Buttons\UI-CheckBox-Highlight" alphaMode="ADD">
+			<Size x="26" y="26" />
+			<Anchors><Anchor point="LEFT" x="0" /></Anchors>
+		</HighlightTexture>
+		<CheckedTexture file="Interface\Buttons\UI-CheckBox-Check">
+			<Size x="26" y="26" />
+			<Anchors><Anchor point="LEFT" x="0" /></Anchors>
+		</CheckedTexture>
+		<DisabledCheckedTexture file="Interface\Buttons\UI-CheckBox-Check-Disabled">
+			<Size x="26" y="26" />
+			<Anchors><Anchor point="LEFT" x="0" /></Anchors>
+		</DisabledCheckedTexture>
+		<!-- and a custom ButtonText that should work better als the one from UICheckButtonTemplate -->
+		<ButtonText inherits="GameFontNormalSmall" parentKey="Text">
+			<Anchors>
+				<Anchor point="LEFT" relativePoint="LEFT" x="26" y="0" />
+			</Anchors>
+		</ButtonText>
+		<NormalFont style="GameFontNormalSmall" />
+		<HighlightFont style="GameFontHighlightSmall" />
+		<DisabledFont style="GameFontDisableSmall" />
 		<Scripts>
-			<OnClick>
-				if ( self:GetChecked() ) then
-					PlaySound(SOUNDKIT.IG_MAINMENU_OPTION_CHECKBOX_ON);
-				else
-					PlaySound(SOUNDKIT.IG_MAINMENU_OPTION_CHECKBOX_OFF);
-				end
-				BlizzardOptionsPanel_CheckButton_OnClick(self);
-			</OnClick>
-			<OnEnter>
-				if ( self.tooltipText ) then
-					GetAppropriateTooltip():SetOwner(self, self.tooltipOwnerPoint or "ANCHOR_RIGHT");
-					GetAppropriateTooltip():SetText(self.tooltipText, nil, nil, nil, nil, true);
-				end
-				if ( self.tooltipRequirement ) then
-					GetAppropriateTooltip():AddLine(self.tooltipRequirement, 1.0, 1.0, 1.0, true);
-					GetAppropriateTooltip():Show();
-				end
-			</OnEnter>
-			<OnLeave>
-				GetAppropriateTooltip():Hide();
-			</OnLeave>
+			<OnEnter method="OnEnter" />
+			<OnLeave method="OnLeave" />
+			<OnClick method="OnClick" />
 		</Scripts>
 	</CheckButton>
 
@@ -175,31 +186,31 @@
 
 					<CheckButton name="$parentCheckButton2" parentKey="CheckButton2" inherits="BaudBagGeneralOptionsCheckButtonTemplate" id="2">
 						<Anchors>
-							<Anchor point="TOPLEFT" relativeKey="$parent.CheckButton1" relativePoint="BOTTOMLEFT" y="-5" />
+							<Anchor point="TOPLEFT" relativeKey="$parent.CheckButton1" relativePoint="BOTTOMLEFT" y="-4" />
 						</Anchors>
 					</CheckButton>
 
 					<CheckButton name="$parentCheckButton3" parentKey="CheckButton3" inherits="BaudBagGeneralOptionsCheckButtonTemplate" id="3">
 						<Anchors>
-							<Anchor point="TOPLEFT" relativeKey="$parent.CheckButton2" relativePoint="BOTTOMLEFT" y="-5" />
+							<Anchor point="TOPLEFT" relativeKey="$parent.CheckButton2" relativePoint="BOTTOMLEFT" y="-4" />
 						</Anchors>
 					</CheckButton>
 
 					<CheckButton name="$parentCheckButton4" parentKey="CheckButton4" inherits="BaudBagGeneralOptionsCheckButtonTemplate" id="4">
 						<Anchors>
-							<Anchor point="TOPLEFT" relativeKey="$parent.CheckButton3" relativePoint="BOTTOMLEFT" y="-5" />
+							<Anchor point="TOPLEFT" relativeKey="$parent.CheckButton3" relativePoint="BOTTOMLEFT" y="-4" />
 						</Anchors>
 					</CheckButton>
 
 					<CheckButton name="$parentCheckButton5" parentKey="CheckButton5" inherits="BaudBagGeneralOptionsCheckButtonTemplate" id="5">
 						<Anchors>
-							<Anchor point="TOPLEFT" relativeKey="$parent.CheckButton4" relativePoint="BOTTOMLEFT" y="-5" />
+							<Anchor point="TOPLEFT" relativeKey="$parent.CheckButton4" relativePoint="BOTTOMLEFT" y="-4" />
 						</Anchors>
 					</CheckButton>
 
 					<CheckButton name="$parentCheckButton6" parentKey="CheckButton6" inherits="BaudBagGeneralOptionsCheckButtonTemplate" id="6">
 						<Anchors>
-							<Anchor point="TOPLEFT" relativeKey="$parent.CheckButton5" relativePoint="BOTTOMLEFT" y="-5" />
+							<Anchor point="TOPLEFT" relativeKey="$parent.CheckButton5" relativePoint="BOTTOMLEFT" y="-4" />
 						</Anchors>
 					</CheckButton>
 
@@ -212,7 +223,7 @@
 					<Button parentKey="ResetPositionsButton" inherits="UIPanelButtonTemplate" mixin="PositionResetMixin">
 						<Size x="200" y="22"/>
 						<Anchors>
-							<Anchor point="TOPLEFT" relativeKey="$parent.CheckButton6" relativePoint="BOTTOMLEFT" y="-5" />
+							<Anchor point="TOPLEFT" relativeKey="$parent.CheckButton6" relativePoint="BOTTOMLEFT" y="-4" />
 						</Anchors>
 						<Scripts>
 							<OnClick method="ResetPosition" />
@@ -317,7 +328,7 @@
 
 					<CheckButton name="$parentCloseAllCheck" parentKey="CloseAllCheck" inherits="BaudBagOptionsCheckButtonTemplate" id="CloseAll">
 						<Anchors>
-							<Anchor point="TOPLEFT" relativeTo="$parentEnabledCheckText" relativePoint="TOPRIGHT" x="10" y="6" />
+							<Anchor point="TOPLEFT" relativeTo="$parentEnabledCheck" relativePoint="TOPRIGHT" x="10" y="6" />
 						</Anchors>
 						<Scripts>
 							<OnClick function="BaudBagCloseAllCheck_OnClick" />
