@@ -93,8 +93,6 @@ function BaudBagOptionsMixin:OnEvent(event, ...)
     self.GroupGlobal.ResetPositionsButton.Text:SetText(Localized.OptionsResetAllPositions)
     self.GroupGlobal.ResetPositionsButton.tooltipText = Localized.OptionsResetAllPositionsTooltip
     
-    self.GroupContainer.Header.Label:SetText(Localized.OptionsGroupContainer)
-    self.GroupContainer.SetSelection.Label:SetText(Localized.BagSet)
     self.GroupContainer.NameInput.Text:SetText(Localized.ContainerName)
     self.GroupContainer.BackgroundSelection.Label:SetText(Localized.Background)
     self.GroupContainer.EnabledCheck:UpdateText(Localized.Enabled, Localized.EnabledTooltip)
@@ -170,7 +168,7 @@ function BaudBagOptionsMixin:OnEvent(event, ...)
             Button:SetPoint("LEFT", Prefix.."Bag"..(Bag-1), "RIGHT", 8, 0)
             Check = CreateFrame("CheckButton", Prefix.."JoinCheck"..Bag, Button, "BaudBagOptionsBagJoinCheckButtonTemplate")
             Check:SetPoint("BOTTOM", Button, "TOP", 0, 4)
-            Check:SetPoint("LEFT", Button, "LEFT", -4, 0)
+            Check:SetPoint("LEFT", Button, "LEFT", -17, 0)
             Check:SetID(Bag)
             Check.tooltipText = Localized.CheckTooltip
 
@@ -203,39 +201,6 @@ function BaudBagOptionsMixin:OnCancel(event, ...)
     BBConfig = CfgBackup
     ReloadConfigDependant()
     self:Update()
-end
-
-
---[[ SetBags DropDown functions ]]
-function BaudBagOptionsSetDropDown_Initialize()
-    -- prepare dropdown entries
-    local info		= UIDropDownMenu_CreateInfo()
-    info.func		= BaudBagOptionsSetDropDown_OnClick
-
-    -- inventory set
-    info.text		= Localized.Inventory
-    info.arg1       = 1
-    info.checked	= (info.arg1 == SelectedBags)
-    UIDropDownMenu_AddButton(info)
-
-    -- bank set
-    info.text		= Localized.BankBox
-    info.arg1       = 2
-    info.checked    = (info.arg1 == SelectedBags)
-    UIDropDownMenu_AddButton(info)
-
-    if (AddOnTable.State.KeyringSupported) then
-        -- keyring
-        info.text		= Localized.KeyRing
-        info.arg1       = 3
-        info.checked    = (info.arg1 == SelectedBags)
-        UIDropDownMenu_AddButton(info)
-    end
-end
-
-function BaudBagOptionsSetDropDown_OnClick(self, newValue)
-    SelectedBags = newValue
-    BaudBagOptions:Update()
 end
 
 
@@ -369,11 +334,6 @@ function BaudBagOptionsMixin:Update()
     local ContNum = 1
     local Bags = SetSize[SelectedBags]
     Updating = true
-
-    -- first reload the drop down (weird problems if not done)
-    local containerDropDown = self.GroupContainer.SetSelection
-    UIDropDownMenu_Initialize(containerDropDown, BaudBagOptionsSetDropDown_Initialize)
-    UIDropDownMenu_SetText(containerDropDown, SelectedBags == 1 and Localized.Inventory or SelectedBags == 2 and Localized.BankBox or Localized.KeyRing)
 
     -- is the box enabled
     self.GroupContainer.EnabledCheck:SetChecked(BBConfig[SelectedBags].Enabled~=false)
@@ -606,6 +566,8 @@ end
 BaudBagOptionsBagSetMixin = {}
 
 function BaudBagOptionsBagSetMixin:ChangeBagSet(bagSetId)
+    SelectedBags = bagSetId
+    BaudBagOptions:Update()
 end
 
 BaudBagOptionsCheckButtonMixin = {}

@@ -295,35 +295,12 @@
 				<Size y="200" />
 
 				<Frames>
-					<Frame parentKey="Header" inherits="BaudBagGroupHeaderTemplate">
-						<Anchors>
-							<Anchor point="TOPLEFT" />
-							<Anchor point="RIGHT" />
-						</Anchors>
-					</Frame>
-
-					<Frame parentKey="SetSelection" inherits="UIDropDownMenuTemplate" enableMouse="true">
-						<Anchors>
-							<Anchor point="TOPLEFT" relativeKey="$parent.Header" relativePoint="BOTTOMLEFT" y="-25" />
-						</Anchors>
-						<Size x="160" y="25" />
-						<Layers>
-							<Layer level="BACKGROUND">
-								<FontString name="$parentLabel" parentKey="Label" inherits="GameFontNormalSmall">
-									<Anchors>
-										<Anchor point="BOTTOMLEFT" relativePoint="TOPLEFT" x="16" y="3" />
-									</Anchors>
-								</FontString>
-							</Layer>
-						</Layers>
-					</Frame>
-
 					<CheckButton parentKey="EnabledCheck" inherits="BaudBagOptionsBagSetCheckButtonTemplate">
 						<KeyValues>
 							<KeyValue key="savedVar" value="Enabled" type="string" />
 						</KeyValues>
 						<Anchors>
-							<Anchor point="TOPLEFT" relativeKey="$parent.SetSelection" relativePoint="TOPRIGHT" x="5" y="-2" />
+							<Anchor point="TOPLEFT" y="-20" />
 						</Anchors>
 					</CheckButton>
 
@@ -332,14 +309,14 @@
 							<KeyValue key="savedVar" value="CloseAll" type="string" />
 						</KeyValues>
 						<Anchors>
-							<Anchor point="TOPLEFT" relativeTo="$parentEnabledCheck" relativePoint="TOPRIGHT" x="10" y="6" />
+							<Anchor point="TOPLEFT" relativeKey="$parent.EnabledCheck" relativePoint="TOPRIGHT" x="10" />
 						</Anchors>
 					</CheckButton>
 
 					<!-- THIS is where the bag icons are getting auto-generated on init! -->
 					<Frame parentKey="BagFrame">
 						<Anchors>
-							<Anchor point="TOP" relativeKey="$parent.SetSelection" relativePoint="BOTTOM" y="-10" />
+							<Anchor point="TOP" y="-40" />
 							<Anchor point="LEFT" />
 							<Anchor point="RIGHT" />
 						</Anchors>
