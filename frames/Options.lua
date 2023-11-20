@@ -239,32 +239,6 @@ function BaudBagOptionsSetDropDown_OnClick(self, newValue)
 end
 
 
---[[ BagSet specific CheckBox functions ]]
-
-function BaudBagEnabledCheck_OnClick(self, event, ...)
-    PlayCheckBoxSound(self)
-    if (not self:GetChecked()) then
-        AddOnTable.Sets[SelectedBags]:Close()  -- TODO: move to BaudBagConfig save?
-    end
-
-    BBConfig[SelectedBags].Enabled = self:GetChecked()
-    AddOnTable.UpdateBagParents()
-    AddOnTable.UpdateBankParents()
-end
-
-function BaudBagCloseAllCheck_OnClick(self, event, ...)
-    PlayCheckBoxSound(self)
-    BBConfig[SelectedBags].CloseAll = self:GetChecked()
-end
-
-function BaudBagSellJunkCheck_OnClick(self, event, ...)
-    if (SelectedBags == 1) then
-        PlayCheckBoxSound(self)
-        BBConfig[SelectedBags].SellJunk = self:GetChecked()
-    end
-end
-
-
 --[[ Dynamic Bags/Container Clicks ]]
 function BaudBagOptionsBag_OnClick(self, event, ...)
     SelectedContainer = self:GetID()
