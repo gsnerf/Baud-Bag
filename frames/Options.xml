@@ -318,22 +318,22 @@
 						</Layers>
 					</Frame>
 
-					<CheckButton name="$parentEnabledCheck" parentKey="EnabledCheck" inherits="BaudBagOptionsBagSetCheckButtonTemplate" id="Enabled">
+					<CheckButton parentKey="EnabledCheck" inherits="BaudBagOptionsBagSetCheckButtonTemplate">
+						<KeyValues>
+							<KeyValue key="savedVar" value="Enabled" type="string" />
+						</KeyValues>
 						<Anchors>
 							<Anchor point="TOPLEFT" relativeKey="$parent.SetSelection" relativePoint="TOPRIGHT" x="5" y="-2" />
 						</Anchors>
-						<Scripts>
-							<OnClick function="BaudBagEnabledCheck_OnClick" />
-						</Scripts>
 					</CheckButton>
 
-					<CheckButton name="$parentCloseAllCheck" parentKey="CloseAllCheck" inherits="BaudBagOptionsBagSetCheckButtonTemplate" id="CloseAll">
+					<CheckButton parentKey="CloseAllCheck" inherits="BaudBagOptionsBagSetCheckButtonTemplate">
+						<KeyValues>
+							<KeyValue key="savedVar" value="CloseAll" type="string" />
+						</KeyValues>
 						<Anchors>
 							<Anchor point="TOPLEFT" relativeTo="$parentEnabledCheck" relativePoint="TOPRIGHT" x="10" y="6" />
 						</Anchors>
-						<Scripts>
-							<OnClick function="BaudBagCloseAllCheck_OnClick" />
-						</Scripts>
 					</CheckButton>
 
 					<!-- THIS is where the bag icons are getting auto-generated on init! -->
