@@ -104,7 +104,6 @@ function BaudBagOptionsMixin:OnEvent(event, ...)
     self.GroupGlobal.ResetPositionsButton.tooltipText = Localized.OptionsResetAllPositionsTooltip
     
     self.GroupContainer.NameInput.Text:SetText(Localized.ContainerName)
-    self.GroupContainer.BackgroundSelection.Label:SetText(Localized.Background)
     self.GroupContainer.EnabledCheck:UpdateText(Localized.Enabled, Localized.EnabledTooltip)
     self.GroupContainer.CloseAllCheck:UpdateText(Localized.CloseAll, Localized.CloseAllTooltip)
     self.GroupContainer.ResetPositionButton.Text:SetText(Localized.OptionsResetContainerPosition)
@@ -252,38 +251,6 @@ function BaudBagOptionsNameEditBox_OnTextChanged(self, wasUserInput)
 
     BBConfig[SelectedBags][SelectedContainer].Name = BaudBagOptions.GroupContainer.NameInput:GetText()
     AddOnTable["Sets"][SelectedBags].Containers[SelectedContainer]:UpdateName() -- TODO: move to BaudBagBBConfig save?
-end
-
-
-
---[[ Background Dropdown functions ]]
--- init
-function BaudBagOptionsBackgroundDropDown_Initialize()
-    local info			= UIDropDownMenu_CreateInfo()
-    info.func			= BaudBagOptionsBackgroundDropDown_OnClick
-    local Selected		= BBConfig[SelectedBags][SelectedContainer].Background
-	
-    for Key, Value in pairs(TextureNames)do
-        info.text		= Value
-        info.arg1       = Key
-        info.checked	= (Key == Selected)
-        UIDropDownMenu_AddButton(info)
-    end
-end
-
--- onclick
-function BaudBagOptionsBackgroundDropDown_OnClick(self, newValue)
-    -- todo: I'm unsure which one is better, testing out the relative one now
-    local dropdown = self:GetParent().dropdown
-    -- local dropdown = BaudBagOptions.GroupContainer.BackgroundSelection
-
-    dropdown.selectedValue = newValue
-    BBConfig[SelectedBags][SelectedContainer].Background = newValue
-    UIDropDownMenu_SetText(dropdown, TextureNames[newValue])
-
-    local container = AddOnTable["Sets"][SelectedBags].Containers[SelectedContainer]
-    container:Rebuild()
-    container:Update()
 end
 
 
@@ -487,11 +454,9 @@ function BaudBagOptionsMixin:Update()
     nameInput:SetText(BBConfig[SelectedBags][SelectedContainer].Name or "test")
     nameInput:SetCursorPosition(0)
 
-    -- load background state (initialized here to work around some strange behavior)
-    local backgroundDropDown = self.GroupContainer.BackgroundSelection
-    UIDropDownMenu_Initialize(backgroundDropDown, BaudBagOptionsBackgroundDropDown_Initialize)
-    UIDropDownMenu_SetText(backgroundDropDown, TextureNames[BBConfig[SelectedBags][SelectedContainer].Background])
-
+    -- load background state (lets see if that is still necessary here)
+    --self.GroupContainer.NewPopout.Button:SetSelectedIndex(BBConfig[SelectedBags][SelectedContainer].Background)
+    
     -- load slider values
     for Key, Value in ipairs(AddOnTable.ConfigOptions.Container.SliderBars) do
         local Slider = self.GroupContainer["Slider"..Key]

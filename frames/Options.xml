@@ -351,25 +351,9 @@
 						</Anchors>
 					</Frame>
 
-					<Frame inherits="UIDropDownMenuTemplate" name="$parentBackgroundSelection" parentKey="BackgroundSelection" enableMouse="true">
-						<Size x="160" y="25" />
-						<Anchors>
-							<Anchor point="LEFT" relativeKey="$parent.NameInput" relativePoint="RIGHT" x="5" y="-2" />
-						</Anchors>
-						<Layers>
-							<Layer level="BACKGROUND">
-								<FontString parentKey="Label" inherits="GameFontNormalSmall">
-									<Anchors>
-										<Anchor point="BOTTOMLEFT" relativePoint="TOPLEFT" x="16" y="1" />
-									</Anchors>
-								</FontString>
-							</Layer>
-						</Layers>
-					</Frame>
-
 					<CheckButton name="$parentCheckButton1" parentKey="CheckButton1" inherits="BaudBagOptionsContainerCheckButtonTemplate" id="1">
 						<Anchors>
-							<Anchor point="TOPLEFT" relativeKey="$parent.BackgroundSelection" relativePoint="BOTTOMLEFT" x="20" y="-7" />
+							<Anchor point="TOPLEFT" relativeKey="$parent.NewPopout" relativePoint="BOTTOMLEFT" x="20" y="-7" />
 						</Anchors>
 					</CheckButton>
 
