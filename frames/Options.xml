@@ -345,7 +345,7 @@
 						</Scripts>
 					</EditBox>
 
-					<Frame parentKey="NewPopout" inherits="BaudBagOptionsSelectionPopoutTemplate">
+					<Frame parentKey="BackgroundSelection" inherits="BaudBagOptionsSelectionPopoutTemplate">
 						<Anchors>
 							<Anchor point="LEFT" relativeKey="$parent.NameInput" relativePoint="RIGHT" x="20" y="0" />
 						</Anchors>
@@ -353,7 +353,7 @@
 
 					<CheckButton name="$parentCheckButton1" parentKey="CheckButton1" inherits="BaudBagOptionsContainerCheckButtonTemplate" id="1">
 						<Anchors>
-							<Anchor point="TOPLEFT" relativeKey="$parent.NewPopout" relativePoint="BOTTOMLEFT" x="20" y="-7" />
+							<Anchor point="TOPLEFT" relativeKey="$parent.BackgroundSelection" relativePoint="BOTTOMLEFT" x="20" y="-7" />
 						</Anchors>
 					</CheckButton>
 

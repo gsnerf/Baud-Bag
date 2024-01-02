@@ -121,9 +121,9 @@ function BaudBagOptionsMixin:OnEvent(event, ...)
         }
     end
     local selected = BBConfig[SelectedBags][SelectedContainer].Background
-    self.GroupContainer.NewPopout.Label:SetText(Localized.Background)
-    self.GroupContainer.NewPopout:SetupSelections(selections, selected)
-    self.GroupContainer.NewPopout.Button:RegisterCallback("OnValueChanged", ContainerBackgroundChanged)
+    self.GroupContainer.BackgroundSelection.Label:SetText(Localized.Background)
+    self.GroupContainer.BackgroundSelection:SetupSelections(selections, selected)
+    self.GroupContainer.BackgroundSelection.Button:RegisterCallback("OnValueChanged", ContainerBackgroundChanged)
 
     -- localized global checkbox labels
     for Key, Value in ipairs(AddOnTable.ConfigOptions.Global.CheckButtons) do
@@ -455,7 +455,7 @@ function BaudBagOptionsMixin:Update()
     nameInput:SetCursorPosition(0)
 
     -- load background state (lets see if that is still necessary here)
-    --self.GroupContainer.NewPopout.Button:SetSelectedIndex(BBConfig[SelectedBags][SelectedContainer].Background)
+    --self.GroupContainer.BackgroundSelection.Button:SetSelectedIndex(BBConfig[SelectedBags][SelectedContainer].Background)
     
     -- load slider values
     for Key, Value in ipairs(AddOnTable.ConfigOptions.Container.SliderBars) do
