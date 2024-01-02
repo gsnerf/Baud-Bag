@@ -345,6 +345,12 @@
 						</Scripts>
 					</EditBox>
 
+					<Frame parentKey="NewPopout" inherits="BaudBagOptionsSelectionPopoutTemplate">
+						<Anchors>
+							<Anchor point="LEFT" relativeKey="$parent.NameInput" relativePoint="RIGHT" x="20" y="0" />
+						</Anchors>
+					</Frame>
+
 					<Frame inherits="UIDropDownMenuTemplate" name="$parentBackgroundSelection" parentKey="BackgroundSelection" enableMouse="true">
 						<Size x="160" y="25" />
 						<Anchors>
@@ -394,18 +400,12 @@
 					<Button parentKey="ResetPositionButton" inherits="UIPanelButtonTemplate" mixin="PositionResetMixin">
 						<Size x="175" y="22"/>
 						<Anchors>
-							<Anchor point="TOPLEFT" relativeKey="$parent.BackgroundSelection" relativePoint="TOPRIGHT" x="5" y="-3" />
+							<Anchor point="TOPLEFT" relativeKey="$parent.CheckButton3" relativePoint="BOTTOMLEFT" x="3" y="0" />
 						</Anchors>
 						<Scripts>
 							<OnClick method="ResetPosition" />
 						</Scripts>
 					</Button>
-
-					<Frame parentKey="NewPopout" inherits="BaudBagOptionsSelectionPopoutTemplate">
-						<Anchors>
-							<Anchor point="TOPLEFT" relativeKey="$parent.ResetPositionButton" relativePoint="BOTTOMLEFT" x="0" y="-10" />
-						</Anchors>
-					</Frame>
 				</Frames>
 			</Frame>
 
