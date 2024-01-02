@@ -59,6 +59,15 @@
 	</Button>
 
 	<Frame name="BaudBagOptionsSelectionPopoutTemplate" inherits="SelectionPopoutWithButtonsTemplate" virtual="true">
+        <Layers>
+            <Layer level="ARTWORK">
+                <FontString parentKey="Label" font="GameFontNormalSmall">
+					<Anchors>
+						<Anchor point="BOTTOMLEFT" relativeKey="$parent.DecrementButton" relativePoint="TOPLEFT" x="0" y="0"/>
+					</Anchors>
+				</FontString>
+            </Layer>
+        </Layers>
 		<Frames>
 			<EventButton parentKey="Button" inherits="SelectionPopoutButtonTemplate">
 				<Size x="150" y="38"/>

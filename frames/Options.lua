@@ -122,6 +122,7 @@ function BaudBagOptionsMixin:OnEvent(event, ...)
         }
     end
     local selected = BBConfig[SelectedBags][SelectedContainer].Background
+    self.GroupContainer.NewPopout.Label:SetText(Localized.Background)
     self.GroupContainer.NewPopout:SetupSelections(selections, selected)
     self.GroupContainer.NewPopout.Button:RegisterCallback("OnValueChanged", ContainerBackgroundChanged)
 
