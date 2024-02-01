@@ -250,16 +250,6 @@
 					</Layer>
 				</Layers>
 				<Frames>
-					<Frame parentKey="NineSlice" inherits="NineSlicePanelTemplate">
-						<KeyValues>
-							<KeyValue key="layoutType" value="UniqueCornersLayout" type="string"/>
-							<KeyValue key="layoutTextureKit" value="OptionsFrame" type="string"/>
-						</KeyValues>
-						<Anchors>
-							<Anchor point="TOPLEFT" x="-12" y="-14"/>
-							<Anchor point="BOTTOMRIGHT" x="6" y="-16"/>
-						</Anchors>
-					</Frame>
 					<!--
 						there will be buttons generated automatically in the OnLoad script of the group frame, that are similar to this:
 						<Button parentKey="BagSetTab" inherits="MinimalTabTemplate">
@@ -277,9 +267,17 @@
 					-->
 					<Frame parentKey="Options" inherits="BaudBagOptionsBagSetTemplate">
 						<Anchors>
-							<Anchor point="TOPLEFT" x="5" y="-30" />
-							<Anchor point="BOTTOMRIGHT" x="-11" y="1" />
+							<Anchor point="TOPLEFT" x="5" y="-27" />
+							<Anchor point="BOTTOMRIGHT" x="-5" y="1" />
 						</Anchors>
+						<Layers>
+							<Layer level="BACKGROUND">
+								<Texture parentKey="Background" file="interface/addons/baudbag/frames/options_tabbed_background">
+									<TextureSliceMargins left="6" right="6" top="6" bottom="6"/>
+									<TextureSliceMode mode="Tiled"/>
+								</Texture>
+							</Layer>
+						</Layers>
 					</Frame>
 				</Frames>
 				<Scripts>
