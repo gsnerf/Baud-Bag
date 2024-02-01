@@ -242,7 +242,7 @@
 				<Size y="200" />
 				<Layers>
 					<Layer level="BACKGROUND">
-						<FontString inherits="GameFontHighlightLarge" text="Bag Specific Stuff">
+						<FontString parentKey="Header" inherits="GameFontHighlightLarge" text="Bag Specific Stuff">
 							<Anchors>
 								<Anchor point="TOPLEFT"/>
 							</Anchors>
