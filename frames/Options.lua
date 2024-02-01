@@ -41,6 +41,8 @@ BACKDROP_BB_OPTIONS_CONTAINER = {
 	insets = { left = 5, right = 5, top = 5, bottom = 5 },
 }
 
+---@class BaudBagOptions
+---@field GroupBagSet OptionsGroupBagSet the group representing the container options for a specific bag set
 BaudBagOptionsMixin = {}
 
 --[[
@@ -102,28 +104,6 @@ function BaudBagOptionsMixin:OnEvent(event, ...)
     self.GroupGlobal.Header.Label:SetText(Localized.OptionsGroupGlobal)
     self.GroupGlobal.ResetPositionsButton.Text:SetText(Localized.OptionsResetAllPositions)
     self.GroupGlobal.ResetPositionsButton.tooltipText = Localized.OptionsResetAllPositionsTooltip
-    
-    self.GroupContainer.NameInput.Text:SetText(Localized.ContainerName)
-    self.GroupContainer.EnabledCheck:UpdateText(Localized.Enabled, Localized.EnabledTooltip)
-    self.GroupContainer.CloseAllCheck:UpdateText(Localized.CloseAll, Localized.CloseAllTooltip)
-    self.GroupContainer.ResetPositionButton.Text:SetText(Localized.OptionsResetContainerPosition)
-    self.GroupContainer.ResetPositionButton.tooltipText = Localized.OptionsResetContainerPositionTooltip
-
-    local selections = {}
-    -- 0 is empty by default, as selection seem to start with index 1
-    for Key, Value in pairs(TextureNames)do
-        selections[Key] = {
-            name = Value,
-            --isNew = false,
-            --ineligibleChoice = false,
-            --isLocked = false
-            id = Key
-        }
-    end
-    local selected = BBConfig[SelectedBags][SelectedContainer].Background
-    self.GroupContainer.BackgroundSelection.Label:SetText(Localized.Background)
-    self.GroupContainer.BackgroundSelection:SetupSelections(selections, selected)
-    self.GroupContainer.BackgroundSelection.Button:RegisterCallback("OnValueChanged", ContainerBackgroundChanged)
 
     -- localized global checkbox labels
     for Key, Value in ipairs(AddOnTable.ConfigOptions.Global.CheckButtons) do
@@ -142,22 +122,9 @@ function BaudBagOptionsMixin:OnEvent(event, ...)
         slider.tooltipText = Value.TooltipText
         slider.valueStep   = Value.Step
     end
-    
-    -- localized checkbox labels
-    for Key, Value in ipairs(AddOnTable.ConfigOptions.Container.CheckButtons) do
-        local checkButton = self.GroupContainer["CheckButton"..Key]
-        checkButton:UpdateText(Value.Text, Value.TooltipText)
-    end
 
-    -- set slider bounds
-    for Key, Value in ipairs(AddOnTable.ConfigOptions.Container.SliderBars) do
-        local slider = self.GroupContainer["Slider"..Key]
-        slider.Low:SetText(Value.Low)
-        slider.High:SetText(Value.High)
-        slider.tooltipText = Value.TooltipText
-        slider.valueStep   = Value.Step
-    end
-	
+    self.GroupBagSet.Options:InitializeContent()
+
     -- some slash command settings
     SlashCmdList[Prefix..'_SLASHCMD'] = function()
         if (category ~= nil) then
@@ -175,36 +142,6 @@ function BaudBagOptionsMixin:OnEvent(event, ...)
     _G["SLASH_"..Prefix.."_SLASHCMD2"] = '/bb'
     DEFAULT_CHAT_FRAME:AddMessage(Localized.AddMessage)
 
-    --[[
-        create stubs for all possibly needed bag buttons:
-        1. create bag button
-        2. create container frame
-        3. create join checkbox if bag > 1
-      ]]
-    local Button, Container, Check
-    for Bag = 1, MaxBags do
-        Button		= CreateFrame("Button", Prefix.."Bag"..Bag,       self.GroupContainer.BagFrame, Prefix.."BagTemplate")
-        Container	= CreateFrame("Frame",  Prefix.."Container"..Bag, self.GroupContainer.BagFrame, Prefix.."ContainerTemplate")
-        if (Bag == 1) then
-            -- first bag only has a container
-            Container:SetPoint("LEFT", _G[Prefix.."Bag1"], "LEFT", -6, 0)
-        else
-            -- all other bags also have a button to mark joins with the previous bags
-            Button:SetPoint("LEFT", Prefix.."Bag"..(Bag-1), "RIGHT", 8, 0)
-            Check = CreateFrame("CheckButton", Prefix.."JoinCheck"..Bag, Button, "BaudBagOptionsBagJoinCheckButtonTemplate")
-            Check:SetPoint("BOTTOM", Button, "TOP", 0, 4)
-            Check:SetPoint("LEFT", Button, "LEFT", -17, 0)
-            Check:SetID(Bag)
-            Check.tooltipText = Localized.CheckTooltip
-
-            if (Bag == MaxBags) then
-                Check:SetChecked(false)
-                Check:Disable()
-                Check:Hide()
-            end
-        end
-    end
-	
     -- make sure the view is updated with the data loaded from the config
     self:Update()
 end
@@ -249,7 +186,7 @@ function BaudBagOptionsNameEditBox_OnTextChanged(self, wasUserInput)
         return
     end
 
-    BBConfig[SelectedBags][SelectedContainer].Name = BaudBagOptions.GroupContainer.NameInput:GetText()
+    BBConfig[SelectedBags][SelectedContainer].Name = BaudBagOptions.GroupBagSet.NameInput:GetText()
     AddOnTable["Sets"][SelectedBags].Containers[SelectedContainer]:UpdateName() -- TODO: move to BaudBagBBConfig save?
 end
 
@@ -278,7 +215,7 @@ function BaudBagOptionsSliderTemplateMixin:OnValueChanged()
         local sliderText = BaudBagOptions.GroupGlobal["Slider"..self:GetID()].Text
         sliderText:SetText( format( AddOnTable.ConfigOptions.Global.SliderBars[self:GetID()].Text, self:GetValue() ) )
     else
-        local sliderText = BaudBagOptions.GroupContainer["Slider"..self:GetID()].Text
+        local sliderText = BaudBagOptions.GroupBagSet.Options["Slider"..self:GetID()].Text
         sliderText:SetText( format( AddOnTable.ConfigOptions.Container.SliderBars[self:GetID()].Text, self:GetValue() ) )
     end
     
@@ -322,15 +259,7 @@ end
 
 
 function BaudBagOptionsMixin:Update()
-    -- prepare vars
-    local Button, Check, Container, Texture
-    local ContNum = 1
-    local Bags = SetSize[SelectedBags]
     Updating = true
-
-    -- is the box enabled
-    self.GroupContainer.EnabledCheck:SetChecked(BBConfig[SelectedBags].Enabled~=false)
-    self.GroupContainer.CloseAllCheck:SetChecked(BBConfig[SelectedBags].CloseAll~=false)
 
     -- load global checkbox and slider values
     for Key, Value in ipairs(AddOnTable.ConfigOptions.Global.CheckButtons) do
@@ -350,10 +279,179 @@ function BaudBagOptionsMixin:Update()
         end
     end
     
+    self.GroupBagSet.Options:UpdateContent()
+
+    Updating = false
+end
+
+function BaudBagOptionsSelectContainer(BagSet, Container)
+    SelectedBags = BagSet
+    SelectedContainer = Container
+    BaudBagOptions:Update()
+end
+
+hooksecurefunc(AddOnTable, "Configuration_Updated", function(self) BaudBagOptions:Update() end)
+
+local function ResetContainerPosition(bagSet, containerId, container)
+    container.Frame:ClearAllPoints()
+    container.Frame:SetPoint("CENTER", UIParent)
+    local x, y = container.Frame:GetCenter()
+    BBConfig[bagSet][containerId].Coords = {x, y}
+end
+
+PositionResetMixin = {}
+function PositionResetMixin:ResetPosition()
+    if (self:GetParent() == BaudBagOptions.GroupGlobal) then
+        AddOnTable.Functions.ForEachContainer(function(bagSet, containerId, container)
+            ResetContainerPosition(bagSet, containerId, container)
+        end)
+    else
+        local container = AddOnTable["Sets"][SelectedBags].Containers[SelectedContainer]
+        ResetContainerPosition(SelectedBags, SelectedContainer, container)
+    end
+end
+
+---@class OptionsGroupBagSet
+---@field Options OptionsBagSet the options for a specific container in the selected bag set
+BaudBagOptionsGroupBagSetMixin = {}
+
+---Creates a tab button for a bag set by it's BagSetType, structure can be seen as comment in the GroupBagSet in XML
+---@param bagSetTypeName string the name of the bag set type as used in BagSetType global as key
+---@param bagSetType BagSetTypeClass the bag set type as used in BagSetType global as value
+---@param lastTabButton Button the previous tab button used as an anchor for the new one
+---@return Button|MinimalTabTemplate
+local function CreateBagSetTabButton(parent, bagSetType, lastTabButton)
+    local tabButtonName = "Tab"..bagSetType.TypeName
+    local tabButton = CreateFrame("Button", nil, parent, "MinimalTabTemplate")
+    parent[tabButtonName] = tabButton
+    tabButton:SetHeight(37)
+    tabButton.tabText = bagSetType.Name
+    if (lastTabButton) then
+        tabButton:SetPoint("TOPRIGHT", lastTabButton, "TOPLEFT", 0, 0)
+    else
+        tabButton:SetPoint("TOPRIGHT", parent, "TOPRIGHT", -30, 10)
+    end
+    tabButton:OnLoad()
+    return tabButton
+end
+
+function BaudBagOptionsGroupBagSetMixin:OnLoad()
+    self.tabButtons = {}
+    self.tabFrames = {}
+    local lastTabButton
+    for _, type in pairs(BagSetTypeArray) do
+        if type.IsSupported() then
+            local tabButton = CreateBagSetTabButton(self, type, lastTabButton)
+            table.insert(self.tabButtons, tabButton)
+            lastTabButton = tabButton
+        end
+    end
+
+    self.tabsGroup = CreateRadioButtonGroup()
+    self.tabsGroup:AddButtons(self.tabButtons)
+    self.tabsGroup:SelectAtIndex(1)
+    self.tabsGroup:RegisterCallback(ButtonGroupBaseMixin.Event.Selected, self.OnTabSelected, self)
+end
+
+function BaudBagOptionsGroupBagSetMixin:OnTabSelected(tab, tabIndex)
+    self.Options:ChangeBagSet(tabIndex)
+	PlaySound(SOUNDKIT.IG_CHARACTER_INFO_TAB)
+end
+
+
+---@class OptionsBagSet
+BaudBagOptionsBagSetMixin = {}
+
+local function CreateBagSetBagButtons(self)
+    --[[
+        create stubs for all possibly needed bag buttons:
+        1. create bag button
+        2. create container frame
+        3. create join checkbox if bag > 1
+    ]]
+    local Button, Container, Check
+    for Bag = 1, MaxBags do
+        Button    = CreateFrame("Button", Prefix.."Bag"..Bag,       self.BagFrame, Prefix.."BagTemplate")
+        Container = CreateFrame("Frame",  Prefix.."Container"..Bag, self.BagFrame, Prefix.."ContainerTemplate")
+        if (Bag == 1) then
+            -- first bag only has a container
+            Container:SetPoint("LEFT", _G[Prefix.."Bag1"], "LEFT", -6, 0)
+        else
+            -- all other bags also have a button to mark joins with the previous bags
+            Button:SetPoint("LEFT", Prefix.."Bag"..(Bag-1), "RIGHT", 8, 0)
+            Check = CreateFrame("CheckButton", Prefix.."JoinCheck"..Bag, Button, "BaudBagOptionsBagJoinCheckButtonTemplate")
+            Check:SetPoint("BOTTOM", Button, "TOP", 0, 4)
+            Check:SetPoint("LEFT", Button, "LEFT", -17, 0)
+            Check:SetID(Bag)
+            Check.tooltipText = Localized.CheckTooltip
+
+            if (Bag == MaxBags) then
+                Check:SetChecked(false)
+                Check:Disable()
+                Check:Hide()
+            end
+        end
+    end
+end
+
+--- Initializes the BagSet group frame:
+--- * puts localized texts on all UI elements
+--- * hooks events
+--- * assigns fixed boundaries
+--- * reates all the bag buttons that might be necessary for all of the bag sets
+function BaudBagOptionsBagSetMixin:OnLoad()
+    -- localized text fields and buttons
+    self.NameInput.Text:SetText(Localized.ContainerName)
+    self.ResetPositionButton.Text:SetText(Localized.OptionsResetContainerPosition)
+    self.ResetPositionButton.tooltipText = Localized.OptionsResetContainerPositionTooltip
+    self.BackgroundSelection.Label:SetText(Localized.Background)
+    self.BackgroundSelection.Button:RegisterCallback("OnValueChanged", ContainerBackgroundChanged)
+    
+    -- localized checkbox labels
+    self.EnabledCheck:UpdateText(Localized.Enabled, Localized.EnabledTooltip)
+    self.CloseAllCheck:UpdateText(Localized.CloseAll, Localized.CloseAllTooltip)
+    for Key, Value in ipairs(AddOnTable.ConfigOptions.Container.CheckButtons) do
+        local checkButton = self["CheckButton"..Key]
+        checkButton:UpdateText(Value.Text, Value.TooltipText)
+    end
+
+    -- set slider bounds
+    for Key, Value in ipairs(AddOnTable.ConfigOptions.Container.SliderBars) do
+        local slider = self["Slider"..Key]
+        slider.Low:SetText(Value.Low)
+        slider.High:SetText(Value.High)
+        slider.tooltipText = Value.TooltipText
+        slider.valueStep   = Value.Step
+    end
+
+    CreateBagSetBagButtons(self)
+end
+
+function BaudBagOptionsBagSetMixin:InitializeContent()
+    -- background popout initialization
+    local selected = BBConfig[SelectedBags][SelectedContainer].Background
+    local selections = {}
+    -- 0 is empty by default, as selection seem to start with index 1
+    for Key, Value in pairs(TextureNames)do
+        selections[Key] = {
+            name = Value,
+            --isNew = false,
+            --ineligibleChoice = false,
+            --isLocked = false
+            id = Key
+        }
+    end
+    self.BackgroundSelection:SetupSelections(selections, selected)
+end
+
+local function UpdateBagButtons(self)
+    -- prepare vars
+    local Button, Check, Container, Texture
+    local ContNum = 1
+    local Bags = SetSize[SelectedBags]
+
     -- load bag specific options (position and show each button that belongs to the current set,
     --		check joined box and create container frames)
-    local bagParent = self.GroupContainer.BagFrame
-
     if (AddOnTable.BlizzConstants.BACKPACK_FIRST_REAGENT_CONTAINER ~= nil) then
         -- for backback set we need to ensure, that the reagent bag(s) cannot be joined with the regular bags
         if SelectedBags == 1 then
@@ -369,7 +467,7 @@ function BaudBagOptionsMixin:Update()
 
             if (Index == 1) then
                 -- only the first bag needs its position set, since the others are anchored to it
-                Button:SetPoint("LEFT", bagParent, "CENTER", ((Bags / 2) * -44), 0)
+                Button:SetPoint("LEFT", self.BagFrame, "CENTER", ((Bags / 2) * -44), 0)
             elseif (Index == AddOnTable.BlizzConstants.BANK_CONTAINER_NUM + 2 or (SelectedBags == 1 and AddOnTable.BlizzConstants.BACKPACK_FIRST_REAGENT_CONTAINER ~= nil and Index == (AddOnTable.BlizzConstants.BACKPACK_LAST_CONTAINER + 1))) then
                 -- the reagent bank and the reagent bag might not be joined with anything else (for the moment?)
                 _G[Prefix.."Container"..ContNum]:SetPoint("RIGHT", Prefix.."Bag"..(Index - 1), "RIGHT", 6,0)
@@ -448,30 +546,35 @@ function BaudBagOptionsMixin:Update()
             Container:Hide()
         end
     end
+end
+
+function BaudBagOptionsBagSetMixin:UpdateContent()
+    -- update global checkboxes
+    self.EnabledCheck:SetChecked(BBConfig[SelectedBags].Enabled~=false)
+    self.CloseAllCheck:SetChecked(BBConfig[SelectedBags].CloseAll~=false)
+
+    UpdateBagButtons(self)
 
     -- load container name into the textbox
-    local nameInput = self.GroupContainer.NameInput
+    local nameInput = self.NameInput
     nameInput:SetText(BBConfig[SelectedBags][SelectedContainer].Name or "test")
     nameInput:SetCursorPosition(0)
 
-    -- load background state (lets see if that is still necessary here)
-    --self.GroupContainer.BackgroundSelection.Button:SetSelectedIndex(BBConfig[SelectedBags][SelectedContainer].Background)
-    
     -- load slider values
     for Key, Value in ipairs(AddOnTable.ConfigOptions.Container.SliderBars) do
-        local Slider = self.GroupContainer["Slider"..Key]
+        local Slider = self["Slider"..Key]
         Slider:SetValue(BBConfig[SelectedBags][SelectedContainer][Value.SavedVar])
     end
 
     -- load checkbox values
     for Key, Value in ipairs(AddOnTable.ConfigOptions.Container.CheckButtons) do
-        local Button = self.GroupContainer["CheckButton"..Key]
+        local Button = self["CheckButton"..Key]
         Button:SetChecked(BBConfig[SelectedBags][SelectedContainer][Value.SavedVar])
     end
-	
+
     -- load checkbox enabled
     for Key, Value in ipairs(AddOnTable.ConfigOptions.Container.CheckButtons) do
-        local Button = self.GroupContainer["CheckButton"..Key]
+        local Button = self["CheckButton"..Key]
         if (Value.DependsOn ~= nil and not BBConfig[SelectedBags][SelectedContainer][Value.DependsOn]) then
             Button:Disable()
         else
@@ -479,89 +582,15 @@ function BaudBagOptionsMixin:Update()
         end
     end
 
-    Updating = false
+    local selectedBackground = BBConfig[SelectedBags][SelectedContainer].Background
+    self.BackgroundSelection.Button:SetSelectedIndex(selectedBackground)
 end
-
-function BaudBagOptionsSelectContainer(BagSet, Container)
-    SelectedBags = BagSet
-    SelectedContainer = Container
-    BaudBagOptions:Update()
-end
-
-hooksecurefunc(AddOnTable, "Configuration_Updated", function(self) BaudBagOptions:Update() end)
-
-local function ResetContainerPosition(bagSet, containerId, container)
-    container.Frame:ClearAllPoints()
-    container.Frame:SetPoint("CENTER", UIParent)
-    local x, y = container.Frame:GetCenter()
-    BBConfig[bagSet][containerId].Coords = {x, y}
-end
-
-PositionResetMixin = {}
-function PositionResetMixin:ResetPosition()
-    if (self:GetParent() == BaudBagOptions.GroupGlobal) then
-        AddOnTable.Functions.ForEachContainer(function(bagSet, containerId, container)
-            ResetContainerPosition(bagSet, containerId, container)
-        end)
-    else
-        local container = AddOnTable["Sets"][SelectedBags].Containers[SelectedContainer]
-        ResetContainerPosition(SelectedBags, SelectedContainer, container)
-    end
-end
-
-
-BaudBagOptionsGroupBagSetMixin = {}
-
----Creates a tab button for a bag set by it's BagSetType, structure can be seen as comment in the GroupBagSet in XML
----@param bagSetTypeName string the name of the bag set type as used in BagSetType global as key
----@param bagSetType BagSetTypeClass the bag set type as used in BagSetType global as value
----@param lastTabButton Button the previous tab button used as an anchor for the new one
----@return Button|MinimalTabTemplate
-local function CreateBagSetTabButton(parent, bagSetType, lastTabButton)
-    local tabButtonName = "Tab"..bagSetType.TypeName
-    local tabButton = CreateFrame("Button", nil, parent, "MinimalTabTemplate")
-    parent[tabButtonName] = tabButton
-    tabButton:SetHeight(37)
-    tabButton.tabText = bagSetType.Name
-    if (lastTabButton) then
-        tabButton:SetPoint("TOPRIGHT", lastTabButton, "TOPLEFT", 0, 0)
-    else
-        tabButton:SetPoint("TOPRIGHT", parent, "TOPRIGHT", -30, 10)
-    end
-    tabButton:OnLoad()
-    return tabButton
-end
-
-function BaudBagOptionsGroupBagSetMixin:OnLoad()
-    self.tabButtons = {}
-    self.tabFrames = {}
-    local lastTabButton
-    for _, type in pairs(BagSetTypeArray) do
-        if type.IsSupported() then
-            local tabButton = CreateBagSetTabButton(self, type, lastTabButton)
-            table.insert(self.tabButtons, tabButton)
-            lastTabButton = tabButton
-        end
-    end
-
-    self.tabsGroup = CreateRadioButtonGroup()
-    self.tabsGroup:AddButtons(self.tabButtons)
-    self.tabsGroup:SelectAtIndex(1)
-    self.tabsGroup:RegisterCallback(ButtonGroupBaseMixin.Event.Selected, self.OnTabSelected, self)
-end
-
-function BaudBagOptionsGroupBagSetMixin:OnTabSelected(tab, tabIndex)
-    self.Options:ChangeBagSet(tabIndex)
-	PlaySound(SOUNDKIT.IG_CHARACTER_INFO_TAB)
-end
-
-
-BaudBagOptionsBagSetMixin = {}
 
 function BaudBagOptionsBagSetMixin:ChangeBagSet(bagSetId)
     SelectedBags = bagSetId
     BaudBagOptions:Update()
 end
+
 
 BaudBagOptionsCheckButtonMixin = {}
 
