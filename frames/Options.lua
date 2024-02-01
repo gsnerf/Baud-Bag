@@ -518,7 +518,9 @@ BaudBagOptionsGroupBagSetMixin = {}
 ---@param lastTabButton Button the previous tab button used as an anchor for the new one
 ---@return Button|MinimalTabTemplate
 local function CreateBagSetTabButton(parent, bagSetType, lastTabButton)
-    local tabButton = CreateFrame("Button", "BagSet"..bagSetType.TypeName.."Tab", parent, "MinimalTabTemplate")
+    local tabButtonName = "Tab"..bagSetType.TypeName
+    local tabButton = CreateFrame("Button", nil, parent, "MinimalTabTemplate")
+    parent[tabButtonName] = tabButton
     tabButton:SetHeight(37)
     tabButton.tabText = bagSetType.Name
     if (lastTabButton) then
