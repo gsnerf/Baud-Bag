@@ -42,7 +42,7 @@ BACKDROP_BB_OPTIONS_CONTAINER = {
 }
 
 ---@class BaudBagOptions
----@field GroupBagSet OptionsGroupBagSet the group representing the container options for a specific bag set
+---@field GroupContainer OptionsGroupContainer the group representing the container options for a specific bag set
 BaudBagOptionsMixin = {}
 
 --[[
@@ -113,7 +113,7 @@ function BaudBagOptionsMixin:OnEvent(event, ...)
         slider.valueStep   = Value.Step
     end
 
-    self.GroupBagSet.Options:InitializeContent()
+    self.GroupContainer.Options:InitializeContent()
 
     -- some slash command settings
     SlashCmdList[Prefix..'_SLASHCMD'] = function()
@@ -154,7 +154,7 @@ function BaudBagOptionsNameEditBox_OnTextChanged(self, wasUserInput)
         return
     end
 
-    BBConfig[SelectedBags][SelectedContainer].Name = BaudBagOptions.GroupBagSet.NameInput:GetText()
+    BBConfig[SelectedBags][SelectedContainer].Name = BaudBagOptions.GroupContainer.NameInput:GetText()
     AddOnTable["Sets"][SelectedBags].Containers[SelectedContainer]:UpdateName() -- TODO: move to BaudBagBBConfig save?
 end
 
@@ -183,7 +183,7 @@ function BaudBagOptionsSliderTemplateMixin:OnValueChanged()
         local sliderText = BaudBagOptions.GroupGlobal["Slider"..self:GetID()].Text
         sliderText:SetText( format( AddOnTable.ConfigOptions.Global.SliderBars[self:GetID()].Text, self:GetValue() ) )
     else
-        local sliderText = BaudBagOptions.GroupBagSet.Options["Slider"..self:GetID()].Text
+        local sliderText = BaudBagOptions.GroupContainer.Options["Slider"..self:GetID()].Text
         sliderText:SetText( format( AddOnTable.ConfigOptions.Container.SliderBars[self:GetID()].Text, self:GetValue() ) )
     end
     
@@ -247,7 +247,7 @@ function BaudBagOptionsMixin:Update()
         end
     end
     
-    self.GroupBagSet.Options:UpdateContent()
+    self.GroupContainer.Options:UpdateContent()
 
     Updating = false
 end
@@ -279,12 +279,12 @@ function PositionResetMixin:ResetPosition()
     end
 end
 
----@class OptionsGroupBagSet
+---@class OptionsGroupContainer
 ---@field Options OptionsBagSet the options for a specific container in the selected bag set
-BaudBagOptionsGroupBagSetMixin = {}
+BaudBagOptionsGroupContainerMixin = {}
 
----Creates a tab button for a bag set by it's BagSetType, structure can be seen as comment in the GroupBagSet in XML
----@param bagSetTypeName string the name of the bag set type as used in BagSetType global as key
+---Creates a tab button for a bag set by it's BagSetType, structure can be seen as comment in the GroupContainer in XML
+---@param parent Frame the frame to use as a parent for the new button
 ---@param bagSetType BagSetTypeClass the bag set type as used in BagSetType global as value
 ---@param lastTabButton Button the previous tab button used as an anchor for the new one
 ---@return Button|MinimalTabTemplate
@@ -303,7 +303,7 @@ local function CreateBagSetTabButton(parent, bagSetType, lastTabButton)
     return tabButton
 end
 
-function BaudBagOptionsGroupBagSetMixin:OnLoad()
+function BaudBagOptionsGroupContainerMixin:OnLoad()
     self.Header:SetText(Localized.OptionsGroupContainer)
     self.tabButtons = {}
     self.tabFrames = {}
@@ -322,7 +322,7 @@ function BaudBagOptionsGroupBagSetMixin:OnLoad()
     self.tabsGroup:RegisterCallback(ButtonGroupBaseMixin.Event.Selected, self.OnTabSelected, self)
 end
 
-function BaudBagOptionsGroupBagSetMixin:OnTabSelected(tab, tabIndex)
+function BaudBagOptionsGroupContainerMixin:OnTabSelected(tab, tabIndex)
     self.Options:ChangeBagSet(tabIndex)
 	PlaySound(SOUNDKIT.IG_CHARACTER_INFO_TAB)
 end

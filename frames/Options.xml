@@ -333,7 +333,7 @@
 				</Frames>
 			</Frame>
 
-			<Frame parentKey="GroupBagSet" mixin="BaudBagOptionsGroupBagSetMixin">
+			<Frame parentKey="GroupContainer" mixin="BaudBagOptionsGroupContainerMixin">
 				<Anchors>
 					<Anchor point="TOPLEFT" relativeKey="$parent.GroupGlobal" relativePoint="BOTTOMLEFT" y="-5" />
 					<Anchor point="BOTTOMRIGHT" x="-10" y="10" />
