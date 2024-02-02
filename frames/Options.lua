@@ -59,16 +59,6 @@ function BaudBagOptionsMixin:OnLoad(event, ...)
     self:RegisterEvent("ADDON_LOADED")
 end
 
-
-local function ContainerBackgroundChanged(self, selectedData)
-    AddOnTable.Functions.DebugMessage("Temp", "container background was changed", self, selectedData)
-
-    BBConfig[SelectedBags][SelectedContainer].Background = selectedData.id
-    local container = AddOnTable["Sets"][SelectedBags].Containers[SelectedContainer]
-    container:Rebuild()
-    container:Update()
-end
-
 --[[ All actual processing needs to be done after we are sure we have a config to load from! ]]
 function BaudBagOptionsMixin:OnEvent(event, ...)
 
@@ -370,6 +360,15 @@ local function CreateBagSetBagButtons(self)
             end
         end
     end
+end
+
+local function ContainerBackgroundChanged(self, selectedData)
+    AddOnTable.Functions.DebugMessage("Temp", "container background was changed", self, selectedData)
+
+    BBConfig[SelectedBags][SelectedContainer].Background = selectedData.id
+    local container = AddOnTable["Sets"][SelectedBags].Containers[SelectedContainer]
+    container:Rebuild()
+    container:Update()
 end
 
 --- Initializes the BagSet group frame:
