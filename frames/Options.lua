@@ -146,38 +146,16 @@ function BaudBagOptionsMixin:OnEvent(event, ...)
     self:Update()
 end
 
+-- TODO: identify if this is still a thing!
 function BaudBagOptionsMixin:OnRefresh(event, ...)
     AddOnTable.Functions.DebugMessage("Options", "OnRefresh was called!")
     self:Update()
 end
 
---[[ this event is never called in retail, and probably even for classic it isn't necessary anymore as changes to BBConfig seem to be automatically written to BaudBag_Cfg ]]
-function BaudBagOptionsMixin:OnOkay(event, ...)
-    AddOnTable.Functions.DebugMessage("Options", "'Okay' pressed, saving BBConfig.")
-    CfgBackup = BBConfig
-    BaudBagSaveCfg(BBConfig)
-end
-
-function BaudBagOptionsMixin:OnCancel(event, ...)
-    AddOnTable.Functions.DebugMessage("Options", "'Cancel' pressed, reset to last BBConfig.")
-    BBConfig = CfgBackup
-    ReloadConfigDependant()
-    self:Update()
-end
-
-
 --[[ Dynamic Bags/Container Clicks ]]
 function BaudBagOptionsBag_OnClick(self, event, ...)
     SelectedContainer = self:GetID()
     BaudBagOptions:Update()
-end
-
-function PlayCheckBoxSound(self)
-    if (self:GetChecked()) then
-        PlaySound(SOUNDKIT.IG_MAINMENU_OPTION_CHECKBOX_OFF)
-    else
-        PlaySound(SOUNDKIT.IG_MAINMENU_OPTION_CHECKBOX_ON)
-    end
 end
 
 --[[ Name TextBox functions ]]
