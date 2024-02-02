@@ -113,7 +113,7 @@ function BaudBagOptionsMixin:OnEvent(event, ...)
         slider.valueStep   = Value.Step
     end
 
-    self.GroupContainer.Options:InitializeContent()
+    self.GroupContainer.BagSet:InitializeContent()
 
     -- some slash command settings
     SlashCmdList[Prefix..'_SLASHCMD'] = function()
@@ -183,7 +183,7 @@ function BaudBagOptionsSliderTemplateMixin:OnValueChanged()
         local sliderText = BaudBagOptions.GroupGlobal["Slider"..self:GetID()].Text
         sliderText:SetText( format( AddOnTable.ConfigOptions.Global.SliderBars[self:GetID()].Text, self:GetValue() ) )
     else
-        local sliderText = BaudBagOptions.GroupContainer.Options["Slider"..self:GetID()].Text
+        local sliderText = BaudBagOptions.GroupContainer.BagSet["Slider"..self:GetID()].Text
         sliderText:SetText( format( AddOnTable.ConfigOptions.Container.SliderBars[self:GetID()].Text, self:GetValue() ) )
     end
     
@@ -247,7 +247,7 @@ function BaudBagOptionsMixin:Update()
         end
     end
     
-    self.GroupContainer.Options:UpdateContent()
+    self.GroupContainer.BagSet:UpdateContent()
 
     Updating = false
 end
@@ -323,7 +323,7 @@ function BaudBagOptionsGroupContainerMixin:OnLoad()
 end
 
 function BaudBagOptionsGroupContainerMixin:OnTabSelected(tab, tabIndex)
-    self.Options:ChangeBagSet(tabIndex)
+    self.BagSet:ChangeBagSet(tabIndex)
 	PlaySound(SOUNDKIT.IG_CHARACTER_INFO_TAB)
 end
 

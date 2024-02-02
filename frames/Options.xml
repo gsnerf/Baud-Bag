@@ -364,7 +364,7 @@
 						Above is the anchor for the first tab button, all following tab buttons will be anchored to the previous one like this:
 						<Anchor point="TOPRIGHT" relativeKey="$parent.BagSetTab" relativePoint="TOPLEFT" x="0" y="0"/>
 					-->
-					<Frame parentKey="Options" inherits="BaudBagOptionsBagSetTemplate">
+					<Frame parentKey="BagSet" inherits="BaudBagOptionsBagSetTemplate">
 						<Anchors>
 							<Anchor point="TOPLEFT" x="5" y="-27" />
 							<Anchor point="BOTTOMRIGHT" x="-5" y="1" />
