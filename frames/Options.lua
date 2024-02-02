@@ -304,6 +304,7 @@ local function CreateBagSetTabButton(parent, bagSetType, lastTabButton)
 end
 
 function BaudBagOptionsGroupBagSetMixin:OnLoad()
+    self.Header:SetText(Localized.OptionsGroupContainer)
     self.tabButtons = {}
     self.tabFrames = {}
     local lastTabButton
