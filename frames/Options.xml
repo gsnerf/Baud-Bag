@@ -149,7 +149,7 @@
 					<KeyValue key="savedVar" value="Enabled" type="string" />
 				</KeyValues>
 				<Anchors>
-					<Anchor point="TOPLEFT" y="-20" />
+					<Anchor point="TOPLEFT" x="5" y="-5" />
 				</Anchors>
 			</CheckButton>
 
