@@ -5,7 +5,6 @@ local Localized = AddOnTable.Localized
 local MaxBags   = 1 + AddOnTable.BlizzConstants.BANK_CONTAINER_NUM + (AddOnTable.State.ReagentBankSupported and 1 or 0) -- 1 for bank + BANK_CONTAINER_NUM + 1 for reagent bank if supported
 local Prefix    = "BaudBagOptions"
 local Updating  = false
-local CfgBackup
 local category = nil
 
 local SelectedBags      = 1
@@ -41,7 +40,7 @@ BACKDROP_BB_OPTIONS_CONTAINER = {
 	insets = { left = 5, right = 5, top = 5, bottom = 5 },
 }
 
----@class BaudBagOptions
+---@class BaudBagOptions: Frame
 ---@field GroupContainer OptionsGroupContainer the group representing the container options for a specific bag set
 BaudBagOptionsMixin = {}
 
@@ -70,7 +69,6 @@ function BaudBagOptionsMixin:OnEvent(event, ...)
     AddOnTable:InitCache()
     BaudBagRestoreCfg()
     ConvertOldConfig()
-    CfgBackup	= AddOnTable.Functions.CopyTable(BBConfig)
 	
     -- add to options windows
     self.name			= "Baud Bag"
@@ -280,7 +278,8 @@ function PositionResetMixin:ResetPosition()
 end
 
 ---@class OptionsGroupContainer
----@field Options OptionsBagSet the options for a specific container in the selected bag set
+---@field Header FontString
+---@field BagSet OptionsBagSet the options for a specific container in the selected bag set
 BaudBagOptionsGroupContainerMixin = {}
 
 ---Creates a tab button for a bag set by it's BagSetType, structure can be seen as comment in the GroupContainer in XML
@@ -328,7 +327,12 @@ function BaudBagOptionsGroupContainerMixin:OnTabSelected(tab, tabIndex)
 end
 
 
----@class OptionsBagSet
+---@class OptionsBagSet: Frame
+---@field NameInput EditBox
+---@field ResetPositionButton Button
+---@field BackgroundSelection Popout
+---@field EnabledCheck CheckButton
+---@field CloseAllCheck CheckButton
 BaudBagOptionsBagSetMixin = {}
 
 local function CreateBagSetBagButtons(self)
@@ -569,7 +573,11 @@ function BaudBagOptionsBagSetMixin:ChangeBagSet(bagSetId)
     BaudBagOptions:Update()
 end
 
-
+---@class OptionsCheckButton: CheckButton
+---@field Text FontString Holds the visible text for the button. Note: tag in XML is named ButtonText which (according to schema) is just an alias for FontString
+---@field tooltipText string text to show in tooltip on hover
+---@field tooltipOwnerPoint TooltipAnchor
+---@field tooltipRequirement string
 BaudBagOptionsCheckButtonMixin = {}
 
 function BaudBagOptionsCheckButtonMixin:UpdateText(text, tooltip)
