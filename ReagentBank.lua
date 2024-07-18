@@ -47,7 +47,6 @@ local function ReagentBankBagUpdate(self)
 
     local unlockInfo = reagentBankContainer.UnlockInfo
     local depositButton = reagentBankContainer.DepositButton
-    
 
     if (not AddOnTable.BlizzAPI.IsReagentBankUnlocked()) then
         local bagSlot = bankSet.BagButtons[AddOnTable.BlizzConstants.REAGENTBANK_CONTAINER]
