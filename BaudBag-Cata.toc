@@ -1,6 +1,6 @@
 ## Author: Thurmal (Author), Suddendeath2000 (Former Author), Baudzila (Original Author)
 ## DefaultState: Enabled
-## Interface: 30403
+## Interface: 30403, 40400
 ## LoadOnDemand: 0
 ## OptionalDeps: CaedronWardrobe, Masque, Pawn
 ## Notes: Allows you to combine bags as well as customize their display.
@@ -10,7 +10,7 @@
 ## Title: Baud Bag
 ## Title-zhCN: 背包整合 Baud Bag
 ## Title-zhTW: 背包整合 Baud Bag
-## Version: 10.2.0.0-DEV
+## Version: 10.2.7.0-DEV
 
 # english has to be the first locale!
 localization\Localization.en.lua
