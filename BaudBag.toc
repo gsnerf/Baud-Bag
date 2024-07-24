@@ -34,7 +34,6 @@ lib\Backgrounds\SimpleBackground.lua
 lib\Backgrounds\BackgroundRegistration.lua
 widgets\buttons\BagButton.xml
 widgets\buttons\ItemButton.lua
-widgets\OptionsPopout.xml
 frames\ContainerMenu.xml
 Events.lua
 config\ConfigOptions.lua
