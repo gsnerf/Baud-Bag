@@ -78,9 +78,10 @@ function BaudBagOptionsMixin:OnEvent(event, ...)
     
     -- register with wow api
     if (Settings ~= nil and Settings.RegisterCanvasLayoutCategory ~= nil) then
-        category = Settings.RegisterCanvasLayoutCategory(self, "Baud Bag")
+        local category = Settings.RegisterCanvasLayoutCategory(self, "Baud Bag")
         Settings.RegisterAddOnCategory(category)
         AddOnTable.Functions.DebugMessage("Options", "Using new settings system to register category", category)
+        AddOnTable.SettingsCategory = category
     else
         InterfaceOptions_AddCategory(self)
     end
@@ -115,6 +116,7 @@ function BaudBagOptionsMixin:OnEvent(event, ...)
 
     -- some slash command settings
     SlashCmdList[Prefix..'_SLASHCMD'] = function()
+        local category = AddOnTable.SettingsCategory
         if (category ~= nil) then
             -- retail options system
             AddOnTable.Functions.DebugMessage("Options", "Using new settings system to open category", category:GetID())
