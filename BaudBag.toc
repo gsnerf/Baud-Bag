@@ -1,6 +1,6 @@
 ## Author: Thurmal (Author), Suddendeath2000 (Former Author), Baudzila (Original Author)
 ## DefaultState: Enabled
-## Interface: 100207
+## Interface: 110000
 ## LoadOnDemand: 0
 ## Dependencies: Blizzard_VoidStorageUI
 ## OptionalDeps: CaedronWardrobe, Masque, Pawn
@@ -11,7 +11,7 @@
 ## Title: Baud Bag
 ## Title-zhCN: 背包整合 Baud Bag
 ## Title-zhTW: 背包整合 Baud Bag
-## Version: 10.2.7.0-DEV
+## Version: 11.0.0.1
 ## IconAtlas: bag-main
 
 # english has to be the first locale!
