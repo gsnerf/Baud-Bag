@@ -117,7 +117,6 @@ else
     API.SortReagentBankBags = SortReagentBankBags
     API.SplitContainerItem = SplitContainerItem
     API.UseContainerItem = UseContainerItem
-    API.GetDetailedItemLevelInfo = GetDetailedItemLevelInfo
     ---returns the number of watched tokens or the maximum number of watched tokens in old API
     ---@return integer
     API.GetNumWatchedTokens = function() return MAX_WATCHED_TOKENS end
@@ -128,6 +127,11 @@ else
     API.GetBankBagSlotFlag = GetBankBagSlotFlag
     API.SetBankBagSlotFlag = SetBankBagSlotFlag
     
+end
+
+if C_Item ~= nil then
+	API.GetItemInfo = C_Item.GetItemInfo;
+	API.GetDetailedItemLevelInfo = C_Item.GetDetailedItemLevelInfo;
 end
 
 local localEnumerateBagGearFilters = function()

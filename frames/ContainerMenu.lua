@@ -49,9 +49,17 @@ function BaudBagContainerMenuButtonMixin:JumpToOptions()
     local containerId = containerMenu.ContainerId
 
     BaudBagOptionsSelectContainer(bagSet, containerId)
-    -- working around what seems to be a bug in blizzards code, preventing this to work on the first try..
-    InterfaceOptionsFrame_OpenToCategory("Baud Bag")
-    InterfaceOptionsFrame_OpenToCategory("Baud Bag")
+    local category = AddOnTable.SettingsCategory
+    if (category ~= nil) then
+        -- retail options system
+        AddOnTable.Functions.DebugMessage("Options", "Using new settings system to open category", category:GetID())
+        Settings.OpenToCategory(category:GetID())
+    else
+        -- classic options system
+        -- working around what seems to be a bug in blizzards code, preventing this to work on the first try..
+        InterfaceOptionsFrame_OpenToCategory("Baud Bag")
+        InterfaceOptionsFrame_OpenToCategory("Baud Bag")
+    end
 
     containerMenu:Hide()
 end

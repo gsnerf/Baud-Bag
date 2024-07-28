@@ -1,4 +1,9 @@
 ﻿=== Changelog ===
+v11.0.0.1
+  - complete overhaul of the settings code
+  - removed all old style dropdowns and replaced with either custom code, popouts (for classic) or the new dropdowns (retail)
+  - wrapped more API calls for easier wow flavor handling
+  - lots of little code improvements
 v10.1.7.1
   - re-added keyring functionality for wotlk classic
   - added support for vanilla classic (classic era)
