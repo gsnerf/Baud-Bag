@@ -369,15 +369,6 @@ local function CreateBagSetBagButtons(self)
     end
 end
 
-local function ContainerBackgroundChanged(selectedIndex, menuInputData)
-    AddOnTable.Functions.DebugMessage("Temp", "container background was changed", selectedIndex, menuInputData)
-
-    BBConfig[SelectedBags][SelectedContainer].Background = selectedIndex
-    local container = AddOnTable["Sets"][SelectedBags].Containers[SelectedContainer]
-    container:Rebuild()
-    container:Update()
-end
-
 --- Initializes the BagSet group frame:
 --- * puts localized texts on all UI elements
 --- * hooks events
@@ -388,8 +379,6 @@ function BaudBagOptionsBagSetMixin:OnLoad()
     self.NameInput.Text:SetText(Localized.ContainerName)
     self.ResetPositionButton.Text:SetText(Localized.OptionsResetContainerPosition)
     self.ResetPositionButton.tooltipText = Localized.OptionsResetContainerPositionTooltip
-    --self.BackgroundSelection.Label:SetText(Localized.Background)
-    --self.BackgroundSelection.Button:RegisterCallback("OnValueChanged", ContainerBackgroundChanged)
     self.BackgroundSelection:SetDefaultText(Localized.Background)
     
     -- localized checkbox labels
@@ -412,18 +401,21 @@ function BaudBagOptionsBagSetMixin:OnLoad()
     CreateBagSetBagButtons(self)
 end
 
+local function ContainerBackgroundChanged(newBackgroundId)
+    AddOnTable.Functions.DebugMessage("Temp", "container background was changed", newBackgroundId)
+
+    BBConfig[SelectedBags][SelectedContainer].Background = newBackgroundId
+    local container = AddOnTable["Sets"][SelectedBags].Containers[SelectedContainer]
+    container:Rebuild()
+    container:Update()
+end
+
 local function BackgroundSelection_isSelected(index)
     return index == BBConfig[SelectedBags][SelectedContainer].Background
 end
 
-local function BackgroundSelection_EntriesGenerator(owner, rootDescription)
-    for Key, Value in pairs(TextureNames) do
-        rootDescription:CreateRadio(Value, BackgroundSelection_isSelected, ContainerBackgroundChanged, Key);
-    end
-end
-
 function BaudBagOptionsBagSetMixin:InitializeContent()
-    self.BackgroundSelection:SetupMenu(BackgroundSelection_EntriesGenerator)
+    self.BackgroundSelection:Setup(TextureNames, BackgroundSelection_isSelected, ContainerBackgroundChanged)
 end
 
 local function UpdateBagButtons(self)
@@ -563,6 +555,9 @@ function BaudBagOptionsBagSetMixin:UpdateContent()
             Button:Enable()
         end
     end
+
+    local selectedBackground = BBConfig[SelectedBags][SelectedContainer].Background
+    self.BackgroundSelection:UpdateSelection(selectedBackground)
 end
 
 function BaudBagOptionsBagSetMixin:ChangeBagSet(bagSetId)

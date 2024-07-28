@@ -158,3 +158,40 @@ function BaudBagSelectionPopoutDetailsMixin:SetupDetails(selectionData, index, i
 
 	self:UpdateText(selectionData, isSelected, hasAFailedReq)
 end
+
+BaudBagOptionsDropdownMixin = {}
+
+function BaudBagOptionsDropdownMixin:SetDefaultText(defaultText)
+	self.Label:SetText(defaultText)
+end
+
+local localValueChangedCallback = function() end
+local function onValueChanged(self, selectedData)
+	localValueChangedCallback(selectedData.id)
+end
+
+function BaudBagOptionsDropdownMixin:Setup(menuEntriesList, isSelectedFunc, valueChangedCallback)
+	local selectedKey = 0
+	local selections = {}
+	-- 0 is empty by default, as selection seem to start with index 1
+	for Key, Value in pairs(menuEntriesList)do
+		selections[Key] = {
+			name = Value,
+			--isNew = false,
+			--ineligibleChoice = false,
+			--isLocked = false
+			id = Key
+		}
+		if (isSelectedFunc(Key)) then
+			selectedKey = Key
+		end
+	end
+	self:SetupSelections(selections, selectedKey)
+
+	localValueChangedCallback = valueChangedCallback
+	self.Button:RegisterCallback("OnValueChanged", onValueChanged)
+end
+
+function BaudBagOptionsDropdownMixin:UpdateSelection(newIndex)
+    self.Button:SetSelectedIndex(newIndex)
+end

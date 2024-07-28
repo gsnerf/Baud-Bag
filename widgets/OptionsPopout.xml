@@ -58,7 +58,7 @@
 		</Scripts>
 	</Button>
 
-	<Frame name="BaudBagOptionsSelectionPopoutTemplate" inherits="SelectionPopoutWithButtonsTemplate" virtual="true">
+	<Frame name="BaudBagOptionsDropdownTemplate" inherits="SelectionPopoutWithButtonsTemplate" mixin="BaudBagOptionsDropdownMixin" virtual="true">
         <Layers>
             <Layer level="ARTWORK">
                 <FontString parentKey="Label" font="GameFontNormalSmall">

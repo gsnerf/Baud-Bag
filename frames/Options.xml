@@ -194,12 +194,11 @@
 				</Scripts>
 			</EditBox>
 
-			<DropdownButton parentKey="BackgroundSelection" inherits="WowStyle2DropdownTemplate">
-				<Size x="200" y="20" />
+			<Frame parentKey="BackgroundSelection" inherits="BaudBagOptionsDropdownTemplate">
 				<Anchors>
 					<Anchor point="LEFT" relativeKey="$parent.NameInput" relativePoint="RIGHT" x="40" y="0" />
 				</Anchors>
-			</DropdownButton>
+			</Frame>
 
 			<CheckButton name="$parentCheckButton1" parentKey="CheckButton1" inherits="BaudBagOptionsContainerCheckButtonTemplate" id="1">
 				<Anchors>
