@@ -78,6 +78,17 @@ function BaudBagContainerMenuButtonMixin:ToggleBank()
     containerMenu:Hide()
 end
 
+function BaudBagContainerMenuButtonMixin:ToggleEnableBank()
+    local currentValue = AddOnTable.Config[2].Enabled
+    --UIParentLoadAddOn('Blizzard_DebugTools')
+    --DisplayTableInspectorWindow(self)
+    --BBConfig[2].Enabled=(not BBConfig[2].Enabled)
+    AddOnTable.Config[2].Enabled = not currentValue
+    AddOnTable.Sets[2]:Close()
+    AddOnTable.UpdateBankParents()
+    self:GetParent().EnableBankButton:SetChecked(AddOnTable.Config[2].Enabled)
+end
+
 function BaudBagContainerMenuButtonMixin:AddSlots()
     StaticPopup_Show("BACKPACK_INCREASE_SIZE")
 
@@ -196,7 +207,15 @@ function BaudBagContainerMenuMixin:SetupGeneral()
         showBankButton:SetPoint("TOP", self.General.ShowOptions, "BOTTOM")
         self.General.ShowBankButton = showBankButton
         table.insert(self.checkButtons, showBankButton)
-        
+
+        local enableBankButton = CreateFrame("CheckButton", nil, self.General, "BaudBagContainerMenuCheckButtonTemplate")
+        enableBankButton:SetText("Enable Bank")
+        enableBankButton:SetScript("OnClick", enableBankButton.ToggleEnableBank)
+        enableBankButton:SetPoint("TOP", showBankButton, "BOTTOM" )
+        enableBankButton:SetChecked(AddOnTable.Config[2].Enabled)
+        self.General.EnableBankButton = enableBankButton
+        table.insert(self.checkButtons, enableBankButton)
+
         local backpackCanBeExtended = not (IsAccountSecured() and AddOnTable.BlizzAPI.GetContainerNumSlots(AddOnTable.BlizzConstants.BACKPACK_CONTAINER) > AddOnTable.BlizzConstants.BACKPACK_BASE_SIZE)
         if (backpackCanBeExtended) then
             local extendBackpack = CreateFrame("CheckButton", nil, self.General, "BaudBagContainerMenuCheckButtonTemplate")
