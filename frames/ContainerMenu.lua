@@ -80,9 +80,6 @@ end
 
 function BaudBagContainerMenuButtonMixin:ToggleEnableBank()
     local currentValue = AddOnTable.Config[2].Enabled
-    --UIParentLoadAddOn('Blizzard_DebugTools')
-    --DisplayTableInspectorWindow(self)
-    --BBConfig[2].Enabled=(not BBConfig[2].Enabled)
     AddOnTable.Config[2].Enabled = not currentValue
     AddOnTable.Sets[2]:Close()
     AddOnTable.UpdateBankParents()
