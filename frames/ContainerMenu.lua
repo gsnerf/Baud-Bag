@@ -206,7 +206,7 @@ function BaudBagContainerMenuMixin:SetupGeneral()
         table.insert(self.checkButtons, showBankButton)
 
         local enableBankButton = CreateFrame("CheckButton", nil, self.General, "BaudBagContainerMenuCheckButtonTemplate")
-        enableBankButton:SetText("Enable Bank")
+        enableBankButton:SetText(Localized.EnableBank)
         enableBankButton:SetScript("OnClick", enableBankButton.ToggleEnableBank)
         enableBankButton:SetPoint("TOP", showBankButton, "BOTTOM" )
         enableBankButton:SetChecked(AddOnTable.Config[2].Enabled)
