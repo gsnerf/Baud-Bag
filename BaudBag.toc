@@ -27,7 +27,7 @@ BaudBagFunctions.lua
 lib\BaseTypes.lua
 lib\BagSet.lua
 lib\SubContainer.lua
-lib\Container.lua
+lib\Container.xml
 lib\TextureHelper.lua
 lib\Backgrounds\BlizzardBackground.lua
 lib\Backgrounds\SimpleBackground.lua
