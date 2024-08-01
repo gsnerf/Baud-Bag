@@ -15,7 +15,7 @@
 		</Scripts>
 	</Frame>
 	
-	<Frame topLevel="true" name="BaudBagContainerTemplate" virtual="true" hidden="true" parent="UIParent" movable="true" frameStrata="MEDIUM" enableMouse="true">
+	<Frame topLevel="true" name="BaudBagContainerTemplate" mixin="BaudBagContainerMixin" virtual="true" hidden="true" parent="UIParent" movable="true" frameStrata="MEDIUM" enableMouse="true">
 		<Size x="640" y="560" />
 		<Anchors>
 			<Anchor point="CENTER" />
@@ -87,12 +87,12 @@
 			</Layer>
 		</Layers>
 		<Scripts>
-			<OnLoad function="BaudBagContainer_OnLoad" />
-			<OnShow function="BaudBagContainer_OnShow" />
-			<OnHide function="BaudBagContainer_OnHide" />
-			<OnUpdate function="BaudBagContainer_OnUpdate" />
-			<OnDragStart function="BaudBagContainer_OnDragStart" />
-			<OnDragStop function="BaudBagContainer_OnDragStop" />
+			<OnLoad method="OnLoad" />
+			<OnShow method="OnShow" />
+			<OnHide method="OnHide" />
+			<OnUpdate method="OnUpdate" />
+			<OnDragStart method="OnDragStart" />
+			<OnDragStop method="OnDragStop" />
 		</Scripts>
 	</Frame>
 	

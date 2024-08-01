@@ -283,19 +283,42 @@ function AddOnTable:Container_Updated(bagSet, containerId)
 end
 
 
---[[ Container events - TO BE MOVED TO MIXIN ]]--
-function BaudBagContainer_OnLoad(self, event, ...)
-    -- that's to make the frame closable through the ESC key
+BaudBagContainerMixin = {}
+
+function BaudBagContainerMixin:OnLoad(event, ...)
     tinsert(UISpecialFrames, self:GetName())
     self:RegisterForDrag("LeftButton")
 end
 
-function BaudBagContainer_OnUpdate(self, event, ...)
+function BaudBagContainerMixin:OnShow(event, ...)
+    AddOnTable.Functions.DebugMessage("BagOpening", "BaudBagContainer_OnShow was called", self:GetName())
+	
+    -- check if the container was open before and closing now
+    if self.FadeStart then
+        return
+    end
+	
+    -- container seems to not be visible, open and update
+    self.FadeStart = GetTime()
+    PlaySound(SOUNDKIT.IG_BACKPACK_OPEN)
+    local bagSet = AddOnTable["Sets"][self.BagSet]
+    local containerObject = bagSet.Containers[self:GetID()]
+    containerObject:Update()
+    if (containerObject.Frame.Slots > 0) then
+        containerObject:UpdateBagHighlight()
+    end
 
+    if (self:GetID() == 1) then
+        AddOnTable["Sets"][self.BagSet]:UpdateSlotInfo()
+    end
+end
+
+function BaudBagContainerMixin:OnUpdate(event, ...)
     local containerObject = AddOnTable["Sets"][self.BagSet].Containers[self:GetID()]
 
     if (self.Refresh) then
         containerObject:Update()
+        -- todo
         BaudBagUpdateOpenBagHighlight()
     end
 
@@ -326,32 +349,7 @@ function BaudBagContainer_OnUpdate(self, event, ...)
     end
 end
 
-
-function BaudBagContainer_OnShow(self, event, ...)
-    AddOnTable.Functions.DebugMessage("BagOpening", "BaudBagContainer_OnShow was called", self:GetName())
-	
-    -- check if the container was open before and closing now
-    if self.FadeStart then
-        return
-    end
-	
-    -- container seems to not be visible, open and update
-    self.FadeStart = GetTime()
-    PlaySound(SOUNDKIT.IG_BACKPACK_OPEN)
-    local bagSet = AddOnTable["Sets"][self.BagSet]
-    local containerObject = bagSet.Containers[self:GetID()]
-    containerObject:Update()
-    if (containerObject.Frame.Slots > 0) then
-        containerObject:UpdateBagHighlight()
-    end
-
-    if (self:GetID() == 1) then
-        AddOnTable["Sets"][self.BagSet]:UpdateSlotInfo()
-    end
-end
-
-
-function BaudBagContainer_OnHide(self, event, ...)
+function BaudBagContainerMixin:OnHide(event, ...)
     AddOnTable.Functions.DebugMessage("BagOpening", "BaudBagContainer_OnHide was called", self:GetName())
     -- correctly handle if this is called while the container is still fading out
     if self.Closing then
@@ -366,6 +364,7 @@ function BaudBagContainer_OnHide(self, event, ...)
     self.Closing = true
     PlaySound(SOUNDKIT.IG_BACKPACK_CLOSE)
     self.AutoOpened = false
+    -- todo
     BaudBagUpdateOpenBagHighlight()
 
     --[[TODO: look into merging the set specific close handling!!!]]--
@@ -385,15 +384,13 @@ function BaudBagContainer_OnHide(self, event, ...)
     AddOnTable.Sets[self.BagSet].Containers[self:GetID()].Menu:Hide()
 end
 
-
-function BaudBagContainer_OnDragStart(self, event, ...)
+function BaudBagContainerMixin:OnDragStart(event, ...)
     if not BBConfig[self.BagSet][self:GetID()].Locked then
         self:StartMoving()
     end
 end
 
-
-function BaudBagContainer_OnDragStop(self, event, ...)
+function BaudBagContainerMixin:OnDragStop(self, event, ...)
     self:StopMovingOrSizing()
     AddOnTable["Sets"][self.BagSet].Containers[self:GetID()]:SaveCoordsToConfig()
 end
