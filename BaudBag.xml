@@ -2,18 +2,7 @@
 	
 	<Script file="BaudBag.lua" />
   
-	<Frame name="BaudBagBagsFrameTemplate" virtual="true" enableMouse="true" inherits="TooltipBackdropTemplate">
-		<KeyValues>
-			<KeyValue key="backdropColor" value="BLACK_FONT_COLOR" type="global"/>
-			<KeyValue key="backdropColorAlpha" value="1" type="number"/>
-		</KeyValues>
-		<Anchors>
-			<Anchor point="TOPRIGHT" relativeTo="$parentBackdrop" relativePoint="TOPLEFT" />
-		</Anchors>
-		<Scripts>
-			<OnShow function="BaudBagBagsFrame_OnShow" />
-		</Scripts>
-	</Frame>
+
 	
 	<Frame name="BaudBagFirstContainerTemplate" virtual="true" inherits="BaudBagContainerTemplate">
 		<Frames>
