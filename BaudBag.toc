@@ -34,7 +34,7 @@ lib\Backgrounds\BackgroundRegistration.lua
 widgets\buttons\BagButton.xml
 widgets\buttons\ItemButton.lua
 widgets\BagsFrame.xml
-lib\Container.xml
+widgets\Container.xml
 widgets\OptionsDropdown.xml
 frames\ContainerMenu.xml
 Events.lua
