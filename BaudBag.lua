@@ -349,25 +349,6 @@ function BaudBagUpdateBagFrames()
     end
 end
 
-function BaudBag_OnModifiedClick(self, button)
-    if (not AddOnTable.Cache:UsesCache(self:GetParent():GetID())) then
-        return
-    end
-
-    if IsModifiedClick("SPLITSTACK")then
-        StackSplitFrame:Hide()
-    end
-
-    local slotCache = AddOnTable.Cache:GetBagCache(self:GetParent():GetID())[self:GetID()]
-    if slotCache then
-        HandleModifiedItemClick(slotCache.Link)
-    end
-end
-
-
---hooksecurefunc("ContainerFrameItemButton_OnModifiedClick", BaudBag_OnModifiedClick)
---hooksecurefunc("BankFrameItemButtonGeneric_OnModifiedClick", BaudBag_OnModifiedClick)
-
 -- TODO: after changes there is some weird behavior after applying changes (like changing the name)
 -- Seems to be in Background drawing for Slot Count
 --[[ this can probably be removed as this is only called on classic and a new way to bubble updates needs to be found ]]
