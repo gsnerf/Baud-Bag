@@ -3,6 +3,7 @@ local AddOnName, AddOnTable = ...
 
 ---@class BlizzAPI
 AddOnTable.BlizzAPI = {
+    CloseBankFrame = CloseBankFrame,
     GetInventorySlotInfo = GetInventorySlotInfo,
     GetItemInfo = GetItemInfo,
     GetDetailedItemLevelInfo = GetDetailedItemLevelInfo,
@@ -132,6 +133,10 @@ end
 if C_Item ~= nil then
 	API.GetItemInfo = C_Item.GetItemInfo;
 	API.GetDetailedItemLevelInfo = C_Item.GetDetailedItemLevelInfo;
+end
+
+if C_Bank ~= nil then
+    API.CloseBankFrame = C_Bank.CloseBankFrame
 end
 
 local localEnumerateBagGearFilters = function()

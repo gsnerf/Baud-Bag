@@ -375,8 +375,7 @@ function BaudBagContainerMixin:OnHide(event, ...)
     ]]--
     if (self:GetID() == 1) and (BBConfig[self.BagSet].Enabled) and (BBConfig[self.BagSet].CloseAll) then
         if (self.BagSet == 2) and AddOnTable.State.BankOpen then
-            -- [TAINT] can be problematic, but doesn't have to be
-            CloseBankFrame()
+            AddOnTable.BlizzAPI.CloseBankFrame()
         end
         AddOnTable.Sets[self.BagSet]:Close()
     end
