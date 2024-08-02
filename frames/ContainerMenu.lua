@@ -82,7 +82,8 @@ function BaudBagContainerMenuButtonMixin:ToggleEnableBank()
     local currentValue = AddOnTable.Config[2].Enabled
     AddOnTable.Config[2].Enabled = not currentValue
     AddOnTable.Sets[2]:Close()
-    AddOnTable.UpdateBankParents()
+    BaudBagUpdateFromBBConfig()
+    --AddOnTable.UpdateBankParents()
     self:GetParent().EnableBankButton:SetChecked(AddOnTable.Config[2].Enabled)
 end
 
