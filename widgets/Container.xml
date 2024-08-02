@@ -44,7 +44,7 @@
 				<PushedTexture file="Interface\Buttons\UI-PlusButton-Down" />
 				<HighlightTexture file="Interface\Buttons\UI-PlusButton-Hilight" alphaMode="ADD" />
 			</Button>
-			<Button name="$parentSearchButton" parentKey="SearchButton">
+			<Button name="$parentSearchButton" parentKey="SearchButton" mixin="BaudBagSearchButtonMixin">
 				<Size x="16" y="16" />
 				<Anchors>
 					<Anchor point="TOPRIGHT" relativeTo="$parentMenuButton" relativePoint="TOPLEFT" x="0" y="0" />
@@ -57,8 +57,8 @@
 					</Anchors>
 				</HighlightTexture>
 				<Scripts>
-					<OnClick function="BaudBagSearchButton_Click" />
-					<OnEnter function="BaudBagSearchButton_Enter" />
+					<OnClick method="OnClick" />
+					<OnEnter method="OnEnter" />
 					<OnLeave function="GameTooltip_Hide"/>
 				</Scripts>
 			</Button>

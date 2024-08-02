@@ -1,4 +1,5 @@
 local AddOnName, AddOnTable = ...
+local Localized = AddOnTable.Localized
 local _
 
 -- -> possibly move this to default config?
@@ -393,4 +394,22 @@ end
 function BaudBagContainerMixin:OnDragStop(self, event, ...)
     self:StopMovingOrSizing()
     AddOnTable["Sets"][self.BagSet].Containers[self:GetID()]:SaveCoordsToConfig()
+end
+
+
+BaudBagSearchButtonMixin = {}
+
+function BaudBagSearchButtonMixin:OnClick(event, ...)
+    -- get references to all needed frames and data
+    local Container		= self:GetParent()
+    local Scale			= BBConfig[Container.BagSet][Container:GetID()].Scale / 100
+    local Background	= BBConfig[Container.BagSet][Container:GetID()].Background
+    
+    BaudBagSearchFrame_ShowFrame(Container, Scale, Background)
+end
+
+function BaudBagSearchButtonMixin:OnEnter(event, ...)
+    GameTooltip:SetOwner(self)
+    GameTooltip:SetText(Localized.SearchBagTooltip)
+    GameTooltip:Show()
 end
