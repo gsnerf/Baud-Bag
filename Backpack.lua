@@ -20,7 +20,7 @@ end
 function BackpackBagOverview_Initialize()
     -- create BagSlots for the bag overview in the inventory (frame that pops out and only shows the available bags)
     AddOnTable.Functions.DebugMessage("Bags", "Creating bag slot buttons.")
-    local backpackSet = AddOnTable["Sets"][1]
+    local backpackSet = AddOnTable.Sets[BagSetType.Backpack.Id]
     local BBContainer1 = _G["BaudBagContainer1_1BagsFrame"]
 
     -- this is one container less, as the backpack itself doesn't get a button
@@ -49,7 +49,7 @@ if PlayerInteractionFrameManager ~= nil then
         AddOnTable.Functions.DebugMessage("Junk", "MerchandFrame was shown checking if we need to sell junk")
         if (BBConfig.SellJunk and BBConfig[1].Enabled and MerchantFrame:IsShown()) then
             AddOnTable.Functions.DebugMessage("Junk", "junk selling active and merchant frame is shown, identifiyng junk now")
-            AddOnTable.Sets[1]:ForEachBag(
+            AddOnTable.Sets[BagSetType.Backpack.Id]:ForEachBag(
                 function(Bag, _)
                     for Slot = 1, AddOnTable.BlizzAPI.GetContainerNumSlots(Bag) do
                         local containerItemInfo = AddOnTable.BlizzAPI.GetContainerItemInfo(Bag, Slot)

@@ -63,7 +63,7 @@ local EventFuncs = {
             if (Slot <= NUM_BANKGENERIC_SLOTS) then
                 BankFrameItemButton_UpdateLocked(_G[Prefix.."SubBag-1Item"..Slot])
             else
-                local bankBagButton = AddOnTable["Sets"][2].BagButtons[Slot-NUM_BANKGENERIC_SLOTS]
+                local bankBagButton = AddOnTable.Sets[BagSetType.Bank.Id].BagButtons[Slot-NUM_BANKGENERIC_SLOTS]
                 BankFrameItemButton_UpdateLocked(bankBagButton)
             end
         elseif (Bag == REAGENTBANK_CONTAINER) then
@@ -129,7 +129,7 @@ local Func = function(self, event, ...)
         -- bank bag slot
         if (bagId > AddOnTable.BlizzConstants.BANK_SLOTS_NUM) then
             local bankBagId = bagId-AddOnTable.BlizzConstants.BANK_SLOTS_NUM
-            local bankBagButton = AddOnTable["Sets"][2].BagButtons[bankBagId]
+            local bankBagButton = AddOnTable.Sets[BagSetType.Bank.Id].BagButtons[bankBagId]
             bankBagButton:UpdateContent()
             return
         end
@@ -169,18 +169,19 @@ Func = function(self, event, ...)
     -- full rebuild if it seems the bags could have been swapped (something like this will probably be necessary for classic, so it stays for the moment)
     if affectedContainerCount > 1 then
         if bagsAffected then
-            AddOnTable.Sets[1]:RebuildContainers()
-            for _, button in ipairs(AddOnTable.Sets[1].BagButtons) do
+            local backpackSet = AddOnTable.Sets[BagSetType.Backpack.Id]
+            backpackSet:RebuildContainers()
+            for _, button in ipairs(backpackSet.BagButtons) do
                 button:Hide()
                 button:Show()
             end
-            for _, button in ipairs(AddOnTable.Sets[1].ReagentBagButtons) do
+            for _, button in ipairs(backpackSet.ReagentBagButtons) do
                 button:Hide()
                 button:Show()
             end
         end
         if bankAffected then
-            AddOnTable.Sets[2]:RebuildContainers()
+            AddOnTable.Sets[BagSetType.Bank.Id]:RebuildContainers()
         end
         BaudBagUpdateOpenBagHighlight()
     else
@@ -198,8 +199,8 @@ EventFuncs.BAG_UPDATE_DELAYED = Func
 
 EventFuncs.BAG_CONTAINER_UPDATE = function(self, event, ...)
     -- not sure how to identify what set is affected, so for now rebuild everything
-    AddOnTable.Sets[1]:RebuildContainers()
-    AddOnTable.Sets[2]:RebuildContainers()
+    AddOnTable.Sets[BagSetType.Backpack.Id]:RebuildContainers()
+    AddOnTable.Sets[BagSetType.Bank.Id]:RebuildContainers()
     if (BaudBagOptions:IsShown()) then
         BaudBagOptions:Update()
     end
@@ -264,12 +265,10 @@ end
 function BaudUpdateJoinedBags()
     AddOnTable.Functions.DebugMessage("Bags", "Updating joined bags...")
     
-    for bagSet = 1, 2 do
-        AddOnTable["Sets"][bagSet]:RebuildContainers()
-    end
-
-    if (AddOnTable.State.KeyringSupported) then
-        AddOnTable["Sets"][3]:RebuildContainers()
+    for _, bagSet in pairs(BagSetType) do
+        if ((bagSet.Id ~= BagSetType.Keyring.Id or AddOnTable.State.KeyringSupported)) then
+            AddOnTable.Sets[bagSet.Id]:RebuildContainers()
+        end
     end
 
     AddOnTable.BagsReady = true
@@ -355,11 +354,10 @@ end
 function BaudBagUpdateFromBBConfig()
     BaudUpdateJoinedBags()
     BaudBagUpdateBagFrames()
-
-    for bagSet = 1, 2 do
-        -- make sure the enabled states are current
-        if (BBConfig[bagSet].Enabled ~= true) then
-            AddOnTable.Sets[bagSet]:Close()
+    for _, bagSet in pairs(BagSetType) do
+    
+        if (BBConfig[bagSet.Id].Enabled ~= true) then
+            AddOnTable.Sets[bagSet.Id]:Close()
         end
     end
     AddOnTable:UpdateBagParents()

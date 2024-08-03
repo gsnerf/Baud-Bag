@@ -10,7 +10,7 @@ function BaudBagBagsFrameMixin:OnShow(event, ...)
     AddOnTable.Functions.DebugMessage("Bank", "BaudBagBagsFrame is shown, correcting frame layer lvls of childs (frame, targetLevel)", self:GetName(), Level)
     -- Adjust frame level because of Blizzard's screw up
     if (isBags) then
-        local backpackSet = AddOnTable["Sets"][1]
+        local backpackSet = AddOnTable.Sets[BagSetType.Backpack.Id]
         for Bag = 0, 3 do
             backpackSet.BagButtons[Bag]:SetFrameLevel(Level)
         end
@@ -18,7 +18,7 @@ function BaudBagBagsFrameMixin:OnShow(event, ...)
             backpackSet.ReagentBagButtons[0]:SetFrameLevel(Level)
         end
     else
-        local bagSet = AddOnTable["Sets"][2]
+        local bagSet = AddOnTable.Sets[BagSetType.Bank.Id]
         for Bag = 1, NUM_BANKBAGSLOTS do
             bagSet.BagButtons[Bag]:SetFrameLevel(Level)
         end

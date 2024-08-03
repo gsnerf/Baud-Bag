@@ -227,7 +227,7 @@ function Prototype:ForEachBag(func)
 end
 
 local Metatable = { __index = Prototype }
-
+---@param type BagSetTypeClass
 function AddOnTable:CreateBagSet(type)
     local bagSet = _G.setmetatable({}, Metatable)
     bagSet.Type = type
@@ -235,6 +235,6 @@ function AddOnTable:CreateBagSet(type)
     bagSet.SubContainers = {}
     bagSet.BagButtons = {}
     bagSet.ReagentBagButtons = {}
-    AddOnTable["Sets"][type.Id] = bagSet
+    AddOnTable.Sets[type.Id] = bagSet
     return bagSet
 end

@@ -7,17 +7,20 @@ local EventFuncs = {
     BANKFRAME_CLOSED = function(self, event, ...)
         AddOnTable.Functions.DebugMessage("Bank", "Event BANKFRAME_CLOSED fired")
         AddOnTable.State.BankOpen = false
+
+        local bankSet = AddOnTable.Sets[BagSetType.Bank.Id]
+
         BaudBagBankSlotPurchaseButton:Disable()
         if _G[Prefix.."Container2_1"].AutoOpened then
             _G[Prefix.."Container2_1"]:Hide()
         else
             --Add offline again to bag name
-            local numberOfContainers = AddOnTable.Sets[2].ContainerNumber
+            local numberOfContainers = bankSet.ContainerNumber
             for ContNum = 1, numberOfContainers do
-                AddOnTable.Sets[2].Containers[ContNum]:UpdateName()
+                bankSet.Containers[ContNum]:UpdateName()
             end
         end
-        AddOnTable.Sets[1]:AutoClose()
+        AddOnTable.Sets[BagSetType.Backpack.Id]:AutoClose()
     end,
 
     PLAYER_MONEY = function(self, event, ...)
@@ -42,9 +45,9 @@ local Func = function(self, event, ...)
     end
     
     -- make sure current bag information are processed
-    AddOnTable.Sets[2]:RebuildContainers()
-    AddOnTable.Sets[1]:AutoOpen()
-    AddOnTable.Sets[2]:AutoOpen()
+    AddOnTable.Sets[BagSetType.Bank.Id]:RebuildContainers()
+    AddOnTable.Sets[BagSetType.Backpack.Id]:AutoOpen()
+    AddOnTable.Sets[BagSetType.Bank.Id]:AutoOpen()
 end
 EventFuncs.BANKFRAME_OPENED = Func
 EventFuncs.PLAYERBANKBAGSLOTS_CHANGED = Func
@@ -66,7 +69,7 @@ end
   ]]
 function BaudBagBankBags_Initialize()
     local BagSlot, Texture
-    local bankSet = AddOnTable["Sets"][2]
+    local bankSet = AddOnTable.Sets[BagSetType.Bank.Id]
     local BBContainer2 = _G[Prefix.."Container2_1BagsFrame"]
 
     -- create BagSlots for regular bags
@@ -101,7 +104,7 @@ function BaudBagBankBags_Update()
     local Slots, Full = GetNumBankSlots()
     
     local BagSlot
-    local bankSet = AddOnTable["Sets"][2]
+    local bankSet = AddOnTable.Sets[BagSetType.Bank.Id]
 
     AddOnTable.Functions.DebugMessage("Bank", "BankBags: updating")
     
@@ -153,9 +156,11 @@ function AddOnTable:BankBags_UpdateContent(self, bankVisible)
     -- make sure the player can buy new bankslots
     BaudBagBankSlotPurchaseButton:Enable()
 
+    local bankSet = AddOnTable.Sets[BagSetType.Bank.Id]
+
     AddOnTable.SubBags[BANK_CONTAINER]:UpdateSlotContents()
     for Index = 1, NUM_BANKBAGSLOTS do
-        local bankBagButton = AddOnTable["Sets"][2].BagButtons[Index]
+        local bankBagButton = bankSet.BagButtons[Index]
         bankBagButton:UpdateContent()
     end
     
@@ -174,10 +179,10 @@ function AddOnTable:BankBags_UpdateContent(self, bankVisible)
         bagCache.BagCount = GetInventoryItemCount("player", inventoryId)
     end
     
-    local firstBankContainer = AddOnTable.Sets[2].Containers[1]
+    local firstBankContainer = bankSet.Containers[1]
     if firstBankContainer.Frame:IsShown() then
         firstBankContainer:Update()
-        AddOnTable["Sets"][2]:UpdateSlotInfo()
+        bankSet:UpdateSlotInfo()
     else
         firstBankContainer.Frame.AutoOpened = true
         firstBankContainer.Frame:Show()
@@ -185,13 +190,14 @@ function AddOnTable:BankBags_UpdateContent(self, bankVisible)
 end
 
 function BaudBagToggleBank(self)
-    local firstBankContainer = AddOnTable.Sets[2].Containers[1]
+    local bankSet = AddOnTable.Sets[BagSetType.Bank.Id]
+    local firstBankContainer = bankSet.Containers[1]
     if firstBankContainer.Frame:IsShown() then
         firstBankContainer.Frame:Hide()
-        AddOnTable.Sets[2]:AutoClose()
+        bankSet:AutoClose()
     else
         firstBankContainer.Frame:Show()
-        AddOnTable.Sets[2]:AutoOpen()
+        bankSet:AutoOpen()
     end
 end
 

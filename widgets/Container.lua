@@ -302,7 +302,7 @@ function BaudBagContainerMixin:OnShow(event, ...)
     -- container seems to not be visible, open and update
     self.FadeStart = GetTime()
     PlaySound(SOUNDKIT.IG_BACKPACK_OPEN)
-    local bagSet = AddOnTable["Sets"][self.BagSet]
+    local bagSet = AddOnTable.Sets[self.BagSet]
     local containerObject = bagSet.Containers[self:GetID()]
     containerObject:Update()
     if (containerObject.Frame.Slots > 0) then
@@ -310,12 +310,12 @@ function BaudBagContainerMixin:OnShow(event, ...)
     end
 
     if (self:GetID() == 1) then
-        AddOnTable["Sets"][self.BagSet]:UpdateSlotInfo()
+        AddOnTable.Sets[self.BagSet]:UpdateSlotInfo()
     end
 end
 
 function BaudBagContainerMixin:OnUpdate(event, ...)
-    local containerObject = AddOnTable["Sets"][self.BagSet].Containers[self:GetID()]
+    local containerObject = AddOnTable.Sets[self.BagSet].Containers[self:GetID()]
 
     if (self.Refresh) then
         containerObject:Update()
@@ -324,7 +324,7 @@ function BaudBagContainerMixin:OnUpdate(event, ...)
     end
 
     if (self.UpdateSlots) then
-        AddOnTable["Sets"][self.BagSet]:UpdateSlotInfo()
+        AddOnTable.Sets[self.BagSet]:UpdateSlotInfo()
     end
 
     if (self.FadeStart) then
@@ -374,7 +374,7 @@ function BaudBagContainerMixin:OnHide(event, ...)
     (first the bag set so the "offline" title doesn't show up before closing and then the bank to disconnect)
     ]]--
     if (self:GetID() == 1) and (BBConfig[self.BagSet].Enabled) and (BBConfig[self.BagSet].CloseAll) then
-        if (self.BagSet == 2) and AddOnTable.State.BankOpen then
+        if (self.BagSet == BagSetType.Bank.Id) and AddOnTable.State.BankOpen then
             AddOnTable.BlizzAPI.CloseBankFrame()
         end
         AddOnTable.Sets[self.BagSet]:Close()
@@ -392,7 +392,7 @@ end
 
 function BaudBagContainerMixin:OnDragStop(self, event, ...)
     self:StopMovingOrSizing()
-    AddOnTable["Sets"][self.BagSet].Containers[self:GetID()]:SaveCoordsToConfig()
+    AddOnTable.Sets[self.BagSet].Containers[self:GetID()]:SaveCoordsToConfig()
 end
 
 

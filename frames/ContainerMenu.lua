@@ -65,13 +65,13 @@ function BaudBagContainerMenuButtonMixin:JumpToOptions()
 end
 
 function BaudBagContainerMenuButtonMixin:ToggleBank()
-    local firstBankContainer = AddOnTable.Sets[2].Containers[1]
+    local firstBankContainer = AddOnTable.Sets[BagSetType.Bank.Id].Containers[1]
     if firstBankContainer.Frame:IsShown() then
         firstBankContainer.Frame:Hide()
-        AddOnTable.Sets[2]:AutoClose()
+        AddOnTable.Sets[BagSetType.Bank.Id]:AutoClose()
     else
         firstBankContainer.Frame:Show()
-        AddOnTable.Sets[2]:AutoOpen()
+        AddOnTable.Sets[BagSetType.Bank.Id]:AutoOpen()
     end
 
     local containerMenu = self:GetParent():GetParent()

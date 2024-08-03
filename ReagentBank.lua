@@ -35,12 +35,12 @@ local function ReagentBankBagInitialize(self, BagContainer)
     BagSlot:HookScript("OnEnter",	BaudBag_BagSlot_OnEnter)
     BagSlot:HookScript("OnUpdate",	BaudBag_BagSlot_OnUpdate)
     BagSlot:HookScript("OnLeave",	BaudBag_BagSlot_OnLeave)
-    AddOnTable.Sets[2].BagButtons[AddOnTable.BlizzConstants.REAGENTBANK_CONTAINER] = BagSlot
+    AddOnTable.Sets[BagSetType.Bank.Id].BagButtons[AddOnTable.BlizzConstants.REAGENTBANK_CONTAINER] = BagSlot
 end
 hooksecurefunc(AddOnTable, "BankBags_Inititalize", ReagentBankBagInitialize)
 
 local function ReagentBankBagUpdate(self)
-    local bankSet = AddOnTable["Sets"][2]
+    local bankSet = AddOnTable.Sets[BagSetType.Bank.Id]
 
     local reagentBank = bankSet.SubContainers[AddOnTable.BlizzConstants.REAGENTBANK_CONTAINER]
     local reagentBankContainer = reagentBank.Frame:GetParent()
