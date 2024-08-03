@@ -310,7 +310,7 @@ function BaudBagOptionsGroupContainerMixin:OnLoad()
     self.tabButtons = {}
     self.tabFrames = {}
     local lastTabButton
-    for _, type in pairs(BagSetTypeArray) do
+    for _, type in pairs(BagSetType) do
         if type.IsSupported() then
             local tabButton = CreateBagSetTabButton(self, type, lastTabButton)
             table.insert(self.tabButtons, tabButton)

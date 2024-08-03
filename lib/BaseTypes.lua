@@ -52,7 +52,6 @@ BagSetType = {
         end
     } ]]
 }
-BagSetTypeArray = { BagSetType.Backpack, BagSetType.Bank, BagSetType.Keyring }
 
 -- INITIALIZATION of BagSetType:
 -- * Backpack:
