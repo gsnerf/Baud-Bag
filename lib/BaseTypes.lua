@@ -15,7 +15,12 @@ BagSetType = {
             local isBackpackContainer = AddOnTable.BlizzConstants.BACKPACK_FIRST_CONTAINER <= containerId and containerId <= AddOnTable.BlizzConstants.BACKPACK_LAST_CONTAINER
             return isBackpackContainer
         end,
-        ContainerIterationOrder = {}
+        ContainerIterationOrder = {},
+        Init = function()
+            for bag = AddOnTable.BlizzConstants.BACKPACK_FIRST_CONTAINER, AddOnTable.BlizzConstants.BACKPACK_LAST_CONTAINER do
+                table.insert(BagSetType.Backpack.ContainerIterationOrder, bag)
+            end
+        end
     },
     Bank = {
         Id = 2,
@@ -27,7 +32,17 @@ BagSetType = {
             local isBankSubContainer = (AddOnTable.BlizzConstants.BANK_FIRST_CONTAINER <= containerId) and (containerId <= AddOnTable.BlizzConstants.BANK_LAST_CONTAINER)
             return isBankDefaultContainer or isBankSubContainer
         end,
-        ContainerIterationOrder = {}
+        ContainerIterationOrder = {},
+        Init = function()
+            table.insert(BagSetType.Bank.ContainerIterationOrder, AddOnTable.BlizzConstants.BANK_CONTAINER)
+            for bag = AddOnTable.BlizzConstants.BANK_FIRST_CONTAINER, AddOnTable.BlizzConstants.BANK_LAST_CONTAINER do
+                table.insert(BagSetType.Bank.ContainerIterationOrder, bag)
+            end
+            -- explicitly using the numerical value of the expansion instead of the enum, as classic variants seemingly do not contain those enums
+            if (GetExpansionLevel() >= 5) then
+                table.insert(BagSetType.Bank.ContainerIterationOrder, AddOnTable.BlizzConstants.REAGENTBANK_CONTAINER)
+            end
+        end
     },
     Keyring = {
         Id = 3,
@@ -37,9 +52,11 @@ BagSetType = {
         IsSubContainerOf = function(containerId)
             return containerId == AddOnTable.BlizzConstants.KEYRING_CONTAINER
         end,
-        ContainerIterationOrder = { AddOnTable.BlizzConstants.KEYRING_CONTAINER }
-    } --[[,
-    GuildBank = {
+        ContainerIterationOrder = { AddOnTable.BlizzConstants.KEYRING_CONTAINER },
+        Init = function() end
+    },
+    --[[
+        GuildBank = {
         Id = 4,
         IsSubContainerOf = function(containerId)
             return false
@@ -54,18 +71,8 @@ BagSetType = {
 }
 
 -- INITIALIZATION of BagSetType:
--- * Backpack:
-for bag = AddOnTable.BlizzConstants.BACKPACK_FIRST_CONTAINER, AddOnTable.BlizzConstants.BACKPACK_LAST_CONTAINER do
-    table.insert(BagSetType.Backpack.ContainerIterationOrder, bag)
-end
--- * Bank:
-table.insert(BagSetType.Bank.ContainerIterationOrder, AddOnTable.BlizzConstants.BANK_CONTAINER)
-for bag = AddOnTable.BlizzConstants.BANK_FIRST_CONTAINER, AddOnTable.BlizzConstants.BANK_LAST_CONTAINER do
-    table.insert(BagSetType.Bank.ContainerIterationOrder, bag)
-end
--- explicitly using the numerical value of the expansion instead of the enum, as classic variants seemingly do not contain those enums
-if (GetExpansionLevel() >= 5) then
-    table.insert(BagSetType.Bank.ContainerIterationOrder, AddOnTable.BlizzConstants.REAGENTBANK_CONTAINER)
+for _, bagSet in pairs(BagSetType) do
+    bagSet:Init()
 end
 
 -- Definition
