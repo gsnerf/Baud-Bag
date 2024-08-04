@@ -24,6 +24,7 @@ API.lua
 BaudBagFunctions.lua
 lib\BaseTypes.lua
 lib\BagSet.lua
+lib\FeatureHooks.lua
 lib\SubContainer.lua
 lib\TextureHelper.lua
 lib\Backgrounds\BlizzardBackground.lua

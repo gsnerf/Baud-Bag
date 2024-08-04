@@ -2,8 +2,11 @@ local AddOnName, AddOnTable = ...
 local _
 local Localized = AddOnTable.Localized
 
--- Definition
----@enum BagSetType
+--[[
+    This enum is pre-filled with the default values that are _aways_ available.
+    It can be extended with more depending on feature availability (for example keyring or warband bank)
+]]
+---@enum BagSetType this contains all bag set types supported by this flavor
 BagSetType = {
     ---@class BagSetTypeClass
     Backpack = {
@@ -44,17 +47,6 @@ BagSetType = {
             end
         end
     },
-    Keyring = {
-        Id = 3,
-        Name = Localized.KeyRing,
-        TypeName = "Keyring",
-        IsSupported = function() return AddOnTable.State.KeyringSupported end,
-        IsSubContainerOf = function(containerId)
-            return containerId == AddOnTable.BlizzConstants.KEYRING_CONTAINER
-        end,
-        ContainerIterationOrder = { AddOnTable.BlizzConstants.KEYRING_CONTAINER },
-        Init = function() end
-    },
     --[[
         GuildBank = {
         Id = 4,
@@ -70,10 +62,6 @@ BagSetType = {
     } ]]
 }
 
--- INITIALIZATION of BagSetType:
-for _, bagSet in pairs(BagSetType) do
-    bagSet:Init()
-end
 
 -- Definition
 ---@enum ContainerType
@@ -88,9 +76,6 @@ idIndexMap[AddOnTable.BlizzConstants.BANK_CONTAINER] = 1
 idIndexMap[AddOnTable.BlizzConstants.REAGENTBANK_CONTAINER] = AddOnTable.BlizzConstants.BANK_CONTAINER_NUM + 2
 for id = AddOnTable.BlizzConstants.BACKPACK_FIRST_CONTAINER, AddOnTable.BlizzConstants.BACKPACK_LAST_CONTAINER do
     idIndexMap[id] = id + 1
-end
-if (AddOnTable.State.KeyringSupported) then
-    idIndexMap[AddOnTable.BlizzConstants.KEYRING_CONTAINER] = 1
 end
 for id = AddOnTable.BlizzConstants.BANK_FIRST_CONTAINER, AddOnTable.BlizzConstants.BANK_LAST_CONTAINER do
     idIndexMap[id] = id - AddOnTable.BlizzConstants.BACKPACK_LAST_CONTAINER + 1

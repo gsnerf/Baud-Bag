@@ -219,6 +219,11 @@ function BaudBag_OnLoad(self, event, ...)
 
     AddOnTable.Functions.InitFunctions()
 
+    AddOnTable:ExtendBaseTypes()
+    for _, bagSet in pairs(BagSetType) do
+        bagSet:Init()
+    end
+
     -- register for global events (actually handled in OnEvent function)
     for Key, Value in pairs(EventFuncs)do
         self:RegisterEvent(Key)
@@ -237,17 +242,17 @@ function BaudBag_OnLoad(self, event, ...)
     end
 
     AddOnTable.Functions.DebugMessage("Bags", "Create BagSets")
-    BackpackSet = AddOnTable:CreateBagSet(BagSetType.Backpack)
-    BankSet = AddOnTable:CreateBagSet(BagSetType.Bank)
-    if (AddOnTable.State.KeyringSupported) then
-        Keyring = AddOnTable:CreateBagSet(BagSetType.Keyring)
-        Keyring:PerformInitialBuild()
-    end
+    local BackpackSet = AddOnTable:CreateBagSet(BagSetType.Backpack)
+    local BankSet = AddOnTable:CreateBagSet(BagSetType.Bank)
+    AddOnTable:InitBagSets()
 
     -- create all necessary SubBags now with basic initialization, correct referencing later when config is available
     AddOnTable.Functions.DebugMessage("Bags", "Creating sub bags")
     BackpackSet:PerformInitialBuild()
     BankSet:PerformInitialBuild()
+
+    -- we think anything essential now should be available... let the system react to that
+    AddOnTable:EssentialsLoaded()
 end
 
 
@@ -266,9 +271,7 @@ function BaudUpdateJoinedBags()
     AddOnTable.Functions.DebugMessage("Bags", "Updating joined bags...")
     
     for _, bagSet in pairs(BagSetType) do
-        if ((bagSet.Id ~= BagSetType.Keyring.Id or AddOnTable.State.KeyringSupported)) then
-            AddOnTable.Sets[bagSet.Id]:RebuildContainers()
-        end
+        AddOnTable.Sets[bagSet.Id]:RebuildContainers()
     end
 
     AddOnTable.BagsReady = true

@@ -24,6 +24,7 @@ API.lua
 BaudBagFunctions.lua
 lib\BaseTypes.lua
 lib\BagSet.lua
+lib\FeatureHooks.lua
 lib\SubContainer.lua
 lib\TextureHelper.lua
 lib\Backgrounds\BlizzardBackground.lua
@@ -44,6 +45,7 @@ frames/Options.xml
 TokenBar.xml
 Backpack.lua
 Bank.lua
+Keyring.lua
 frames\BaudBagSearchFrame.xml
 Overrides.lua
 BaudBag.xml

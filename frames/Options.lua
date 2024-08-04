@@ -309,19 +309,26 @@ function BaudBagOptionsGroupContainerMixin:OnLoad()
     self.Header:SetText(Localized.OptionsGroupContainer)
     self.tabButtons = {}
     self.tabFrames = {}
-    local lastTabButton
-    for _, type in pairs(BagSetType) do
-        if type.IsSupported() then
-            local tabButton = CreateBagSetTabButton(self, type, lastTabButton)
-            table.insert(self.tabButtons, tabButton)
-            lastTabButton = tabButton
-        end
-    end
-
     self.tabsGroup = CreateRadioButtonGroup()
-    self.tabsGroup:AddButtons(self.tabButtons)
-    self.tabsGroup:SelectAtIndex(1)
-    self.tabsGroup:RegisterCallback(ButtonGroupBaseMixin.Event.Selected, self.OnTabSelected, self)
+
+
+    local loadEssentials = function()
+        AddOnTable.Functions.DebugMessage("Temp", "BaudBagOptionsBagSetMixin:EssentialsLoaded()")
+        local lastTabButton
+        for _, type in pairs(BagSetType) do
+            -- TODO: log out and see if keyring is supported...
+            if type.IsSupported() then
+                local tabButton = CreateBagSetTabButton(self, type, lastTabButton)
+                table.insert(self.tabButtons, tabButton)
+                lastTabButton = tabButton
+            end
+        end
+    
+        self.tabsGroup:AddButtons(self.tabButtons)
+        self.tabsGroup:SelectAtIndex(1)
+        self.tabsGroup:RegisterCallback(ButtonGroupBaseMixin.Event.Selected, self.OnTabSelected, self)
+    end
+    hooksecurefunc(AddOnTable, "EssentialsLoaded", loadEssentials)
 end
 
 function BaudBagOptionsGroupContainerMixin:OnTabSelected(tab, tabIndex)

@@ -5,7 +5,6 @@ AddOnTable.Functions = {}
 AddOnTable.State = {
     -- switches, intended for differentiation of functions between addon versions (classic/retail, etc.)
     ReagentBankSupported = false,
-    KeyringSupported = false,
     -- runtime state
     ItemLock = {
         Move = false,
@@ -230,7 +229,7 @@ local function BaudBag_BagHandledByBaudBag(id)
             NUM_TOTAL_EQUIPPED_BAG_SLOTS (first bank bag)
             NUM_BANKBAGSLOTS (number of bank bags)
       ]]
-    return (AddOnTable.Functions.IsBankContainer(id) and BBConfig[2].Enabled) or (AddOnTable.Functions.IsInventory(id) and BBConfig[1].Enabled) or (AddOnTable.State.KeyringSupported and id == AddOnTable.BlizzConstants.KEYRING_CONTAINER);
+    return (AddOnTable.Functions.IsBankContainer(id) and BBConfig[2].Enabled) or (AddOnTable.Functions.IsInventory(id) and BBConfig[1].Enabled) or (id == AddOnTable.BlizzConstants.KEYRING_CONTAINER);
 end
 AddOnTable.Functions.BagHandledByBaudBag = BaudBag_BagHandledByBaudBag
 
