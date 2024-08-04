@@ -9,11 +9,8 @@ local category = nil
 
 local SelectedBags      = BagSetType.Backpack.Id
 local SelectedContainer = 1
-local SetSize           = {
-    1 + AddOnTable.BlizzConstants.BACKPACK_TOTAL_BAGS_NUM,
-    1 + AddOnTable.BlizzConstants.BANK_CONTAINER_NUM + (AddOnTable.State.ReagentBankSupported and 1 or 0),
-    1
-}
+local SetSize           = {} -- this list will be filled with values read from the specific BagSetType defined at time of AddOnTable:EssentialsLoaded()
+
 BaudBagIcons = {
     [0]	    = "Interface\\Buttons\\Button-Backpack-Up",
     [-1]	= "Interface\\Icons\\INV_Box_02",
@@ -316,12 +313,13 @@ function BaudBagOptionsGroupContainerMixin:OnLoad()
         AddOnTable.Functions.DebugMessage("Temp", "BaudBagOptionsBagSetMixin:EssentialsLoaded()")
         local lastTabButton
         for _, type in ipairs(BagSetTypeArray) do
-            -- TODO: log out and see if keyring is supported...
-            if type.IsSupported() then
-                local tabButton = CreateBagSetTabButton(self, type, lastTabButton)
-                table.insert(self.tabButtons, tabButton)
-                lastTabButton = tabButton
-            end
+            -- create tabs for bagset selection
+            local tabButton = CreateBagSetTabButton(self, type, lastTabButton)
+            table.insert(self.tabButtons, tabButton)
+            lastTabButton = tabButton
+
+            -- ensure that we know how many container buttons are needed for this BagSetType
+            SetSize[type.Id] = type.NumberOfContainers
         end
     
         self.tabsGroup:AddButtons(self.tabButtons)

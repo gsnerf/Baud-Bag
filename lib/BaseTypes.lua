@@ -23,7 +23,9 @@ BagSetType = {
             for bag = AddOnTable.BlizzConstants.BACKPACK_FIRST_CONTAINER, AddOnTable.BlizzConstants.BACKPACK_LAST_CONTAINER do
                 table.insert(BagSetType.Backpack.ContainerIterationOrder, bag)
             end
-        end
+        end,
+        -- backpack + number of additional bags
+        NumberOfContainers = 1 + AddOnTable.BlizzConstants.BACKPACK_TOTAL_BAGS_NUM
     },
     Bank = {
         Id = 2,
@@ -45,7 +47,9 @@ BagSetType = {
             if (GetExpansionLevel() >= 5) then
                 table.insert(BagSetType.Bank.ContainerIterationOrder, AddOnTable.BlizzConstants.REAGENTBANK_CONTAINER)
             end
-        end
+        end,
+        -- bank container + number of additional bags in bank + optionally reagent bank
+        NumberOfContainers = 1 + AddOnTable.BlizzConstants.BANK_CONTAINER_NUM + (GetExpansionLevel() >= 5 and 1 or 0)
     },
     --[[
         GuildBank = {
