@@ -61,7 +61,8 @@ function RestoreConfigToObject(configObject)
     end
 
     -- bag set configs now
-    for bagSetID = 1, 3 do
+    for _, bagSetType in pairs(BagSetType) do
+        local bagSetID = bagSetType.Id
         configObject[bagSetID]          = checkValue(configObject[bagSetID],          "table",   {},   "- BBConfig for BagSet "..bagSetID.." damaged or missing, creating now")
 		configObject[bagSetID].Enabled  = checkValue(configObject[bagSetID].Enabled,  "boolean", true, "- enabled state for BagSet "..bagSetID.." damaged or missing, creating now")
         configObject[bagSetID].CloseAll = checkValue(configObject[bagSetID].CloseAll, "boolean", true, "- close all state for BagSet "..bagSetID.." damaged or missing, creating now")
@@ -69,13 +70,13 @@ function RestoreConfigToObject(configObject)
         configObject[bagSetID].ShowBags = checkValue(configObject[bagSetID].ShowBags, "boolean", (bagSetID == 2), "- show information for BagSet "..bagSetID.." damaged or missing, creating now")
 
         -- make sure the reagent bank is NOT joined by default!
-        if (bagSetID == 2 and configObject[2].Joined[9] == nil) then
+        if (bagSetID == BagSetType.Bank.Id and configObject[2].Joined[9] == nil) then
             AddOnTable.Functions.DebugMessage("Config", "- reagent bank join for BagSet "..bagSetID.." damaged or missing, creating now")
             configObject[bagSetID].Joined[9] = false
         end
 
         -- make sure the reagent bag is NOT joined by default!
-        if (bagSetID == 1 and configObject[1].Joined[6] == nil) then
+        if (bagSetID == BagSetType.Backpack.Id and configObject[1].Joined[6] == nil) then
             AddOnTable.Functions.DebugMessage("Config", "- reagent bag join for BagSet "..bagSetID.." damaged or missing, creating now")
             configObject[bagSetID].Joined[6] = false;
         end
