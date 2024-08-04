@@ -315,7 +315,7 @@ function BaudBagOptionsGroupContainerMixin:OnLoad()
     local loadEssentials = function()
         AddOnTable.Functions.DebugMessage("Temp", "BaudBagOptionsBagSetMixin:EssentialsLoaded()")
         local lastTabButton
-        for _, type in pairs(BagSetType) do
+        for _, type in ipairs(BagSetTypeArray) do
             -- TODO: log out and see if keyring is supported...
             if type.IsSupported() then
                 local tabButton = CreateBagSetTabButton(self, type, lastTabButton)

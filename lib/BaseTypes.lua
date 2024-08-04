@@ -62,6 +62,11 @@ BagSetType = {
     } ]]
 }
 
+--[[
+    This will seem unnecessary at first glance, but it ensures a specific order for iterating over all existing BagSetTypes.
+    At the moment this is necessary at least for the tab list in the options as long as BagSetType itself is a "map" type table instead of an "array" type table.
+  ]]
+BagSetTypeArray = { BagSetType.Backpack, BagSetType.Bank }
 
 -- Definition
 ---@enum ContainerType
