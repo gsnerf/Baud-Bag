@@ -45,6 +45,7 @@ local BaudBag_DebugCfg = {
     Tooltip     = { Name = "Tooltip",   Active = false },
     Junk        = { Name = "Junk",      Active = false },
     ItemHandle  = { Name = "Item",      Active = false },
+    Keyring     = { Name = "Keyring",   Active = false },
 
     -- this is for everything else that is supposed to be a temporary debug message
     Temp        = { Name = "Temp",      Active = false }

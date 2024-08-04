@@ -5,6 +5,7 @@ local Events = AddOnTable.Events
 local Localized = AddOnTable.Localized
 
 local function extendBaseType()
+    Funcs.DebugMessage("Keyring", "Keyring#extendBaseType()")
     BagSetType["Keyring"] = {
         Id = 3,
         Name = Localized.KeyRing,
@@ -23,6 +24,7 @@ end
 hooksecurefunc(AddOnTable, "ExtendBaseTypes", extendBaseType)
 
 local function initBagSet()
+    Funcs.DebugMessage("Keyring", "Keyring#initBagSet()")
     local Keyring = AddOnTable:CreateBagSet(BagSetType.Keyring)
     Keyring:PerformInitialBuild()
 end
