@@ -35,6 +35,7 @@ lib\Backgrounds\BackgroundRegistration.lua
 widgets\buttons\BagButton.xml
 widgets\buttons\ItemButton.lua
 widgets\BagsFrame.xml
+TokenBar.xml
 widgets\Container.xml
 widgets\OptionsDropdown.xml
 frames\ContainerMenu.xml
@@ -47,7 +48,6 @@ Backpack.lua
 Bank.lua
 ReagentBank.xml
 frames/Options.xml
-TokenBar.xml
 frames\BaudBagSearchFrame.xml
 Overrides.lua
 BaudBag.xml

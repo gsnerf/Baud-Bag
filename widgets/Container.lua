@@ -412,3 +412,20 @@ function BaudBagSearchButtonMixin:OnEnter(event, ...)
     GameTooltip:SetText(Localized.SearchBagTooltip)
     GameTooltip:Show()
 end
+
+BaudBagBagsButtonMixin = {}
+
+function BaudBagBagsButtonMixin:OnClick(event, ...)
+    local bagSetId = self:GetParent().BagSet
+    local bagsFrame = self:GetParent().BagsFrame
+    if (bagsFrame ~= nil) then
+        BBConfig[bagSetId].ShowBags = (BBConfig[bagSetId].ShowBags==false)
+        local isShown = (BBConfig[bagSetId].ShowBags ~= false)
+        self:SetChecked(isShown)
+        if (isShown) then
+            bagsFrame:Show()
+        else
+            bagsFrame:Hide()
+        end
+    end
+end

@@ -4,40 +4,6 @@
   
 
 	
-	<Frame name="BaudBagFirstContainerTemplate" virtual="true" inherits="BaudBagContainerTemplate">
-		<Frames>
-			<CheckButton name="$parentBagsButton" parentKey="BagsButton">
-				<Size>
-					<AbsDimension x="24" y="24" />
-				</Size>
-				<Anchors>
-					<Anchor point="RIGHT" relativeTo="$parentName" relativePoint="LEFT" x="-5" y="0" />
-				</Anchors>
-				<Scripts>
-					<OnClick function="BaudBagBagsButton_OnClick" />
-				</Scripts>
-				<NormalTexture file="Interface\Buttons\UI-SpellbookIcon-PrevPage-Up" />
-				<PushedTexture file="Interface\Buttons\UI-SpellbookIcon-PrevPage-Down" />
-				<HighlightTexture file="Interface\Buttons\UI-Common-MouseHilight" alphaMode="ADD" />
-				<CheckedTexture file="Interface\Buttons\UI-SpellbookIcon-PrevPage-Down" />
-			</CheckButton>
-			<Frame name="$parentMoneyFrame" parentKey="MoneyFrame" inherits="SmallMoneyFrameTemplate">
-				<Size>
-					<AbsDimension x="206" y="20" />
-				</Size>
-			</Frame>
-			<Frame name="$parentTokenFrame" parentKey="TokenFrame" inherits="BaudBagTokenFrameTemplate" hidden="true">
-				<Size>
-					<AbsDimension x="206" y="20" />
-				</Size>
-			</Frame>
-		</Frames>
-		<Layers>
-			<Layer>
-				<FontString name="$parentSlots" parentKey="FreeSlots" inherits="GameFontNormal" justifyH="LEFT" wordwrap="false" nonSpaceWrap="false" />
-			</Layer>
-		</Layers>
-	</Frame>
 	<Frame name="BaudBagSubBagTemplate" virtual="true">
 		<Anchors>
 			<Anchor point="CENTER" />
