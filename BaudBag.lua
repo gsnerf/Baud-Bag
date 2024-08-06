@@ -326,15 +326,6 @@ function BaudBagSubBag_OnEvent(self, event, ...)
     SubBagEvents[event](self, event, ...)
 end
 
---This is for the button that toggles the bank bag display
-function BaudBagBagsButton_OnClick(self, event, ...)
-    local Set = self:GetParent().BagSet
-    --Bank set is automaticaly shown, and main bags are not
-    BBConfig[Set].ShowBags = (BBConfig[Set].ShowBags==false)
-    BaudBagUpdateBagFrames()
-end
-
-
 function BaudBagUpdateBagFrames()
     AddOnTable.Functions.DebugMessage("Bags", "Called BaudBagUpdateBagFrames()")
     local Shown, BagFrame, FrameName
