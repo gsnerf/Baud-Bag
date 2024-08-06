@@ -199,8 +199,9 @@ EventFuncs.BAG_UPDATE_DELAYED = Func
 
 EventFuncs.BAG_CONTAINER_UPDATE = function(self, event, ...)
     -- not sure how to identify what set is affected, so for now rebuild everything
-    AddOnTable.Sets[BagSetType.Backpack.Id]:RebuildContainers()
-    AddOnTable.Sets[BagSetType.Bank.Id]:RebuildContainers()
+    for _, bagSet in pairs(AddOnTable.Sets) do
+        bagSet:RebuildContainers()
+    end
     if (BaudBagOptions:IsShown()) then
         BaudBagOptions:Update()
     end
