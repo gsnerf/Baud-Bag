@@ -25,7 +25,11 @@ BagSetType = {
             end
         end,
         -- backpack + number of additional bags
-        NumberOfContainers = 1 + AddOnTable.BlizzConstants.BACKPACK_TOTAL_BAGS_NUM
+        NumberOfContainers = 1 + AddOnTable.BlizzConstants.BACKPACK_TOTAL_BAGS_NUM,
+        DefaultConfig = {
+            Columns = 8,
+            Scale = 100,
+        },
     },
     Bank = {
         Id = 2,
@@ -49,7 +53,11 @@ BagSetType = {
             end
         end,
         -- bank container + number of additional bags in bank + optionally reagent bank
-        NumberOfContainers = 1 + AddOnTable.BlizzConstants.BANK_CONTAINER_NUM + (GetExpansionLevel() >= 5 and 1 or 0)
+        NumberOfContainers = 1 + AddOnTable.BlizzConstants.BANK_CONTAINER_NUM + (GetExpansionLevel() >= 5 and 1 or 0),
+        DefaultConfig = {
+            Columns = 14,
+            Scale = 100,
+        },
     },
     --[[
         GuildBank = {

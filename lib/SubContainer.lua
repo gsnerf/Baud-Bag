@@ -290,9 +290,11 @@ function Prototype:GetFilterType()
             funcToExec = AddOnTable.BlizzAPI.GetBankBagSlotFlag
         end
 
-        for i, flag in  AddOnTable.BlizzAPI.EnumerateBagGearFilters() do
-            if (funcToExec(self.ContainerId, flag)) then
-                self.FilterType = flag
+        if (funcToExec) then
+            for _, flag in  AddOnTable.BlizzAPI.EnumerateBagGearFilters() do
+                if (funcToExec(self.ContainerId, flag)) then
+                    self.FilterType = flag
+                end
             end
         end
     end

@@ -114,34 +114,7 @@ AddOnTable.Functions.Vardump = BaudBag_Vardump
             ]]
 --[[ TODO: Before we can get rid of this (in favor of BagSet:ForEachBag) we need to ensure that the bag sets are available everywhere (looking at you, config!) ]]
 AddOnTable.Functions.ForEachBag = function(BagSet, Func)
-    --[[
-        BagsSet Indices:
-            1 == inventory
-            2 == bank
-        Bag Indices:
-           -3 == reagent bank
-           -2 == keyring & currency
-           -1 == bank
-            0 == backpack
-            1-4 == inventory bags
-            5 == reagent bag
-            6-12 == bank bags
-    ]]--
-    if (BagSet == 1) then -- regular bags
-        for Bag = AddOnTable.BlizzConstants.BACKPACK_FIRST_CONTAINER, AddOnTable.BlizzConstants.BACKPACK_LAST_CONTAINER do
-            Func(Bag, Bag + 1);
-        end
-    else -- bank
-        Func(-1, 1);
-        -- bank bags
-        for Bag = 1, AddOnTable.BlizzConstants.BANK_CONTAINER_NUM do
-            Func(Bag + AddOnTable.BlizzConstants.BACKPACK_LAST_CONTAINER, Bag + 1);
-        end
-        -- reagent bank
-        if (AddOnTable.State.ReagentBankSupported) then
-            Func(-3, AddOnTable.BlizzConstants.BANK_CONTAINER_NUM + 2);
-        end
-    end
+    AddOnTable.Sets[BagSet]:ForEachBag(Func)
 end
 
 AddOnTable.Functions.ForEachContainer = function(func)

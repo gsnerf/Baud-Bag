@@ -16,7 +16,9 @@ local function extendBaseType()
         end,
         ContainerIterationOrder = { AddOnTable.BlizzConstants.KEYRING_CONTAINER },
         Init = function() end,
-        NumberOfContainers = 1
+        NumberOfContainers = 1,
+        DefaultColumns = 4,
+        DefaultScale = 100,
     }
     tinsert(BagSetTypeArray, BagSetType.Keyring)
 
