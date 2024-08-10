@@ -19,6 +19,8 @@ local function extendBaseType()
         NumberOfContainers = 1,
         DefaultColumns = 4,
         DefaultScale = 100,
+        GetItemButtonTemplate = function(containerId) return "ContainerFrameItemButtonTemplate" end,
+        GetSize = function(containerId) return AddOnTable.BlizzAPI.GetKeyRingSize() end
     }
     tinsert(BagSetTypeArray, BagSetType.Keyring)
 

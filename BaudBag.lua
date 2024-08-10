@@ -235,10 +235,10 @@ function BaudBag_OnLoad(self, event, ...)
 
     -- the first container from each set (inventory/bank) is different and is created in the XML
     local Container
-    for BagSet = 1, 2 do
-        Container = _G[Prefix.."Container"..BagSet.."_1"]
+    for _, bagSet in pairs(BagSetType) do
+        Container = _G[Prefix.."Container"..bagSet.Id.."_1"]
         Container.FreeSlots:SetPoint("RIGHT",Container:GetName().."MoneyFrame","LEFT")
-        Container.BagSet = BagSet
+        Container.BagSet = bagSet.Id
         Container:SetID(1)
     end
 

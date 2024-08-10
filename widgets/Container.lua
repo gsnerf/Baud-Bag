@@ -9,8 +9,11 @@ local FadeTime = 0.2
 local Prototype = {
     Id = nil,
     Name = "DefaultContainer",
+    ---@class Frame
     Frame = nil,
+    ---@class SubContainer
     SubContainers = nil,
+    ---@class BagSetTypeClass
     BagSet = nil,
     -- the values below aren't used yet
     Columns = 11,

@@ -30,6 +30,8 @@ BagSetType = {
             Columns = 8,
             Scale = 100,
         },
+        GetItemButtonTemplate = function(containerId) return "ContainerFrameItemButtonTemplate" end,
+        GetSize = function(containerId) return AddOnTable.BlizzAPI.GetContainerNumSlots(containerId) end
     },
     Bank = {
         Id = 2,
@@ -58,6 +60,22 @@ BagSetType = {
             Columns = 14,
             Scale = 100,
         },
+        GetItemButtonTemplate = function(containerId)
+            if (containerId == AddOnTable.BlizzConstants.REAGENTBANK_CONTAINER) then
+                return "ReagentBankItemButtonGenericTemplate"
+            else
+                return "BankItemButtonGenericTemplate"
+            end
+        end,
+        GetSize = function(containerId)
+            local useCache = not AddOnTable.State.BankOpen
+            if useCache and (containerId ~= AddOnTable.BlizzConstants.REAGENTBANK_CONTAINER) then
+                local bagCache = AddOnTable.Cache:GetBagCache(containerId)
+                return bagCache.Size
+            else
+                return AddOnTable.BlizzAPI.GetContainerNumSlots(containerId)
+            end
+        end
     },
     --[[
         GuildBank = {
