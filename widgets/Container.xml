@@ -117,4 +117,119 @@
 			</Layer>
 		</Layers>
 	</Frame>
+
+	<Frame name="BaudBagContainerUnlockTemplate" virtual="true" mixin="BaudBagContainerUnlockMixin">
+		<Anchors>
+			<Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="0" y="0"/>
+			<Anchor point="BOTTOMRIGHT" relativePoint="BOTTOMRIGHT" x="0" y="0"/>
+		</Anchors>
+		<Layers>
+			<Layer level="BACKGROUND">
+				<Texture parentKey="BottomLeftInner" file="Interface\GuildBankFrame\Corners" >
+					<Size x="32" y="32"/>
+					<Anchors>
+						<Anchor point="BOTTOMLEFT" x="4" y="0"/>
+					</Anchors>
+					<TexCoords left="0.01562500" right="0.51562500" top="0.00390625" bottom="0.12890625"/>
+				</Texture>
+				<Texture parentKey="BottomRightInner" file="Interface\GuildBankFrame\Corners" >
+					<Size x="32" y="32"/>
+					<Anchors>
+						<Anchor point="BOTTOMRIGHT" x="-4" y="0"/>
+					</Anchors>
+					<TexCoords left="0.01562500" right="0.51562500" top="0.13671875" bottom="0.26171875"/>
+				</Texture>
+				<Texture parentKey="TopRightInner" file="Interface\GuildBankFrame\Corners"  >
+					<Size x="32" y="32"/>
+					<Anchors>
+						<Anchor point="TOPRIGHT" x="-4" y="0"/>
+					</Anchors>
+					<TexCoords left="0.01562500" right="0.51562500" top="0.26953125" bottom="0.39453125"/>
+				</Texture>
+				<Texture parentKey="TopLeftInner" file="Interface\GuildBankFrame\Corners">
+					<Size x="32" y="32"/>
+					<Anchors>
+						<Anchor point="TOPLEFT" x="4" y="0"/>
+					</Anchors>
+					<TexCoords left="0.01562500" right="0.51562500" top="0.40234375" bottom="0.52734375"/>
+				</Texture>
+				<Texture parentKey="LeftInner" file="Interface\GuildBankFrame\VertTile" vertTile="true">
+					<Anchors>
+						<Anchor point="TOPLEFT" relativeKey="$parent.TopLeftInner" relativePoint="BOTTOMLEFT" x="-3"/>
+						<Anchor point="BOTTOMLEFT" relativeKey="$parent.BottomLeftInner" relativePoint="TOPLEFT" x="-3"/>
+					</Anchors>
+				</Texture>
+				<Texture parentKey="RightInner" file="Interface\GuildBankFrame\VertTile" vertTile="true">
+					<Anchors>
+						<Anchor point="TOPRIGHT" relativeKey="$parent.TopRightInner" relativePoint="BOTTOMRIGHT" x="4"/>
+						<Anchor point="BOTTOMRIGHT" relativeKey="$parent.BottomRightInner" relativePoint="TOPRIGHT" x="4"/>
+					</Anchors>
+				</Texture>
+				<Texture parentKey="TopInner" file="Interface\GuildBankFrame\HorizTile" horizTile="true">
+					<Anchors>
+						<Anchor point="TOPLEFT" relativeKey="$parent.TopLeftInner" relativePoint="TOPRIGHT" y="3"/>
+						<Anchor point="TOPRIGHT" relativeKey="$parent.TopRightInner" relativePoint="TOPLEFT" y="3"/>
+					</Anchors>
+				</Texture>
+				<Texture parentKey="BottomInner" file="Interface\GuildBankFrame\HorizTile" horizTile="true">
+					<Anchors>
+						<Anchor point="BOTTOMLEFT" relativeKey="$parent.BottomLeftInner" relativePoint="BOTTOMRIGHT" y="-5"/>
+						<Anchor point="BOTTOMRIGHT" relativeKey="$parent.BottomRightInner" relativePoint="BOTTOMLEFT" y="-5"/>
+					</Anchors>
+				</Texture>
+			</Layer>
+			<Layer level="BACKGROUND">
+				<Texture parentKey="BlackBG">
+					<Anchors>
+						<Anchor point="TOPLEFT" relativeKey="$parent.TopLeftInner" x="4" y="-4"/>
+						<Anchor point="BOTTOMRIGHT" relativeKey="$parent.BottomRightInner" x="-4" y="3"/>
+					</Anchors>
+					<Color r="0" g="0" b="0" a="1"/>
+				</Texture>
+			</Layer>
+			<Layer level="ARTWORK">
+				<FontString parentKey="Text" inherits="GameFontHighlightMedium" justifyV="BOTTOM">
+					<Size x="512" />
+					<Anchors>
+						<Anchor point="BOTTOM" relativePoint="CENTER" x="0" y="-8"/>
+					</Anchors>
+				</FontString>
+				<FontString parentKey="TabCost" inherits="GameFontNormalMed3" text="COSTS_LABEL">
+					<Size x="0" y="12"/>
+					<Anchors>
+						<Anchor point="CENTER" relativePoint="CENTER" x="-93" y="-48"/>
+					</Anchors>
+				</FontString>
+				<FontString parentKey="Title" inherits="QuestFont_Enormous" justifyV="BOTTOM">
+					<Size x="384" y="0"/>
+					<Anchors>
+						<Anchor point="BOTTOM" relativeKey="$parent.Text" relativePoint="TOP" x="0" y="8"/>
+					</Anchors>
+				</FontString>
+			</Layer>
+		</Layers>
+		<Frames>
+			<Frame parentKey="CostMoneyFrame" inherits="SmallMoneyFrameTemplate" mixin="BaudBagContainerUnlockCostMoneyMixin" hidden="false">
+				<Anchors>
+					<Anchor point="LEFT" relativeKey="$parent.TabCost" relativePoint="RIGHT" x="0" y="0"/>
+				</Anchors>
+				<Scripts>
+					<OnLoad method="OnLoad" />
+				</Scripts>
+			</Frame>
+			<Button parentKey="PurchaseButton" inherits="UIPanelButtonTemplate" mixin="BaudBagContainerUnlockPurchaseButtonMixin" text="BANKSLOTPURCHASE">
+				<Size x="124" y="21"/>
+				<Anchors>
+					<Anchor point="LEFT" relativeKey="$parent.CostMoneyFrame" relativePoint="RIGHT" x="12" y="0"/>
+				</Anchors>
+				<Scripts>
+					<OnClick method="OnClick" />
+				</Scripts>
+			</Button>
+		</Frames>
+		<Scripts>
+			<OnShow method="OnShow"/>
+			<OnLoad method="OnLoad"/>
+		</Scripts>
+	</Frame>
 </Ui>

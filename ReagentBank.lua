@@ -95,11 +95,20 @@ function ReagentBankSlotButton_OnClick(self, event, ...)
     end
 end
 
-function BBReagentBank_UnlockInfo_Show(self, event, ...)
-    if(not AddOnTable.BlizzAPI.IsReagentBankUnlocked()) then
-		self:Show();
-		MoneyFrame_Update( self.CostMoneyFrame, GetReagentBankCost());
-	else
-		self:Hide();
-	end
+BaudBagReagentBankUnlockMixin = {}
+
+function BaudBagReagentBankUnlockMixin:OnLoad()
+    BaudBagContainerUnlockMixin.OnLoad(self)
+    self.Title:SetText(REAGENT_BANK)
+    self.Text:SetText(REAGENTBANK_PURCHASE_TEXT)
+end
+
+function BaudBagReagentBankUnlockMixin:Refresh()
+    -- TODO: global api access
+    MoneyFrame_Update( self.CostMoneyFrame, GetReagentBankCost())
+end
+
+function BaudBagReagentBankUnlockMixin:Purchase()
+    PlaySound(SOUNDKIT.IG_MAINMENU_OPTION)
+    StaticPopup_Show("CONFIRM_BUY_REAGENTBANK_TAB")
 end

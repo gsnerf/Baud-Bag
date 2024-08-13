@@ -432,3 +432,31 @@ function BaudBagBagsButtonMixin:OnClick(event, ...)
         end
     end
 end
+
+BaudBagContainerUnlockMixin = {}
+
+function BaudBagContainerUnlockMixin:OnLoad()
+    RaiseFrameLevel(self)
+end
+
+function BaudBagContainerUnlockMixin:OnShow()
+    if self.Refresh then
+		self:Refresh()
+	end
+end
+
+BaudBagContainerUnlockCostMoneyMixin = {}
+
+function BaudBagContainerUnlockCostMoneyMixin:OnLoad()
+    SmallMoneyFrame_OnLoad(self)
+    MoneyFrame_SetType(self, "STATIC")
+end
+
+BaudBagContainerUnlockPurchaseButtonMixin = {}
+
+function BaudBagContainerUnlockPurchaseButtonMixin:OnClick()
+    local unlockPanel = self:GetParent()
+    if unlockPanel.Purchase then
+        unlockPanel:Purchase()
+    end
+end
