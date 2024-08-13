@@ -11,7 +11,7 @@ local Prototype = {
     Name = "DefaultContainer",
     ---@class Frame
     Frame = nil,
-    ---@class SubContainer
+    ---@type SubContainer[]
     SubContainers = nil,
     ---@class BagSetTypeClass
     BagSet = nil,
@@ -393,7 +393,7 @@ function BaudBagContainerMixin:OnDragStart(event, ...)
     end
 end
 
-function BaudBagContainerMixin:OnDragStop(self, event, ...)
+function BaudBagContainerMixin:OnDragStop(event, ...)
     self:StopMovingOrSizing()
     AddOnTable.Sets[self.BagSet].Containers[self:GetID()]:SaveCoordsToConfig()
 end
