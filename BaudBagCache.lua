@@ -91,7 +91,7 @@ end
 --[[ ####################################### ToolTip stuff ####################################### ]]
 
 function BaudBagUpdateCachedTooltip(tooltip, bagId, slotId)
-    if (not AddOnTable.Cache:UsesCache(bagId)) then
+    if (bagId == nil or not AddOnTable.Cache:UsesCache(bagId)) then
         return
     end
 
