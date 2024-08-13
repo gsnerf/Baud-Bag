@@ -41,7 +41,7 @@ AddOnTable.Config = BBConfig
 local function checkValue(toCheck, compareWith, default, log)
     -- default check if applied, return default value
     if (type(toCheck) ~= compareWith) then
-        AddOnTable.Functions.DebugMessage("Config", log);
+        AddOnTable.Functions.DebugMessage("Config", log.." (default)", default);
         return default;
     end
 

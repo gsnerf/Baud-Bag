@@ -1,6 +1,7 @@
 local AddOnName, AddOnTable = ...
 local _
 
+---@class BagSet
 local Prototype = {
     ---@type BagSetTypeClass
     Type = nil,
@@ -34,6 +35,10 @@ end
 
 --[[ This will be called on first load as well as every configuration change (via options screen) ]]
 function Prototype:RebuildContainers()
+    ---comment
+    ---@param localContainerObject Container
+    ---@param localIsOpen boolean
+    ---@param maxSubContainerIndex integer
     local function FinishContainer(localContainerObject, localIsOpen, maxSubContainerIndex)
         -- first remove all subcontainers that are not contained anymore
         local currentSubContainerCount = table.getn(localContainerObject.SubContainers)
