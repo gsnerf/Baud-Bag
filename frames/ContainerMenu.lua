@@ -210,7 +210,7 @@ function BaudBagContainerMenuMixin:SetupGeneral()
         enableBankButton:SetText(Localized.EnableBank)
         enableBankButton:SetScript("OnClick", enableBankButton.ToggleEnableBank)
         enableBankButton:SetPoint("TOP", showBankButton, "BOTTOM" )
-        enableBankButton:SetChecked(AddOnTable.Config[2].Enabled)
+        enableBankButton:SetChecked(AddOnTable.Config[BagSetType.Bank.Id].Enabled)
         self.General.EnableBankButton = enableBankButton
         table.insert(self.checkButtons, enableBankButton)
 
