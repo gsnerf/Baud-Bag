@@ -85,7 +85,7 @@ function BaudBagOptionsMixin:OnEvent(event, ...)
 
     -- set localized labels
     self.Title:SetText("Baud Bag "..Localized.Options)
-    self.Version:SetText("(v"..GetAddOnMetadata("BaudBag","Version")..")")
+    self.Version:SetText("(v"..AddOnTable.BlizzAPI.GetAddOnMetadata("BaudBag","Version")..")")
     
     self.GroupGlobal.Header.Label:SetText(Localized.OptionsGroupGlobal)
     self.GroupGlobal.ResetPositionsButton.Text:SetText(Localized.OptionsResetAllPositions)

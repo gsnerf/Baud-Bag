@@ -87,7 +87,7 @@ local function UpdateRegistration(self)
     end
 end
 
-if IsAddOnLoaded("Masque") then
+if AddOnTable.BlizzAPI.IsAddOnLoaded("Masque") then
     Masque = LibStub("Masque")
 
     StaticPopupDialogs[staticPopupName] = {
