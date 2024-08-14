@@ -138,11 +138,11 @@ function RestoreConfigToObject(configObject)
                 end
 
                 for _, sliderConfig in ipairs(AddOnTable.ConfigOptions.Container.SliderBars) do
-                    configObject[bagSetID][containerID][sliderConfig.SavedVar] = checkValue(configObject[bagSetID][containerID][sliderConfig.SavedVar], "number", bagSetType.DefaultConfig.Scale, "- BagSet["..bagSetID.."], Bag["..bagID.."], Container["..containerID.."] Slider["..sliderConfig.SavedVar.."] data damaged or missing, creating now")
+                    configObject[bagSetID][containerID][sliderConfig.SavedVar] = checkValue(configObject[bagSetID][containerID][sliderConfig.SavedVar], "number", bagSetType.DefaultConfig[sliderConfig.SavedVar], "- BagSet["..bagSetID.."], Bag["..bagID.."], Container["..containerID.."] Slider["..sliderConfig.SavedVar.."] data damaged or missing, creating now")
                 end
 
                 for _, buttonConfig in ipairs(AddOnTable.ConfigOptions.Container.CheckButtons) do
-                    configObject[bagSetID][containerID][buttonConfig.SavedVar] = checkValue(configObject[bagSetID][containerID][buttonConfig.SavedVar], "boolean", bagSetType.DefaultConfig.Columns, "- BagSet["..bagSetID.."], Bag["..bagID.."], Container["..containerID.."] CheckBox["..buttonConfig.SavedVar.."] data damaged or missing, creating now")
+                    configObject[bagSetID][containerID][buttonConfig.SavedVar] = checkValue(configObject[bagSetID][containerID][buttonConfig.SavedVar], "boolean", buttonConfig.Default, "- BagSet["..bagSetID.."], Bag["..bagID.."], Container["..containerID.."] CheckBox["..buttonConfig.SavedVar.."] data damaged or missing, creating now")
                 end
             end
         end)
