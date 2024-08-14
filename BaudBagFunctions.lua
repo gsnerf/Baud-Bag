@@ -40,15 +40,16 @@ local BaudBag_DebugCfg = {
     VoidStorage = { Name = "Void Storage",  Active = false },
 
     -- additional functionality
-    Token       = { Name = "Token",     Active = false },
-    Search      = { Name = "Search",    Active = false },
-    Tooltip     = { Name = "Tooltip",   Active = false },
-    Junk        = { Name = "Junk",      Active = false },
-    ItemHandle  = { Name = "Item",      Active = false },
-    Keyring     = { Name = "Keyring",   Active = false },
+    Token       = { Name = "Token",         Active = false },
+    Search      = { Name = "Search",        Active = false },
+    Tooltip     = { Name = "Tooltip",       Active = false },
+    Junk        = { Name = "Junk",          Active = false },
+    ItemHandle  = { Name = "Item",          Active = false },
+    Keyring     = { Name = "Keyring",       Active = false },
+    AccountBank = { Name = "Account Bank",  Active = false },
 
     -- this is for everything else that is supposed to be a temporary debug message
-    Temp        = { Name = "Temp",      Active = false }
+    Temp        = { Name = "Temp",          Active = false }
 };
 
 -- make sure to delete log from last session!
