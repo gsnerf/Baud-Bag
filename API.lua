@@ -3,6 +3,7 @@ local AddOnName, AddOnTable = ...
 
 ---@class BlizzAPI
 AddOnTable.BlizzAPI = {
+    CloseBankFrame = CloseBankFrame,
     GetInventorySlotInfo = GetInventorySlotInfo,
     GetItemInfo = GetItemInfo,
     GetDetailedItemLevelInfo = GetDetailedItemLevelInfo,
@@ -32,6 +33,8 @@ AddOnTable.BlizzAPI = {
     GetReagentBankCost = GetReagentBankCost and GetReagentBankCost or function() return 0 end,
     -- introduced with wotlk
     GetKeyRingSize = GetKeyRingSize and GetKeyRingSize or function() return 0 end,
+    IsAddOnLoaded = IsAddOnLoaded,
+    GetAddOnMetadata = GetAddOnMetadata,
 }
 
 local API = AddOnTable.BlizzAPI
@@ -126,12 +129,22 @@ else
     API.SetBagSlotFlag = SetBagSlotFlag
     API.GetBankBagSlotFlag = GetBankBagSlotFlag
     API.SetBankBagSlotFlag = SetBankBagSlotFlag
-    
 end
 
 if C_Item ~= nil then
 	API.GetItemInfo = C_Item.GetItemInfo;
 	API.GetDetailedItemLevelInfo = C_Item.GetDetailedItemLevelInfo;
+end
+
+-- introduced with tww
+if C_Bank ~= nil then
+    API.CloseBankFrame = C_Bank.CloseBankFrame
+end
+
+-- introduced with tww
+if C_AddOns ~= nil then
+    API.IsAddOnLoaded = C_AddOns.IsAddOnLoaded
+    API.GetAddOnMetadata = C_AddOns.GetAddOnMetadata
 end
 
 local localEnumerateBagGearFilters = function()

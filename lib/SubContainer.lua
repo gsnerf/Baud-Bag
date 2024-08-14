@@ -1,13 +1,16 @@
 local AddOnName, AddOnTable = ...
 local _
 
+---@class SubContainer
 local Prototype = {
+    ---@class BagSetTypeClass
     BagSet = nil,
     ContainerId = nil,
     Name = "",
     StartColumn = 0,
     FreeSlots = 0,
     HighlightSlots = false,
+    ---@class Frame
     Frame = nil,
     Items = nil,
     BagButton = nil,
@@ -26,39 +29,16 @@ function Prototype:GetFrame()
     return self.Frame
 end
 
-function Prototype:GetSize()
-    if self.ContainerId == AddOnTable.BlizzConstants.KEYRING_CONTAINER then
-        return AddOnTable.BlizzAPI.GetKeyRingSize()
-    end
-    local isBankBag = self.BagSet.Id == BagSetType.Bank.Id
-    local useCache = isBankBag and not AddOnTable.State.BankOpen
-    if useCache and (self.ContainerId ~= -3) then
-        local bagCache = AddOnTable.Cache:GetBagCache(self.ContainerId)
-        return bagCache.Size
-    else
-        return AddOnTable.BlizzAPI.GetContainerNumSlots(self.ContainerId)
-    end
-end
-
 function Prototype:IsOpen()
     -- TODO: is self.Frame:IsShown() really necessary here?
     -- possible answer: apparently there _can_ be a timing issue when calling GetParent() on load that _might_ be prevented by checking IsShown() first
-    return self.Frame:IsShown() and self.Frame:GetParent():IsShown() and not self.Frame:GetParent().Closing
-end
-
-function Prototype:GetItemButtonTemplate()
-    -- TODO: this should propably be already known when creating the SubContainer, so better move somewhere earlier!
-    if (self.ContainerId == REAGENTBANK_CONTAINER) then
-        return "ReagentBankItemButtonGenericTemplate"
-    elseif (self.BagSet.Id == BagSetType.Bank.Id) then
-        return "BankItemButtonGenericTemplate"
-    else
-        return "ContainerFrameItemButtonTemplate"
-    end
+    ---@class Frame
+    local parent = self.Frame:GetParent()
+    return self.Frame:IsShown() and parent:IsShown() and not parent.Closing
 end
 
 function Prototype:Rebuild()
-    local newSize = self:GetSize()
+    local newSize = self.BagSet.GetSize(self.ContainerId)
     local currentSize = self.Size
     local availableItemButtons = self.AvailableItemButtons
     local bagCache = AddOnTable.Cache:GetBagCache(self.ContainerId)
@@ -66,7 +46,7 @@ function Prototype:Rebuild()
     
     -- create missing slots if necessary
     if (availableItemButtons < newSize) then
-        local templateToUse = self:GetItemButtonTemplate()
+        local templateToUse = self.BagSet.GetItemButtonTemplate(self.ContainerId)
         for newSlot = availableItemButtons + 1, newSize do
             local button = AddOnTable:CreateItemButton(self, newSlot, templateToUse)
             self.Items[newSlot] = button
@@ -186,14 +166,15 @@ local function UpdateBackpackHighlight(subContainer)
             MainMenuBarBackpackButton:SetChecked(open)
         end
     else
+        local backpackSet = AddOnTable.Sets[BagSetType.Backpack.Id]
         local bagId = subContainer.ContainerId -1
         local mainMenuBarButton = _G["CharacterBag"..bagId.."Slot"]
-        local baudBagBagButton = AddOnTable["Sets"][1].BagButtons[bagId]
+        local baudBagBagButton = backpackSet.BagButtons[bagId]
 
         if (subContainer.ContainerId == 5) then
             bagId = subContainer.ContainerId - (AddOnTable.BlizzConstants.BACKPACK_FIRST_CONTAINER + AddOnTable.BlizzConstants.BACKPACK_CONTAINER_NUM + 1)
             mainMenuBarButton = _G["CharacterReagentBag"..bagId.."Slot"]
-            baudBagBagButton = AddOnTable["Sets"][1].ReagentBagButtons[bagId]
+            baudBagBagButton = backpackSet.ReagentBagButtons[bagId]
         end
         
         if (open) then
@@ -227,7 +208,7 @@ local function UpdateBankBagHighlight(subContainer)
     end
 
     if (subContainer.ContainerId ~= AddOnTable.BlizzConstants.BANK_CONTAINER) then
-        local button = AddOnTable["Sets"][2].BagButtons[subContainer.ContainerId - AddOnTable.BlizzConstants.BACKPACK_LAST_CONTAINER]
+        local button = AddOnTable.Sets[BagSetType.Bank.Id].BagButtons[subContainer.ContainerId - AddOnTable.BlizzConstants.BACKPACK_LAST_CONTAINER]
         if (button) then
             if (open) then
                 button.SlotHighlightTexture:Show()
@@ -289,9 +270,11 @@ function Prototype:GetFilterType()
             funcToExec = AddOnTable.BlizzAPI.GetBankBagSlotFlag
         end
 
-        for i, flag in  AddOnTable.BlizzAPI.EnumerateBagGearFilters() do
-            if (funcToExec(self.ContainerId, flag)) then
-                self.FilterType = flag
+        if (funcToExec) then
+            for _, flag in  AddOnTable.BlizzAPI.EnumerateBagGearFilters() do
+                if (funcToExec(self.ContainerId, flag)) then
+                    self.FilterType = flag
+                end
             end
         end
     end

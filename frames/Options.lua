@@ -7,13 +7,10 @@ local Prefix    = "BaudBagOptions"
 local Updating  = false
 local category = nil
 
-local SelectedBags      = 1
+local SelectedBags      = BagSetType.Backpack.Id
 local SelectedContainer = 1
-local SetSize           = {
-    1 + AddOnTable.BlizzConstants.BACKPACK_TOTAL_BAGS_NUM,
-    1 + AddOnTable.BlizzConstants.BANK_CONTAINER_NUM + (AddOnTable.State.ReagentBankSupported and 1 or 0),
-    1
-}
+local SetSize           = {} -- this list will be filled with values read from the specific BagSetType defined at time of AddOnTable:EssentialsLoaded()
+
 BaudBagIcons = {
     [0]	    = "Interface\\Buttons\\Button-Backpack-Up",
     [-1]	= "Interface\\Icons\\INV_Box_02",
@@ -88,7 +85,7 @@ function BaudBagOptionsMixin:OnEvent(event, ...)
 
     -- set localized labels
     self.Title:SetText("Baud Bag "..Localized.Options)
-    self.Version:SetText("(v"..GetAddOnMetadata("BaudBag","Version")..")")
+    self.Version:SetText("(v"..AddOnTable.BlizzAPI.GetAddOnMetadata("BaudBag","Version")..")")
     
     self.GroupGlobal.Header.Label:SetText(Localized.OptionsGroupGlobal)
     self.GroupGlobal.ResetPositionsButton.Text:SetText(Localized.OptionsResetAllPositions)
@@ -155,7 +152,7 @@ function BaudBagOptionsNameEditBox_OnTextChanged(self, wasUserInput)
     end
 
     BBConfig[SelectedBags][SelectedContainer].Name = BaudBagOptions.GroupContainer.NameInput:GetText()
-    AddOnTable["Sets"][SelectedBags].Containers[SelectedContainer]:UpdateName() -- TODO: move to BaudBagBBConfig save?
+    AddOnTable.Sets[SelectedBags].Containers[SelectedContainer]:UpdateName() -- TODO: move to BaudBagBBConfig save?
 end
 
 
@@ -274,7 +271,7 @@ function PositionResetMixin:ResetPosition()
             ResetContainerPosition(bagSet, containerId, container)
         end)
     else
-        local container = AddOnTable["Sets"][SelectedBags].Containers[SelectedContainer]
+        local container = AddOnTable.Sets[SelectedBags].Containers[SelectedContainer]
         ResetContainerPosition(SelectedBags, SelectedContainer, container)
     end
 end
@@ -295,6 +292,7 @@ local function CreateBagSetTabButton(parent, bagSetType, lastTabButton)
     parent[tabButtonName] = tabButton
     tabButton:SetHeight(37)
     tabButton.tabText = bagSetType.Name
+    tabButton.tabId = bagSetType.Id
     if (lastTabButton) then
         tabButton:SetPoint("TOPRIGHT", lastTabButton, "TOPLEFT", 0, 0)
     else
@@ -308,23 +306,31 @@ function BaudBagOptionsGroupContainerMixin:OnLoad()
     self.Header:SetText(Localized.OptionsGroupContainer)
     self.tabButtons = {}
     self.tabFrames = {}
-    local lastTabButton
-    for _, type in pairs(BagSetTypeArray) do
-        if type.IsSupported() then
+    self.tabsGroup = CreateRadioButtonGroup()
+
+
+    local loadEssentials = function()
+        AddOnTable.Functions.DebugMessage("Temp", "BaudBagOptionsBagSetMixin:EssentialsLoaded()")
+        local lastTabButton
+        for _, type in ipairs(BagSetTypeArray) do
+            -- create tabs for bagset selection
             local tabButton = CreateBagSetTabButton(self, type, lastTabButton)
             table.insert(self.tabButtons, tabButton)
             lastTabButton = tabButton
-        end
-    end
 
-    self.tabsGroup = CreateRadioButtonGroup()
-    self.tabsGroup:AddButtons(self.tabButtons)
-    self.tabsGroup:SelectAtIndex(1)
-    self.tabsGroup:RegisterCallback(ButtonGroupBaseMixin.Event.Selected, self.OnTabSelected, self)
+            -- ensure that we know how many container buttons are needed for this BagSetType
+            SetSize[type.Id] = type.NumberOfContainers
+        end
+    
+        self.tabsGroup:AddButtons(self.tabButtons)
+        self.tabsGroup:SelectAtIndex(1)
+        self.tabsGroup:RegisterCallback(ButtonGroupBaseMixin.Event.Selected, self.OnTabSelected, self)
+    end
+    hooksecurefunc(AddOnTable, "EssentialsLoaded", loadEssentials)
 end
 
 function BaudBagOptionsGroupContainerMixin:OnTabSelected(tab, tabIndex)
-    self.BagSet:ChangeBagSet(tabIndex)
+    self.BagSet:ChangeBagSet(tab.tabId)
 	PlaySound(SOUNDKIT.IG_CHARACTER_INFO_TAB)
 end
 
@@ -405,7 +411,7 @@ local function ContainerBackgroundChanged(newBackgroundId)
     AddOnTable.Functions.DebugMessage("Temp", "container background was changed", newBackgroundId)
 
     BBConfig[SelectedBags][SelectedContainer].Background = newBackgroundId
-    local container = AddOnTable["Sets"][SelectedBags].Containers[SelectedContainer]
+    local container = AddOnTable.Sets[SelectedBags].Containers[SelectedContainer]
     container:Rebuild()
     container:Update()
 end
@@ -428,7 +434,7 @@ local function UpdateBagButtons(self)
     --		check joined box and create container frames)
     if (AddOnTable.BlizzConstants.BACKPACK_FIRST_REAGENT_CONTAINER ~= nil) then
         -- for backback set we need to ensure, that the reagent bag(s) cannot be joined with the regular bags
-        if SelectedBags == 1 then
+        if SelectedBags == BagSetType.Backpack.Id then
             _G[Prefix.."JoinCheck"..(AddOnTable.BlizzConstants.BACKPACK_FIRST_REAGENT_CONTAINER+1)]:Hide()
         else
             _G[Prefix.."JoinCheck"..(AddOnTable.BlizzConstants.BACKPACK_FIRST_REAGENT_CONTAINER+1)]:Show()
@@ -442,7 +448,7 @@ local function UpdateBagButtons(self)
             if (Index == 1) then
                 -- only the first bag needs its position set, since the others are anchored to it
                 Button:SetPoint("LEFT", self.BagFrame, "CENTER", ((Bags / 2) * -44), 0)
-            elseif (Index == AddOnTable.BlizzConstants.BANK_CONTAINER_NUM + 2 or (SelectedBags == 1 and AddOnTable.BlizzConstants.BACKPACK_FIRST_REAGENT_CONTAINER ~= nil and Index == (AddOnTable.BlizzConstants.BACKPACK_LAST_CONTAINER + 1))) then
+            elseif (Index == AddOnTable.BlizzConstants.BANK_CONTAINER_NUM + 2 or (SelectedBags == BagSetType.Backpack.Id and AddOnTable.BlizzConstants.BACKPACK_FIRST_REAGENT_CONTAINER ~= nil and Index == (AddOnTable.BlizzConstants.BACKPACK_LAST_CONTAINER + 1))) then
                 -- the reagent bank and the reagent bag might not be joined with anything else (for the moment?)
                 _G[Prefix.."Container"..ContNum]:SetPoint("RIGHT", Prefix.."Bag"..(Index - 1), "RIGHT", 6,0)
                 ContNum = ContNum + 1
@@ -469,7 +475,7 @@ local function UpdateBagButtons(self)
             local bagCache = AddOnTable.Cache:GetBagCache(Bag)
             if BaudBagIcons[Bag]then
                 Texture = BaudBagIcons[Bag]
-            elseif(SelectedBags == 1)then
+            elseif(SelectedBags == BagSetType.Backpack.Id)then
                 Texture = GetInventoryItemTexture("player", AddOnTable.BlizzAPI.ContainerIDToInventoryID(Bag))
             elseif bagCache and bagCache.BagLink then
                 Texture = GetItemIcon(bagCache.BagLink)

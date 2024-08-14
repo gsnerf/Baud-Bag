@@ -1,6 +1,7 @@
 local AddOnName, AddOnTable = ...
 local _
 
+---@class BagSet
 local Prototype = {
     ---@type BagSetTypeClass
     Type = nil,
@@ -34,6 +35,10 @@ end
 
 --[[ This will be called on first load as well as every configuration change (via options screen) ]]
 function Prototype:RebuildContainers()
+    ---comment
+    ---@param localContainerObject Container
+    ---@param localIsOpen boolean
+    ---@param maxSubContainerIndex integer
     local function FinishContainer(localContainerObject, localIsOpen, maxSubContainerIndex)
         -- first remove all subcontainers that are not contained anymore
         local currentSubContainerCount = table.getn(localContainerObject.SubContainers)
@@ -227,7 +232,7 @@ function Prototype:ForEachBag(func)
 end
 
 local Metatable = { __index = Prototype }
-
+---@param type BagSetTypeClass
 function AddOnTable:CreateBagSet(type)
     local bagSet = _G.setmetatable({}, Metatable)
     bagSet.Type = type
@@ -235,6 +240,6 @@ function AddOnTable:CreateBagSet(type)
     bagSet.SubContainers = {}
     bagSet.BagButtons = {}
     bagSet.ReagentBagButtons = {}
-    AddOnTable["Sets"][type.Id] = bagSet
+    AddOnTable.Sets[type.Id] = bagSet
     return bagSet
 end

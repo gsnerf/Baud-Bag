@@ -1,0 +1,235 @@
+<Ui xmlns="http://www.blizzard.com/wow/ui/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.blizzard.com/wow/ui/ ..\FrameXML\UI.xsd">
+    <Script file="Container.lua" />
+
+	<Frame topLevel="true" name="BaudBagContainerTemplate" mixin="BaudBagContainerMixin" virtual="true" hidden="true" parent="UIParent" movable="true" frameStrata="MEDIUM" enableMouse="true">
+		<Size x="640" y="560" />
+		<Anchors>
+			<Anchor point="CENTER" />
+		</Anchors>
+		<Frames>
+			<Frame name="$parentBackdrop" parentKey="Backdrop" inherits="BackdropTemplate">
+				<Frames>
+					<Frame name="$parentTextures" parentKey="Textures" setAllPoints="true" />
+				</Frames>
+			</Frame>
+			<Button name="$parentCloseButton" parentKey="CloseButton">
+				<!--Size x="24" y="24"/>
+				<DisabledTexture atlas="RedButton-Exit-Disabled"/>
+				<NormalTexture atlas="RedButton-Exit"/>
+				<PushedTexture atlas="RedButton-exit-pressed"/>
+				<HighlightTexture atlas="RedButton-Highlight" alphaMode="ADD"/-->
+				<Size x="32" y="32"/>
+				<DisabledTexture file="Interface\Buttons\UI-Panel-MinimizeButton-Disabled"/>
+				<NormalTexture file="Interface\Buttons\UI-Panel-MinimizeButton-Up"/>
+				<PushedTexture file="Interface\Buttons\UI-Panel-MinimizeButton-Down"/>
+				<HighlightTexture file="Interface\Buttons\UI-Panel-MinimizeButton-Highlight" alphaMode="ADD"/>
+				<Anchors>
+					<Anchor point="TOPRIGHT" />
+				</Anchors>
+				<Scripts>
+					<OnClick>
+						self:GetParent():Hide();
+					</OnClick>
+				</Scripts>
+			</Button>
+			<Button name="$parentMenuButton" parentKey="MenuButton">
+				<Size x="16" y="16" />
+				<Anchors>
+					<Anchor point="TOPRIGHT" relativeTo="$parentCloseButton" relativePoint="TOPLEFT" x="0" y="-8" />
+				</Anchors>
+				<Scripts>
+					<OnClick function="BaudBagContainerMenu_Show" />
+				</Scripts>
+				<NormalTexture file="Interface\Buttons\UI-PlusButton-Up" />
+				<PushedTexture file="Interface\Buttons\UI-PlusButton-Down" />
+				<HighlightTexture file="Interface\Buttons\UI-PlusButton-Hilight" alphaMode="ADD" />
+			</Button>
+			<Button name="$parentSearchButton" parentKey="SearchButton" mixin="BaudBagSearchButtonMixin">
+				<Size x="16" y="16" />
+				<Anchors>
+					<Anchor point="TOPRIGHT" relativeTo="$parentMenuButton" relativePoint="TOPLEFT" x="0" y="0" />
+				</Anchors>
+				<NormalTexture file="Interface\Minimap\TRACKING\None" />
+				<HighlightTexture file="Interface\Buttons\ButtonHilight-Square" alphaMode="ADD">
+					<Size x="12" y="13"/>
+					<Anchors>
+						<Anchor point="CENTER" x="0" y="0"/>
+					</Anchors>
+				</HighlightTexture>
+				<Scripts>
+					<OnClick method="OnClick" />
+					<OnEnter method="OnEnter" />
+					<OnLeave function="GameTooltip_Hide"/>
+				</Scripts>
+			</Button>
+		</Frames>
+		<Layers>
+			<Layer>
+				<FontString name="$parentName" parentKey="Name" inherits="GameFontNormal" justifyH="LEFT">
+					<Size>
+						<AbsDimension x="0" y="12" />
+					</Size>
+				</FontString>
+			</Layer>
+		</Layers>
+		<Scripts>
+			<OnLoad method="OnLoad" />
+			<OnShow method="OnShow" />
+			<OnHide method="OnHide" />
+			<OnUpdate method="OnUpdate" />
+			<OnDragStart method="OnDragStart" />
+			<OnDragStop method="OnDragStop" />
+		</Scripts>
+	</Frame>
+
+	
+	<Frame name="BaudBagFirstContainerTemplate" virtual="true" inherits="BaudBagContainerTemplate">
+		<Frames>
+			<CheckButton name="$parentBagsButton" parentKey="BagsButton" mixin="BaudBagBagsButtonMixin">
+				<Size>
+					<AbsDimension x="24" y="24" />
+				</Size>
+				<Anchors>
+					<Anchor point="RIGHT" relativeTo="$parentName" relativePoint="LEFT" x="-5" y="0" />
+				</Anchors>
+				<Scripts>
+					<OnClick method="OnClick" />
+				</Scripts>
+				<NormalTexture file="Interface\Buttons\UI-SpellbookIcon-PrevPage-Up" />
+				<PushedTexture file="Interface\Buttons\UI-SpellbookIcon-PrevPage-Down" />
+				<HighlightTexture file="Interface\Buttons\UI-Common-MouseHilight" alphaMode="ADD" />
+				<CheckedTexture file="Interface\Buttons\UI-SpellbookIcon-PrevPage-Down" />
+			</CheckButton>
+			<Frame name="$parentMoneyFrame" parentKey="MoneyFrame" inherits="SmallMoneyFrameTemplate">
+				<Size>
+					<AbsDimension x="206" y="20" />
+				</Size>
+			</Frame>
+			<Frame name="$parentTokenFrame" parentKey="TokenFrame" inherits="BaudBagTokenFrameTemplate" hidden="true">
+				<Size>
+					<AbsDimension x="206" y="20" />
+				</Size>
+			</Frame>
+		</Frames>
+		<Layers>
+			<Layer>
+				<FontString name="$parentSlots" parentKey="FreeSlots" inherits="GameFontNormal" justifyH="LEFT" wordwrap="false" nonSpaceWrap="false" />
+			</Layer>
+		</Layers>
+	</Frame>
+
+	<Frame name="BaudBagContainerUnlockTemplate" virtual="true" mixin="BaudBagContainerUnlockMixin">
+		<Anchors>
+			<Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="0" y="0"/>
+			<Anchor point="BOTTOMRIGHT" relativePoint="BOTTOMRIGHT" x="0" y="0"/>
+		</Anchors>
+		<Layers>
+			<Layer level="BACKGROUND">
+				<Texture parentKey="BottomLeftInner" file="Interface\GuildBankFrame\Corners" >
+					<Size x="32" y="32"/>
+					<Anchors>
+						<Anchor point="BOTTOMLEFT" x="4" y="0"/>
+					</Anchors>
+					<TexCoords left="0.01562500" right="0.51562500" top="0.00390625" bottom="0.12890625"/>
+				</Texture>
+				<Texture parentKey="BottomRightInner" file="Interface\GuildBankFrame\Corners" >
+					<Size x="32" y="32"/>
+					<Anchors>
+						<Anchor point="BOTTOMRIGHT" x="-4" y="0"/>
+					</Anchors>
+					<TexCoords left="0.01562500" right="0.51562500" top="0.13671875" bottom="0.26171875"/>
+				</Texture>
+				<Texture parentKey="TopRightInner" file="Interface\GuildBankFrame\Corners"  >
+					<Size x="32" y="32"/>
+					<Anchors>
+						<Anchor point="TOPRIGHT" x="-4" y="0"/>
+					</Anchors>
+					<TexCoords left="0.01562500" right="0.51562500" top="0.26953125" bottom="0.39453125"/>
+				</Texture>
+				<Texture parentKey="TopLeftInner" file="Interface\GuildBankFrame\Corners">
+					<Size x="32" y="32"/>
+					<Anchors>
+						<Anchor point="TOPLEFT" x="4" y="0"/>
+					</Anchors>
+					<TexCoords left="0.01562500" right="0.51562500" top="0.40234375" bottom="0.52734375"/>
+				</Texture>
+				<Texture parentKey="LeftInner" file="Interface\GuildBankFrame\VertTile" vertTile="true">
+					<Anchors>
+						<Anchor point="TOPLEFT" relativeKey="$parent.TopLeftInner" relativePoint="BOTTOMLEFT" x="-3"/>
+						<Anchor point="BOTTOMLEFT" relativeKey="$parent.BottomLeftInner" relativePoint="TOPLEFT" x="-3"/>
+					</Anchors>
+				</Texture>
+				<Texture parentKey="RightInner" file="Interface\GuildBankFrame\VertTile" vertTile="true">
+					<Anchors>
+						<Anchor point="TOPRIGHT" relativeKey="$parent.TopRightInner" relativePoint="BOTTOMRIGHT" x="4"/>
+						<Anchor point="BOTTOMRIGHT" relativeKey="$parent.BottomRightInner" relativePoint="TOPRIGHT" x="4"/>
+					</Anchors>
+				</Texture>
+				<Texture parentKey="TopInner" file="Interface\GuildBankFrame\HorizTile" horizTile="true">
+					<Anchors>
+						<Anchor point="TOPLEFT" relativeKey="$parent.TopLeftInner" relativePoint="TOPRIGHT" y="3"/>
+						<Anchor point="TOPRIGHT" relativeKey="$parent.TopRightInner" relativePoint="TOPLEFT" y="3"/>
+					</Anchors>
+				</Texture>
+				<Texture parentKey="BottomInner" file="Interface\GuildBankFrame\HorizTile" horizTile="true">
+					<Anchors>
+						<Anchor point="BOTTOMLEFT" relativeKey="$parent.BottomLeftInner" relativePoint="BOTTOMRIGHT" y="-5"/>
+						<Anchor point="BOTTOMRIGHT" relativeKey="$parent.BottomRightInner" relativePoint="BOTTOMLEFT" y="-5"/>
+					</Anchors>
+				</Texture>
+			</Layer>
+			<Layer level="BACKGROUND">
+				<Texture parentKey="BlackBG">
+					<Anchors>
+						<Anchor point="TOPLEFT" relativeKey="$parent.TopLeftInner" x="4" y="-4"/>
+						<Anchor point="BOTTOMRIGHT" relativeKey="$parent.BottomRightInner" x="-4" y="3"/>
+					</Anchors>
+					<Color r="0" g="0" b="0" a="1"/>
+				</Texture>
+			</Layer>
+			<Layer level="ARTWORK">
+				<FontString parentKey="Text" inherits="GameFontHighlightMedium" justifyV="BOTTOM">
+					<Size x="512" />
+					<Anchors>
+						<Anchor point="BOTTOM" relativePoint="CENTER" x="0" y="-8"/>
+					</Anchors>
+				</FontString>
+				<FontString parentKey="TabCost" inherits="GameFontNormalMed3" text="COSTS_LABEL">
+					<Size x="0" y="12"/>
+					<Anchors>
+						<Anchor point="CENTER" relativePoint="CENTER" x="-93" y="-48"/>
+					</Anchors>
+				</FontString>
+				<FontString parentKey="Title" inherits="QuestFont_Enormous" justifyV="BOTTOM">
+					<Size x="384" y="0"/>
+					<Anchors>
+						<Anchor point="BOTTOM" relativeKey="$parent.Text" relativePoint="TOP" x="0" y="8"/>
+					</Anchors>
+				</FontString>
+			</Layer>
+		</Layers>
+		<Frames>
+			<Frame parentKey="CostMoneyFrame" inherits="SmallMoneyFrameTemplate" mixin="BaudBagContainerUnlockCostMoneyMixin" hidden="false">
+				<Anchors>
+					<Anchor point="LEFT" relativeKey="$parent.TabCost" relativePoint="RIGHT" x="0" y="0"/>
+				</Anchors>
+				<Scripts>
+					<OnLoad method="OnLoad" />
+				</Scripts>
+			</Frame>
+			<Button parentKey="PurchaseButton" inherits="UIPanelButtonTemplate" mixin="BaudBagContainerUnlockPurchaseButtonMixin" text="BANKSLOTPURCHASE">
+				<Size x="124" y="21"/>
+				<Anchors>
+					<Anchor point="LEFT" relativeKey="$parent.CostMoneyFrame" relativePoint="RIGHT" x="12" y="0"/>
+				</Anchors>
+				<Scripts>
+					<OnClick method="OnClick" />
+				</Scripts>
+			</Button>
+		</Frames>
+		<Scripts>
+			<OnShow method="OnShow"/>
+			<OnLoad method="OnLoad"/>
+		</Scripts>
+	</Frame>
+</Ui>

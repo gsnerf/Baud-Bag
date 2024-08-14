@@ -63,7 +63,7 @@ local EventFuncs = {
             if (Slot <= NUM_BANKGENERIC_SLOTS) then
                 BankFrameItemButton_UpdateLocked(_G[Prefix.."SubBag-1Item"..Slot])
             else
-                local bankBagButton = AddOnTable["Sets"][2].BagButtons[Slot-NUM_BANKGENERIC_SLOTS]
+                local bankBagButton = AddOnTable.Sets[BagSetType.Bank.Id].BagButtons[Slot-NUM_BANKGENERIC_SLOTS]
                 BankFrameItemButton_UpdateLocked(bankBagButton)
             end
         elseif (Bag == REAGENTBANK_CONTAINER) then
@@ -129,7 +129,7 @@ local Func = function(self, event, ...)
         -- bank bag slot
         if (bagId > AddOnTable.BlizzConstants.BANK_SLOTS_NUM) then
             local bankBagId = bagId-AddOnTable.BlizzConstants.BANK_SLOTS_NUM
-            local bankBagButton = AddOnTable["Sets"][2].BagButtons[bankBagId]
+            local bankBagButton = AddOnTable.Sets[BagSetType.Bank.Id].BagButtons[bankBagId]
             bankBagButton:UpdateContent()
             return
         end
@@ -169,18 +169,19 @@ Func = function(self, event, ...)
     -- full rebuild if it seems the bags could have been swapped (something like this will probably be necessary for classic, so it stays for the moment)
     if affectedContainerCount > 1 then
         if bagsAffected then
-            AddOnTable.Sets[1]:RebuildContainers()
-            for _, button in ipairs(AddOnTable.Sets[1].BagButtons) do
+            local backpackSet = AddOnTable.Sets[BagSetType.Backpack.Id]
+            backpackSet:RebuildContainers()
+            for _, button in ipairs(backpackSet.BagButtons) do
                 button:Hide()
                 button:Show()
             end
-            for _, button in ipairs(AddOnTable.Sets[1].ReagentBagButtons) do
+            for _, button in ipairs(backpackSet.ReagentBagButtons) do
                 button:Hide()
                 button:Show()
             end
         end
         if bankAffected then
-            AddOnTable.Sets[2]:RebuildContainers()
+            AddOnTable.Sets[BagSetType.Bank.Id]:RebuildContainers()
         end
         BaudBagUpdateOpenBagHighlight()
     else
@@ -198,8 +199,9 @@ EventFuncs.BAG_UPDATE_DELAYED = Func
 
 EventFuncs.BAG_CONTAINER_UPDATE = function(self, event, ...)
     -- not sure how to identify what set is affected, so for now rebuild everything
-    AddOnTable.Sets[1]:RebuildContainers()
-    AddOnTable.Sets[2]:RebuildContainers()
+    for _, bagSet in pairs(AddOnTable.Sets) do
+        bagSet:RebuildContainers()
+    end
     if (BaudBagOptions:IsShown()) then
         BaudBagOptions:Update()
     end
@@ -218,6 +220,11 @@ function BaudBag_OnLoad(self, event, ...)
 
     AddOnTable.Functions.InitFunctions()
 
+    AddOnTable:ExtendBaseTypes()
+    for _, bagSet in pairs(BagSetType) do
+        bagSet:Init()
+    end
+
     -- register for global events (actually handled in OnEvent function)
     for Key, Value in pairs(EventFuncs)do
         self:RegisterEvent(Key)
@@ -228,25 +235,25 @@ function BaudBag_OnLoad(self, event, ...)
 
     -- the first container from each set (inventory/bank) is different and is created in the XML
     local Container
-    for BagSet = 1, 2 do
-        Container = _G[Prefix.."Container"..BagSet.."_1"]
+    for _, bagSet in pairs(BagSetType) do
+        Container = _G[Prefix.."Container"..bagSet.Id.."_1"]
         Container.FreeSlots:SetPoint("RIGHT",Container:GetName().."MoneyFrame","LEFT")
-        Container.BagSet = BagSet
+        Container.BagSet = bagSet.Id
         Container:SetID(1)
     end
 
     AddOnTable.Functions.DebugMessage("Bags", "Create BagSets")
-    BackpackSet = AddOnTable:CreateBagSet(BagSetType.Backpack)
-    BankSet = AddOnTable:CreateBagSet(BagSetType.Bank)
-    if (AddOnTable.State.KeyringSupported) then
-        Keyring = AddOnTable:CreateBagSet(BagSetType.Keyring)
-        Keyring:PerformInitialBuild()
-    end
+    local BackpackSet = AddOnTable:CreateBagSet(BagSetType.Backpack)
+    local BankSet = AddOnTable:CreateBagSet(BagSetType.Bank)
+    AddOnTable:InitBagSets()
 
     -- create all necessary SubBags now with basic initialization, correct referencing later when config is available
     AddOnTable.Functions.DebugMessage("Bags", "Creating sub bags")
     BackpackSet:PerformInitialBuild()
     BankSet:PerformInitialBuild()
+
+    -- we think anything essential now should be available... let the system react to that
+    AddOnTable:EssentialsLoaded()
 end
 
 
@@ -260,41 +267,12 @@ function BaudBag_OnEvent(self, event, ...)
     AddOnTable.Functions.OnEvent(self, event, ...)
 end
 
--- this just makes sure the bags will be visible at the correct layer position when opened
-function BaudBagBagsFrame_OnShow(self, event, ...)
-    local isBags = self:GetName() == "BaudBagContainer1_1BagsFrame"
-    local Level = self:GetFrameLevel() + 1
-    AddOnTable.Functions.DebugMessage("Bank", "BaudBagBagsFrame is shown, correcting frame layer lvls of childs (frame, targetLevel)", self:GetName(), Level)
-    -- Adjust frame level because of Blizzard's screw up
-    if (isBags) then
-        local backpackSet = AddOnTable["Sets"][1]
-        for Bag = 0, 3 do
-            backpackSet.BagButtons[Bag]:SetFrameLevel(Level)
-        end
-        if (backpackSet.ReagentBagButtons[0]) then
-            backpackSet.ReagentBagButtons[0]:SetFrameLevel(Level)
-        end
-    else
-        local bagSet = AddOnTable["Sets"][2]
-        for Bag = 1, NUM_BANKBAGSLOTS do
-            bagSet.BagButtons[Bag]:SetFrameLevel(Level)
-        end
-        if (AddOnTable.State.ReagentBankSupported) then
-            _G["BBReagentsBag"]:SetFrameLevel(Level)
-        end
-    end
-end
-
 --[[ This function updates the parent containers for each bag, according to the options setup ]]--
 function BaudUpdateJoinedBags()
     AddOnTable.Functions.DebugMessage("Bags", "Updating joined bags...")
     
-    for bagSet = 1, 2 do
-        AddOnTable["Sets"][bagSet]:RebuildContainers()
-    end
-
-    if (AddOnTable.State.KeyringSupported) then
-        AddOnTable["Sets"][3]:RebuildContainers()
+    for _, bagSet in pairs(BagSetType) do
+        AddOnTable.Sets[bagSet.Id]:RebuildContainers()
     end
 
     AddOnTable.BagsReady = true
@@ -349,15 +327,6 @@ function BaudBagSubBag_OnEvent(self, event, ...)
     SubBagEvents[event](self, event, ...)
 end
 
---This is for the button that toggles the bank bag display
-function BaudBagBagsButton_OnClick(self, event, ...)
-    local Set = self:GetParent().BagSet
-    --Bank set is automaticaly shown, and main bags are not
-    BBConfig[Set].ShowBags = (BBConfig[Set].ShowBags==false)
-    BaudBagUpdateBagFrames()
-end
-
-
 function BaudBagUpdateBagFrames()
     AddOnTable.Functions.DebugMessage("Bags", "Called BaudBagUpdateBagFrames()")
     local Shown, BagFrame, FrameName
@@ -374,55 +343,20 @@ function BaudBagUpdateBagFrames()
     end
 end
 
-function BaudBag_OnModifiedClick(self, button)
-    if (not AddOnTable.Cache:UsesCache(self:GetParent():GetID())) then
-        return
-    end
-
-    if IsModifiedClick("SPLITSTACK")then
-        StackSplitFrame:Hide()
-    end
-
-    local slotCache = AddOnTable.Cache:GetBagCache(self:GetParent():GetID())[self:GetID()]
-    if slotCache then
-        HandleModifiedItemClick(slotCache.Link)
-    end
-end
-
-
---hooksecurefunc("ContainerFrameItemButton_OnModifiedClick", BaudBag_OnModifiedClick)
---hooksecurefunc("BankFrameItemButtonGeneric_OnModifiedClick", BaudBag_OnModifiedClick)
-
 -- TODO: after changes there is some weird behavior after applying changes (like changing the name)
 -- Seems to be in Background drawing for Slot Count
 --[[ this can probably be removed as this is only called on classic and a new way to bubble updates needs to be found ]]
 function BaudBagUpdateFromBBConfig()
     BaudUpdateJoinedBags()
     BaudBagUpdateBagFrames()
-
-    for bagSet = 1, 2 do
-        -- make sure the enabled states are current
-        if (BBConfig[bagSet].Enabled ~= true) then
-            AddOnTable.Sets[bagSet]:Close()
+    for _, bagSet in pairs(BagSetType) do
+    
+        if (BBConfig[bagSet.Id].Enabled ~= true) then
+            AddOnTable.Sets[bagSet.Id]:Close()
         end
     end
     AddOnTable:UpdateBagParents()
     AddOnTable:UpdateBankParents()
-end
-
-function BaudBagSearchButton_Click(self, event, ...)
-    -- get references to all needed frames and data
-    local Container		= self:GetParent()
-    local Scale			= BBConfig[Container.BagSet][Container:GetID()].Scale / 100
-    local Background	= BBConfig[Container.BagSet][Container:GetID()].Background
-    
-    BaudBagSearchFrame_ShowFrame(Container, Scale, Background)
-end
-
-function BaudBagSearchButton_Enter(self, event, ...)
-    GameTooltip:SetOwner(self)
-    GameTooltip:SetText(Localized.SearchBagTooltip)
-    GameTooltip:Show()
 end
 
 --[[ if the mouse hovers over the bag slot item the slots belonging to this bag should be shown after a certain time (atm 350ms or 0.35s) ]]

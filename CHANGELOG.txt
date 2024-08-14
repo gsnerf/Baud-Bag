@@ -1,4 +1,9 @@
 ﻿=== Changelog ===
+v11.0.2.1
+  - fixes for moved C_AddOns APIs
+  - fixes for moved C_Bank APIs
+  - big under the hood rework of lots of BagSet related mechanics in preparation for warband bank (and more)
+  - switched to GitHub Actions for releases
 v11.0.0.1
   - complete overhaul of the settings code
   - removed all old style dropdowns and replaced with either custom code, popouts (for classic) or the new dropdowns (retail)

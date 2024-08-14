@@ -65,17 +65,26 @@ function BaudBagContainerMenuButtonMixin:JumpToOptions()
 end
 
 function BaudBagContainerMenuButtonMixin:ToggleBank()
-    local firstBankContainer = AddOnTable.Sets[2].Containers[1]
+    local firstBankContainer = AddOnTable.Sets[BagSetType.Bank.Id].Containers[1]
     if firstBankContainer.Frame:IsShown() then
         firstBankContainer.Frame:Hide()
-        AddOnTable.Sets[2]:AutoClose()
+        AddOnTable.Sets[BagSetType.Bank.Id]:AutoClose()
     else
         firstBankContainer.Frame:Show()
-        AddOnTable.Sets[2]:AutoOpen()
+        AddOnTable.Sets[BagSetType.Bank.Id]:AutoOpen()
     end
 
     local containerMenu = self:GetParent():GetParent()
     containerMenu:Hide()
+end
+
+function BaudBagContainerMenuButtonMixin:ToggleEnableBank()
+    local currentValue = AddOnTable.Config[2].Enabled
+    AddOnTable.Config[2].Enabled = not currentValue
+    AddOnTable.Sets[2]:Close()
+    BaudBagUpdateFromBBConfig()
+    --AddOnTable.UpdateBankParents()
+    self:GetParent().EnableBankButton:SetChecked(AddOnTable.Config[2].Enabled)
 end
 
 function BaudBagContainerMenuButtonMixin:AddSlots()
@@ -196,7 +205,15 @@ function BaudBagContainerMenuMixin:SetupGeneral()
         showBankButton:SetPoint("TOP", self.General.ShowOptions, "BOTTOM")
         self.General.ShowBankButton = showBankButton
         table.insert(self.checkButtons, showBankButton)
-        
+
+        local enableBankButton = CreateFrame("CheckButton", nil, self.General, "BaudBagContainerMenuCheckButtonTemplate")
+        enableBankButton:SetText(Localized.EnableBank)
+        enableBankButton:SetScript("OnClick", enableBankButton.ToggleEnableBank)
+        enableBankButton:SetPoint("TOP", showBankButton, "BOTTOM" )
+        enableBankButton:SetChecked(AddOnTable.Config[BagSetType.Bank.Id].Enabled)
+        self.General.EnableBankButton = enableBankButton
+        table.insert(self.checkButtons, enableBankButton)
+
         local backpackCanBeExtended = not (IsAccountSecured() and AddOnTable.BlizzAPI.GetContainerNumSlots(AddOnTable.BlizzConstants.BACKPACK_CONTAINER) > AddOnTable.BlizzConstants.BACKPACK_BASE_SIZE)
         if (backpackCanBeExtended) then
             local extendBackpack = CreateFrame("CheckButton", nil, self.General, "BaudBagContainerMenuCheckButtonTemplate")

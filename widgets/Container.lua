@@ -1,4 +1,5 @@
 local AddOnName, AddOnTable = ...
+local Localized = AddOnTable.Localized
 local _
 
 -- -> possibly move this to default config?
@@ -8,8 +9,11 @@ local FadeTime = 0.2
 local Prototype = {
     Id = nil,
     Name = "DefaultContainer",
+    ---@class Frame
     Frame = nil,
+    ---@type SubContainer[]
     SubContainers = nil,
+    ---@class BagSetTypeClass
     BagSet = nil,
     -- the values below aren't used yet
     Columns = 11,
@@ -283,24 +287,47 @@ function AddOnTable:Container_Updated(bagSet, containerId)
 end
 
 
---[[ Container events - TO BE MOVED TO MIXIN ]]--
-function BaudBagContainer_OnLoad(self, event, ...)
-    -- that's to make the frame closable through the ESC key
+BaudBagContainerMixin = {}
+
+function BaudBagContainerMixin:OnLoad(event, ...)
     tinsert(UISpecialFrames, self:GetName())
     self:RegisterForDrag("LeftButton")
 end
 
-function BaudBagContainer_OnUpdate(self, event, ...)
+function BaudBagContainerMixin:OnShow(event, ...)
+    AddOnTable.Functions.DebugMessage("BagOpening", "BaudBagContainer_OnShow was called", self:GetName())
+	
+    -- check if the container was open before and closing now
+    if self.FadeStart then
+        return
+    end
+	
+    -- container seems to not be visible, open and update
+    self.FadeStart = GetTime()
+    PlaySound(SOUNDKIT.IG_BACKPACK_OPEN)
+    local bagSet = AddOnTable.Sets[self.BagSet]
+    local containerObject = bagSet.Containers[self:GetID()]
+    containerObject:Update()
+    if (containerObject.Frame.Slots > 0) then
+        containerObject:UpdateBagHighlight()
+    end
 
-    local containerObject = AddOnTable["Sets"][self.BagSet].Containers[self:GetID()]
+    if (self:GetID() == 1) then
+        AddOnTable.Sets[self.BagSet]:UpdateSlotInfo()
+    end
+end
+
+function BaudBagContainerMixin:OnUpdate(event, ...)
+    local containerObject = AddOnTable.Sets[self.BagSet].Containers[self:GetID()]
 
     if (self.Refresh) then
         containerObject:Update()
+        -- todo
         BaudBagUpdateOpenBagHighlight()
     end
 
     if (self.UpdateSlots) then
-        AddOnTable["Sets"][self.BagSet]:UpdateSlotInfo()
+        AddOnTable.Sets[self.BagSet]:UpdateSlotInfo()
     end
 
     if (self.FadeStart) then
@@ -326,32 +353,7 @@ function BaudBagContainer_OnUpdate(self, event, ...)
     end
 end
 
-
-function BaudBagContainer_OnShow(self, event, ...)
-    AddOnTable.Functions.DebugMessage("BagOpening", "BaudBagContainer_OnShow was called", self:GetName())
-	
-    -- check if the container was open before and closing now
-    if self.FadeStart then
-        return
-    end
-	
-    -- container seems to not be visible, open and update
-    self.FadeStart = GetTime()
-    PlaySound(SOUNDKIT.IG_BACKPACK_OPEN)
-    local bagSet = AddOnTable["Sets"][self.BagSet]
-    local containerObject = bagSet.Containers[self:GetID()]
-    containerObject:Update()
-    if (containerObject.Frame.Slots > 0) then
-        containerObject:UpdateBagHighlight()
-    end
-
-    if (self:GetID() == 1) then
-        AddOnTable["Sets"][self.BagSet]:UpdateSlotInfo()
-    end
-end
-
-
-function BaudBagContainer_OnHide(self, event, ...)
+function BaudBagContainerMixin:OnHide(event, ...)
     AddOnTable.Functions.DebugMessage("BagOpening", "BaudBagContainer_OnHide was called", self:GetName())
     -- correctly handle if this is called while the container is still fading out
     if self.Closing then
@@ -366,6 +368,7 @@ function BaudBagContainer_OnHide(self, event, ...)
     self.Closing = true
     PlaySound(SOUNDKIT.IG_BACKPACK_CLOSE)
     self.AutoOpened = false
+    -- todo
     BaudBagUpdateOpenBagHighlight()
 
     --[[TODO: look into merging the set specific close handling!!!]]--
@@ -374,9 +377,8 @@ function BaudBagContainer_OnHide(self, event, ...)
     (first the bag set so the "offline" title doesn't show up before closing and then the bank to disconnect)
     ]]--
     if (self:GetID() == 1) and (BBConfig[self.BagSet].Enabled) and (BBConfig[self.BagSet].CloseAll) then
-        if (self.BagSet == 2) and AddOnTable.State.BankOpen then
-            -- [TAINT] can be problematic, but doesn't have to be
-            CloseBankFrame()
+        if (self.BagSet == BagSetType.Bank.Id) and AddOnTable.State.BankOpen then
+            AddOnTable.BlizzAPI.CloseBankFrame()
         end
         AddOnTable.Sets[self.BagSet]:Close()
     end
@@ -385,15 +387,76 @@ function BaudBagContainer_OnHide(self, event, ...)
     AddOnTable.Sets[self.BagSet].Containers[self:GetID()].Menu:Hide()
 end
 
-
-function BaudBagContainer_OnDragStart(self, event, ...)
+function BaudBagContainerMixin:OnDragStart(event, ...)
     if not BBConfig[self.BagSet][self:GetID()].Locked then
         self:StartMoving()
     end
 end
 
-
-function BaudBagContainer_OnDragStop(self, event, ...)
+function BaudBagContainerMixin:OnDragStop(event, ...)
     self:StopMovingOrSizing()
-    AddOnTable["Sets"][self.BagSet].Containers[self:GetID()]:SaveCoordsToConfig()
+    AddOnTable.Sets[self.BagSet].Containers[self:GetID()]:SaveCoordsToConfig()
+end
+
+
+BaudBagSearchButtonMixin = {}
+
+function BaudBagSearchButtonMixin:OnClick(event, ...)
+    -- get references to all needed frames and data
+    local Container		= self:GetParent()
+    local Scale			= BBConfig[Container.BagSet][Container:GetID()].Scale / 100
+    local Background	= BBConfig[Container.BagSet][Container:GetID()].Background
+    
+    BaudBagSearchFrame_ShowFrame(Container, Scale, Background)
+end
+
+function BaudBagSearchButtonMixin:OnEnter(event, ...)
+    GameTooltip:SetOwner(self)
+    GameTooltip:SetText(Localized.SearchBagTooltip)
+    GameTooltip:Show()
+end
+
+BaudBagBagsButtonMixin = {}
+
+function BaudBagBagsButtonMixin:OnClick(event, ...)
+    local bagSetId = self:GetParent().BagSet
+    local bagsFrame = self:GetParent().BagsFrame
+    if (bagsFrame ~= nil) then
+        BBConfig[bagSetId].ShowBags = (BBConfig[bagSetId].ShowBags==false)
+        local isShown = (BBConfig[bagSetId].ShowBags ~= false)
+        self:SetChecked(isShown)
+        if (isShown) then
+            bagsFrame:Show()
+        else
+            bagsFrame:Hide()
+        end
+    end
+end
+
+BaudBagContainerUnlockMixin = {}
+
+function BaudBagContainerUnlockMixin:OnLoad()
+    RaiseFrameLevel(self)
+end
+
+function BaudBagContainerUnlockMixin:OnShow()
+    if self.Refresh then
+		self:Refresh()
+	end
+end
+
+BaudBagContainerUnlockCostMoneyMixin = {}
+
+function BaudBagContainerUnlockCostMoneyMixin:OnLoad()
+    SmallMoneyFrame_OnLoad(self)
+    MoneyFrame_SetType(self, "STATIC")
+end
+
+BaudBagContainerUnlockPurchaseButtonMixin = {}
+
+function BaudBagContainerUnlockPurchaseButtonMixin:OnClick()
+    local unlockPanel = self:GetParent()
+    if unlockPanel.Purchase then
+        unlockPanel:Purchase()
+    end
 end

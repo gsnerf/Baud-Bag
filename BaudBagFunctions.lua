@@ -5,7 +5,6 @@ AddOnTable.Functions = {}
 AddOnTable.State = {
     -- switches, intended for differentiation of functions between addon versions (classic/retail, etc.)
     ReagentBankSupported = false,
-    KeyringSupported = false,
     -- runtime state
     ItemLock = {
         Move = false,
@@ -46,6 +45,7 @@ local BaudBag_DebugCfg = {
     Tooltip     = { Name = "Tooltip",   Active = false },
     Junk        = { Name = "Junk",      Active = false },
     ItemHandle  = { Name = "Item",      Active = false },
+    Keyring     = { Name = "Keyring",   Active = false },
 
     -- this is for everything else that is supposed to be a temporary debug message
     Temp        = { Name = "Temp",      Active = false }
@@ -114,34 +114,7 @@ AddOnTable.Functions.Vardump = BaudBag_Vardump
             ]]
 --[[ TODO: Before we can get rid of this (in favor of BagSet:ForEachBag) we need to ensure that the bag sets are available everywhere (looking at you, config!) ]]
 AddOnTable.Functions.ForEachBag = function(BagSet, Func)
-    --[[
-        BagsSet Indices:
-            1 == inventory
-            2 == bank
-        Bag Indices:
-           -3 == reagent bank
-           -2 == keyring & currency
-           -1 == bank
-            0 == backpack
-            1-4 == inventory bags
-            5 == reagent bag
-            6-12 == bank bags
-    ]]--
-    if (BagSet == 1) then -- regular bags
-        for Bag = AddOnTable.BlizzConstants.BACKPACK_FIRST_CONTAINER, AddOnTable.BlizzConstants.BACKPACK_LAST_CONTAINER do
-            Func(Bag, Bag + 1);
-        end
-    else -- bank
-        Func(-1, 1);
-        -- bank bags
-        for Bag = 1, AddOnTable.BlizzConstants.BANK_CONTAINER_NUM do
-            Func(Bag + AddOnTable.BlizzConstants.BACKPACK_LAST_CONTAINER, Bag + 1);
-        end
-        -- reagent bank
-        if (AddOnTable.State.ReagentBankSupported) then
-            Func(-3, AddOnTable.BlizzConstants.BANK_CONTAINER_NUM + 2);
-        end
-    end
+    AddOnTable.Sets[BagSet]:ForEachBag(Func)
 end
 
 AddOnTable.Functions.ForEachContainer = function(func)
@@ -230,7 +203,7 @@ local function BaudBag_BagHandledByBaudBag(id)
             NUM_TOTAL_EQUIPPED_BAG_SLOTS (first bank bag)
             NUM_BANKBAGSLOTS (number of bank bags)
       ]]
-    return (AddOnTable.Functions.IsBankContainer(id) and BBConfig[2].Enabled) or (AddOnTable.Functions.IsInventory(id) and BBConfig[1].Enabled) or (AddOnTable.State.KeyringSupported and id == AddOnTable.BlizzConstants.KEYRING_CONTAINER);
+    return (AddOnTable.Functions.IsBankContainer(id) and BBConfig[2].Enabled) or (AddOnTable.Functions.IsInventory(id) and BBConfig[1].Enabled) or (id == AddOnTable.BlizzConstants.KEYRING_CONTAINER);
 end
 AddOnTable.Functions.BagHandledByBaudBag = BaudBag_BagHandledByBaudBag
 

@@ -90,7 +90,7 @@ EventRegistry:RegisterCallback("ContainerFrame.OpenAllBags", function()
         openBag(i)
     end
 
-    if AddOnTable.Sets[2].Containers[1].Frame:IsShown() then
+    if AddOnTable.Sets[BagSetType.Bank.Id].Containers[1].Frame:IsShown() then
         for i = AddOnTable.BlizzConstants.BANK_FIRST_CONTAINER,  AddOnTable.BlizzConstants.BANK_LAST_CONTAINER do
             openBag(i)
         end
@@ -102,7 +102,7 @@ EventRegistry:RegisterCallback("ContainerFrame.CloseAllBags", function()
         closeBag(i)
     end
 
-    if AddOnTable.Sets[2].Containers[1].Frame:IsShown() then
+    if AddOnTable.Sets[BagSetType.Bank.Id].Containers[1].Frame:IsShown() then
         for i = AddOnTable.BlizzConstants.BANK_FIRST_CONTAINER,  AddOnTable.BlizzConstants.BANK_LAST_CONTAINER do
             closeBag(i)
         end

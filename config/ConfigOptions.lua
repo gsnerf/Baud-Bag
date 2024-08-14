@@ -19,7 +19,6 @@ local Localized = AddOnTable.Localized
 ---@field High number|string the maximum valid value this option can have
 ---@field Step number the increase between two valid values of this option
 ---@field SavedVar string the ID of the option as used in the configuration object
----@field Default number|number[] the default value to be used if no value has been configured yet, when used on container options this is supposed to be an array containing the defaults for each bag set type
 ---@field DependsOn string? the ID of another option entry that needs to be enabled for this option to be used
 
 ---@class ConfigOptionSection
@@ -35,7 +34,7 @@ AddOnTable.ConfigOptions = {
         CheckButtons = {
             {Text=Localized.ShowNewItems,        SavedVar="ShowNewItems",        Default=true,  TooltipText=Localized.ShowNewItemsTooltip,        DependsOn=nil, CanBeSet=true,                      UnavailableText = "" },
             {Text=Localized.SellJunk,            SavedVar="SellJunk",            Default=false, TooltipText=Localized.SellJunkTooltip,            DependsOn=nil, CanBeSet=true,                      UnavailableText = "" },
-            {Text=Localized.UseMasque,           SavedVar="UseMasque",           Default=false, TooltipText=Localized.UseMasqueTooltp,            DependsOn=nil, CanBeSet=IsAddOnLoaded("Masque"),   UnavailableText = Localized.UseMasqueUnavailable},
+            {Text=Localized.UseMasque,           SavedVar="UseMasque",           Default=false, TooltipText=Localized.UseMasqueTooltp,            DependsOn=nil, CanBeSet=AddOnTable.BlizzAPI.IsAddOnLoaded("Masque"),   UnavailableText = Localized.UseMasqueUnavailable},
             {Text=Localized.RarityColoring,      SavedVar="RarityColor",         Default=true,  TooltipText=Localized.RarityColoringTooltip,      DependsOn=nil, CanBeSet=true,                      UnavailableText = "" },
             {Text=Localized.ShowItemLevel,       SavedVar="ShowItemLevel",       Default=false, TooltipText=Localized.ShowItemLevelTooltip,       DependsOn=nil, CanBeSet=true,                      UnavailableText = "" },
             {Text=Localized.EnableFadeAnimation, SavedVar="EnableFadeAnimation", Default=false, TooltipText=Localized.EnableFadeAnimationTooltip, DependsOn=nil, CanBeSet=true,                      UnavailableText = "" },
@@ -51,8 +50,8 @@ AddOnTable.ConfigOptions = {
             {Text=Localized.BlankOnTop,     SavedVar="BlankTop",     Default=false, TooltipText=Localized.BlankOnTopTooltip,        DependsOn=nil},
         },
         SliderBars = {
-            {Text=Localized.Columns,	Low="2",	High="40",		Step=1,		SavedVar="Columns",		Default={8,14,4},		TooltipText = Localized.ColumnsTooltip },
-            {Text=Localized.Scale,		Low="50%",	High="200%",	Step=1,		SavedVar="Scale",		Default={100,100,100},	TooltipText = Localized.ScaleTooltip }
+            {Text=Localized.Columns,	Low="2",	High="40",		Step=1,		SavedVar="Columns",		TooltipText = Localized.ColumnsTooltip },
+            {Text=Localized.Scale,		Low="50%",	High="200%",	Step=1,		SavedVar="Scale",		TooltipText = Localized.ScaleTooltip }
         }
     }
 }
