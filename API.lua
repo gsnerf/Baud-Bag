@@ -1,6 +1,8 @@
 local _
 local AddOnName, AddOnTable = ...
 
+local interfaceVersion = select(4, GetBuildInfo())
+
 ---@class BlizzAPI
 AddOnTable.BlizzAPI = {
     CloseBankFrame = CloseBankFrame,
@@ -62,6 +64,7 @@ if C_Container ~= nil then
     API.SortBags = C_Container.SortBags
     API.SortBankBags = C_Container.SortBankBags
     API.SortReagentBankBags = C_Container.SortReagentBankBags
+    API.SortAccountBankBags = C_Container.SortAccountBankBags
     API.SplitContainerItem = C_Container.SplitContainerItem
     API.UseContainerItem = C_Container.UseContainerItem
     API.GetBagSlotFlag = C_Container.GetBagSlotFlag
@@ -118,6 +121,7 @@ else
     API.SortBags = SortBags
     API.SortBankBags = SortBankBags
     API.SortReagentBankBags = SortReagentBankBags
+    API.SortAccountBankBags = function() end
     API.SplitContainerItem = SplitContainerItem
     API.UseContainerItem = UseContainerItem
     ---returns the number of watched tokens or the maximum number of watched tokens in old API
@@ -139,6 +143,24 @@ end
 -- introduced with tww
 if C_Bank ~= nil then
     API.CloseBankFrame = C_Bank.CloseBankFrame
+    -- not used right now, need to cull based on necessity
+    API.AutoDepositItemsIntoBank = C_Bank.AutoDepositItemsIntoBank
+    API.CanDepositMoney = C_Bank.CanDepositMoney
+    API.CanPurchaseBankTab = C_Bank.CanPurchaseBankTab
+    API.CanUseBank = C_Bank.CanUseBank
+    API.CanViewBank = C_Bank.CanViewBank
+    API.CanWithdrawMoney = C_Bank.CanWithdrawMoney
+    API.DepositMoney = C_Bank.DepositMoney
+    API.FetchDepositedMoney = C_Bank.FetchDepositedMoney
+    API.FetchNextPurchasableBankTabCost = C_Bank.FetchNextPurchasableBankTabCost
+    API.FetchNumPurchasedBankTabs = C_Bank.FetchNumPurchasedBankTabs
+    API.FetchPurchasedBankTabData = C_Bank.FetchPurchasedBankTabData
+    API.FetchPurchasedBankTabIDs = C_Bank.FetchPurchasedBankTabIDs
+    API.HasMaxBankTabs = C_Bank.HasMaxBankTabs
+    API.IsItemAllowedInBankType = C_Bank.IsItemAllowedInBankType
+    API.PurchaseBankTab = C_Bank.PurchaseBankTab
+    API.UpdateBankTabSettings = C_Bank.UpdateBankTabSettings
+    API.WithdrawMoney = C_Bank.WithdrawMoney
 end
 
 -- introduced with tww
@@ -195,6 +217,12 @@ AddOnTable.BlizzConstants = {
     BAG_CLEANUP_BANK = BAG_CLEANUP_BANK, -- localized string for "cleanup bank"
     BAG_FILTER_ASSIGN_TO = BAG_FILTER_ASSIGN_TO, -- localized string for filter assignment
     BACKPACK_AUTHENTICATOR_INCREASE_SIZE = BACKPACK_AUTHENTICATOR_INCREASE_SIZE, -- localized string for backpack extension through securing account
+    ACCOUNT_BANK_CONTAINER_NUM = 0, -- only available from warwithin (11)
+    ACCOUNT_BANK_CONTAINER = nil, -- Enum.BagIndex.Accountbanktab (from TWW onwards)
+    ACCOUNT_BANK_FIRST_SUB_CONTAINER = nil, -- Enum.BagIndex.AccountBankTab_1 (from TWW onwards)
+    ACCOUNT_BANK_LAST_SUB_CONTAINER = nil, -- Enum.BagIndex.AccountBankTab_1 (from TWW onwards)
+    ACCOUNT_BANK_PANEL_TITLE = "",
+    ACCOUNT_BANK_TAB_PURCHASE_PROMPT = "",
 }
 
 if (GetExpansionLevel() >= 9) then
@@ -204,6 +232,15 @@ if (GetExpansionLevel() >= 9) then
     AddOnTable.BlizzConstants.BACKPACK_LAST_CONTAINER = 5 -- == BACKPACK_CONTAINER + NUM_TOTAL_EQUIPPED_BAG_SLOTS ( == NUM_BAG_SLOTS + NUM_REAGENTBAG_SLOTS)
     AddOnTable.BlizzConstants.BANK_FIRST_CONTAINER = 6 -- == NUM_TOTAL_EQUIPPED_BAG_SLOTS + 1
     AddOnTable.BlizzConstants.BANK_LAST_CONTAINER = 12 -- == NUM_TOTAL_EQUIPPED_BAG_SLOTS + 1 + NUM_BANKBAGSLOTS
+end
+
+if (interfaceVersion >= 110000) then -- from "The War Within" onwards
+    AddOnTable.BlizzConstants.ACCOUNT_BANK_CONTAINER_NUM = 6 -- according to Enum.BagIndex Accountbanktab + AccountBankTab_1 to *_5
+    AddOnTable.BlizzConstants.ACCOUNT_BANK_CONTAINER = Enum.BagIndex.Accountbanktab -- -5
+    AddOnTable.BlizzConstants.ACCOUNT_BANK_FIRST_SUB_CONTAINER = Enum.BagIndex.AccountBankTab_1 -- 13
+    AddOnTable.BlizzConstants.ACCOUNT_BANK_LAST_SUB_CONTAINER = Enum.BagIndex.AccountBankTab_5 -- 17
+    AddOnTable.BlizzConstants.ACCOUNT_BANK_PANEL_TITLE = ACCOUNT_BANK_PANEL_TITLE
+    AddOnTable.BlizzConstants.ACCOUNT_BANK_TAB_PURCHASE_PROMPT = ACCOUNT_BANK_TAB_PURCHASE_PROMPT
 end
 
 if C_CurrencyInfo ~= nil and C_CurrencyInfo.GetBackpackCurrencyInfo ~= nil then
