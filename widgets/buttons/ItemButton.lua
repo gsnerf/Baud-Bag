@@ -237,13 +237,13 @@ function Prototype:UpdateNewAndBattlepayoverlays(isNewItem, isBattlePayItem)
 end
 
 function Prototype:OnCustomEnter()
-
-    if (self.Parent.BagSet.Id == BagSetType.Bank.Id) then
+    local bagSetId = self.Parent.BagSet.Id
+    if (bagSetId == BagSetType.Bank.Id) then
         local bagId = self:GetParent():GetID()
         local slotId = self:GetID()
         AddOnTable.Functions.DebugMessage("Tooltip", "[ItemButton:UpdateTooltip] This button is part of the bank bags... reading from cache")
         self:UpdateTooltipFromCache(bagId, slotId)
-    else
+    elseif (bagSetId == BagSetType.Backpack.Id) then
         if (ContainerFrameItemButton_OnUpdate ~= nil) then
             ContainerFrameItemButton_OnUpdate(self)
         elseif (ContainerFrameItemButton_OnEnter ~= nil) then
