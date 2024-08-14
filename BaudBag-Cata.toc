@@ -1,6 +1,6 @@
 ## Author: Thurmal (Author), Suddendeath2000 (Former Author), Baudzila (Original Author)
 ## DefaultState: Enabled
-## Interface: 30403, 40400
+## Interface: 40400
 ## LoadOnDemand: 0
 ## OptionalDeps: CaedronWardrobe, Masque, Pawn
 ## Notes: Allows you to combine bags as well as customize their display.
