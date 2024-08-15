@@ -17,8 +17,13 @@ local function extendBaseType()
         ContainerIterationOrder = { AddOnTable.BlizzConstants.KEYRING_CONTAINER },
         Init = function() end,
         NumberOfContainers = 1,
-        DefaultColumns = 4,
-        DefaultScale = 100,
+        DefaultConfig = {
+            Columns = 4,
+            Scale = 100,
+            GetNameAddition = function(bagId) return Localized.KeyRing end,
+            RequiresFreshConfig = function(bagId) return false end,
+            Background = 3
+        },
         GetItemButtonTemplate = function(containerId) return "ContainerFrameItemButtonTemplate" end,
         GetSize = function(containerId) return AddOnTable.BlizzAPI.GetKeyRingSize() end
     }
