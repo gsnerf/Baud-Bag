@@ -84,6 +84,9 @@
 
 	
 	<Frame name="BaudBagFirstContainerTemplate" virtual="true" inherits="BaudBagContainerTemplate">
+		<KeyValues>
+			<KeyValue key="showInfoBar" type="boolean" value="true" />
+		</KeyValues>
 		<Frames>
 			<CheckButton name="$parentBagsButton" parentKey="BagsButton" mixin="BaudBagBagsButtonMixin">
 				<Size>
