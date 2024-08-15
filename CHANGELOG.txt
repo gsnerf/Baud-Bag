@@ -1,4 +1,7 @@
 ﻿=== Changelog ===
+v11.0.2.3
+  - fixed another faulty access to GetSize() in search frame
+  - fixed error in ITEM_LOCK_CHANGED event due to not yet supported warband bank
 v11.0.2.2
   - fixed default configuration for new chars or bag sets (options window)
   - fixed loading of initial background selection value when switching between bag sets (options window)
