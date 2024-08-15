@@ -243,7 +243,7 @@ local function RemoveSearchHighlights()
             if (BagsSearched[Bag]) then
                 SubBagObject = AddOnTable.SubBags[Bag]
                 SubBag = SubBagObject.Frame
-                for Slot = 1, SubBagObject:GetSize() do
+                for Slot = 1, SubBagObject.BagSet.GetSize(Bag) do
                     ItemButton = _G[SubBag:GetName().."Item"..Slot]
                     ItemButton:SetAlpha(1)
                 end
