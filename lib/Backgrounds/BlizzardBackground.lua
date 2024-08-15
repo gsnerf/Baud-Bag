@@ -45,7 +45,7 @@ function Prototype:Update(containerFrame, backdrop, shiftName)
     self:FillBlanks(helper, blanks, blanksOnTop, ParentTextureName, containerFrame)
     self:CreateSlotBackgrounds(helper, containerFrame, cols, startColumn)
     self:ImproveCornerGaps(helper, containerFrame, ParentTextureName, blanks, blanksOnTop, cols)
-    if (containerFrame:GetID() == 1) then
+    if (containerFrame.showInfoBar == true) then
         local bottomOffset = self:AddBottomInfoBar(helper, containerFrame, ParentTextureName)
         bottom = bottom + bottomOffset
     end

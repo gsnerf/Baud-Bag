@@ -1,9 +1,16 @@
 ﻿=== Changelog ===
+v11.0.2.2
+  - fixed default configuration for new chars or bag sets (options window)
+  - fixed loading of initial background selection value when switching between bag sets (options window)
+  - fixed faulty access to GetSize() in search frame
+  - added contribution note in changelog of last version
+  - more under the hood reworks, necessary for warband bank
 v11.0.2.1
   - fixes for moved C_AddOns APIs
   - fixes for moved C_Bank APIs
   - big under the hood rework of lots of BagSet related mechanics in preparation for warband bank (and more)
   - switched to GitHub Actions for releases
+  - added temporary quick-jump to enable/disable bank into container menu until warband bank is supported (contributed by Ketrel, thx!)
 v11.0.0.1
   - complete overhaul of the settings code
   - removed all old style dropdowns and replaced with either custom code, popouts (for classic) or the new dropdowns (retail)

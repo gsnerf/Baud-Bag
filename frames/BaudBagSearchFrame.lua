@@ -172,7 +172,7 @@ function BaudBagSearchFrameEditBox_OnTextChanged(self, isUserInput)
                 AddOnTable.Functions.DebugMessage("Search", "Bag is open, going through items (BagID)", Bag)
                 BagsSearched[Bag] = true
 
-                for Slot = 1, SubBagObject:GetSize() do
+                for Slot = 1, SubBagObject.BagSet.GetSize(Bag) do
                     ItemButton = _G[SubBag:GetName().."Item"..Slot]
                     slotCache = bagCache and bagCache[Slot] or nil
 

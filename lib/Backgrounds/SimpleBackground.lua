@@ -22,7 +22,7 @@ function Prototype:Update(containerFrame, backdrop, shiftName)
     containerFrame.CloseButton:SetPoint("TOPRIGHT", 8, 28)
 
     local Bottom = self.Insets.Bottom
-    if (containerFrame:GetID() == 1) then
+    if (containerFrame.showInfoBar == true) then
         if (containerFrame.TokenFrame.shouldShow == 1 and containerFrame:GetName() == "BaudBagContainer1_1") then
             containerFrame.FreeSlots:SetPoint("BOTTOMLEFT",   2, -17)
             containerFrame.MoneyFrame:SetPoint("BOTTOMRIGHT", 8, -18)

@@ -217,13 +217,15 @@ end
     The function gets the parameters: 1. ID of the bag, 2. Index of the bag (as provided by ContainerIterationOrder)
 
     Bag IDs are expected to be:
+        -5 == account bank
         -3 == reagent bank
         -2 == keyring & currency
         -1 == bank
         0 == backpack
         1-4 == inventory bags
-        5 == reagent bag [from DF onwards]
-        6-12 == bank bags [before DF -1]
+        5 == reagent bag
+        6-12 == bank bags
+        13-17 == account bank bags
   ]]
 function Prototype:ForEachBag(func)
     for index, bagId in ipairs(self.Type.ContainerIterationOrder) do

@@ -87,14 +87,11 @@ function RestoreConfigToObject(configObject)
             if (containerID == 0) or (configObject[bagSetID].Joined[index] == false) then
                 containerID = containerID + 1;
                 
-                local isBackpack = containerID == 1
-                local isReagentBank = bagID == AddOnTable.BlizzConstants.REAGENTBANK_CONTAINER
-                local isReagentBag = AddOnTable.BlizzConstants.BACKPACK_FIRST_REAGENT_CONTAINER ~= nil and AddOnTable.BlizzConstants.BACKPACK_FIRST_REAGENT_CONTAINER <= bagID and bagID <= AddOnTable.BlizzConstants.BACKPACK_LAST_CONTAINER
-                local isKeyring = bagID == AddOnTable.BlizzConstants.KEYRING_CONTAINER
+                local isFirstContainer = containerID == 1
 
                 if (type(configObject[bagSetID][containerID]) ~= "table") then
                     AddOnTable.Functions.DebugMessage("Config", "- BagSet["..bagSetID.."], Bag["..bagID.."], Container["..containerID.."] container data damaged or missing, creating now")
-                    if isBackpack or isReagentBank or isReagentBag or isKeyring then
+                    if isFirstContainer or bagSetType.DefaultConfig.RequiresFreshConfig(bagID) then
                         configObject[bagSetID][containerID] = {}
                     else
                         configObject[bagSetID][containerID] = AddOnTable.Functions.CopyTable(configObject[bagSetID][containerID-1])
@@ -103,46 +100,21 @@ function RestoreConfigToObject(configObject)
 
                 if not configObject[bagSetID][containerID].Name then
                     AddOnTable.Functions.DebugMessage("Config", "- BagSet["..bagSetID.."], Bag["..bagID.."], Container["..containerID.."] container name missing, creating now")
-                    local nameAddition = Localized.BankBox
-                    if (bagSetID == 1) then
-                        if ( isReagentBag ) then
-                            nameAddition = Localized.ReagentBag
-                        else
-                            nameAddition = Localized.Inventory
-                        end
-                    end
-
-                    if ( isReagentBank ) then
-                        nameAddition = Localized.ReagentBankBox
-                    end
-
-                    if (bagSetID == 3) then
-                        nameAddition = Localized.KeyRing
-                    end
-                    
+                    local nameAddition = bagSetType.DefaultConfig.GetNameAddition(bagID)
                     configObject[bagSetID][containerID].Name = UnitName("player")..Localized.Of..nameAddition
                 end
 
                 if (type(configObject[bagSetID][containerID].Background) ~= "number") then
                     AddOnTable.Functions.DebugMessage("Config", "- BagSet["..bagSetID.."], Bag["..bagID.."], Container["..containerID.."] container background damaged or missing, creating now")
-                    if (bagSetID == 2) then
-                        -- bank containers have "blizz bank" default
-                        configObject[bagSetID][containerID].Background = 2
-                    elseif (bagSetID == 3) then
-                        -- keyring containers have "blizz keyring" default
-                        configObject[bagSetID][containerID].Background = 3
-                    else
-                        -- default contains have "blizz inventory" default
-                        configObject[bagSetID][containerID].Background = 1
-                    end
+                    configObject[bagSetID][containerID].Background = bagSetType.DefaultConfig.Background
                 end
 
                 for _, sliderConfig in ipairs(AddOnTable.ConfigOptions.Container.SliderBars) do
-                    configObject[bagSetID][containerID][sliderConfig.SavedVar] = checkValue(configObject[bagSetID][containerID][sliderConfig.SavedVar], "number", bagSetType.DefaultConfig.Scale, "- BagSet["..bagSetID.."], Bag["..bagID.."], Container["..containerID.."] Slider["..sliderConfig.SavedVar.."] data damaged or missing, creating now")
+                    configObject[bagSetID][containerID][sliderConfig.SavedVar] = checkValue(configObject[bagSetID][containerID][sliderConfig.SavedVar], "number", bagSetType.DefaultConfig[sliderConfig.SavedVar], "- BagSet["..bagSetID.."], Bag["..bagID.."], Container["..containerID.."] Slider["..sliderConfig.SavedVar.."] data damaged or missing, creating now")
                 end
 
                 for _, buttonConfig in ipairs(AddOnTable.ConfigOptions.Container.CheckButtons) do
-                    configObject[bagSetID][containerID][buttonConfig.SavedVar] = checkValue(configObject[bagSetID][containerID][buttonConfig.SavedVar], "boolean", bagSetType.DefaultConfig.Columns, "- BagSet["..bagSetID.."], Bag["..bagID.."], Container["..containerID.."] CheckBox["..buttonConfig.SavedVar.."] data damaged or missing, creating now")
+                    configObject[bagSetID][containerID][buttonConfig.SavedVar] = checkValue(configObject[bagSetID][containerID][buttonConfig.SavedVar], "boolean", buttonConfig.Default, "- BagSet["..bagSetID.."], Bag["..bagID.."], Container["..containerID.."] CheckBox["..buttonConfig.SavedVar.."] data damaged or missing, creating now")
                 end
             end
         end)

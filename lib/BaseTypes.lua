@@ -29,6 +29,19 @@ BagSetType = {
         DefaultConfig = {
             Columns = 8,
             Scale = 100,
+            GetNameAddition = function(bagId)
+                local isReagentBag = AddOnTable.BlizzConstants.BACKPACK_FIRST_REAGENT_CONTAINER ~= nil and AddOnTable.BlizzConstants.BACKPACK_FIRST_REAGENT_CONTAINER <= bagId and bagId <= AddOnTable.BlizzConstants.BACKPACK_LAST_CONTAINER
+                if (isReagentBag) then
+                    return Localized.ReagentBag
+                else
+                    return Localized.Inventory
+                end
+            end,
+            RequiresFreshConfig = function(bagId)
+                local isReagentBag = AddOnTable.BlizzConstants.BACKPACK_FIRST_REAGENT_CONTAINER ~= nil and AddOnTable.BlizzConstants.BACKPACK_FIRST_REAGENT_CONTAINER <= bagId and bagId <= AddOnTable.BlizzConstants.BACKPACK_LAST_CONTAINER
+                return isReagentBag
+            end,
+            Background = 1
         },
         GetItemButtonTemplate = function(containerId) return "ContainerFrameItemButtonTemplate" end,
         GetSize = function(containerId) return AddOnTable.BlizzAPI.GetContainerNumSlots(containerId) end
@@ -59,6 +72,19 @@ BagSetType = {
         DefaultConfig = {
             Columns = 14,
             Scale = 100,
+            GetNameAddition = function(bagId)
+                local isReagentBank = bagId == AddOnTable.BlizzConstants.REAGENTBANK_CONTAINER
+                if (isReagentBank) then
+                    return Localized.ReagentBankBox
+                else
+                    return Localized.BankBox
+                end
+            end,
+            RequiresFreshConfig = function(bagId)
+                local isReagentBank = bagId == AddOnTable.BlizzConstants.REAGENTBANK_CONTAINER
+                return isReagentBank
+            end,
+            Background = 2
         },
         GetItemButtonTemplate = function(containerId)
             if (containerId == AddOnTable.BlizzConstants.REAGENTBANK_CONTAINER) then

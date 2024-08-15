@@ -14,5 +14,6 @@ function BaudBagOptionsDropdownMixin:Setup(menuEntriesList, isSelectedFunc, valu
 end
 
 function BaudBagOptionsDropdownMixin:UpdateSelection(newIndex)
-    -- nothing to be done, this happens automatically here
+    -- this is basically only needed because the drop down needs to handle selections of multiple things that are switched behind its ass...
+    self.Dropdown:SignalUpdate()
 end
