@@ -1,4 +1,10 @@
 ﻿=== Changelog ===
+v11.0.2.2
+  - fixed default configuration for new chars or bag sets (options window)
+  - fixed loading of initial background selection value when switching between bag sets (options window)
+  - fixed faulty access to GetSize() in search frame
+  - added contribution note in changelog of last version
+  - more under the hood reworks, necessary for warband bank
 v11.0.2.1
   - fixes for moved C_AddOns APIs
   - fixes for moved C_Bank APIs
