@@ -247,7 +247,11 @@ function BaudBag_OnLoad(self, event, ...)
     local Container
     for _, bagSet in pairs(BagSetType) do
         Container = _G[Prefix.."Container"..bagSet.Id.."_1"]
-        Container.FreeSlots:SetPoint("RIGHT",Container:GetName().."MoneyFrame","LEFT")
+        -- FreeSlots is only available in containers that inherit from BaudBagFirstContainerTemplate
+        -- in special case Keyring this is not given
+        if (Container.FreeSlots) then
+            Container.FreeSlots:SetPoint("RIGHT",Container:GetName().."MoneyFrame","LEFT")
+        end
         Container.BagSet = bagSet.Id
         Container:SetID(1)
     end
