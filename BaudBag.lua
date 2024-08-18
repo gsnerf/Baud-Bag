@@ -257,7 +257,7 @@ function BaudBag_OnLoad(self, event, ...)
 end
 
 
---[[ this will call the correct event handler]]--
+--[[ this will call the correct event handler ]]--
 function BaudBag_OnEvent(self, event, ...)
     BaudBag_OnBankEvent(self, event, ...)
     BaudBag_OnBackpackEvent(self, event, ...)
