@@ -51,5 +51,4 @@ frames/Options.xml
 frames\BaudBagSearchFrame.xml
 Overrides.lua
 BaudBag.xml
-BaudBagVoidStorage.xml
 external\Masque.lua
