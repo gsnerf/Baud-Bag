@@ -44,6 +44,16 @@ local EventFuncs = {
 
         AddOnTable:UpdateBankParents()
         AddOnTable:UpdateBagParents()
+
+        for _, bagSetType in pairs(BagSetType) do
+            local bagSet = AddOnTable.Sets[bagSetType.Id]
+            AddOnTable.Functions.DebugMessage("Temp", "trying to initialize first container of '"..bagSetType.Name.."'", bagSet.Containers[1])
+            -- TODO: get rid of "Frame"...
+            if (bagSet.Containers[1].Frame.Initialize) then
+                AddOnTable.Functions.DebugMessage("Temp", "calling initialize")
+                bagSet.Containers[1].Frame:Initialize()
+            end
+        end
     end,
 
     ITEM_LOCK_CHANGED = function(self, event, ...)
