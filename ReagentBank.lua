@@ -101,14 +101,10 @@ function BaudBagReagentBankUnlockMixin:OnLoad()
     BaudBagContainerUnlockMixin.OnLoad(self)
     self.Title:SetText(REAGENT_BANK)
     self.Text:SetText(REAGENTBANK_PURCHASE_TEXT)
+    self.PurchaseButton:SetAttribute("clickbutton", ReagentBankFrameUnlockInfoPurchaseButton)
 end
 
 function BaudBagReagentBankUnlockMixin:Refresh()
     -- TODO: global api access
     MoneyFrame_Update( self.CostMoneyFrame, GetReagentBankCost())
-end
-
-function BaudBagReagentBankUnlockMixin:Purchase()
-    PlaySound(SOUNDKIT.IG_MAINMENU_OPTION)
-    StaticPopup_Show("CONFIRM_BUY_REAGENTBANK_TAB")
 end
