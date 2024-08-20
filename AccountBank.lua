@@ -1,0 +1,181 @@
+local AddOnName, AddOnTable = ...
+local _
+local Funcs = AddOnTable.Functions
+local Events = AddOnTable.Events
+local Localized = AddOnTable.Localized
+
+local function extendBaseType()
+    Funcs.DebugMessage("AccountBank", "AccountBank#extendBaseType()")
+    BagSetType["AccountBank"] = {
+        Id = 6,
+        Name = Localized.AccountBank,
+        TypeName = "AccountBank",
+        IsSupported = function() return true end,
+        IsSubContainerOf = function(containerId)
+            local isAccountBankContainer = (containerId == AddOnTable.BlizzConstants.ACCOUNT_BANK_CONTAINER)
+            local isAccountBankSubContainer = (AddOnTable.BlizzConstants.ACCOUNT_BANK_FIRST_SUB_CONTAINER <= containerId) and (containerId <= AddOnTable.BlizzConstants.ACCOUNT_BANK_LAST_SUB_CONTAINER)
+            return isAccountBankContainer or isAccountBankSubContainer
+        end,
+        ContainerIterationOrder = {},
+        Init = function()
+            -- AddOnTable.BlizzConstants.ACCOUNT_BANK_CONTAINER seems to only hold a list of purchased bank tabs along with an rather undefined icon
+            -- not really sure what this thing is supposed to be for
+            -- table.insert(BagSetType.AccountBank.ContainerIterationOrder, AddOnTable.BlizzConstants.ACCOUNT_BANK_CONTAINER)
+            for bag = AddOnTable.BlizzConstants.ACCOUNT_BANK_FIRST_SUB_CONTAINER, AddOnTable.BlizzConstants.ACCOUNT_BANK_LAST_SUB_CONTAINER do
+                table.insert(BagSetType.AccountBank.ContainerIterationOrder, bag)
+            end
+        end,
+        NumberOfContainers = math.max(1, AddOnTable.BlizzAPI.FetchNumPurchasedBankTabs(Enum.BankType.Account)),
+        DefaultConfig = {
+            Columns = 14,
+            Scale = 100,
+            GetNameAddition = function(bagId) return Localized.AccountBank end,
+            RequiresFreshConfig = function(bagId) return false end,
+            Background = 2
+        },
+        GetItemButtonTemplate = function(containerId) return "AccountBankItemButtonTemplate" end,
+        GetSize = function(containerId)
+            local purchasedBankTabIds = AddOnTable.BlizzAPI.FetchPurchasedBankTabIDs(Enum.BankType.Account)
+
+            -- necessary to get a visible first container even when not bought yet (so that we CAN buy)
+            if table.getn(purchasedBankTabIds) == 0 and containerId == AddOnTable.BlizzConstants.ACCOUNT_BANK_FIRST_SUB_CONTAINER then
+                return 98
+            end
+
+            for _, tabId in ipairs (purchasedBankTabIds) do
+                if tabId == containerId then
+                    return 98
+                end
+            end
+            return 0
+        end
+    }
+    tinsert(BagSetTypeArray, BagSetType.AccountBank)
+
+    --AddOnTable.ContainerIdOptionsIndexMap[AddOnTable.BlizzConstants.KEYRING_CONTAINER] = 1
+end
+hooksecurefunc(AddOnTable, "ExtendBaseTypes", extendBaseType)
+
+local function initBagSet()
+    Funcs.DebugMessage("AccountBank", "AccountBank#initBagSet()")
+    local AccountBank = AddOnTable:CreateBagSet(BagSetType.AccountBank)
+    AccountBank:PerformInitialBuild()
+end
+hooksecurefunc(AddOnTable, "InitBagSets", initBagSet)
+
+EventRegistry:RegisterFrameEventAndCallback("BANKFRAME_OPENED", function(ownerID, ...)
+    Funcs.DebugMessage("AccountBank", "AccountBank#bankframeOpened()")
+    ---@type BagSet
+    local bagSet = AddOnTable.Sets[BagSetType.AccountBank.Id]
+    bagSet:RebuildContainers()
+    bagSet:Open()
+end, nil)
+
+EventRegistry:RegisterFrameEventAndCallback("BANKFRAME_CLOSED", function(ownerID, ...)
+    Funcs.DebugMessage("AccountBank", "AccountBank#bankframeClosed()")
+	AddOnTable.Sets[BagSetType.AccountBank.Id]:Close()
+end, nil)
+
+BaudBagFirstAccountBankMixin = {}
+
+local function switchToUnlockMode(self)
+    -- ensure unlock frame exists
+    self.UnlockInfo = CreateFrame("Frame", "BaudBagAccountBankPurchase", _G["BaudBagContainer6_1"], "BaudBagContainerUnlockTemplate")
+    Mixin(self.UnlockInfo, BaudBagAccountBankUnlockMixin)
+    self.UnlockInfo:OnLoad()
+
+    -- ensure that everything intefering with the unlock frame is being hidden
+    self.showInfoBar = false
+    self.MoneyFrame:Hide()
+    self.BagsFrame:Hide()
+    self.BagsButton:Hide()
+    self.SearchButton:Hide()
+    self.MenuButton:Hide()
+end
+
+local function endUnlockMode(self)
+    -- unlock frame needs to vanish
+    self.UnlockInfo:Hide()
+
+    -- we need to re-enable everything that we've hidden earlier
+    self.showInfoBar = true
+    self.MoneyFrame:Show()
+    self.BagsFrame:Show()
+    self.BagsButton:Show()
+    self.SearchButton:Show()
+    self.MenuButton:Show()
+end
+
+function BaudBagFirstAccountBankMixin:OnAccountBankLoad()
+    self:OnLoad()
+
+    -- on unload because it should be ensured that hiding also happens when the frame is not currently visible (otherwise the frame might only vanish)
+    self:RegisterEvent("PLAYER_ACCOUNT_BANK_TAB_SLOTS_CHANGED")
+end
+
+function BaudBagFirstAccountBankMixin:Initialize()
+    local purchasedBankTabsIds = AddOnTable.BlizzAPI.FetchPurchasedBankTabIDs(Enum.BankType.Account)
+    if table.getn(purchasedBankTabsIds) == 0 then
+        switchToUnlockMode(self)
+    end
+end
+
+function BaudBagFirstAccountBankMixin:OnAccountBankShow()
+
+    --[[if self:ShouldShowLockPrompt() then
+		self:ShowLockPrompt();
+		return;
+	end]]
+
+    self:OnShow()
+end
+
+function BaudBagFirstAccountBankMixin:OnAccountBankEvent(event, ...)
+    if (event == "PLAYER_ACCOUNT_BANK_TAB_SLOTS_CHANGED") then
+        if self.UnlockInfo ~= nil then
+            endUnlockMode(self)
+            AddOnTable.Sets[BagSetType.AccountBank.Id].Containers[1]:Rebuild()
+        end
+    end
+
+    -- fallback for inherited OnEvents
+    if (self.OnEvent) then
+        self:OnEvent(event, ...)
+    end
+end
+
+
+--[[ ####################################### UnlockInfo frame ####################################### ]]
+BaudBagAccountBankUnlockMixin = {}
+
+function BaudBagAccountBankUnlockMixin:OnLoad()
+    BaudBagContainerUnlockMixin.OnLoad(self)
+    self.Title:SetText(AddOnTable.BlizzConstants.ACCOUNT_BANK_PANEL_TITLE)
+    self.Text:SetText(AddOnTable.BlizzConstants.ACCOUNT_BANK_TAB_PURCHASE_PROMPT)
+    self.PurchaseButton:SetAttribute("clickbutton", AccountBankPanel.PurchasePrompt.TabCostFrame.PurchaseButton)
+end
+
+function BaudBagAccountBankUnlockMixin:OnShow()
+    self:Refresh()
+    self:RegisterEvent("PLAYER_MONEY")
+end
+
+function BaudBagAccountBankUnlockMixin:OnEvent(event, ...)
+	if event == "PLAYER_MONEY" then
+		self:Refresh()
+	end
+end
+
+function BaudBagAccountBankUnlockMixin:OnHide()
+    self:UnregisterEvent("PLAYER_MONEY")
+end
+
+function BaudBagAccountBankUnlockMixin:Refresh()
+	local tabCost = AddOnTable.BlizzAPI.FetchNextPurchasableBankTabCost(Enum.BankType.Account)
+	if tabCost then 
+        -- TODO: check if it is reasonable to wrap that or not
+		MoneyFrame_Update(self.CostMoneyFrame, tabCost);
+		local canAfford = GetMoney() >= tabCost;
+		SetMoneyFrameColorByFrame(self.CostMoneyFrame, canAfford and "white" or "red");
+	end
+end
