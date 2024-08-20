@@ -32,10 +32,3 @@ local function extendBaseType()
     AddOnTable.ContainerIdOptionsIndexMap[AddOnTable.BlizzConstants.KEYRING_CONTAINER] = 1
 end
 hooksecurefunc(AddOnTable, "ExtendBaseTypes", extendBaseType)
-
-local function initBagSet()
-    Funcs.DebugMessage("Keyring", "Keyring#initBagSet()")
-    local Keyring = AddOnTable:CreateBagSet(BagSetType.Keyring)
-    Keyring:PerformInitialBuild()
-end
-hooksecurefunc(AddOnTable, "InitBagSets", initBagSet)

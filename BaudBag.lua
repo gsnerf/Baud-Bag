@@ -231,17 +231,13 @@ function BaudBag_OnLoad(self, event, ...)
     AddOnTable.Functions.InitFunctions()
 
     AddOnTable:ExtendBaseTypes()
-    for _, bagSet in pairs(BagSetType) do
-        bagSet:Init()
+    
+    AddOnTable.Functions.DebugMessage("Bags", "Create BagSets")
+    for _, bagSetType in pairs(BagSetType) do
+        bagSetType:Init()
+        local bagSet = AddOnTable:CreateBagSet(bagSetType)
+        bagSet:PerformInitialBuild()
     end
-
-    -- register for global events (actually handled in OnEvent function)
-    for Key, Value in pairs(EventFuncs)do
-        self:RegisterEvent(Key)
-    end
-    BaudBag_RegisterBankEvents(self)
-    BaudBag_RegisterBackpackEvents(self)
-    AddOnTable.Functions.RegisterEvents(self)
 
     -- the first container from each set (inventory/bank) is different and is created in the XML
     local Container
@@ -255,19 +251,17 @@ function BaudBag_OnLoad(self, event, ...)
         Container.BagSet = bagSet.Id
         Container:SetID(1)
     end
-
-    AddOnTable.Functions.DebugMessage("Bags", "Create BagSets")
-    local BackpackSet = AddOnTable:CreateBagSet(BagSetType.Backpack)
-    local BankSet = AddOnTable:CreateBagSet(BagSetType.Bank)
-    AddOnTable:InitBagSets()
-
-    -- create all necessary SubBags now with basic initialization, correct referencing later when config is available
-    AddOnTable.Functions.DebugMessage("Bags", "Creating sub bags")
-    BackpackSet:PerformInitialBuild()
-    BankSet:PerformInitialBuild()
-
+    
     -- we think anything essential now should be available... let the system react to that
     AddOnTable:EssentialsLoaded()
+
+    -- register for global events (actually handled in OnEvent function)
+    for Key, Value in pairs(EventFuncs)do
+        self:RegisterEvent(Key)
+    end
+    BaudBag_RegisterBankEvents(self)
+    BaudBag_RegisterBackpackEvents(self)
+    AddOnTable.Functions.RegisterEvents(self)
 end
 
 

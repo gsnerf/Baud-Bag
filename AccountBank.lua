@@ -56,13 +56,6 @@ local function extendBaseType()
 end
 hooksecurefunc(AddOnTable, "ExtendBaseTypes", extendBaseType)
 
-local function initBagSet()
-    Funcs.DebugMessage("AccountBank", "AccountBank#initBagSet()")
-    local AccountBank = AddOnTable:CreateBagSet(BagSetType.AccountBank)
-    AccountBank:PerformInitialBuild()
-end
-hooksecurefunc(AddOnTable, "InitBagSets", initBagSet)
-
 EventRegistry:RegisterFrameEventAndCallback("BANKFRAME_OPENED", function(ownerID, ...)
     Funcs.DebugMessage("AccountBank", "AccountBank#bankframeOpened()")
     ---@type BagSet
