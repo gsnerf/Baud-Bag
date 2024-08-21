@@ -3,9 +3,9 @@
 
     <Frame name="BaudBagContainer6_1" mixin="BaudBagFirstAccountBankMixin" inherits="BaudBagFirstContainerTemplate">
 		<Frames>
-			<Frame name="$parentBagsFrame" parentKey="BagsFrame" inherits="BaudBagBagsFrameTemplate" frameStrata="MEDIUM">
+			<Frame parentKey="BagsFrame" inherits="BaudBagBagsFrameTemplate" mixin="BaudBagAccountBagsFrameMixin" frameStrata="MEDIUM">
 				<Frames>
-					<Frame name="$parentPurchaseFrame" parentKey="PurchaseFrame" setAllPoints="true">
+					<Frame parentKey="PurchaseFrame" setAllPoints="true">
 						<Layers>
 							<Layer level="BACKGROUND">
 								<FontString name="$parentSlotCost" inherits="GameFontHighlight" text="Slot:" justifyH="LEFT">
@@ -19,7 +19,7 @@
 							</Layer>
 						</Layers>
 						<Frames>
-							<Button name="BaudBagBankSlotPurchaseButton" inherits="UIPanelButtonTemplate" text="BANKSLOTPURCHASE">
+							<Button parentKey="PurchaseButton" inherits="UIPanelButtonTemplate" text="BANKSLOTPURCHASE">
 								<Size>
 									<AbsDimension x="0" y="21" />
 								</Size>
@@ -35,7 +35,7 @@
 									</OnClick>
 								</Scripts>
 							</Button>
-							<Frame name="$parentMoneyFrame" inherits="SmallMoneyFrameTemplate">
+							<Frame name="$parentMoneyFrame" parentKey="MoneyFrame" inherits="SmallMoneyFrameTemplate">
 								<Anchors>
 									<Anchor point="LEFT" relativeTo="$parentSlotCost" relativePoint="RIGHT" />
 								</Anchors>

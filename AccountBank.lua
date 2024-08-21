@@ -49,7 +49,7 @@ local function extendBaseType()
             end
             return 0
         end,
-        BagOverview_Initialize = function() end,
+        BagOverview_Initialize = function() _G["BaudBagContainer6_1"].BagsFrame:Initialize() end,
     }
     tinsert(BagSetTypeArray, BagSetType.AccountBank)
 
@@ -172,4 +172,71 @@ function BaudBagAccountBankUnlockMixin:Refresh()
 		local canAfford = GetMoney() >= tabCost;
 		SetMoneyFrameColorByFrame(self.CostMoneyFrame, canAfford and "white" or "red");
 	end
+end
+
+BaudBagAccountBagsFrameMixin = {}
+
+function BaudBagAccountBagsFrameMixin:Initialize()
+    --[[if (#AddOnTable.BlizzAPI.FetchPurchasedBankTabIDs(Enum.BankType.Account) == 0) then
+        return
+    end]]
+
+    local accountBankSet = AddOnTable.Sets[BagSetType.AccountBank.Id]
+
+    for bag = 1, AddOnTable.BlizzConstants.ACCOUNT_BANK_CONTAINER_NUM do
+        local subContainerId = AddOnTable.BlizzConstants.BANK_LAST_CONTAINER + bag
+        ---@type Button
+        local bagButton = AddOnTable:CreateBagButton(BagSetType.AccountBank, subContainerId, bag, self)
+        -- bagButton:SetPoint("TOPLEFT", 8, -8 - (bag-1) * bagButton:GetHeight())
+        bagButton:SetPoint("TOPLEFT", 8 + mod(bag - 1, 2) * 39, -8 - floor((bag - 1) / 2) * 39)
+        accountBankSet.BagButtons[bag] = bagButton
+    end
+
+    local firstBagButton = accountBankSet.BagButtons[1]
+    self:SetWidth(15 + (firstBagButton:GetWidth() * 2))
+    self:Update()
+end
+
+function BaudBagAccountBagsFrameMixin:Update()
+    local accountBankSet = AddOnTable.Sets[BagSetType.AccountBank.Id]
+    local numberOfBoughtContainers = #AddOnTable.BlizzAPI.FetchPurchasedBankTabIDs(Enum.BankType.Account)
+
+    local bagSlot
+    for bag = 1, AddOnTable.BlizzConstants.ACCOUNT_BANK_CONTAINER_NUM do
+        bagSlot = accountBankSet.BagButtons[bag]
+        if bag <= numberOfBoughtContainers then
+            SetItemButtonTextureVertexColor(bagSlot, 1.0, 1.0, 1.0)
+            -- TODO tooltips
+        else
+            SetItemButtonTextureVertexColor(BagSlot, 1.0, 0.1, 0.1)
+            -- TODO tooltips
+        end
+    end
+
+    if (numberOfBoughtContainers == AddOnTable.BlizzConstants.ACCOUNT_BANK_CONTAINER_NUM) then
+        AddOnTable.Functions.DebugMessage("AccountBank", "BagOverview: all containers bought hiding purchase button")
+        self.PurchaseFrame:Hide()
+        self:UpdateHeight(accountBankSet.BagButtons[1]:GetHeight(), false)
+        return
+    end
+
+    local cost = AddOnTable.BlizzAPI.FetchNextPurchasableBankTabCost(Enum.BankType.Account)
+    if (AddOnTable.BlizzAPI.GetMoney() >= cost) then
+        SetMoneyFrameColorByFrame(self.PurchaseFrame.MoneyFrame)
+    else
+        SetMoneyFrameColorByFrame(self.PurchaseFrame.MoneyFrame, "red")
+    end
+    MoneyFrame_Update(self.PurchaseFrame.MoneyFrame, cost)
+    self.PurchaseFrame:Show()
+    self:UpdateHeight(accountBankSet.BagButtons[1]:GetHeight(), true)
+end
+
+---@param withPurchaseFrame boolean
+function BaudBagAccountBagsFrameMixin:UpdateHeight(firstButtonHeight, withPurchaseFrame)
+    local purchaseHeight = 0
+    if (withPurchaseFrame) then
+        purchaseHeight = 40
+    end
+    --self:SetHeight(15 + AddOnTable.BlizzConstants.ACCOUNT_BANK_CONTAINER_NUM * firstBagButton:GetHeight() + 30)
+    self:SetHeight(15 + ceil(AddOnTable.BlizzConstants.ACCOUNT_BANK_CONTAINER_NUM / 2) * firstButtonHeight + purchaseHeight)
 end
