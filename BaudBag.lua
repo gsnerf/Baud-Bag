@@ -233,22 +233,20 @@ function BaudBag_OnLoad(self, event, ...)
     AddOnTable:ExtendBaseTypes()
     
     AddOnTable.Functions.DebugMessage("Bags", "Create BagSets")
+    local Container
     for _, bagSetType in pairs(BagSetType) do
         bagSetType:Init()
         local bagSet = AddOnTable:CreateBagSet(bagSetType)
         bagSet:PerformInitialBuild()
-    end
 
-    -- the first container from each set (inventory/bank) is different and is created in the XML
-    local Container
-    for _, bagSet in pairs(BagSetType) do
-        Container = _G[Prefix.."Container"..bagSet.Id.."_1"]
+        -- the first container for each set is different and is created in XML
+        Container = _G[Prefix.."Container"..bagSetType.Id.."_1"]
         -- FreeSlots is only available in containers that inherit from BaudBagFirstContainerTemplate
         -- in special case Keyring this is not given
         if (Container.FreeSlots) then
             Container.FreeSlots:SetPoint("RIGHT",Container:GetName().."MoneyFrame","LEFT")
         end
-        Container.BagSet = bagSet.Id
+        Container.BagSet = bagSetType.Id
         Container:SetID(1)
     end
     
