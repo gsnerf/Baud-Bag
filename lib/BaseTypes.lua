@@ -3,7 +3,7 @@ local _
 local Localized = AddOnTable.Localized
 
 --[[
-    This enum is pre-filled with the default values that are _aways_ available.
+    This enum is pre-filled with the default values that are _always_ available.
     It can be extended with more depending on feature availability (for example keyring or warband bank)
 ]]
 ---@enum BagSetType this contains all bag set types supported by this flavor
@@ -44,7 +44,9 @@ BagSetType = {
             Background = 1
         },
         GetItemButtonTemplate = function(containerId) return "ContainerFrameItemButtonTemplate" end,
-        GetSize = function(containerId) return AddOnTable.BlizzAPI.GetContainerNumSlots(containerId) end
+        GetSize = function(containerId) return AddOnTable.BlizzAPI.GetContainerNumSlots(containerId) end,
+        -- intended to be set in Backpack.lua
+        BagOverview_Initialize = nil,
     },
     Bank = {
         Id = 2,
@@ -101,7 +103,9 @@ BagSetType = {
             else
                 return AddOnTable.BlizzAPI.GetContainerNumSlots(containerId)
             end
-        end
+        end,
+        -- intended to be set in Bank.lua
+        BagOverview_Initialize = nil,
     },
     --[[
         GuildBank = {

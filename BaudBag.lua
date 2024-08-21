@@ -38,14 +38,13 @@ local EventFuncs = {
         end
         AddOnTable.Functions.DebugMessage("Bags", "Event PLAYER_LOGIN fired")
 
-        BackpackBagOverview_Initialize()
         BaudBagUpdateFromBBConfig()
-        BaudBagBankBags_Initialize()
 
         AddOnTable:UpdateBankParents()
         AddOnTable:UpdateBagParents()
 
         for _, bagSetType in pairs(BagSetType) do
+            bagSetType.BagOverview_Initialize()
             local bagSet = AddOnTable.Sets[bagSetType.Id]
             AddOnTable.Functions.DebugMessage("Temp", "trying to initialize first container of '"..bagSetType.Name.."'", bagSet.Containers[1])
             -- TODO: get rid of "Frame"...

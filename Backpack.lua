@@ -17,7 +17,7 @@ function BaudBag_OnBackpackEvent(self, event, ...)
 end
 
 
-function BackpackBagOverview_Initialize()
+local function BackpackBagOverview_Initialize()
     -- create BagSlots for the bag overview in the inventory (frame that pops out and only shows the available bags)
     AddOnTable.Functions.DebugMessage("Bags", "Creating bag slot buttons.")
     local backpackSet = AddOnTable.Sets[BagSetType.Backpack.Id]
@@ -42,6 +42,7 @@ function BackpackBagOverview_Initialize()
     BBContainer1:SetWidth(15 + firstBackpackBagButton:GetWidth())
     BBContainer1:SetHeight(15 + AddOnTable.BlizzConstants.BACKPACK_TOTAL_BAGS_NUM * firstBackpackBagButton:GetHeight())
 end
+BagSetType.Backpack.BagOverview_Initialize = BackpackBagOverview_Initialize
 
 
 if PlayerInteractionFrameManager ~= nil then

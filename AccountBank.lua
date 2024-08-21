@@ -48,7 +48,8 @@ local function extendBaseType()
                 end
             end
             return 0
-        end
+        end,
+        BagOverview_Initialize = function() end,
     }
     tinsert(BagSetTypeArray, BagSetType.AccountBank)
 

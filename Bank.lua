@@ -67,8 +67,7 @@ end
 --[[
     This method creates the buttons in the banks BagsFrame (frame that pops out and shows the available bags).
   ]]
-function BaudBagBankBags_Initialize()
-    local BagSlot, Texture
+local function BankBags_Initialize()
     local bankSet = AddOnTable.Sets[BagSetType.Bank.Id]
     local BBContainer2 = _G[Prefix.."Container2_1BagsFrame"]
 
@@ -88,6 +87,7 @@ function BaudBagBankBags_Initialize()
     BBContainer2.Height = 13 + ceil(NUM_BANKBAGSLOTS / 2) * 39
     BaudBagBankBags_Update()
 end
+BagSetType.Bank.BagOverview_Initialize = BankBags_Initialize
 
 function AddOnTable:BankBags_Inititalize(BagContainer)
     -- just an empty hook for other addons
