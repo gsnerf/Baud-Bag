@@ -275,17 +275,16 @@ function BaudBag_BagButtonMixin:OnReceiveDrag()
     self:PutItemInBag()
 end
 
-function AddOnTable:CreateBackpackBagButton(bagIndex, parentFrame)
-    local bagSetType = BagSetType.Backpack
-    local subContainerId = bagIndex + 1
-    local name = "BBBagSet"..bagSetType.Id.."Bag"..bagIndex.."Slot"
-
+---@return table|BaudBag_BagButton|Button
+function AddOnTable:CreateBagButton(bagSetType, subContainerId, bagIndex, parentFrame, name)
+    if (name == nil) then
+        name = "BBBagSet"..bagSetType.Id.."Bag"..bagIndex.."Slot"
+    end
     local bagButton = CreateFrame("Button", name, parentFrame, "BaudBag_BagButton")
     bagButton.BagSetType = bagSetType
     bagButton.BagIndex = bagIndex
     bagButton.Bag = subContainerId
     bagButton.SubContainerId = subContainerId
-    bagButton:SetFrameStrata("HIGH")
     bagButton:Initialize()
 
     AddOnTable:BagSlot_Created(bagSetType, subContainerId, bagButton)
@@ -293,21 +292,19 @@ function AddOnTable:CreateBackpackBagButton(bagIndex, parentFrame)
     return bagButton
 end
 
+function AddOnTable:CreateBackpackBagButton(bagIndex, parentFrame)
+    local bagSetType = BagSetType.Backpack
+    local subContainerId = bagIndex + 1
+
+    return AddOnTable:CreateBagButton(bagSetType, subContainerId, bagIndex, parentFrame)
+end
+
 function AddOnTable:CreateReagentBagButton(bagIndex, parentFrame)
+    local bagSetType = BagSetType.Backpack
     local subContainerId = bagIndex + AddOnTable.BlizzConstants.BACKPACK_CONTAINER_NUM + 1
     local name = "BBBagSet1ReagentBag"..bagIndex.."Slot"
 
-    local bagButton = CreateFrame("Button", name, parentFrame, "BaudBag_BagButton")
-    bagButton.BagSetType = BagSetType.Backpack
-    bagButton.BagIndex = bagIndex
-    bagButton.Bag = subContainerId
-    bagButton.SubContainerId = subContainerId
-    bagButton:SetFrameStrata("HIGH")
-    bagButton:Initialize()
-
-    AddOnTable:BagSlot_Created(bagButton.BagSetType, subContainerId, bagButton)
-
-    return bagButton
+    return AddOnTable:CreateBagButton(bagSetType, subContainerId, bagIndex, parentFrame, name)
 end
 
 function AddOnTable:CreateBankBagButton(bagIndex, parentFrame)
@@ -319,17 +316,7 @@ function AddOnTable:CreateBankBagButton(bagIndex, parentFrame)
     local subContainerId = AddOnTable.BlizzConstants.BACKPACK_LAST_CONTAINER + bagIndex
     local name = "BBBagSet"..bagSetType.Id.."Bag"..bagIndex.."Slot"
 
-    local bagButton = CreateFrame("Button", name, parentFrame, "BaudBag_BagButton")
-    bagButton.BagSetType = bagSetType
-    bagButton.BagIndex = bagIndex
-    bagButton.Bag = subContainerId
-    bagButton.SubContainerId = subContainerId
-    --bagButton:SetFrameStrata("HIGH")
-    bagButton:Initialize()
-
-    AddOnTable:BagSlot_Created(bagSetType, subContainerId, bagButton)
-
-    return bagButton
+    return AddOnTable:CreateBagButton(bagSetType, subContainerId, bagIndex, parentFrame, name)
 end
 
 function AddOnTable:BagSlot_Created(bagSetType, bag, button)
