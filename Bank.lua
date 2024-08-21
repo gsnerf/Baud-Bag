@@ -33,7 +33,7 @@ local Func = function(self, event, ...)
     AddOnTable.Functions.DebugMessage("Bank", "Event fired", event)
     
 	-- set bank open marker if it was opend
-    if (event == "BANKFRAME_OPENED") then
+    if (event == "BANKFRAME_OPENED" and AddOnTable.BlizzAPI.CanUseBank(AddOnTable.BlizzEnum.BankType.Character)) then
         AddOnTable.State.BankOpen = true
     end
     

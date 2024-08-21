@@ -161,6 +161,16 @@ if C_Bank ~= nil then
     API.PurchaseBankTab = C_Bank.PurchaseBankTab
     API.UpdateBankTabSettings = C_Bank.UpdateBankTabSettings
     API.WithdrawMoney = C_Bank.WithdrawMoney
+else
+    API.CanUseBank = function(bankType)
+        if (bankType == API.BlizzEnum.BankType.Account) then
+            -- it is known that this doesn't exist until C_Bank was introduced
+            return false
+        else
+            -- there is no way to identify this for other types, so we just rely on the events themselves for that
+            return true
+        end
+    end
 end
 
 -- introduced with tww
@@ -247,4 +257,16 @@ if C_CurrencyInfo ~= nil and C_CurrencyInfo.GetBackpackCurrencyInfo ~= nil then
     AddOnTable.BlizzAPI.GetBackpackCurrencyInfo = C_CurrencyInfo.GetBackpackCurrencyInfo
 else
     AddOnTable.BlizzAPI.GetBackpackCurrencyInfo = GetBackpackCurrencyInfo
+end
+
+AddOnTable.BlizzEnum = {}
+
+if (Enum.BankType) then
+    AddOnTable.BlizzEnum.BankType = Enum.BankType
+else
+    AddOnTable.BlizzEnum.BankType = {
+        Character = 0,
+        Guild = 1,
+        Account = 2
+    }
 end
