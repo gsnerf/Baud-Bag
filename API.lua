@@ -25,6 +25,7 @@ AddOnTable.BlizzAPI = {
     GetInventoryItemTexture = GetInventoryItemTexture,
     GetInventoryItemQuality = GetInventoryItemQuality,
     GetInventoryItemLink = GetInventoryItemLink,
+    GetInventoryItemCount = GetInventoryItemCount,
     CursorUpdate = CursorUpdate,
     CursorHasItem = CursorHasItem,
     ResetCursor = ResetCursor,
@@ -37,6 +38,10 @@ AddOnTable.BlizzAPI = {
     GetKeyRingSize = GetKeyRingSize and GetKeyRingSize or function() return 0 end,
     IsAddOnLoaded = IsAddOnLoaded,
     GetAddOnMetadata = GetAddOnMetadata,
+    GetNumBankSlots = GetNumBankSlots,
+    GetBankSlotCost = GetBankSlotCost,
+    GetMoney = GetMoney,
+    BankButtonIDToInvSlotID = BankButtonIDToInvSlotID,
 }
 
 local API = AddOnTable.BlizzAPI

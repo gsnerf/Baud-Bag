@@ -101,7 +101,7 @@ end
   ]]
 function BaudBagBankBags_Update()
     local Purchase = BaudBagBankSlotPurchaseFrame
-    local Slots, Full = GetNumBankSlots()
+    local Slots, Full = AddOnTable.BlizzAPI.GetNumBankSlots()
     
     local BagSlot
     local bankSet = AddOnTable.Sets[BagSetType.Bank.Id]
@@ -130,13 +130,14 @@ function BaudBagBankBags_Update()
         return
     end
     
-    local Cost = GetBankSlotCost(Slots)
+    -- TODO migrate to FetchNextPurchasableBankTabCost with fallback for classic?
+    local Cost = AddOnTable.BlizzAPI.GetBankSlotCost(Slots)
     AddOnTable.Functions.DebugMessage("Bank", "BankBags: buyable bag slots left, currentCost = "..Cost)
     
     -- This line allows the confirmation box to show the cost
     BankFrame.nextSlotCost = Cost
     
-    if (GetMoney() >= Cost) then
+    if (AddOnTable.BlizzAPI.GetMoney() >= Cost) then
         -- SetMoneyFrameColor(Purchase:GetName().."MoneyFrame", 1.0, 1.0, 1.0)
         SetMoneyFrameColor(Purchase:GetName().."MoneyFrame")
     else
@@ -174,9 +175,9 @@ function AddOnTable:BankBags_UpdateContent(self, bankVisible)
     AddOnTable.Functions.DebugMessage("Bank", "Recording bank bag info.")
     for Bag = 1, NUM_BANKBAGSLOTS do
         local bagCache = AddOnTable.Cache:GetBagCache(Bag + AddOnTable.BlizzConstants.BACKPACK_LAST_CONTAINER)
-        local inventoryId = BankButtonIDToInvSlotID(Bag, 1)
-        bagCache.BagLink  = GetInventoryItemLink("player", inventoryId)
-        bagCache.BagCount = GetInventoryItemCount("player", inventoryId)
+        local inventoryId = AddOnTable.BlizzAPI.BankButtonIDToInvSlotID(Bag, 1)
+        bagCache.BagLink  = AddOnTable.BlizzAPI.GetInventoryItemLink("player", inventoryId)
+        bagCache.BagCount = AddOnTable.BlizzAPI.GetInventoryItemCount("player", inventoryId)
     end
     
     local firstBankContainer = bankSet.Containers[1]
