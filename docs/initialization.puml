@@ -22,27 +22,28 @@ activate WoW
     WoW -> BaudBagFrame: BaudBagFrame_OnLoad(self, event, ...)
     activate BaudBagFrame
         BaudBagFrame -> BaudBagFrame: call hook ExtendBaseTypes
-        BaudBagFrame -> BaudBagFrame: call Init() on all BagSetTypes
 
-        BaudBagFrame -> BaudBagFrame: event init stuff (TODO: rework!)
+        loop over all BagSetType entries
+            BaudBagFrame -> BagSetType: call Init()
+            create BagSet
+            BaudBagFrame -> BagSet: AddOnTable:CreateBagSet(bagSetType)
+            BaudBagFrame -> BagSet: PerformInitialBuild()
 
-        BaudBagFrame -> BaudBagFrame: BaudBagContainerX_1 initial setup (as not done by CreateContainer)
+            activate BagSet
+                create Container
+                BagSet -> Container: new
 
-        create BagSet
-        BaudBagFrame -> BagSet: AddOnTable:CreateBagSet(...) [for backpack & banks]
-        BaudBagFrame -> BaudBagFrame: call hook InitBagSets
-        BaudBagFrame -> BagSet: PerformInitialBuild [for backpack & banks]
+                create SubContainer
+                BagSet -> SubContainer: new
+                BagSet -> BagSet: tinsert subcontainer into internal list
+            deactivate BagSet
 
-        activate BagSet
-            create Container
-            BagSet -> Container: new
-
-            create SubContainer
-            BagSet -> SubContainer: new
-            BagSet -> BagSet: tinsert subcontainer into internal list
-        deactivate BagSet
+            BaudBagFrame -> BaudBagFrame: BaudBagContainerX_1 initial setup (as not done by CreateContainer)
+        end
 
         BaudBagFrame -> BaudBagFrame: call hook EssentialsLoaded
+
+        BaudBagFrame -> BaudBagFrame: event init stuff (TODO: rework!)
     deactivate BaudBagFrame
 
 
