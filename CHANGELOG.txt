@@ -1,4 +1,8 @@
 ﻿=== Changelog ===
+v11.0.2.4
+  - fixed keyring to actually be able to load in classic flavors
+  - fixed offline state recognition for bank when visiting using the "warband distance inhibitor"
+  - lots of under the hood improvements to allow supporting warband bank
 v11.0.2.3
   - fixed another faulty access to GetSize() in search frame
   - fixed error in ITEM_LOCK_CHANGED event due to not yet supported warband bank
