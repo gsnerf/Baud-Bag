@@ -168,7 +168,7 @@ if C_Bank ~= nil then
     API.WithdrawMoney = C_Bank.WithdrawMoney
 else
     API.CanUseBank = function(bankType)
-        if (bankType == API.BlizzEnum.BankType.Account) then
+        if (bankType == AddOnTable.BlizzEnum.BankType.Account) then
             -- it is known that this doesn't exist until C_Bank was introduced
             return false
         else
@@ -265,6 +265,7 @@ else
     AddOnTable.BlizzAPI.GetBackpackCurrencyInfo = GetBackpackCurrencyInfo
 end
 
+---@class BlizzEnum
 AddOnTable.BlizzEnum = {}
 
 if (Enum.BankType) then
