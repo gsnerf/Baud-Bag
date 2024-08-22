@@ -46,6 +46,7 @@ BaudBagCache.lua
 BaudBagToolTips.lua
 Backpack.lua
 Bank.lua
+# AccountBank.xml
 ReagentBank.xml
 frames/Options.xml
 frames\BaudBagSearchFrame.xml
