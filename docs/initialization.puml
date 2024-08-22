@@ -1,20 +1,66 @@
-@startuml
+@startuml addon initialization phase
 
-participant BaudBagFrame
+participant WoW
 
-[-> BaudBagFrame: BaudBagFrame_OnLoad(self, event, ...)
+WoW -> WoW: load all files in toc
+activate WoW
+    WoW -> WoW: call OnLoad on any frame directly intantiated (excludes virtuals)
 
-create BagSet
-BaudBagFrame -> BagSet: new
-BaudBagFrame -> BagSet: PerformInitialBuild
-activate BagSet
+    create BaudBagContainer6_1
+    WoW -> BaudBagContainer6_1: OnLoad()
 
-create Container
-BagSet -> Container: new
+    create BaudBagOptions
+    WoW -> BaudBagOptions: OnLoad()
 
-create SubContainer
-BagSet -> SubContainer: new
-BagSet -> BagSet: tinsert subcontainer into internal list
+    create BaudBagContainer1_1
+    WoW -> BaudBagContainer1_1: OnLoad()
+
+    create BaudBagContainer2_1
+    WoW -> BaudBagContainer2_1: OnLoad()
+
+    create BaudBagFrame
+    WoW -> BaudBagFrame: BaudBagFrame_OnLoad(self, event, ...)
+    activate BaudBagFrame
+        BaudBagFrame -> BaudBagFrame: call hook ExtendBaseTypes
+
+        loop over all BagSetType entries
+            BaudBagFrame -> BagSetType: call Init()
+            create BagSet
+            BaudBagFrame -> BagSet: AddOnTable:CreateBagSet(bagSetType)
+            BaudBagFrame -> BagSet: PerformInitialBuild()
+
+            activate BagSet
+                create Container
+                BagSet -> Container: new
+
+                create SubContainer
+                BagSet -> SubContainer: new
+                BagSet -> BagSet: tinsert subcontainer into internal list
+            deactivate BagSet
+
+            BaudBagFrame -> BaudBagFrame: BaudBagContainerX_1 initial setup (as not done by CreateContainer)
+        end
+
+        BaudBagFrame -> BaudBagFrame: call hook EssentialsLoaded
+
+        BaudBagFrame -> BaudBagFrame: event init stuff (TODO: rework!)
+    deactivate BaudBagFrame
 
 
+    WoW -> BaudBagFrame: event ADDON_LOADED
+    activate BaudBagFrame
+        BaudBagFrame -> BaudBagFrame: AddOnTable:InitCache()
+        BaudBagFrame -> BaudBagFrame: AddOnTable:RegisterDefaultBackgrounds()
+    deactivate BaudBagFrame
+
+    WoW -> BaudBagFrame: event PLAYER_LOGIN
+    activate BaudBagFrame
+        BaudBagFrame -> BaudBagFrame: BackpackBagOverview_Initialize()
+        BaudBagFrame -> BaudBagFrame: BaudBagUpdateFromBBConfig()
+        BaudBagFrame -> BaudBagFrame: BaudBagBankBags_Initialize()
+        BaudBagFrame -> BaudBagFrame: AddOnTable:UpdateBankParents()
+        BaudBagFrame -> BaudBagFrame: AddOnTable:UpdateBagParents()
+    deactivate BaudBagFrame
+
+deactivate WoW
 @enduml

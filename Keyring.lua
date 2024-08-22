@@ -25,17 +25,12 @@ local function extendBaseType()
             Background = 3
         },
         GetItemButtonTemplate = function(containerId) return "ContainerFrameItemButtonTemplate" end,
-        GetSize = function(containerId) return AddOnTable.BlizzAPI.GetKeyRingSize() end
+        GetSize = function(containerId) return AddOnTable.BlizzAPI.GetKeyRingSize() end,
+        -- there are no bags for an overview
+        BagOverview_Initialize = function() end,
     }
     tinsert(BagSetTypeArray, BagSetType.Keyring)
 
     AddOnTable.ContainerIdOptionsIndexMap[AddOnTable.BlizzConstants.KEYRING_CONTAINER] = 1
 end
 hooksecurefunc(AddOnTable, "ExtendBaseTypes", extendBaseType)
-
-local function initBagSet()
-    Funcs.DebugMessage("Keyring", "Keyring#initBagSet()")
-    local Keyring = AddOnTable:CreateBagSet(BagSetType.Keyring)
-    Keyring:PerformInitialBuild()
-end
-hooksecurefunc(AddOnTable, "InitBagSets", initBagSet)

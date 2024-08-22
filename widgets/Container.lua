@@ -306,6 +306,7 @@ function BaudBagContainerMixin:OnShow(event, ...)
     self.FadeStart = GetTime()
     PlaySound(SOUNDKIT.IG_BACKPACK_OPEN)
     local bagSet = AddOnTable.Sets[self.BagSet]
+    ---@type Container
     local containerObject = bagSet.Containers[self:GetID()]
     containerObject:Update()
     if (containerObject.Frame.Slots > 0) then
@@ -450,13 +451,4 @@ BaudBagContainerUnlockCostMoneyMixin = {}
 function BaudBagContainerUnlockCostMoneyMixin:OnLoad()
     SmallMoneyFrame_OnLoad(self)
     MoneyFrame_SetType(self, "STATIC")
-end
-
-BaudBagContainerUnlockPurchaseButtonMixin = {}
-
-function BaudBagContainerUnlockPurchaseButtonMixin:OnClick()
-    local unlockPanel = self:GetParent()
-    if unlockPanel.Purchase then
-        unlockPanel:Purchase()
-    end
 end

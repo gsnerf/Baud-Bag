@@ -25,6 +25,7 @@ AddOnTable.BlizzAPI = {
     GetInventoryItemTexture = GetInventoryItemTexture,
     GetInventoryItemQuality = GetInventoryItemQuality,
     GetInventoryItemLink = GetInventoryItemLink,
+    GetInventoryItemCount = GetInventoryItemCount,
     CursorUpdate = CursorUpdate,
     CursorHasItem = CursorHasItem,
     ResetCursor = ResetCursor,
@@ -37,6 +38,10 @@ AddOnTable.BlizzAPI = {
     GetKeyRingSize = GetKeyRingSize and GetKeyRingSize or function() return 0 end,
     IsAddOnLoaded = IsAddOnLoaded,
     GetAddOnMetadata = GetAddOnMetadata,
+    GetNumBankSlots = GetNumBankSlots,
+    GetBankSlotCost = GetBankSlotCost,
+    GetMoney = GetMoney,
+    BankButtonIDToInvSlotID = BankButtonIDToInvSlotID,
 }
 
 local API = AddOnTable.BlizzAPI
@@ -161,6 +166,16 @@ if C_Bank ~= nil then
     API.PurchaseBankTab = C_Bank.PurchaseBankTab
     API.UpdateBankTabSettings = C_Bank.UpdateBankTabSettings
     API.WithdrawMoney = C_Bank.WithdrawMoney
+else
+    API.CanUseBank = function(bankType)
+        if (bankType == AddOnTable.BlizzEnum.BankType.Account) then
+            -- it is known that this doesn't exist until C_Bank was introduced
+            return false
+        else
+            -- there is no way to identify this for other types, so we just rely on the events themselves for that
+            return true
+        end
+    end
 end
 
 -- introduced with tww
@@ -235,7 +250,8 @@ if (GetExpansionLevel() >= 9) then
 end
 
 if (interfaceVersion >= 110000) then -- from "The War Within" onwards
-    AddOnTable.BlizzConstants.ACCOUNT_BANK_CONTAINER_NUM = 6 -- according to Enum.BagIndex Accountbanktab + AccountBankTab_1 to *_5
+    --AddOnTable.BlizzConstants.ACCOUNT_BANK_CONTAINER_NUM = 6 -- according to Enum.BagIndex Accountbanktab + AccountBankTab_1 to *_5
+    AddOnTable.BlizzConstants.ACCOUNT_BANK_CONTAINER_NUM = 5 -- according to Enum.BagIndex AccountBankTab_1 to AccountBankTab_5 (Accountbanktab isn't actually a usable bank tab)
     AddOnTable.BlizzConstants.ACCOUNT_BANK_CONTAINER = Enum.BagIndex.Accountbanktab -- -5
     AddOnTable.BlizzConstants.ACCOUNT_BANK_FIRST_SUB_CONTAINER = Enum.BagIndex.AccountBankTab_1 -- 13
     AddOnTable.BlizzConstants.ACCOUNT_BANK_LAST_SUB_CONTAINER = Enum.BagIndex.AccountBankTab_5 -- 17
@@ -247,4 +263,17 @@ if C_CurrencyInfo ~= nil and C_CurrencyInfo.GetBackpackCurrencyInfo ~= nil then
     AddOnTable.BlizzAPI.GetBackpackCurrencyInfo = C_CurrencyInfo.GetBackpackCurrencyInfo
 else
     AddOnTable.BlizzAPI.GetBackpackCurrencyInfo = GetBackpackCurrencyInfo
+end
+
+---@class BlizzEnum
+AddOnTable.BlizzEnum = {}
+
+if (Enum.BankType) then
+    AddOnTable.BlizzEnum.BankType = Enum.BankType
+else
+    AddOnTable.BlizzEnum.BankType = {
+        Character = 0,
+        Guild = 1,
+        Account = 2
+    }
 end

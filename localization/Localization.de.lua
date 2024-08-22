@@ -71,4 +71,5 @@ if (GetLocale() == "deDE") then
     L.OptionsResetAllPositionsTooltip = "Nützlich um Container wieder ins Bild zu holen die ausserhalb des sichtbaren Bildschirmbereichs gelandet sind."
     L.OptionsResetContainerPosition = "Container zentrieren"
     L.OptionsResetContainerPositionTooltip = "Verwende dies um einen aus dem Bildschirmbreich geschobenen Container in die Mitte des Bildschirms zu versetzen."
+    L.AccountBank = "Kriegsmeutenbank"
 end

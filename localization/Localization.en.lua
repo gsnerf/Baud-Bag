@@ -82,4 +82,5 @@ AddOnTable["Localized"] = {
     OptionsResetAllPositionsTooltip = "Mainly helpful if you moved a container off screen by accident. If you only want to reset the position for a specific container, use the option further down instead!",
     OptionsResetContainerPosition = "Reset container position",
     OptionsResetContainerPositionTooltip = "Use this if you dragged the selected container of screen by accident.",
+    AccountBank = "Warband Bank",
 }
