@@ -174,6 +174,31 @@ function BaudBagAccountBankUnlockMixin:Refresh()
 	end
 end
 
+--[[ ########################################## Bags frame ########################################## ]]
+
+local function UpdateContent(self)
+    local purchasedBankTabData = AddOnTable.BlizzAPI.FetchPurchasedBankTabData(Enum.BankType.Account)
+    for index, tabData in pairs(purchasedBankTabData) do
+        if self.SubContainerId == tabData.ID then
+            ---@class TabData
+            self.TabData = {
+                Name = tabData.name,
+                IconID = tabData.icon,
+                Flags = tabData.depositFlags
+            }
+            -- TEMP
+            self.Icon:SetTexture(tabData.icon)
+            return
+        end
+    end
+    -- fallback
+    self:SetItem()
+end
+
+local function OnShowOverride(self)
+    self:UpdateContent()
+end
+
 BaudBagAccountBagsFrameMixin = {}
 
 function BaudBagAccountBagsFrameMixin:Initialize()
@@ -189,6 +214,8 @@ function BaudBagAccountBagsFrameMixin:Initialize()
         local bagButton = AddOnTable:CreateBagButton(BagSetType.AccountBank, subContainerId, bag, self)
         -- bagButton:SetPoint("TOPLEFT", 8, -8 - (bag-1) * bagButton:GetHeight())
         bagButton:SetPoint("TOPLEFT", 8 + mod(bag - 1, 2) * 39, -8 - floor((bag - 1) / 2) * 39)
+        bagButton.UpdateContent = UpdateContent
+        bagButton.OnShowOverride = OnShowOverride
         accountBankSet.BagButtons[bag] = bagButton
     end
 
@@ -204,11 +231,9 @@ function BaudBagAccountBagsFrameMixin:Update()
     local bagSlot
     for bag = 1, AddOnTable.BlizzConstants.ACCOUNT_BANK_CONTAINER_NUM do
         bagSlot = accountBankSet.BagButtons[bag]
-        if bag <= numberOfBoughtContainers then
-            SetItemButtonTextureVertexColor(bagSlot, 1.0, 1.0, 1.0)
-            -- TODO tooltips
-        else
-            SetItemButtonTextureVertexColor(BagSlot, 1.0, 0.1, 0.1)
+        if bag > numberOfBoughtContainers then
+            bagSlot.ContainerNotPurchasedYet = true
+            bagSlot:UpdateContent()
             -- TODO tooltips
         end
     end

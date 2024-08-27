@@ -2,6 +2,8 @@ local _
 local AddOnName, AddOnTable = ...
 
 ---@class BagButton
+---@field BagSetType BagSetTypeClass
+---@field SubContainerId integer ID of the container as WoW knows it
 ---@field Icon Texture
 ---@field Border Texture
 BaudBag_BagButtonMixin = {
@@ -62,6 +64,7 @@ function BaudBag_BagButtonMixin:SetQuality(quality)
     self.Icon:SetVertexColor(1, 1, 1)
 end
 
+---@param item ItemInfo Item ID, Link or name 
 function BaudBag_BagButtonMixin:SetItem(item)
 	self.item = item;
 
@@ -221,9 +224,14 @@ local bagButtonRelatedEvents = {
 function BaudBag_BagButtonMixin:OnShow()
     if (self.IsInventoryContainer) then
         FrameUtil.RegisterFrameForEvents(self, bagButtonRelatedEvents)
-
         self:UpdateContent()
     end
+
+    self:OnShowOverride()
+end
+
+function BaudBag_BagButtonMixin:OnShowOverride()
+    -- intentionally empty, to be overridden by specific bag button flavors
 end
 
 function BaudBag_BagButtonMixin:OnHide()
