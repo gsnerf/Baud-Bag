@@ -62,6 +62,7 @@ EventRegistry:RegisterFrameEventAndCallback("BANKFRAME_OPENED", function(ownerID
     ---@type BagSet
     local bagSet = AddOnTable.Sets[BagSetType.AccountBank.Id]
     bagSet:RebuildContainers()
+    bagSet.Containers[1].Frame.BagsFrame:Update()
     bagSet:Open()
 end, nil)
 
@@ -177,22 +178,16 @@ end
 --[[ ########################################## Bags frame ########################################## ]]
 
 local function UpdateContent(self)
-    local purchasedBankTabData = AddOnTable.BlizzAPI.FetchPurchasedBankTabData(Enum.BankType.Account)
-    for index, tabData in pairs(purchasedBankTabData) do
-        if self.SubContainerId == tabData.ID then
-            ---@class TabData
-            self.TabData = {
-                Name = tabData.name,
-                IconID = tabData.icon,
-                Flags = tabData.depositFlags
-            }
-            -- TEMP
-            self.Icon:SetTexture(tabData.icon)
-            return
-        end
+    if (self.TabData) then
+        AddOnTable.Functions.DebugMessage("AccountBank", "UpdateContent: updating based on TabData", self:GetName())
+        self.ContainerNotPurchasedYet = false
+        self.Icon:SetTexture(self.TabData.IconID)
+        self:SetQuality()
+    else
+        AddOnTable.Functions.DebugMessage("AccountBank", "UpdateContent: no TabData, assuming bagslot not bought", self:GetName())
+        self.ContainerNotPurchasedYet = true
+        self:SetItem()
     end
-    -- fallback
-    self:SetItem()
 end
 
 local function OnShowOverride(self)
@@ -226,16 +221,23 @@ end
 
 function BaudBagAccountBagsFrameMixin:Update()
     local accountBankSet = AddOnTable.Sets[BagSetType.AccountBank.Id]
-    local numberOfBoughtContainers = #AddOnTable.BlizzAPI.FetchPurchasedBankTabIDs(Enum.BankType.Account)
+    local purchasedBankTabData = AddOnTable.BlizzAPI.FetchPurchasedBankTabData(Enum.BankType.Account)
+    local numberOfBoughtContainers = #purchasedBankTabData
+    AddOnTable.Functions.DebugMessage("AccountBank", "BagOverview: updating content", purchasedBankTabData, numberOfBoughtContainers)
 
     local bagSlot
     for bag = 1, AddOnTable.BlizzConstants.ACCOUNT_BANK_CONTAINER_NUM do
         bagSlot = accountBankSet.BagButtons[bag]
-        if bag > numberOfBoughtContainers then
-            bagSlot.ContainerNotPurchasedYet = true
-            bagSlot:UpdateContent()
-            -- TODO tooltips
+        if bag <= numberOfBoughtContainers then
+            local tabData = purchasedBankTabData[bag]
+            ---@class TabData
+            bagSlot.TabData = {
+                Name = tabData.name,
+                IconID = tabData.icon,
+                Flags = tabData.depositFlags
+            }
         end
+        bagSlot:UpdateContent()
     end
 
     if (numberOfBoughtContainers == AddOnTable.BlizzConstants.ACCOUNT_BANK_CONTAINER_NUM) then
