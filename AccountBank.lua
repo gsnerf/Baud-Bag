@@ -179,12 +179,10 @@ end
 
 local function UpdateContent(self)
     if (self.TabData) then
-        AddOnTable.Functions.DebugMessage("AccountBank", "UpdateContent: updating based on TabData", self:GetName())
         self.ContainerNotPurchasedYet = false
         self.Icon:SetTexture(self.TabData.IconID)
         self:SetQuality()
     else
-        AddOnTable.Functions.DebugMessage("AccountBank", "UpdateContent: no TabData, assuming bagslot not bought", self:GetName())
         self.ContainerNotPurchasedYet = true
         self:SetItem()
     end
