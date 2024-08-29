@@ -342,7 +342,11 @@ function AddOnTable:CreateItemButton(subContainer, slotIndex, buttonTemplate)
     return itemButton
 end
 
-
+---@param bagSet BagSetTypeClass
+---@param containerId integer ID of the baud bag container containing the subContainerId (bagId)
+---@param subContainerId integer ID representing the actual bag as known to WoW
+---@param slotId integer the numeric index/ID of the slot in the wow bag the button is here fore
+---@param button ItemButton the item button of the respective bagSet specific template
 function AddOnTable:ItemSlot_Created(bagSet, containerId, subContainerId, slotId, button)
     -- just an empty hook for other addons
 end

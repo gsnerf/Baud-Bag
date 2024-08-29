@@ -52,7 +52,7 @@ function Prototype:Rebuild()
             self.Items[newSlot] = button
 
             -- hook for plugins
-            AddOnTable:ItemSlot_Created(self.BagSet, self.Frame:GetParent():GetID(), self.ContainerId, slot, button)
+            AddOnTable:ItemSlot_Created(self.BagSet, self.Frame:GetParent():GetID(), self.ContainerId, newSlot, button)
         end
         availableItemButtons = newSize
     end

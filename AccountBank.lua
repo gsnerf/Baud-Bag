@@ -265,3 +265,13 @@ function BaudBagAccountBagsFrameMixin:UpdateHeight(firstButtonHeight, withPurcha
     --self:SetHeight(15 + AddOnTable.BlizzConstants.ACCOUNT_BANK_CONTAINER_NUM * firstBagButton:GetHeight() + 30)
     self:SetHeight(15 + ceil(AddOnTable.BlizzConstants.ACCOUNT_BANK_CONTAINER_NUM / 2) * firstButtonHeight + purchaseHeight)
 end
+
+
+--[[ ######################################### Item Buttons ######################################### ]]
+
+hooksecurefunc(AddOnTable, "ItemSlot_Created", function(self, bagSet, containerId, subcontainerId, slot, button)
+    if (bagSet == BagSetType.AccountBank) then
+        AddOnTable.Functions.DebugMessage("AccountBank", "Created new ItemButton for account bank", slot)
+        button:Init(subcontainerId, slot)
+    end
+end)
