@@ -33,6 +33,7 @@ local function extendBaseType()
             RequiresFreshConfig = function(bagId) return false end,
             Background = 2
         },
+        GetContainerTemplate = function(containerId) return "BaudBagAccountBankContainerTemplate" end,
         GetItemButtonTemplate = function(containerId) return "AccountBankItemButtonTemplate" end,
         GetSize = function(containerId)
             local purchasedBankTabIds = AddOnTable.BlizzAPI.FetchPurchasedBankTabIDs(Enum.BankType.Account)

@@ -259,7 +259,10 @@ end
 
 local Metatable = { __index = Prototype }
 
-function AddOnTable:CreateContainer(bagSetType, bbContainerId, isReagentBank)
+---@param bagSetType BagSetTypeClass
+---@param bbContainerId integer the ID of the container indexed from 1 to X for each bag set
+---@param containerTemplate string the name of the container template to use (it is expected that everything extends from BaudBagContainerTemplate)
+function AddOnTable:CreateContainer(bagSetType, bbContainerId, containerTemplate)
     local container = _G.setmetatable({}, Metatable)
     container.Id = bbContainerId
     container.Name = AddOnName.."Container"..bagSetType.Id.."_"..bbContainerId
@@ -267,7 +270,6 @@ function AddOnTable:CreateContainer(bagSetType, bbContainerId, isReagentBank)
     local frame = _G[container.Name]
     if (frame == nil) then
         AddOnTable.Functions.DebugMessage("Container", "Frame for container does not yet exist, creating new Frame (name)", name)
-        local containerTemplate = isReagentBank and "BaudBagReagentBankTemplate" or "BaudBagContainerTemplate"
         frame = CreateFrame("Frame", container.Name, BaudBagFrame, containerTemplate)
     end
     frame:SetID(bbContainerId)

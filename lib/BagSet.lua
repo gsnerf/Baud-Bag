@@ -88,7 +88,8 @@ function Prototype:RebuildContainers()
             isOpen = false
             containerNumber = containerNumber + 1
             if (self.MaxContainerNumber < containerNumber and subContainer ~= nil) then
-                containerObject = AddOnTable:CreateContainer(self.Type, containerNumber, id == AddOnTable.BlizzConstants.REAGENTBANK_CONTAINER)
+                local containerTemplate = self.Type.GetContainerTemplate(id)
+                containerObject = AddOnTable:CreateContainer(self.Type, containerNumber, containerTemplate)
 
                 self.Containers[containerNumber] = containerObject
                 self.MaxContainerNumber = containerNumber

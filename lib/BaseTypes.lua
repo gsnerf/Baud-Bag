@@ -43,6 +43,7 @@ BagSetType = {
             end,
             Background = 1
         },
+        GetContainerTemplate = function(containerId) return "BaudBagContainerTemplate" end,
         GetItemButtonTemplate = function(containerId) return "ContainerFrameItemButtonTemplate" end,
         GetSize = function(containerId) return AddOnTable.BlizzAPI.GetContainerNumSlots(containerId) end,
         -- intended to be set in Backpack.lua
@@ -88,6 +89,13 @@ BagSetType = {
             end,
             Background = 2
         },
+        GetContainerTemplate = function(containerId)
+            if (containerId == AddOnTable.BlizzConstants.REAGENTBANK_CONTAINER) then
+                return "BaudBagReagentBankTemplate"
+            else
+                return "BaudBagContainerTemplate"
+            end
+        end,
         GetItemButtonTemplate = function(containerId)
             if (containerId == AddOnTable.BlizzConstants.REAGENTBANK_CONTAINER) then
                 return "ReagentBankItemButtonGenericTemplate"

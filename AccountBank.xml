@@ -59,4 +59,6 @@
 			<OnEvent method="OnAccountBankEvent" />
 		</Scripts>
 	</Frame>
+
+	<Frame name="BaudBagAccountBankContainerTemplate" inherits="BaudBagContainerTemplate" virtual="true" />
 </Ui>
