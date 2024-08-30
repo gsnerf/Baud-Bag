@@ -27,6 +27,8 @@ local function extendBaseType()
         GetContainerTemplate = function(containerId) return "BaudBagContainerTemplate" end,
         GetItemButtonTemplate = function(containerId) return "ContainerFrameItemButtonTemplate" end,
         GetSize = function(containerId) return AddOnTable.BlizzAPI.GetKeyRingSize() end,
+        SupportsCache = false,
+        ShouldUseCache = function() return false end,
         -- there are no bags for an overview
         BagOverview_Initialize = function() end,
     }

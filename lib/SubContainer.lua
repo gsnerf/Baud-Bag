@@ -5,19 +5,26 @@ local _
 local Prototype = {
     ---@type BagSetTypeClass
     BagSet = nil,
+    ---@type integer
     ContainerId = nil,
+    ---@type string
     Name = "",
+    ---@type integer
     StartColumn = 0,
+    ---@type integer
     FreeSlots = 0,
+    ---@type boolean
     HighlightSlots = false,
     ---@type Frame
     Frame = nil,
     ---@type BBItemButton[]
     Items = nil,
+    ---@type BagButton TODO: never used???
     BagButton = nil,
+    ---@type Enum.BagSlotFlags
     FilterType = nil,
     
-    -- theese values might be better of in an own object, we'll see
+    -- these values might be better of in an own object, we'll see
     Size = 0,
     AvailableItemButtons = 0
 }
@@ -84,14 +91,14 @@ end
 function Prototype:UpdateSlotContents()
     local showColor = BBConfig.RarityColor
     local rarityIntensity = BBConfig.RarityIntensity
-    local isBankBag = self.BagSet.Id == BagSetType.Bank.Id
+    local setSupportsCache = self.BagSet.SupportsCache
     local bagCache = AddOnTable.Cache:GetBagCache(self.ContainerId)
-    local useCache = isBankBag and not AddOnTable.State.BankOpen
+    local useCache = setSupportsCache and self.BagSet.ShouldUseCache()
     
     -- reinit values that might be outdated
     self.FreeSlots = 0
 
-    AddOnTable.Functions.DebugMessage("Bags", "Updating SubBag (ID, Size, isBagContainer, isBankOpen)", self.ContainerId, self.Size, not isBankBag, AddOnTable.State.BankOpen)
+    AddOnTable.Functions.DebugMessage("Temp", "Updating SubBag (ID, Size, isBagContainer, isBankOpen)", self.ContainerId, self.Size, not setSupportsCache, AddOnTable.State.BankOpen)
 
     for slot = 1, self.Size do
         local itemObject = self.Items[slot]
@@ -99,7 +106,7 @@ function Prototype:UpdateSlotContents()
         itemObject:UpdateCustomRarity(showColor, rarityIntensity)
         itemObject:ShowHighlight(self.HighlightSlots)
 
-        if (isBankBag and not useCache) then
+        if (setSupportsCache and not useCache) then
             bagCache[slot] = newCacheEntry
         end
 
