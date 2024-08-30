@@ -13,6 +13,7 @@ AddOnTable.State = {
     BankOpen = false
 }
 
+---@type GameTooltip
 local ItemToolTip
 
 local BaudBag_DebugCfg = {

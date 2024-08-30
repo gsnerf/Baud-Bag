@@ -1,12 +1,19 @@
 local AddOnName, AddOnTable = ...
 local _
 
+---@class BBItemButton
 local Prototype = {
+    ---@type string frame name for referencing from global space
     Name = nil,
+    ---@type integer index inside the sub container, to be used for API calls
     SlotIndex = nil,
+    ---@type Enum.ItemQuality cached quality string, used for overlay handling
     Quality = nil,
+    ---@type SubContainer reference to the parent container for easier API call handling
     Parent = nil,
+    ---@type Texture
     BorderFrame = nil,
+    ---@type Texture|nil
     QuestOverlay = nil
 }
 

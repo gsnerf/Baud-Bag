@@ -3,15 +3,16 @@ local _
 
 ---@class SubContainer
 local Prototype = {
-    ---@class BagSetTypeClass
+    ---@type BagSetTypeClass
     BagSet = nil,
     ContainerId = nil,
     Name = "",
     StartColumn = 0,
     FreeSlots = 0,
     HighlightSlots = false,
-    ---@class Frame
+    ---@type Frame
     Frame = nil,
+    ---@type BBItemButton[]
     Items = nil,
     BagButton = nil,
     FilterType = nil,
