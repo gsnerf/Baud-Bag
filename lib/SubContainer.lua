@@ -93,12 +93,12 @@ function Prototype:UpdateSlotContents()
     local rarityIntensity = BBConfig.RarityIntensity
     local setSupportsCache = self.BagSet.SupportsCache
     local bagCache = AddOnTable.Cache:GetBagCache(self.ContainerId)
-    local useCache = setSupportsCache and self.BagSet.ShouldUseCache()
+    local useCache = self.BagSet.ShouldUseCache()
     
     -- reinit values that might be outdated
     self.FreeSlots = 0
 
-    AddOnTable.Functions.DebugMessage("Temp", "Updating SubBag (ID, Size, isBagContainer, isBankOpen)", self.ContainerId, self.Size, not setSupportsCache, AddOnTable.State.BankOpen)
+    AddOnTable.Functions.DebugMessage("Bags", "Updating SubBag (ID, Size, supportsCache, useCache)", self.ContainerId, self.Size, setSupportsCache, useCache)
 
     for slot = 1, self.Size do
         local itemObject = self.Items[slot]

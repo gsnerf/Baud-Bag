@@ -51,10 +51,12 @@ local function extendBaseType()
             return 0
         end,
         SupportsCache = true,
-        ShouldUseCache = function() return not AddOnTable.State.BankOpen end,
+        ShouldUseCache = function() return not AddOnTable.State.AccountBankOpen end,
         BagOverview_Initialize = function() _G["BaudBagContainer6_1"].BagsFrame:Initialize() end,
     }
     tinsert(BagSetTypeArray, BagSetType.AccountBank)
+
+    AddOnTable.State.AccountBankOpen = false
 
     --AddOnTable.ContainerIdOptionsIndexMap[AddOnTable.BlizzConstants.KEYRING_CONTAINER] = 1
 end
@@ -62,6 +64,7 @@ hooksecurefunc(AddOnTable, "ExtendBaseTypes", extendBaseType)
 
 EventRegistry:RegisterFrameEventAndCallback("BANKFRAME_OPENED", function(ownerID, ...)
     Funcs.DebugMessage("AccountBank", "AccountBank#bankframeOpened()")
+    AddOnTable.State.AccountBankOpen = true
     ---@type BagSet
     local bagSet = AddOnTable.Sets[BagSetType.AccountBank.Id]
     bagSet:RebuildContainers()
@@ -71,6 +74,7 @@ end, nil)
 
 EventRegistry:RegisterFrameEventAndCallback("BANKFRAME_CLOSED", function(ownerID, ...)
     Funcs.DebugMessage("AccountBank", "AccountBank#bankframeClosed()")
+    AddOnTable.State.AccountBankOpen = false
 	AddOnTable.Sets[BagSetType.AccountBank.Id]:Close()
 end, nil)
 
