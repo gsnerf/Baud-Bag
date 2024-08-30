@@ -321,6 +321,7 @@ function BaudBagContainerMixin:OnShow(event, ...)
 end
 
 function BaudBagContainerMixin:OnUpdate(event, ...)
+    ---@type Container
     local containerObject = AddOnTable.Sets[self.BagSet].Containers[self:GetID()]
 
     if (self.Refresh) then

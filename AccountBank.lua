@@ -108,13 +108,6 @@ local function endUnlockMode(self)
     self.MenuButton:Show()
 end
 
-function BaudBagFirstAccountBankMixin:OnAccountBankLoad()
-    self:OnLoad()
-
-    -- on unload because it should be ensured that hiding also happens when the frame is not currently visible (otherwise the frame might only vanish)
-    self:RegisterEvent("PLAYER_ACCOUNT_BANK_TAB_SLOTS_CHANGED")
-end
-
 function BaudBagFirstAccountBankMixin:Initialize()
     local purchasedBankTabsIds = AddOnTable.BlizzAPI.FetchPurchasedBankTabIDs(Enum.BankType.Account)
     if table.getn(purchasedBankTabsIds) == 0 then
@@ -134,11 +127,14 @@ end
 
 function BaudBagFirstAccountBankMixin:OnAccountBankEvent(event, ...)
     if (event == "PLAYER_ACCOUNT_BANK_TAB_SLOTS_CHANGED") then
+        Funcs.DebugMessage("AccountBank", "AccountBankFirstContainer#PLAYER_ACCOUNT_BANK_TAB_SLOTS_CHANGED", ...)
         if self.UnlockInfo ~= nil then
             endUnlockMode(self)
             AddOnTable.Sets[BagSetType.AccountBank.Id].Containers[1]:Rebuild()
         end
     end
+
+    self:OnContainerEvent(event, ...)
 
     -- fallback for inherited OnEvents
     if (self.OnEvent) then
@@ -273,6 +269,36 @@ function BaudBagAccountBagsFrameMixin:UpdateHeight(firstButtonHeight, withPurcha
     self:SetHeight(15 + ceil(AddOnTable.BlizzConstants.ACCOUNT_BANK_CONTAINER_NUM / 2) * firstButtonHeight + purchaseHeight)
 end
 
+--[[ ###################################### Container Template ###################################### ]]
+
+BaudBagAccountBankContainerMixin = {}
+
+function BaudBagAccountBankContainerMixin:OnContainerLoad()
+    self:OnLoad()
+
+    -- on unload because it should be ensured that hiding also happens when the frame is not currently visible (otherwise the frame might only vanish)
+    self:RegisterEvent("PLAYER_ACCOUNT_BANK_TAB_SLOTS_CHANGED")
+    self:RegisterEvent("BAG_UPDATE_DELAYED")
+end
+
+function BaudBagAccountBankContainerMixin:OnContainerEvent(event, ...)
+    Funcs.DebugMessage("AccountBank", "AccountBankContainer#"..event, ...)
+    if (event == "PLAYER_ACCOUNT_BANK_TAB_SLOTS_CHANGED") then
+        local containerIndex = ...
+        if (containerIndex == self:GetID()) then
+            self.QueueForUpdate = true
+        end
+    end
+
+    if (event == "BAG_UPDATE_DELAYED" and self.QueueForUpdate) then
+        AddOnTable.Sets[BagSetType.AccountBank.Id].Containers[self:GetID()]:Update()
+    end
+
+    -- fallback for inherited OnEvents
+    if (self.OnEvent) then
+        self:OnEvent(event, ...)
+    end
+end
 
 --[[ ######################################### Item Buttons ######################################### ]]
 
@@ -280,7 +306,6 @@ end
 local function ItemButton_OnCustomEnter(self)
     local bagId = self:GetParent():GetID()
     local slotId = self:GetID()
-    AddOnTable.Functions.DebugMessage("AccountBank", "[ItemButton:OnCustomEnter] This button is part of the account bags... reading from cache")
     self:UpdateTooltipFromCache(bagId, slotId)
 end
 

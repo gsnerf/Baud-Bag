@@ -1,7 +1,7 @@
 <Ui xmlns="http://www.blizzard.com/wow/ui/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.blizzard.com/wow/ui/ ..\FrameXML\UI.xsd">
     <Script file="AccountBank.lua" />
 
-    <Frame name="BaudBagContainer6_1" mixin="BaudBagFirstAccountBankMixin" inherits="BaudBagFirstContainerTemplate">
+    <Frame name="BaudBagContainer6_1" mixin="BaudBagFirstAccountBankMixin,BaudBagAccountBankContainerMixin" inherits="BaudBagFirstContainerTemplate">
 		<Frames>
 			<Frame parentKey="BagsFrame" inherits="BaudBagBagsFrameTemplate" mixin="BaudBagAccountBagsFrameMixin" frameStrata="MEDIUM">
 				<Frames>
@@ -54,11 +54,16 @@
 			<!--Frame parentKey="UnlockInfo" inherits="BaudBagContainerUnlockTemplate" mixin="BaudBagAccountBankUnlockMixin" hidden="true" /-->
 		</Frames>
 		<Scripts>
-			<OnLoad method="OnAccountBankLoad" />
+			<OnLoad method="OnContainerLoad" />
 			<OnShow method="OnAccountBankShow" />
 			<OnEvent method="OnAccountBankEvent" />
 		</Scripts>
 	</Frame>
 
-	<Frame name="BaudBagAccountBankContainerTemplate" inherits="BaudBagContainerTemplate" virtual="true" />
+	<Frame name="BaudBagAccountBankContainerTemplate" inherits="BaudBagContainerTemplate" mixin="BaudBagAccountBankContainerMixin" virtual="true">
+		<Scripts>
+			<OnLoad method="OnContainerLoad" />
+			<OnEvent method="OnContainerEvent" />
+		</Scripts>
+	</Frame>
 </Ui>
