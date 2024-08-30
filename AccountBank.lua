@@ -272,9 +272,17 @@ end
 
 --[[ ######################################### Item Buttons ######################################### ]]
 
+---@param self BBItemButton
+local function ItemButton_OnCustomEnter(self)
+    local bagId = self:GetParent():GetID()
+    local slotId = self:GetID()
+    AddOnTable.Functions.DebugMessage("AccountBank", "[ItemButton:OnCustomEnter] This button is part of the account bags... reading from cache")
+    self:UpdateTooltipFromCache(bagId, slotId)
+end
+
 hooksecurefunc(AddOnTable, "ItemSlot_Created", function(self, bagSet, containerId, subcontainerId, slot, button)
     if (bagSet == BagSetType.AccountBank) then
-        AddOnTable.Functions.DebugMessage("AccountBank", "Created new ItemButton for account bank", slot)
         button:Init(subcontainerId, slot)
+        button:SetScript("OnEnter", ItemButton_OnCustomEnter)
     end
 end)
