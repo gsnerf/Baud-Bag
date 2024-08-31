@@ -26,6 +26,12 @@ local CacheMixin = {}
     At the moment only: bag == bankbag
 ]]
 function CacheMixin:UsesCache(Bag)
+    for _, bagSetType in pairs(BagSetType) do
+        if bagSetType.IsSubContainerOf(Bag) then
+            return bagSetType.SupportsCache and bagSetType.ShouldUseCache(Bag)
+        end
+    end
+    -- fallback
     local usesCache = (BBConfig[2].Enabled and ((Bag < AddOnTable.BlizzConstants.BACKPACK_FIRST_CONTAINER) or (AddOnTable.BlizzConstants.BACKPACK_LAST_CONTAINER < Bag)) and (not AddOnTable.State.BankOpen))
     DebugMsg("[UseCache] Bag: "..Bag..", Enabled: "..(BBConfig[2].Enabled and "true" or "false")..", bank open: "..(AddOnTable.State.BankOpen and "true" or "false"), usesCache)
     return usesCache
