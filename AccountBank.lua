@@ -194,7 +194,7 @@ end
 local function UpdateContent(self)
     if (self.TabData) then
         self.ContainerNotPurchasedYet = false
-        self.Icon:SetTexture(self.TabData.IconID)
+        self.Icon:SetTexture(self.TabData.icon)
         self:SetQuality()
     else
         self.ContainerNotPurchasedYet = true
@@ -208,6 +208,11 @@ end
 
 local function OnClick(self, button)
     -- TODO: this should trigger the tab configuration window
+    if button == "RightButton" and self.TabData then
+        Funcs.DebugMessage("AccountBank", "BagButton#OnClick: recognized right click on already bought bank tab", self.TabData, self.SubContainerId)
+        self:GetParent().TabSettingsMenu.selectedTabData = self.TabData
+        self:GetParent().TabSettingsMenu:TriggerEvent(BankPanelTabSettingsMenuMixin.Event.OpenTabSettingsRequested, self.SubContainerId)
+    end
 end
 
 BaudBagAccountBagsFrameMixin = {}
@@ -246,12 +251,7 @@ function BaudBagAccountBagsFrameMixin:Update()
         bagSlot = accountBankSet.BagButtons[bag]
         if bag <= numberOfBoughtContainers then
             local tabData = purchasedBankTabData[bag]
-            ---@class TabData
-            bagSlot.TabData = {
-                Name = tabData.name,
-                IconID = tabData.icon,
-                Flags = tabData.depositFlags
-            }
+            bagSlot.TabData = tabData
         end
         bagSlot:UpdateContent()
     end
@@ -282,6 +282,14 @@ function BaudBagAccountBagsFrameMixin:UpdateHeight(firstButtonHeight, withPurcha
     end
     --self:SetHeight(15 + AddOnTable.BlizzConstants.ACCOUNT_BANK_CONTAINER_NUM * firstBagButton:GetHeight() + 30)
     self:SetHeight(15 + ceil(AddOnTable.BlizzConstants.ACCOUNT_BANK_CONTAINER_NUM / 2) * firstButtonHeight + purchaseHeight)
+end
+
+--[[ ###################################### Bags Settings frame ##################################### ]]
+
+BaudBagAccountBankTabSettingsMixin = {}
+
+function BaudBagAccountBankTabSettingsMixin:SetSelectedTab(selectedTabId)
+    -- intentionally empty, please set the selectedTabData before requesting to show tab settings!
 end
 
 --[[ ###################################### Container Template ###################################### ]]

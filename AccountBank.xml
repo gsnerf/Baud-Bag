@@ -48,6 +48,11 @@
 							</Frame>
 						</Frames>
 					</Frame>
+					<Frame parentKey="TabSettingsMenu" inherits="BankPanelTabSettingsMenuTemplate" mixin="BaudBagAccountBankTabSettingsMixin" hidden="true">
+						<Anchors>
+							<Anchor point="TOPLEFT" relativeKey="$parent" relativePoint="BOTTOMLEFT" x="-5" y="-5"/>
+						</Anchors>
+					</Frame>
 				</Frames>
 			</Frame>
 
