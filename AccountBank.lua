@@ -114,6 +114,7 @@ function BaudBagFirstAccountBankMixin:Initialize()
     if table.getn(purchasedBankTabsIds) == 0 then
         switchToUnlockMode(self)
     end
+    MoneyFrame_SetType(self.MoneyFrame, "ACCOUNT")
 end
 
 function BaudBagFirstAccountBankMixin:OnAccountBankShow()
@@ -123,6 +124,7 @@ function BaudBagFirstAccountBankMixin:OnAccountBankShow()
 		return;
 	end]]
 
+    MoneyFrame_UpdateMoney(self.MoneyFrame)
     self:OnShow()
 end
 
