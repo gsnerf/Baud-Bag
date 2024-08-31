@@ -124,6 +124,7 @@ function BaudBagFirstAccountBankMixin:OnAccountBankShow()
 		return;
 	end]]
 
+    self:RegisterEvent("ACCOUNT_MONEY")
     MoneyFrame_UpdateMoney(self.MoneyFrame)
     self:OnShow()
 end
@@ -135,6 +136,8 @@ function BaudBagFirstAccountBankMixin:OnAccountBankEvent(event, ...)
             endUnlockMode(self)
             AddOnTable.Sets[BagSetType.AccountBank.Id].Containers[1]:Rebuild()
         end
+    elseif (event == "ACCOUNT_MONEY") then
+        MoneyFrame_UpdateMoney(self.MoneyFrame)
     end
 
     self:OnContainerEvent(event, ...)
@@ -143,6 +146,11 @@ function BaudBagFirstAccountBankMixin:OnAccountBankEvent(event, ...)
     if (self.OnEvent) then
         self:OnEvent(event, ...)
     end
+end
+
+function BaudBagFirstAccountBankMixin:OnAccountBankHide()
+    self:UnregisterEvent("ACCOUNT_MONEY")
+    self:OnHide()
 end
 
 

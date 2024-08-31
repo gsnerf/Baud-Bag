@@ -57,6 +57,7 @@
 			<OnLoad method="OnContainerLoad" />
 			<OnShow method="OnAccountBankShow" />
 			<OnEvent method="OnAccountBankEvent" />
+			<OnHide method="OnAccountBankHide" />
 		</Scripts>
 	</Frame>
 
