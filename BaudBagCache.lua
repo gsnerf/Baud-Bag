@@ -10,7 +10,8 @@
         }
     }
 ]]
-local AddOnName, AddOnTable = ...
+---@class AddonNamespace
+local AddOnTable = select(2, ...)
 local _
 local initialized = false
 

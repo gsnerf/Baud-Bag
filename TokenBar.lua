@@ -9,7 +9,8 @@
 
 	Additionally to the self rendering in our bags (done in BaudBag.lua BaudBagUpdateBackground()) the max trackable tokens are raised to 5.
   ]]
-local AddOnName, AddOnTable = ...
+---@class AddonNamespace
+local AddOnTable = select(2, ...)
 local _
 
 local function calculateScaleFix(TokenFrame)

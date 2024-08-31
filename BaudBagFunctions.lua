@@ -1,5 +1,6 @@
-﻿local _
-local AddOnName, AddOnTable = ...
+﻿---@class AddonNamespace
+local AddOnTable = select(2, ...)
+local _
 
 AddOnTable.Functions = {}
 AddOnTable.State = {

@@ -1,5 +1,6 @@
+---@class AddonNamespace
+local AddOnTable = select(2, ...)
 local _
-local AddOnName, AddOnTable = ...
 
 local interfaceVersion = select(4, GetBuildInfo())
 

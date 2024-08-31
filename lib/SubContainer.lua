@@ -1,4 +1,6 @@
-local AddOnName, AddOnTable = ...
+---@class AddonNamespace
+local AddOnTable = select(2, ...)
+local AddOnName = select(1, ...)
 local _
 
 ---@class SubContainer
