@@ -198,6 +198,10 @@ local function OnShowOverride(self)
     self:UpdateContent()
 end
 
+local function OnClick(self, button)
+    -- TODO: this should trigger the tab configuration window
+end
+
 BaudBagAccountBagsFrameMixin = {}
 
 function BaudBagAccountBagsFrameMixin:Initialize()
@@ -209,12 +213,12 @@ function BaudBagAccountBagsFrameMixin:Initialize()
 
     for bag = 1, AddOnTable.BlizzConstants.ACCOUNT_BANK_CONTAINER_NUM do
         local subContainerId = AddOnTable.BlizzConstants.BANK_LAST_CONTAINER + bag
-        ---@type Button
         local bagButton = AddOnTable:CreateBagButton(BagSetType.AccountBank, subContainerId, bag, self)
         -- bagButton:SetPoint("TOPLEFT", 8, -8 - (bag-1) * bagButton:GetHeight())
         bagButton:SetPoint("TOPLEFT", 8 + mod(bag - 1, 2) * 39, -8 - floor((bag - 1) / 2) * 39)
         bagButton.UpdateContent = UpdateContent
         bagButton.OnShowOverride = OnShowOverride
+        bagButton:SetScript("OnClick", OnClick)
         accountBankSet.BagButtons[bag] = bagButton
     end
 

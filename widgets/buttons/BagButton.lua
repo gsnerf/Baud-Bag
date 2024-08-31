@@ -296,7 +296,7 @@ function BaudBag_BagButtonMixin:OnReceiveDrag()
     self:PutItemInBag()
 end
 
----@return table|BaudBag_BagButton|Button
+---@return BagButton
 function AddOnTable:CreateBagButton(bagSetType, subContainerId, bagIndex, parentFrame, name)
     if (name == nil) then
         name = "BBBagSet"..bagSetType.Id.."Bag"..bagIndex.."Slot"
