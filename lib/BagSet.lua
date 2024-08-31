@@ -10,9 +10,13 @@ local Prototype = {
     MaxContainerNumber = 0,
     ContainerNumber = 0,
     --[[  sub tables have to be reassigned on init or ALL new elements will have the SAME tables for access... ]]
+    ---@type Container[]
     Containers = nil,
+    ---@type SubContainer[]
     SubContainers = nil,
+    ---@type BagButton[]
     BagButtons = nil,
+    ---@type BagButton[]
     ReagentBagButtons = nil,
 }
 
@@ -239,6 +243,7 @@ end
 local Metatable = { __index = Prototype }
 ---@param type BagSetTypeClass
 function AddOnTable:CreateBagSet(type)
+    ---@type BagSet
     local bagSet = _G.setmetatable({}, Metatable)
     bagSet.Type = type
     bagSet.Containers = {}

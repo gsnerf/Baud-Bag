@@ -7,7 +7,9 @@ local _
 
 -- necessary globals
 _G[AddOnName] = AddOnTable
+---@type BagSet[]
 AddOnTable["Sets"] = {}
+---@type SubContainer[]
 AddOnTable["SubBags"] = {}
 AddOnTable["Backgrounds"] = {}
 
