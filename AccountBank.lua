@@ -323,6 +323,19 @@ function BaudBagAccountBankContainerMixin:OnContainerEvent(event, ...)
     end
 end
 
+function BaudBagAccountBankContainerMixin:UpdateBagHighlight()
+    Funcs.DebugMessage("AccountBank", "AccountBankContainer#UpdateBagHighlight")
+    local bagSet = AddOnTable.Sets[BagSetType.AccountBank.Id]
+    for _, subContainer in pairs(bagSet.Containers[self:GetID()].SubContainers) do
+        local button = bagSet.BagButtons[subContainer.ContainerId - AddOnTable.BlizzConstants.ACCOUNT_BANK_FIRST_SUB_CONTAINER + 1]
+        if (subContainer:IsOpen()) then
+            button.SlotHighlightTexture:Show()
+        else
+            button.SlotHighlightTexture:Hide()
+        end
+    end
+end
+
 --[[ ######################################### Item Buttons ######################################### ]]
 
 ---@param self BBItemButton

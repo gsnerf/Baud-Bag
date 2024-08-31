@@ -314,7 +314,11 @@ function BaudBagContainerMixin:OnShow(event, ...)
     local containerObject = bagSet.Containers[self:GetID()]
     containerObject:Update()
     if (containerObject.Frame.Slots > 0) then
-        containerObject:UpdateBagHighlight()
+        if (containerObject.Frame.UpdateBagHighlight) then
+            containerObject.Frame:UpdateBagHighlight()
+        else
+            containerObject:UpdateBagHighlight()
+        end
     end
 
     if (self:GetID() == 1) then
