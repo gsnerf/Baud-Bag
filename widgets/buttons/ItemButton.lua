@@ -75,7 +75,8 @@ function Prototype:UpdateContent(useCache, slotCache)
     if (containerItemInfo.hyperlink ~= nil and BBConfig.ShowItemLevel) then
         local _, _, _, _, _, itemType, itemSubType, _, itemEquipLoc = AddOnTable.BlizzAPI.GetItemInfo(containerItemInfo.hyperlink)
         local effectiveItemLevel, _, _ = AddOnTable.BlizzAPI.GetDetailedItemLevelInfo(containerItemInfo.hyperlink)
-        if effectiveItemLevel ~= nil and itemEquipLoc ~= "" and itemEquipLoc ~= INVTYPE_NON_EQUIP then
+        local isNonEquip = itemEquipLoc == "INVTYPE_NON_EQUIP" or itemEquipLoc == "INVTYPE_NON_EQUIP_IGNORE"
+        if effectiveItemLevel ~= nil and not isNonEquip then
             itemLevelText = effectiveItemLevel
         end
     end
