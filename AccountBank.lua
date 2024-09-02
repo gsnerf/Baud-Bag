@@ -301,12 +301,13 @@ function BaudBagAccountBankContainerMixin:OnContainerLoad()
 
     -- on unload because it should be ensured that hiding also happens when the frame is not currently visible (otherwise the frame might only vanish)
     self:RegisterEvent("PLAYER_ACCOUNT_BANK_TAB_SLOTS_CHANGED")
+    self:RegisterEvent("BAG_UPDATE")
     self:RegisterEvent("BAG_UPDATE_DELAYED")
 end
 
 function BaudBagAccountBankContainerMixin:OnContainerEvent(event, ...)
     Funcs.DebugMessage("AccountBank", "AccountBankContainer#"..event, ...)
-    if (event == "PLAYER_ACCOUNT_BANK_TAB_SLOTS_CHANGED") then
+    if (event == "PLAYER_ACCOUNT_BANK_TAB_SLOTS_CHANGED" or event == "BAG_UPDATE") then
         local containerIndex = ...
         if (containerIndex == self:GetID()) then
             self.QueueForUpdate = true
