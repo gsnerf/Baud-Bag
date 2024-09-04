@@ -1,8 +1,8 @@
 <Bindings>
-    <Binding name="BaudBagToggleBank" header="BaudBag" category="Baud Bag">
+    <Binding name="BaudBagToggleBank" header="BaudBag" category="Baud Bag" default="ALT-B">
         BaudBagToggleBank()
     </Binding>
-    <Binding name="BaudBagToggleWarbandBank" category="Baud Bag">
+    <Binding name="BaudBagToggleWarbandBank" category="Baud Bag" default="CTRL-B">
         if (BaudBagToggleWarbandBank) then
             BaudBagToggleWarbandBank()
         end
