@@ -192,6 +192,13 @@ end
 --[[ ########################################## Bags frame ########################################## ]]
 
 local function UpdateContent(self)
+    -- ensure we load potentially cached data when opening the account bank in offline mode before visiting the bank npc
+    if not self.TabData and not AddOnTable.State.AccountBankOpen then
+        local bagCache = AddOnTable.Cache:GetBagCache(self.SubContainerId)
+        self.TabData = bagCache.TabData
+    end
+
+    -- now that all data should be present update the button content
     if (self.TabData) then
         self.ContainerNotPurchasedYet = false
         self.Icon:SetTexture(self.TabData.icon)
@@ -252,6 +259,8 @@ function BaudBagAccountBagsFrameMixin:Update()
         if bag <= numberOfBoughtContainers then
             local tabData = purchasedBankTabData[bag]
             bagSlot.TabData = tabData
+            local bagCache = AddOnTable.Cache:GetBagCache(bagSlot.SubContainerId)
+            bagCache.TabData = tabData
         end
         bagSlot:UpdateContent()
     end
