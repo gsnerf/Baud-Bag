@@ -1,5 +1,6 @@
+---@class AddonNamespace
+local AddOnTable = select(2, ...)
 local _
-local AddOnName, AddOnTable = ...
 
 local interfaceVersion = select(4, GetBuildInfo())
 
@@ -160,6 +161,7 @@ if C_Bank ~= nil then
     API.FetchNextPurchasableBankTabCost = C_Bank.FetchNextPurchasableBankTabCost
     API.FetchNumPurchasedBankTabs = C_Bank.FetchNumPurchasedBankTabs
     API.FetchPurchasedBankTabData = C_Bank.FetchPurchasedBankTabData
+    ---@return BankTabData[]
     API.FetchPurchasedBankTabIDs = C_Bank.FetchPurchasedBankTabIDs
     API.HasMaxBankTabs = C_Bank.HasMaxBankTabs
     API.IsItemAllowedInBankType = C_Bank.IsItemAllowedInBankType

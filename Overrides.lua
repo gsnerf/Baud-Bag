@@ -1,5 +1,7 @@
 -- addon defaults
-local AddOnName, AddOnTable = ...
+---@class AddonNamespace
+local AddOnTable = select(2, ...)
+local AddOnName = select(1, ...)
 local Localized = AddOnTable.Localized
 local _
 

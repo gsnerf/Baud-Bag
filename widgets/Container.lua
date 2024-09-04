@@ -1,4 +1,6 @@
-local AddOnName, AddOnTable = ...
+---@class AddonNamespace
+local AddOnTable = select(2, ...)
+local AddOnName = select(1, ...)
 local Localized = AddOnTable.Localized
 local _
 
@@ -34,7 +36,7 @@ function Prototype:UpdateName()
     local targetName = containerConfig.Name or ""
     local targetColor = NORMAL_FONT_COLOR
 
-    if ((self.Frame.BagSet == 2) and (not AddOnTable.State.BankOpen)) then
+    if (self.BagSet.SupportsCache and self.BagSet.ShouldUseCache()) then
         targetName = containerConfig.Name..AddOnTable.Localized.Offline
         targetColor = RED_FONT_COLOR
     end
@@ -259,7 +261,10 @@ end
 
 local Metatable = { __index = Prototype }
 
-function AddOnTable:CreateContainer(bagSetType, bbContainerId, isReagentBank)
+---@param bagSetType BagSetTypeClass
+---@param bbContainerId integer the ID of the container indexed from 1 to X for each bag set
+---@param containerTemplate string the name of the container template to use (it is expected that everything extends from BaudBagContainerTemplate)
+function AddOnTable:CreateContainer(bagSetType, bbContainerId, containerTemplate)
     local container = _G.setmetatable({}, Metatable)
     container.Id = bbContainerId
     container.Name = AddOnName.."Container"..bagSetType.Id.."_"..bbContainerId
@@ -267,7 +272,6 @@ function AddOnTable:CreateContainer(bagSetType, bbContainerId, isReagentBank)
     local frame = _G[container.Name]
     if (frame == nil) then
         AddOnTable.Functions.DebugMessage("Container", "Frame for container does not yet exist, creating new Frame (name)", name)
-        local containerTemplate = isReagentBank and "BaudBagReagentBankTemplate" or "BaudBagContainerTemplate"
         frame = CreateFrame("Frame", container.Name, BaudBagFrame, containerTemplate)
     end
     frame:SetID(bbContainerId)
@@ -310,7 +314,11 @@ function BaudBagContainerMixin:OnShow(event, ...)
     local containerObject = bagSet.Containers[self:GetID()]
     containerObject:Update()
     if (containerObject.Frame.Slots > 0) then
-        containerObject:UpdateBagHighlight()
+        if (containerObject.Frame.UpdateBagHighlight) then
+            containerObject.Frame:UpdateBagHighlight()
+        else
+            containerObject:UpdateBagHighlight()
+        end
     end
 
     if (self:GetID() == 1) then
@@ -319,6 +327,7 @@ function BaudBagContainerMixin:OnShow(event, ...)
 end
 
 function BaudBagContainerMixin:OnUpdate(event, ...)
+    ---@type Container
     local containerObject = AddOnTable.Sets[self.BagSet].Containers[self:GetID()]
 
     if (self.Refresh) then

@@ -1,5 +1,6 @@
+---@class AddonNamespace
+local AddOnTable = select(2, ...)
 local _
-local AddOnName, AddOnTable = ...
 local Prefix = "BaudBag"
 local INV_ID_BAG_FIRST = AddOnTable.BlizzAPI.ContainerIDToInventoryID(AddOnTable.BlizzConstants.BACKPACK_FIRST_CONTAINER + 1)
 local INV_ID_BAG_LAST = AddOnTable.BlizzAPI.ContainerIDToInventoryID(AddOnTable.BlizzConstants.BACKPACK_LAST_CONTAINER)

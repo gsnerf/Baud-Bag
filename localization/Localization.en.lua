@@ -1,4 +1,5 @@
-local AddOnName, AddOnTable = ...
+---@class AddonNamespace
+local AddOnTable = select(2, ...)
 local _
 
 --[[

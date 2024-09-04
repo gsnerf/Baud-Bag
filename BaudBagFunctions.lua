@@ -1,5 +1,6 @@
-﻿local _
-local AddOnName, AddOnTable = ...
+﻿---@class AddonNamespace
+local AddOnTable = select(2, ...)
+local _
 
 AddOnTable.Functions = {}
 AddOnTable.State = {
@@ -13,6 +14,7 @@ AddOnTable.State = {
     BankOpen = false
 }
 
+---@type GameTooltip
 local ItemToolTip
 
 local BaudBag_DebugCfg = {
@@ -259,4 +261,13 @@ AddOnTable.Functions.IsCraftingReagent = function (itemId)
         end
     end
     return isReagent
+end
+
+---@return BagSetTypeClass
+AddOnTable.Functions.GetBagSetTypeForBag = function(subContainerId)
+    for _, bagSetType in pairs(BagSetType) do
+        if bagSetType.IsSubContainerOf(subContainerId) then
+            return bagSetType
+        end
+    end
 end

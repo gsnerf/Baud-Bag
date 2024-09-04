@@ -1,6 +1,11 @@
 <Bindings>
-    <Binding name="BaudBagToggleBank" header="BaudBag" category="Baud Bag">
-        BaudBagToggleBank();
+    <Binding name="BaudBagToggleBank" header="BaudBag" category="Baud Bag" default="ALT-B">
+        BaudBagToggleBank()
+    </Binding>
+    <Binding name="BaudBagToggleWarbandBank" category="Baud Bag" default="CTRL-B">
+        if (BaudBagToggleWarbandBank) then
+            BaudBagToggleWarbandBank()
+        end
     </Binding>
     <!--<Binding name="BaudBagToggleVoidStorage" header="BaudBag">
         BaudBagToggleVoidStorage();

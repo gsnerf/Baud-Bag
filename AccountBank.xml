@@ -1,23 +1,11 @@
 <Ui xmlns="http://www.blizzard.com/wow/ui/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.blizzard.com/wow/ui/ ..\FrameXML\UI.xsd">
     <Script file="AccountBank.lua" />
 
-    <Frame name="BaudBagContainer6_1" mixin="BaudBagFirstAccountBankMixin" inherits="BaudBagFirstContainerTemplate">
+    <Frame name="BaudBagContainer6_1" mixin="BaudBagFirstAccountBankMixin,BaudBagAccountBankContainerMixin" inherits="BaudBagFirstContainerTemplate">
 		<Frames>
 			<Frame parentKey="BagsFrame" inherits="BaudBagBagsFrameTemplate" mixin="BaudBagAccountBagsFrameMixin" frameStrata="MEDIUM">
 				<Frames>
 					<Frame parentKey="PurchaseFrame" setAllPoints="true">
-						<Layers>
-							<Layer level="BACKGROUND">
-								<FontString name="$parentSlotCost" inherits="GameFontHighlight" text="Slot:" justifyH="LEFT">
-									<Size>
-										<AbsDimension x="30" y="20" />
-									</Size>
-									<Anchors>
-										<Anchor point="BOTTOMLEFT" x="15" y="25" />
-									</Anchors>
-								</FontString>
-							</Layer>
-						</Layers>
 						<Frames>
 							<Button parentKey="PurchaseButton" inherits="UIPanelButtonTemplate" text="BANKSLOTPURCHASE">
 								<Size>
@@ -37,7 +25,9 @@
 							</Button>
 							<Frame name="$parentMoneyFrame" parentKey="MoneyFrame" inherits="SmallMoneyFrameTemplate">
 								<Anchors>
-									<Anchor point="LEFT" relativeTo="$parentSlotCost" relativePoint="RIGHT" />
+									<Anchor point="BOTTOM" x="0" y="25" />
+									<Anchor point="LEFT" x="5" y="0" />
+									<Anchor point="RIGHT" x="-5" y="0" />
 								</Anchors>
 								<Scripts>
 									<OnLoad>
@@ -48,15 +38,31 @@
 							</Frame>
 						</Frames>
 					</Frame>
+					<Frame parentKey="TabSettingsMenu" inherits="BankPanelTabSettingsMenuTemplate" mixin="BaudBagAccountBankTabSettingsMixin" hidden="true">
+						<Anchors>
+							<Anchor point="TOPLEFT" relativeKey="$parent" relativePoint="BOTTOMLEFT" x="-5" y="-5"/>
+						</Anchors>
+					</Frame>
 				</Frames>
+				<Scripts>
+					<OnShow method="OnShow" />
+				</Scripts>
 			</Frame>
 
 			<!--Frame parentKey="UnlockInfo" inherits="BaudBagContainerUnlockTemplate" mixin="BaudBagAccountBankUnlockMixin" hidden="true" /-->
 		</Frames>
 		<Scripts>
-			<OnLoad method="OnAccountBankLoad" />
+			<OnLoad method="OnContainerLoad" />
 			<OnShow method="OnAccountBankShow" />
 			<OnEvent method="OnAccountBankEvent" />
+			<OnHide method="OnAccountBankHide" />
+		</Scripts>
+	</Frame>
+
+	<Frame name="BaudBagAccountBankContainerTemplate" inherits="BaudBagContainerTemplate" mixin="BaudBagAccountBankContainerMixin" virtual="true">
+		<Scripts>
+			<OnLoad method="OnContainerLoad" />
+			<OnEvent method="OnContainerEvent" />
 		</Scripts>
 	</Frame>
 </Ui>

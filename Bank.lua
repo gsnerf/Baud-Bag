@@ -1,4 +1,5 @@
-local AddOnName, AddOnTable = ...
+---@class AddonNamespace
+local AddOnTable = select(2, ...)
 local _
 local Prefix = "BaudBag"
 local Localized = AddOnTable.Localized
@@ -112,11 +113,11 @@ function BaudBagBankBags_Update()
         BagSlot = bankSet.BagButtons[Bag]
         
         if (Bag <= Slots) then
-            SetItemButtonTextureVertexColor(BagSlot, 1.0, 1.0, 1.0)
             BagSlot.tooltipText = BANK_BAG
         else
-            SetItemButtonTextureVertexColor(BagSlot, 1.0, 0.1, 0.1)
+            BagSlot.ContainerNotPurchasedYet = true
             BagSlot.tooltipText = BANK_BAG_PURCHASE
+            BagSlot:UpdateContent()
         end
     end
     AddOnTable:BankBags_Update()

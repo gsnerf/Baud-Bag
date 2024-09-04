@@ -1,4 +1,3 @@
-local AddOnName, AddOnTable = ...
 local _
 
 

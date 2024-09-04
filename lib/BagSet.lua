@@ -1,4 +1,6 @@
-local AddOnName, AddOnTable = ...
+---@class AddonNamespace
+local AddOnTable = select(2, ...)
+local AddOnName = select(1, ...)
 local _
 
 ---@class BagSet
@@ -8,9 +10,13 @@ local Prototype = {
     MaxContainerNumber = 0,
     ContainerNumber = 0,
     --[[  sub tables have to be reassigned on init or ALL new elements will have the SAME tables for access... ]]
+    ---@type Container[]
     Containers = nil,
+    ---@type SubContainer[]
     SubContainers = nil,
+    ---@type BagButton[]
     BagButtons = nil,
+    ---@type BagButton[]
     ReagentBagButtons = nil,
 }
 
@@ -88,7 +94,8 @@ function Prototype:RebuildContainers()
             isOpen = false
             containerNumber = containerNumber + 1
             if (self.MaxContainerNumber < containerNumber and subContainer ~= nil) then
-                containerObject = AddOnTable:CreateContainer(self.Type, containerNumber, id == AddOnTable.BlizzConstants.REAGENTBANK_CONTAINER)
+                local containerTemplate = self.Type.GetContainerTemplate(id)
+                containerObject = AddOnTable:CreateContainer(self.Type, containerNumber, containerTemplate)
 
                 self.Containers[containerNumber] = containerObject
                 self.MaxContainerNumber = containerNumber
@@ -236,6 +243,7 @@ end
 local Metatable = { __index = Prototype }
 ---@param type BagSetTypeClass
 function AddOnTable:CreateBagSet(type)
+    ---@type BagSet
     local bagSet = _G.setmetatable({}, Metatable)
     bagSet.Type = type
     bagSet.Containers = {}

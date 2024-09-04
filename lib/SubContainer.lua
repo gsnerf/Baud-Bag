@@ -1,22 +1,32 @@
-local AddOnName, AddOnTable = ...
+---@class AddonNamespace
+local AddOnTable = select(2, ...)
+local AddOnName = select(1, ...)
 local _
 
 ---@class SubContainer
 local Prototype = {
-    ---@class BagSetTypeClass
+    ---@type BagSetTypeClass
     BagSet = nil,
+    ---@type integer
     ContainerId = nil,
+    ---@type string
     Name = "",
+    ---@type integer
     StartColumn = 0,
+    ---@type integer
     FreeSlots = 0,
+    ---@type boolean
     HighlightSlots = false,
-    ---@class Frame
+    ---@type Frame
     Frame = nil,
+    ---@type BBItemButton[]
     Items = nil,
+    ---@type BagButton TODO: never used???
     BagButton = nil,
+    ---@type Enum.BagSlotFlags
     FilterType = nil,
     
-    -- theese values might be better of in an own object, we'll see
+    -- these values might be better of in an own object, we'll see
     Size = 0,
     AvailableItemButtons = 0
 }
@@ -52,7 +62,7 @@ function Prototype:Rebuild()
             self.Items[newSlot] = button
 
             -- hook for plugins
-            AddOnTable:ItemSlot_Created(self.BagSet, self.Frame:GetParent():GetID(), self.ContainerId, slot, button)
+            AddOnTable:ItemSlot_Created(self.BagSet, self.Frame:GetParent():GetID(), self.ContainerId, newSlot, button)
         end
         availableItemButtons = newSize
     end
@@ -83,22 +93,22 @@ end
 function Prototype:UpdateSlotContents()
     local showColor = BBConfig.RarityColor
     local rarityIntensity = BBConfig.RarityIntensity
-    local isBankBag = self.BagSet.Id == BagSetType.Bank.Id
+    local setSupportsCache = self.BagSet.SupportsCache
     local bagCache = AddOnTable.Cache:GetBagCache(self.ContainerId)
-    local useCache = isBankBag and not AddOnTable.State.BankOpen
+    local useCache = self.BagSet.ShouldUseCache()
     
     -- reinit values that might be outdated
     self.FreeSlots = 0
 
-    AddOnTable.Functions.DebugMessage("Bags", "Updating SubBag (ID, Size, isBagContainer, isBankOpen)", self.ContainerId, self.Size, not isBankBag, AddOnTable.State.BankOpen)
+    AddOnTable.Functions.DebugMessage("Bags", "Updating SubBag (ID, Size, supportsCache, useCache)", self.ContainerId, self.Size, setSupportsCache, useCache)
 
     for slot = 1, self.Size do
         local itemObject = self.Items[slot]
-        local link, newCacheEntry = itemObject:UpdateContent(useCache, bagCache[slot])
+        local link, newCacheEntry = itemObject:UpdateContent(useCache, setSupportsCache and bagCache[slot] or nil)
         itemObject:UpdateCustomRarity(showColor, rarityIntensity)
         itemObject:ShowHighlight(self.HighlightSlots)
 
-        if (isBankBag and not useCache) then
+        if (setSupportsCache and not useCache) then
             bagCache[slot] = newCacheEntry
         end
 

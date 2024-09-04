@@ -1,11 +1,15 @@
 ﻿-- addon defaults
-local AddOnName, AddOnTable = ...
+---@class AddonNamespace
+local AddOnTable = select(2, ...)
+local AddOnName = select(1, ...)
 local Localized = AddOnTable.Localized
 local _
 
 -- necessary globals
 _G[AddOnName] = AddOnTable
+---@type BagSet[]
 AddOnTable["Sets"] = {}
+---@type SubContainer[]
 AddOnTable["SubBags"] = {}
 AddOnTable["Backgrounds"] = {}
 
@@ -46,12 +50,12 @@ local EventFuncs = {
         for _, bagSetType in pairs(BagSetType) do
             bagSetType.BagOverview_Initialize()
             local bagSet = AddOnTable.Sets[bagSetType.Id]
-            AddOnTable.Functions.DebugMessage("Temp", "trying to initialize first container of '"..bagSetType.Name.."'", bagSet.Containers[1])
             -- TODO: get rid of "Frame"...
             if (bagSet.Containers[1].Frame.Initialize) then
-                AddOnTable.Functions.DebugMessage("Temp", "calling initialize")
                 bagSet.Containers[1].Frame:Initialize()
             end
+            -- first time rebuld necessary to support containers that support cache
+            bagSet.Containers[1]:Rebuild()
         end
     end,
 
@@ -223,6 +227,7 @@ end
 function BaudBag_OnLoad(self, event, ...)
     BINDING_HEADER_BaudBag					= "Baud Bag"
     BINDING_NAME_BaudBagToggleBank			= "Toggle Bank"
+    BINDING_NAME_BaudBagToggleAccountBank	= "Toggle Warband Bank"
     BINDING_NAME_BaudBagToggleVoidStorage	= "Show Void Storage"
 
     AddOnTable.Functions.DebugMessage("Bags", "OnLoad was called")

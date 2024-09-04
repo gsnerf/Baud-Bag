@@ -1,6 +1,12 @@
+---@class AddonNamespace
+local AddOnTable = select(2, ...)
 local _
-local AddOnName, AddOnTable = ...
 
+---@class BagButton
+---@field BagSetType BagSetTypeClass
+---@field SubContainerId integer ID of the container as WoW knows it
+---@field Icon Texture
+---@field Border Texture
 BaudBag_BagButtonMixin = {
     --[[
         the BagButton frame is supposed to contain:
@@ -16,6 +22,7 @@ BaudBag_BagButtonMixin = {
 function BaudBag_BagButtonMixin:Initialize()
     self.IsBankContainer = self.BagSetType == BagSetType.Bank
     self.IsInventoryContainer = self.BagSetType == BagSetType.Backpack
+    self.ContainerNotPurchasedYet = false
 
     if (self.IsInventoryContainer) then
         local slotPrefix = self.SubContainerId <= AddOnTable.BlizzConstants.BACKPACK_CONTAINER_NUM and "Bag" or "ReagentBag"
@@ -43,18 +50,27 @@ function BaudBag_BagButtonMixin:UpdateContent()
 end
 
 function BaudBag_BagButtonMixin:SetQuality(quality)
+    if (self.ContainerNotPurchasedYet ~= false) then
+        self.Border:SetVertexColor(0.51, 0.1, 0.1)
+        self.Icon:SetVertexColor(0.51, 0.1, 0.1)
+        return
+    end
+
     local qualityColor = AddOnTable.BlizzConstants.BAG_ITEM_QUALITY_COLORS[quality]
     if (qualityColor) then
         self.Border:SetVertexColor(qualityColor.r, qualityColor.g, qualityColor.b)
     else
         self.Border:SetVertexColor(1, 1, 1)
     end
+    self.Icon:SetVertexColor(1, 1, 1)
 end
 
+---@param item ItemInfo Item ID, Link or name 
 function BaudBag_BagButtonMixin:SetItem(item)
 	self.item = item;
 
 	if not item then
+        self:Reset()
 		return true
 	end
 
@@ -77,8 +93,8 @@ function BaudBag_BagButtonMixin:SetItem(item)
 end
 
 function BaudBag_BagButtonMixin:Reset()
-	self.Icon:SetTexture()
-	self:SetQuality()
+	self.Icon:SetTexture("interface\\paperdoll\\ui-paperdoll-slot-bag")
+    self:SetQuality()
 end
 
 --[[function BaudBag_BagButtonMixin:GetItemContextMatchResult()
@@ -209,9 +225,14 @@ local bagButtonRelatedEvents = {
 function BaudBag_BagButtonMixin:OnShow()
     if (self.IsInventoryContainer) then
         FrameUtil.RegisterFrameForEvents(self, bagButtonRelatedEvents)
-
         self:UpdateContent()
     end
+
+    self:OnShowOverride()
+end
+
+function BaudBag_BagButtonMixin:OnShowOverride()
+    -- intentionally empty, to be overridden by specific bag button flavors
 end
 
 function BaudBag_BagButtonMixin:OnHide()
@@ -275,7 +296,7 @@ function BaudBag_BagButtonMixin:OnReceiveDrag()
     self:PutItemInBag()
 end
 
----@return table|BaudBag_BagButton|Button
+---@return BagButton
 function AddOnTable:CreateBagButton(bagSetType, subContainerId, bagIndex, parentFrame, name)
     if (name == nil) then
         name = "BBBagSet"..bagSetType.Id.."Bag"..bagIndex.."Slot"

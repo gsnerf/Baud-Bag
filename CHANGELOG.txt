@@ -1,4 +1,13 @@
 ﻿=== Changelog ===
+v11.0.2.5
+  - added support for warband bank
+    - you can currently only put items into it by manually moving it there, rightclicking from bags does not work and instead try to put into regular bank
+    - depositing money is currently not possible
+    - bank content does not correctly lock when online with another account that has access to same bank
+    - configuring bag joining might not work correctly (everything will be joined by default)
+  - fixed bag buttons not updating correctly when not yet bought
+  - fixed item levels, now only showing on equipable items again
+  - greatly improved IDE support for addon development
 v11.0.2.4
   - fixed keyring to actually be able to load in classic flavors
   - fixed offline state recognition for bank when visiting using the "warband distance inhibitor"

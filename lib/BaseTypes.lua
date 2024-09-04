@@ -1,4 +1,5 @@
-local AddOnName, AddOnTable = ...
+---@class AddonNamespace
+local AddOnTable = select(2, ...)
 local _
 local Localized = AddOnTable.Localized
 
@@ -43,8 +44,11 @@ BagSetType = {
             end,
             Background = 1
         },
+        GetContainerTemplate = function(containerId) return "BaudBagContainerTemplate" end,
         GetItemButtonTemplate = function(containerId) return "ContainerFrameItemButtonTemplate" end,
         GetSize = function(containerId) return AddOnTable.BlizzAPI.GetContainerNumSlots(containerId) end,
+        SupportsCache = false,
+        ShouldUseCache = function() return false end,
         -- intended to be set in Backpack.lua
         BagOverview_Initialize = nil,
     },
@@ -88,6 +92,13 @@ BagSetType = {
             end,
             Background = 2
         },
+        GetContainerTemplate = function(containerId)
+            if (containerId == AddOnTable.BlizzConstants.REAGENTBANK_CONTAINER) then
+                return "BaudBagReagentBankTemplate"
+            else
+                return "BaudBagContainerTemplate"
+            end
+        end,
         GetItemButtonTemplate = function(containerId)
             if (containerId == AddOnTable.BlizzConstants.REAGENTBANK_CONTAINER) then
                 return "ReagentBankItemButtonGenericTemplate"
@@ -104,6 +115,8 @@ BagSetType = {
                 return AddOnTable.BlizzAPI.GetContainerNumSlots(containerId)
             end
         end,
+        SupportsCache = true,
+        ShouldUseCache = function() return not AddOnTable.State.BankOpen end,
         -- intended to be set in Bank.lua
         BagOverview_Initialize = nil,
     },

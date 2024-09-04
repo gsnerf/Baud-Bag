@@ -1,12 +1,20 @@
-local AddOnName, AddOnTable = ...
+---@class AddonNamespace
+local AddOnTable = select(2, ...)
 local _
 
+---@class BBItemButton
 local Prototype = {
+    ---@type string frame name for referencing from global space
     Name = nil,
+    ---@type integer index inside the sub container, to be used for API calls
     SlotIndex = nil,
+    ---@type Enum.ItemQuality cached quality string, used for overlay handling
     Quality = nil,
+    ---@type SubContainer reference to the parent container for easier API call handling
     Parent = nil,
+    ---@type Texture
     BorderFrame = nil,
+    ---@type Texture|nil
     QuestOverlay = nil
 }
 
@@ -67,7 +75,8 @@ function Prototype:UpdateContent(useCache, slotCache)
     if (containerItemInfo.hyperlink ~= nil and BBConfig.ShowItemLevel) then
         local _, _, _, _, _, itemType, itemSubType, _, itemEquipLoc = AddOnTable.BlizzAPI.GetItemInfo(containerItemInfo.hyperlink)
         local effectiveItemLevel, _, _ = AddOnTable.BlizzAPI.GetDetailedItemLevelInfo(containerItemInfo.hyperlink)
-        if effectiveItemLevel ~= nil and itemEquipLoc ~= "" and itemEquipLoc ~= INVTYPE_NON_EQUIP then
+        local isNonEquip = itemEquipLoc == "INVTYPE_NON_EQUIP" or itemEquipLoc == "INVTYPE_NON_EQUIP_IGNORE"
+        if effectiveItemLevel ~= nil and not isNonEquip then
             itemLevelText = effectiveItemLevel
         end
     end
@@ -342,7 +351,11 @@ function AddOnTable:CreateItemButton(subContainer, slotIndex, buttonTemplate)
     return itemButton
 end
 
-
+---@param bagSet BagSetTypeClass
+---@param containerId integer ID of the baud bag container containing the subContainerId (bagId)
+---@param subContainerId integer ID representing the actual bag as known to WoW
+---@param slotId integer the numeric index/ID of the slot in the wow bag the button is here fore
+---@param button ItemButton the item button of the respective bagSet specific template
 function AddOnTable:ItemSlot_Created(bagSet, containerId, subContainerId, slotId, button)
     -- just an empty hook for other addons
 end
