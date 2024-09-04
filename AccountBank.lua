@@ -306,10 +306,10 @@ function BaudBagAccountBankContainerMixin:OnContainerLoad()
 end
 
 function BaudBagAccountBankContainerMixin:OnContainerEvent(event, ...)
-    Funcs.DebugMessage("AccountBank", "AccountBankContainer#"..event, ...)
     if (event == "PLAYER_ACCOUNT_BANK_TAB_SLOTS_CHANGED" or event == "BAG_UPDATE") then
         local containerIndex = ...
         if (containerIndex == self:GetID()) then
+            Funcs.DebugMessage("AccountBank", "AccountBankContainer#"..event, ...)
             self.QueueForUpdate = true
         end
     end
