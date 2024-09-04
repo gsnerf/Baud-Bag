@@ -13,4 +13,6 @@
 			<OnShow method="OnShow" />
 		</Scripts>
 	</Frame>
+
+	<GameTooltip name="BaudBgBagsFrameTooltip" inherits="GameTooltipTemplate" />
 </Ui>
