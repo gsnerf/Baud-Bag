@@ -36,7 +36,7 @@ function Prototype:UpdateName()
     local targetName = containerConfig.Name or ""
     local targetColor = NORMAL_FONT_COLOR
 
-    if ((self.Frame.BagSet == 2) and (not AddOnTable.State.BankOpen)) then
+    if (self.BagSet.SupportsCache and self.BagSet.ShouldUseCache()) then
         targetName = containerConfig.Name..AddOnTable.Localized.Offline
         targetColor = RED_FONT_COLOR
     end
