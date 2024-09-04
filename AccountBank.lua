@@ -293,6 +293,16 @@ function BaudBagAccountBagsFrameMixin:UpdateHeight(firstButtonHeight, withPurcha
     self:SetHeight(15 + ceil(AddOnTable.BlizzConstants.ACCOUNT_BANK_CONTAINER_NUM / 2) * firstButtonHeight + purchaseHeight)
 end
 
+function BaudBagAccountBagsFrameMixin:OnShow()
+    if self.PurchaseFrame then
+        if AddOnTable.State.AccountBankOpen then
+            self.PurchaseFrame.PurchaseButton:Enable()
+        else
+            self.PurchaseFrame.PurchaseButton:Disable()
+        end
+    end
+end
+
 --[[ ###################################### Bags Settings frame ##################################### ]]
 
 BaudBagAccountBankTabSettingsMixin = {}

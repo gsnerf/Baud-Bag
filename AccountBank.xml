@@ -54,6 +54,9 @@
 						</Anchors>
 					</Frame>
 				</Frames>
+				<Scripts>
+					<OnShow method="OnShow" />
+				</Scripts>
 			</Frame>
 
 			<!--Frame parentKey="UnlockInfo" inherits="BaudBagContainerUnlockTemplate" mixin="BaudBagAccountBankUnlockMixin" hidden="true" /-->
