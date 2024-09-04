@@ -104,7 +104,7 @@ function Prototype:UpdateSlotContents()
 
     for slot = 1, self.Size do
         local itemObject = self.Items[slot]
-        local link, newCacheEntry = itemObject:UpdateContent(useCache, bagCache[slot])
+        local link, newCacheEntry = itemObject:UpdateContent(useCache, setSupportsCache and bagCache[slot] or nil)
         itemObject:UpdateCustomRarity(showColor, rarityIntensity)
         itemObject:ShowHighlight(self.HighlightSlots)
 

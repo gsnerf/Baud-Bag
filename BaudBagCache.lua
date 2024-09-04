@@ -43,15 +43,27 @@ end
     so this method makes sure to return a valid cache object.
 ]]
 function CacheMixin:GetBagCache(bag)
+    local bagSetType = AddOnTable.Functions.GetBagSetTypeForBag(bag)
+
+    if bagSetType == nil or not bagSetType.SupportsCache then return end
+
     -- make sure the requested cache is initialized.
-    --if (self:UsesCache(bag) and type(self.Bank[bag]) ~= "table") then
-    if (type(self.Bank[bag]) ~= "table") then
-        DebugMsg("[GetBagCache] Bag: "..bag..", cache entry type: "..type(self.Bank[bag]), self.Bank)
-        self.Bank[bag] = {Size = 0}
+    DebugMsg("[GetBagCache] Bag: "..bag..", cache entry type: "..type(self[bagSetType.TypeName][bag]), self[bagSetType.TypeName])
+    if (type(self[bagSetType.TypeName][bag]) ~= "table") then
+        self[bagSetType.TypeName][bag] = {Size = 0}
     end
-    return self.Bank[bag]
+    
+    return self[bagSetType.TypeName][bag]
 end
 
+---@param bagSetType BagSetTypeClass
+local function initCacheForBagSetType(bagSetType)
+    if (type(BaudBag_Cache[bagSetType.TypeName]) ~= "table") then
+        DebugMsg("cache for bag set '"..bagSetType.TypeName.."' missing or broken, creating new one")
+        -- wrapper for everything bank specific
+        BaudBag_Cache[bagSetType.TypeName] = {}
+    end
+end
 
 --[[
     This function initializes the cache if it does not already exist. Needs to be called in ADDON_LOADED event!
@@ -72,19 +84,11 @@ function AddOnTable:InitCache()
     BaudBag_Cache = Mixin(BaudBag_Cache, CacheMixin)
     AddOnTable.Cache = BaudBag_Cache
 
-    -- init bank cache
-    if (type(BaudBag_Cache.Bank) ~= "table") then
-        DebugMsg("bank cache missing or broken, creating new one")
-        -- wrapper for everything bank specific
-        BaudBag_Cache.Bank = {}
-        -- the bank box (not the additional bags in the bank)
-        BaudBag_Cache.Bank[-1] = { Size = NUM_BANKGENERIC_SLOTS }
-    end
-	
-    -- init void cache
-    if (type(BaudBag_Cache.Void) ~= "table") then
-        DebugMsg("void cache missing or broken, creating new one")
-        BaudBag_Cache.Void = {}
+    -- init caches for all bagsets that support it
+    for _, bagSetType in pairs(BagSetType) do
+        if (bagSetType.SupportsCache) then
+            initCacheForBagSetType(bagSetType)
+        end
     end
 
     initialized = true

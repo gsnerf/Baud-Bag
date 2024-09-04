@@ -262,3 +262,12 @@ AddOnTable.Functions.IsCraftingReagent = function (itemId)
     end
     return isReagent
 end
+
+---@return BagSetTypeClass
+AddOnTable.Functions.GetBagSetTypeForBag = function(subContainerId)
+    for _, bagSetType in pairs(BagSetType) do
+        if bagSetType.IsSubContainerOf(subContainerId) then
+            return bagSetType
+        end
+    end
+end
