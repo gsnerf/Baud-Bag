@@ -352,3 +352,16 @@ hooksecurefunc(AddOnTable, "ItemSlot_Created", function(self, bagSet, containerI
         button:SetScript("OnEnter", ItemButton_OnCustomEnter)
     end
 end)
+
+
+function BaudBagToggleWarbandBank()
+    local warbandBankSet = AddOnTable.Sets[BagSetType.AccountBank.Id]
+    local firstContainer = warbandBankSet.Containers[1]
+    if (firstContainer.Frame:IsShown()) then
+        firstContainer.Frame:Hide()
+        warbandBankSet:AutoClose()
+    else
+        firstContainer.Frame:Show()
+        warbandBankSet:AutoOpen()
+    end
+end

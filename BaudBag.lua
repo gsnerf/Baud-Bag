@@ -54,6 +54,8 @@ local EventFuncs = {
             if (bagSet.Containers[1].Frame.Initialize) then
                 bagSet.Containers[1].Frame:Initialize()
             end
+            -- first time rebuld necessary to support containers that support cache
+            bagSet.Containers[1]:Rebuild()
         end
     end,
 
@@ -225,6 +227,7 @@ end
 function BaudBag_OnLoad(self, event, ...)
     BINDING_HEADER_BaudBag					= "Baud Bag"
     BINDING_NAME_BaudBagToggleBank			= "Toggle Bank"
+    BINDING_NAME_BaudBagToggleAccountBank	= "Toggle Warband Bank"
     BINDING_NAME_BaudBagToggleVoidStorage	= "Show Void Storage"
 
     AddOnTable.Functions.DebugMessage("Bags", "OnLoad was called")
