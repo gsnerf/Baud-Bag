@@ -102,18 +102,30 @@ function Prototype:UpdateSlotContents()
 
     AddOnTable.Functions.DebugMessage("Bags", "Updating SubBag (ID, Size, supportsCache, useCache)", self.ContainerId, self.Size, setSupportsCache, useCache)
 
-    for slot = 1, self.Size do
-        local itemObject = self.Items[slot]
-        local link, newCacheEntry = itemObject:UpdateContent(useCache, setSupportsCache and bagCache[slot] or nil)
-        itemObject:UpdateCustomRarity(showColor, rarityIntensity)
-        itemObject:ShowHighlight(self.HighlightSlots)
-
-        if (setSupportsCache and not useCache) then
-            bagCache[slot] = newCacheEntry
-        end
-
+    local finishItemButtonUpdateCallback = function(itemButton, link)
+        itemButton:ShowHighlight(self.HighlightSlots)
+        
         if not link then
             self.FreeSlots = self.FreeSlots + 1
+        end
+    end
+
+    for slot = 1, self.Size do
+        local itemObject = self.Items[slot]
+        itemObject:SetRarityOptions(showColor, rarityIntensity)
+        if setSupportsCache then
+            itemObject:UpdateContent(
+                useCache,
+                bagCache[slot],
+                function(newCacheEntry)
+                    if not useCache then
+                        bagCache[slot] = newCacheEntry
+                    end
+                end,
+                finishItemButtonUpdateCallback
+            )
+        else
+            itemObject:UpdateContent(false, nil, nil, finishItemButtonUpdateCallback)
         end
 
         AddOnTable:ItemSlot_Updated(self.BagSet, self.Frame:GetParent():GetID(), self.ContainerId, slot, itemObject)

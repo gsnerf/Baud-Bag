@@ -56,7 +56,7 @@ if C_Container ~= nil then
     ---wrapper for the regular GetContainerItemInfo so we can support the addon in multiple interface levels
     ---@param containerId number ID of the container the item is located in
     ---@param slotIndex number ID of the slot in the container the item is located in
-    ---@return { iconFileID: number, stackCount: number, isLocked: boolean, quality: Enum.ItemQuality?, isReadable: boolean, hasLoot: boolean, hyperlink: string, isFiltered: boolean, hasNoValue: boolean, itemID: number, isBound: boolean }|nil
+    ---@return ContainerItemInfo
     API.GetContainerItemInfo = C_Container.GetContainerItemInfo
     API.GetContainerItemQuestInfo = C_Container.GetContainerItemQuestInfo
     API.GetBackpackAutosortDisabled = C_Container.GetBackpackAutosortDisabled
@@ -87,7 +87,7 @@ else
     ---wrapper for the regular GetContainerItemInfo so we can support the addon in multiple interface levels
     ---@param containerId number ID of the container the item is located in
     ---@param slotIndex number ID of the slot in the container the item is located in
-    ---@return { iconFileID: number, stackCount: number, isLocked: boolean, quality: Enum.ItemQuality?, isReadable: boolean, hasLoot: boolean, hyperlink: string, isFiltered: boolean, hasNoValue: boolean, itemID: number, isBound: boolean }|nil
+    ---@return ContainerItemInfo
     API.GetContainerItemInfo = function(containerId, slotIndex)
         local texture, count, locked, quality, isReadable, lootable, link, isFiltered, hasNoValue, itemID, isBound = GetContainerItemInfo(containerId, slotIndex)
         return {

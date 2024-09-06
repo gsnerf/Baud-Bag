@@ -18,50 +18,97 @@ local Prototype = {
     QuestOverlay = nil
 }
 
-function Prototype:UpdateContent(useCache, slotCache)
-    local isNewItem, isBattlePayItem
-    local cacheEntry = nil
-    local containerItemInfo = {}
+---@param show boolean show custom rarity coloring?
+---@param intensity integer how intense should the color be rendered? (0.0-1.0)
+function Prototype:SetRarityOptions(show, intensity)
+    self.RarityOptions = { Show = show, Intensity = intensity}
+end
 
+---@param useCache boolean wether the cache should be used right now
+---@param slotCache any table containing a size field and an array of links per item slot
+---@param newCacheCallback fun(newEntry: SlotCache)
+---@param finishUpdateCallback fun(link: string)
+function Prototype:UpdateContent(useCache, slotCache, newCacheCallback, finishUpdateCallback)
+    
     if not useCache then
-        containerItemInfo = AddOnTable.BlizzAPI.GetContainerItemInfo(self.Parent.ContainerId, self.SlotIndex)
-        if containerItemInfo == nil then
-            containerItemInfo = {}
-        end
-        
-        if containerItemInfo.hyperlink then
-            cacheEntry = { Link = containerItemInfo.hyperlink, Count = containerItemInfo.stackCount }
-            isNewItem = AddOnTable.BlizzAPI.IsNewItem(self.Parent.ContainerId, self.SlotIndex)
-            isBattlePayItem = AddOnTable.BlizzAPI.IsBattlePayItem(self.Parent.ContainerId, self.SlotIndex)
+        local item = Item:CreateFromBagAndSlot(self.Parent.ContainerId, self.SlotIndex)
+        if item:IsItemEmpty() then
+            self:UpdateContentFromContainerItemInfo({}, false, false)
+        else
+            item:ContinueOnItemLoad(function()
+                local containerItemInfo = AddOnTable.BlizzAPI.GetContainerItemInfo(self.Parent.ContainerId, self.SlotIndex)
+                
+                if containerItemInfo == nil then
+                    containerItemInfo = {}
+                end
+                
+                local isNewItem, isBattlePayItem
+                local cacheEntry = nil
+                
+                if containerItemInfo.hyperlink then
+                    cacheEntry = { Link = containerItemInfo.hyperlink, Count = containerItemInfo.stackCount }
+                    isNewItem = AddOnTable.BlizzAPI.IsNewItem(self.Parent.ContainerId, self.SlotIndex)
+                    isBattlePayItem = AddOnTable.BlizzAPI.IsBattlePayItem(self.Parent.ContainerId, self.SlotIndex)
+                end
+                
+                self:UpdateContentFromContainerItemInfo(containerItemInfo, isNewItem, isBattlePayItem)
+
+                if (newCacheCallback) then
+                    newCacheCallback(cacheEntry)
+                end
+
+                finishUpdateCallback(self, containerItemInfo.hyperlink)
+            end)
         end
     elseif slotCache then
         self.hasItem = nil
-        containerItemInfo.hyperlink = slotCache.Link
-        containerItemInfo.stackCount = slotCache.Count or 0
+        
+        if slotCache.Link then
+            
+            local item = Item:CreateFromItemLink(slotCache.Link)
+            item:ContinueOnItemLoad(function()
+                -- regular items ... 
+                local name, texture, quality
+                if (LinkUtil.IsLinkType(slotCache.Link, "item")) then
+                    name, _, quality, _, _, _, _, _, _, texture = AddOnTable.BlizzAPI.GetItemInfo(slotCache.Link)
+                    -- ... or a caged battle pet ...
+                elseif (LinkUtil.IsLinkType(slotCache.Link, "battlepet")) then
+                    local _, speciesID, _, qualityString = strsplit(":", slotCache.Link)
+                    _, texture = C_PetJournal.GetPetInfoBySpeciesID(speciesID)
+                    quality = tonumber(qualityString)
+                    -- ... we don't know about everything else
+                end
+                local containerItemInfo = {
+                    iconFileID = texture,
+                    stackCount = slotCache.Count or 0,
+                    isLocked = false,
+                    quality = quality,
+                    -- isReadable and hasLoot can't be answered
+                    hyperlink = slotCache.Link,
+                    -- how to find out if an item is filtered by search here or not?
+                    hasNoValue = false,
+                    itemId = item:GetItemID(),
+                    -- no idea what to do with isBound
+                    itemName = name
+                }
+                local isNewItem = AddOnTable.BlizzAPI.IsNewItem(self.Parent.ContainerId, self.SlotIndex)
+                local isBattlePayItem = AddOnTable.BlizzAPI.IsBattlePayItem(self.Parent.ContainerId, self.SlotIndex)
 
-        if containerItemInfo.hyperlink then
-            -- regular items ... 
-            local texture, quality
-            if (LinkUtil.IsLinkType(containerItemInfo.hyperlink, "item")) then
-                _, _, quality, _, _, _, _, _, _, texture = AddOnTable.BlizzAPI.GetItemInfo(containerItemInfo.hyperlink)
-                -- ... or a caged battle pet ...
-            elseif (LinkUtil.IsLinkType(containerItemInfo.hyperlink, "battlepet")) then
-                local _, speciesID, _, qualityString = strsplit(":", containerItemInfo.hyperlink)
-                _, texture = C_PetJournal.GetPetInfoBySpeciesID(speciesID)
-                quality = tonumber(qualityString)
-                -- ... we don't know about everything else
-            end
-            containerItemInfo.quality = quality
-            containerItemInfo.iconFileID = texture
+                self:UpdateContentFromContainerItemInfo(containerItemInfo, isNewItem, isBattlePayItem)
+                self.hasItem = 1
 
-            self.hasItem = 1
-            isNewItem = AddOnTable.BlizzAPI.IsNewItem(self.Parent.ContainerId, self.SlotIndex)
-            isBattlePayItem = AddOnTable.BlizzAPI.IsBattlePayItem(self.Parent.ContainerId, self.SlotIndex)
-
-            -- how to find out if an item is filtered by search here or not?
+                finishUpdateCallback(self, containerItemInfo.hyperlink)
+            end)
+        else
+            self:UpdateContentFromContainerItemInfo({}, false, false)
         end
-
+    else
+        self:UpdateContentFromContainerItemInfo({}, false, false)
     end
+end
+
+---@param containerItemInfo ContainerItemInfo
+function Prototype:UpdateContentFromContainerItemInfo(containerItemInfo)
     
     if SetItemButtonTexture ~= nil then
         SetItemButtonTexture(self, containerItemInfo.iconFileID)
@@ -96,12 +143,11 @@ function Prototype:UpdateContent(useCache, slotCache)
     if (self.JunkIcon) then
         self.JunkIcon:SetShown(containerItemInfo.quality == Enum.ItemQuality.Poor and not containerItemInfo.hasNoValue and MerchantFrame:IsShown())
     end
+    self:UpdateCustomRarity()
 
     if self.UpgradeIcon then
         self:UpdateItemUpgradeIcon()
     end
-    
-    return containerItemInfo.hyperlink, cacheEntry
 end
 
 function Prototype:UpdateItemUpgradeIcon()
@@ -110,7 +156,7 @@ function Prototype:UpdateItemUpgradeIcon()
 
     -- first lets check if pawn is available and if so use that as a source
     if PawnIsContainerItemAnUpgrade then
-        isUpgrade = PawnIsContainerItemAnUpgrade (self:GetParent():GetID(), self:GetID())
+        isUpgrade = PawnIsContainerItemAnUpgrade(self:GetParent():GetID(), self:GetID())
     -- now for regular wow upgrade information... while the UpgradeIcon texture itself still exists in DF, it doesn't seem to be used anymore, so this is mainly for classic(ish) versions
     elseif AddOnTable.BlizzAPI.IsContainerItemAnUpgrade then
         -- in case this is a container button we try to use the regular upgrade system (this might be even extended by addons like pawn)
@@ -137,17 +183,17 @@ function Prototype:UpdatePosition(container, x, y, slotLevel)
 end
 
 --[[ Updates the rarity for this on basis of the current items quality ]]
-function Prototype:UpdateCustomRarity(showColor, intensity)
+function Prototype:UpdateCustomRarity()
     local quality = self.Quality
 
-    if quality and (quality > 1) and showColor then
+    if quality and (quality > 1) and self.RarityOptions.Show then
         -- use alternative rarity coloring
         if (quality == Enum.ItemQuality.Uncommon) then
-            self.IconBorder:SetVertexColor(0.1,   1,   0, math.min(0.5 * intensity, 1))
+            self.IconBorder:SetVertexColor(0.1,   1,   0, math.min(0.5 * self.RarityOptions.Intensity, 1))
         elseif (quality == Enum.ItemQuality.Rare) then
-            self.IconBorder:SetVertexColor(  0, 0.4, 0.8, math.min(0.8 * intensity, 1))
+            self.IconBorder:SetVertexColor(  0, 0.4, 0.8, math.min(0.8 * self.RarityOptions.Intensity, 1))
         elseif (quality == Enum.ItemQuality.Epic) then
-            self.IconBorder:SetVertexColor(0.6, 0.2, 0.9, math.min(0.5 * intensity, 1))
+            self.IconBorder:SetVertexColor(0.6, 0.2, 0.9, math.min(0.5 * self.RarityOptions.Intensity, 1))
         else
             -- we have no alternative colors for this rarity, just use the default ones
             local color = BAG_ITEM_QUALITY_COLORS[quality]
@@ -173,13 +219,6 @@ function Prototype:UpdateQuestOverlay(containerId, itemlink)
 
         local questInfo = AddOnTable.BlizzAPI.GetContainerItemQuestInfo(containerId, self.SlotIndex)
         local isQuestRelated = questInfo.questID ~= nil or questInfo.isQuestItem
-
-        --[[if ( not isQuestRelated ) then
-            if (itemlink) then
-                local _, _, _, _, _, itemType, itemSubType, _, _, _, _, classID, subclassID = AddOnTable.BlizzAPI.GetItemInfo(itemlink)
-                isQuestRelated = itemType == "Quest" or itemSubType == "Quest"
-            end
-        end]]
 
         if ( isQuestRelated ) then
             self.IconBorder:SetVertexColor(1, 0.9, 0.4, 0.9)

@@ -19,6 +19,17 @@ local function DebugMsg(message, ...)
     AddOnTable.Functions.DebugMessage("Cache", message, ...)
 end
 
+---@class SlotCache
+---@field Link string item link
+---@field Count integer number of items in the stack
+
+---@class BagCache
+---@field Size integer number of item slots in the bag
+---@field TabData TabData|nil optional data for warband banks
+---@field BagLink string optional item link for the bag (usually bank bags)
+---@field BagCount integer number of items in the bag stack (that doesn't really make sense, does it?)
+
+---@class Cache
 local CacheMixin = {}
 
 --[[ 
