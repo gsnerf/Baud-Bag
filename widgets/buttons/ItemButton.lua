@@ -26,9 +26,8 @@ end
 
 ---@param useCache boolean wether the cache should be used right now
 ---@param slotCache any table containing a size field and an array of links per item slot
----@param newCacheCallback fun(newEntry: SlotCache)
----@param finishUpdateCallback fun(link: string)
-function Prototype:UpdateContent(useCache, slotCache, newCacheCallback, finishUpdateCallback)
+---@param finishUpdateCallback fun(button: BBItemButton, link: string, newCacheEntry: SlotCache)
+function Prototype:UpdateContent(useCache, slotCache, finishUpdateCallback)
     
     if not useCache then
         local item = Item:CreateFromBagAndSlot(self.Parent.ContainerId, self.SlotIndex)
@@ -53,11 +52,7 @@ function Prototype:UpdateContent(useCache, slotCache, newCacheCallback, finishUp
                 
                 self:UpdateContentFromContainerItemInfo(containerItemInfo, isNewItem, isBattlePayItem)
 
-                if (newCacheCallback) then
-                    newCacheCallback(cacheEntry)
-                end
-
-                finishUpdateCallback(self, containerItemInfo.hyperlink)
+                finishUpdateCallback(self, containerItemInfo.hyperlink, cacheEntry)
             end)
         end
     elseif slotCache then

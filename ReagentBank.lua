@@ -11,13 +11,22 @@ Func = function(self, event, ...)
     local slot = ...
     Funcs.DebugMessage("BankReagent", "Updating Slot", slot)
 
+    local showColor = BBConfig.RarityColor
+    local rarityIntensity = BBConfig.RarityIntensity
+
     local bagCache = AddOnTable.Cache:GetBagCache(AddOnTable.BlizzConstants.REAGENTBANK_CONTAINER)
     local subBagObject = AddOnTable["SubBags"][AddOnTable.BlizzConstants.REAGENTBANK_CONTAINER]
-    local rarityColor = BBConfig[2].RarityColor
+    --local rarityColor = BBConfig[2].RarityColor
+    local finishItemButtonUpdateCallback = function(itemButton, link, newCacheEntry)
+        bagCache[slot] = newCacheEntry
+    end
 
-    local _, newCacheEntry  = subBagObject.Items[slot]:UpdateContent(false)
-    bagCache[slot] = newCacheEntry
-    subBagObject.Items[slot]:UpdateCustomRarity(rarityColor)
+    subBagObject.Items[slot]:SetRarityOptions(showColor, rarityIntensity)
+    local _, newCacheEntry  = subBagObject.Items[slot]:UpdateContent(
+        false,
+        nil,
+        finishItemButtonUpdateCallback
+    )
 end
 Events.PLAYERREAGENTBANKSLOTS_CHANGED = Func
 
