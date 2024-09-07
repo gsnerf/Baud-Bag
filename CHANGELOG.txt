@@ -7,6 +7,7 @@ v11.0.2.5
     - configuring bag joining might not work correctly (everything will be joined by default)
   - fixed bag buttons not updating correctly when not yet bought
   - fixed item levels, now only showing on equipable items again
+  - reworked quite some parts of caching and item data handling, so opening the offline banks before visiting a bank should work more reliably now
   - greatly improved IDE support for addon development
 v11.0.2.4
   - fixed keyring to actually be able to load in classic flavors
