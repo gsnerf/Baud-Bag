@@ -78,7 +78,6 @@ function Prototype:UpdateFromConfig()
 end
 
 function Prototype:Rebuild()
-    local _, subContainer
     local numberOfSlots = 0
     for _, subContainer in pairs(self.SubContainers) do
         subContainer:Rebuild()

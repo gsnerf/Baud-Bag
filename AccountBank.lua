@@ -37,7 +37,13 @@ local function extendBaseType()
         GetContainerTemplate = function(containerId) return "BaudBagAccountBankContainerTemplate" end,
         GetItemButtonTemplate = function(containerId) return "AccountBankItemButtonTemplate" end,
         GetSize = function(containerId)
-            local purchasedBankTabIds = AddOnTable.BlizzAPI.FetchPurchasedBankTabIDs(Enum.BankType.Account)
+            if (BagSetType["AccountBank"].ShouldUseCache()) then
+                local bagCache = AddOnTable.Cache:GetBagCache(containerId)
+                if bagCache then
+                    return bagCache.Size
+                end
+            end
+            local purchasedBankTabIds  = AddOnTable.BlizzAPI.FetchPurchasedBankTabIDs(Enum.BankType.Account)
 
             -- necessary to get a visible first container even when not bought yet (so that we CAN buy)
             if table.getn(purchasedBankTabIds) == 0 and containerId == AddOnTable.BlizzConstants.ACCOUNT_BANK_FIRST_SUB_CONTAINER then
