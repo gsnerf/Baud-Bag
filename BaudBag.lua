@@ -34,6 +34,8 @@ local EventFuncs = {
         -- the rest of the bank slots are cleared in the next event
         -- TODO: recheck why this is necessary and if it can be avoided
         BaudBagBankSlotPurchaseButton:Disable()
+
+        AddOnTable.ApplyOverrides()
     end,
 
     PLAYER_LOGIN = function(self, event, ...)
