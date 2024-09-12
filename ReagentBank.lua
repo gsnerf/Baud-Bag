@@ -22,11 +22,7 @@ Func = function(self, event, ...)
     end
 
     subBagObject.Items[slot]:SetRarityOptions(showColor, rarityIntensity)
-    local _, newCacheEntry  = subBagObject.Items[slot]:UpdateContent(
-        false,
-        nil,
-        finishItemButtonUpdateCallback
-    )
+    subBagObject.Items[slot]:UpdateContentFromLiveData(finishItemButtonUpdateCallback)
 end
 Events.PLAYERREAGENTBANKSLOTS_CHANGED = Func
 

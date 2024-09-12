@@ -116,7 +116,11 @@ function Prototype:UpdateSlotContents()
         end
         local itemObject = self.Items[slot]
         itemObject:SetRarityOptions(showColor, rarityIntensity)
-        itemObject:UpdateContent(useCache, bagCache and bagCache[slot] or nil, finishItemButtonUpdateCallback)
+        if (useCache) then
+            itemObject:UpdateContentFromCache(bagCache and bagCache[slot] or nil, finishItemButtonUpdateCallback)
+        else
+            itemObject:UpdateContentFromLiveData(finishItemButtonUpdateCallback)
+        end
 
         AddOnTable:ItemSlot_Updated(self.BagSet, self.Frame:GetParent():GetID(), self.ContainerId, slot, itemObject)
     end

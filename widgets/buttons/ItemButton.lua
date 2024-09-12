@@ -24,77 +24,48 @@ function Prototype:SetRarityOptions(show, intensity)
     self.RarityOptions = { Show = show, Intensity = intensity}
 end
 
----@param useCache boolean wether the cache should be used right now
+---@param finishUpdateCallback fun(button: BBItemButton, link: string, newCacheEntry: SlotCache)
+function Prototype:UpdateContentFromLiveData(finishUpdateCallback)
+    local item = Item:CreateFromBagAndSlot(self.Parent.ContainerId, self.SlotIndex)
+    if item:IsItemEmpty() then
+        self:UpdateContentFromContainerItemInfo({}, false, false)
+        finishUpdateCallback(self, nil, nil)
+    else
+        item:ContinueOnItemLoad(function()
+            local containerItemInfo = AddOnTable.BlizzAPI.GetContainerItemInfo(self.Parent.ContainerId, self.SlotIndex)
+            
+            if containerItemInfo == nil then
+                containerItemInfo = {}
+            end
+            
+            local isNewItem, isBattlePayItem
+            local cacheEntry = nil
+            
+            if containerItemInfo.hyperlink then
+                cacheEntry = { Link = containerItemInfo.hyperlink, Count = containerItemInfo.stackCount }
+                isNewItem = AddOnTable.BlizzAPI.IsNewItem(self.Parent.ContainerId, self.SlotIndex)
+                isBattlePayItem = AddOnTable.BlizzAPI.IsBattlePayItem(self.Parent.ContainerId, self.SlotIndex)
+            end
+            
+            self:UpdateContentFromContainerItemInfo(containerItemInfo, isNewItem, isBattlePayItem)
+
+            finishUpdateCallback(self, containerItemInfo.hyperlink, cacheEntry)
+        end)
+    end
+end
+
 ---@param slotCache any table containing a size field and an array of links per item slot
 ---@param finishUpdateCallback fun(button: BBItemButton, link: string, newCacheEntry: SlotCache)
-function Prototype:UpdateContent(useCache, slotCache, finishUpdateCallback)
+function Prototype:UpdateContentFromCache(slotCache, finishUpdateCallback)
+    self.hasItem = nil
     
-    if not useCache then
-        local item = Item:CreateFromBagAndSlot(self.Parent.ContainerId, self.SlotIndex)
-        if item:IsItemEmpty() then
-            self:UpdateContentFromContainerItemInfo({}, false, false)
-            finishUpdateCallback(self, nil, nil)
-        else
+    if slotCache and slotCache.Link then
+        -- regular items ... 
+        if (LinkUtil.IsLinkType(slotCache.Link, "item")) then
+            local item = Item:CreateFromItemLink(slotCache.Link)
             item:ContinueOnItemLoad(function()
-                local containerItemInfo = AddOnTable.BlizzAPI.GetContainerItemInfo(self.Parent.ContainerId, self.SlotIndex)
-                
-                if containerItemInfo == nil then
-                    containerItemInfo = {}
-                end
-                
-                local isNewItem, isBattlePayItem
-                local cacheEntry = nil
-                
-                if containerItemInfo.hyperlink then
-                    cacheEntry = { Link = containerItemInfo.hyperlink, Count = containerItemInfo.stackCount }
-                    isNewItem = AddOnTable.BlizzAPI.IsNewItem(self.Parent.ContainerId, self.SlotIndex)
-                    isBattlePayItem = AddOnTable.BlizzAPI.IsBattlePayItem(self.Parent.ContainerId, self.SlotIndex)
-                end
-                
-                self:UpdateContentFromContainerItemInfo(containerItemInfo, isNewItem, isBattlePayItem)
+                local name, _, quality, _, _, _, _, _, _, texture = AddOnTable.BlizzAPI.GetItemInfo(slotCache.Link)
 
-                finishUpdateCallback(self, containerItemInfo.hyperlink, cacheEntry)
-            end)
-        end
-    elseif slotCache then
-        self.hasItem = nil
-        
-        if slotCache.Link then
-            
-            -- regular items ... 
-            if (LinkUtil.IsLinkType(slotCache.Link, "item")) then
-                local item = Item:CreateFromItemLink(slotCache.Link)
-                item:ContinueOnItemLoad(function()
-                    local name, _, quality, _, _, _, _, _, _, texture = AddOnTable.BlizzAPI.GetItemInfo(slotCache.Link)
-
-                    local containerItemInfo = {
-                        iconFileID = texture,
-                        stackCount = slotCache.Count or 0,
-                        isLocked = false,
-                        quality = quality,
-                        -- isReadable and hasLoot can't be answered
-                        hyperlink = slotCache.Link,
-                        -- how to find out if an item is filtered by search here or not?
-                        hasNoValue = false,
-                        itemId = item:GetItemID(),
-                        -- no idea what to do with isBound
-                        itemName = name
-                    }
-                    local isNewItem = AddOnTable.BlizzAPI.IsNewItem(self.Parent.ContainerId, self.SlotIndex)
-                    local isBattlePayItem = AddOnTable.BlizzAPI.IsBattlePayItem(self.Parent.ContainerId, self.SlotIndex)
-                    
-                    self:UpdateContentFromContainerItemInfo(containerItemInfo, isNewItem, isBattlePayItem)
-                    self.hasItem = 1
-                    
-                    finishUpdateCallback(self, containerItemInfo.hyperlink)
-                end)
-            -- ... or a caged battle pet ...
-            elseif (LinkUtil.IsLinkType(slotCache.Link, "battlepet")) then
-                local _, speciesID, _, qualityString = strsplit(":", slotCache.Link)
-                local name, texture = C_PetJournal.GetPetInfoBySpeciesID(speciesID)
-                local quality = tonumber(qualityString)
-
-                -- ... we don't know about everything else
                 local containerItemInfo = {
                     iconFileID = texture,
                     stackCount = slotCache.Count or 0,
@@ -104,7 +75,7 @@ function Prototype:UpdateContent(useCache, slotCache, finishUpdateCallback)
                     hyperlink = slotCache.Link,
                     -- how to find out if an item is filtered by search here or not?
                     hasNoValue = false,
-                    -- can't get an item id from a battlepet hyperlink
+                    itemId = item:GetItemID(),
                     -- no idea what to do with isBound
                     itemName = name
                 }
@@ -113,10 +84,35 @@ function Prototype:UpdateContent(useCache, slotCache, finishUpdateCallback)
                 
                 self:UpdateContentFromContainerItemInfo(containerItemInfo, isNewItem, isBattlePayItem)
                 self.hasItem = 1
+                
                 finishUpdateCallback(self, containerItemInfo.hyperlink)
-            end
-        else
-            self:UpdateContentFromContainerItemInfo({}, false, false)
+            end)
+        -- ... or a caged battle pet ...
+        elseif (LinkUtil.IsLinkType(slotCache.Link, "battlepet")) then
+            local _, speciesID, _, qualityString = strsplit(":", slotCache.Link)
+            local name, texture = C_PetJournal.GetPetInfoBySpeciesID(speciesID)
+            local quality = tonumber(qualityString)
+
+            -- ... we don't know about everything else
+            local containerItemInfo = {
+                iconFileID = texture,
+                stackCount = slotCache.Count or 0,
+                isLocked = false,
+                quality = quality,
+                -- isReadable and hasLoot can't be answered
+                hyperlink = slotCache.Link,
+                -- how to find out if an item is filtered by search here or not?
+                hasNoValue = false,
+                -- can't get an item id from a battlepet hyperlink
+                -- no idea what to do with isBound
+                itemName = name
+            }
+            local isNewItem = AddOnTable.BlizzAPI.IsNewItem(self.Parent.ContainerId, self.SlotIndex)
+            local isBattlePayItem = AddOnTable.BlizzAPI.IsBattlePayItem(self.Parent.ContainerId, self.SlotIndex)
+            
+            self:UpdateContentFromContainerItemInfo(containerItemInfo, isNewItem, isBattlePayItem)
+            self.hasItem = 1
+            finishUpdateCallback(self, containerItemInfo.hyperlink)
         end
     else
         self:UpdateContentFromContainerItemInfo({}, false, false)
