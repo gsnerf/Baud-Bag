@@ -27,17 +27,9 @@ end
 ---@param finishUpdateCallback fun(button: BBItemButton, link: string, newCacheEntry: SlotCache)
 function Prototype:UpdateContentFromLiveData(finishUpdateCallback)
     local item = Item:CreateFromBagAndSlot(self.Parent.ContainerId, self.SlotIndex)
-    if item:IsItemEmpty() then
-        self:UpdateContentFromContainerItemInfo({}, false, false)
-        finishUpdateCallback(self, nil, nil)
-    else
+    if not item:IsItemEmpty() then
         item:ContinueOnItemLoad(function()
             local containerItemInfo = AddOnTable.BlizzAPI.GetContainerItemInfo(self.Parent.ContainerId, self.SlotIndex)
-            
-            if containerItemInfo == nil then
-                containerItemInfo = {}
-            end
-            
             local isNewItem, isBattlePayItem
             local cacheEntry = nil
             
@@ -48,10 +40,14 @@ function Prototype:UpdateContentFromLiveData(finishUpdateCallback)
             end
             
             self:UpdateContentFromContainerItemInfo(containerItemInfo, isNewItem, isBattlePayItem)
-
             finishUpdateCallback(self, containerItemInfo.hyperlink, cacheEntry)
         end)
+        return
     end
+
+    -- fallback
+    self:UpdateContentFromContainerItemInfo({}, false, false)
+    finishUpdateCallback(self, nil, nil)
 end
 
 ---@param slotCache any table containing a size field and an array of links per item slot
