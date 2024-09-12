@@ -33,6 +33,7 @@ function Prototype:UpdateContent(useCache, slotCache, finishUpdateCallback)
         local item = Item:CreateFromBagAndSlot(self.Parent.ContainerId, self.SlotIndex)
         if item:IsItemEmpty() then
             self:UpdateContentFromContainerItemInfo({}, false, false)
+            finishUpdateCallback(self, nil, nil)
         else
             item:ContinueOnItemLoad(function()
                 local containerItemInfo = AddOnTable.BlizzAPI.GetContainerItemInfo(self.Parent.ContainerId, self.SlotIndex)
@@ -103,7 +104,7 @@ function Prototype:UpdateContent(useCache, slotCache, finishUpdateCallback)
                     hyperlink = slotCache.Link,
                     -- how to find out if an item is filtered by search here or not?
                     hasNoValue = false,
-                    -- the closest thing to an item id is a battlepet id or species id, both of which don't seem to be correct.
+                    -- can't get an item id from a battlepet hyperlink
                     -- no idea what to do with isBound
                     itemName = name
                 }
