@@ -60,19 +60,40 @@ function Prototype:UpdateContent(useCache, slotCache, finishUpdateCallback)
         
         if slotCache.Link then
             
-            local item = Item:CreateFromItemLink(slotCache.Link)
-            item:ContinueOnItemLoad(function()
-                -- regular items ... 
-                local name, texture, quality
-                if (LinkUtil.IsLinkType(slotCache.Link, "item")) then
-                    name, _, quality, _, _, _, _, _, _, texture = AddOnTable.BlizzAPI.GetItemInfo(slotCache.Link)
-                    -- ... or a caged battle pet ...
-                elseif (LinkUtil.IsLinkType(slotCache.Link, "battlepet")) then
-                    local _, speciesID, _, qualityString = strsplit(":", slotCache.Link)
-                    _, texture = C_PetJournal.GetPetInfoBySpeciesID(speciesID)
-                    quality = tonumber(qualityString)
-                    -- ... we don't know about everything else
-                end
+            -- regular items ... 
+            if (LinkUtil.IsLinkType(slotCache.Link, "item")) then
+                local item = Item:CreateFromItemLink(slotCache.Link)
+                item:ContinueOnItemLoad(function()
+                    local name, _, quality, _, _, _, _, _, _, texture = AddOnTable.BlizzAPI.GetItemInfo(slotCache.Link)
+
+                    local containerItemInfo = {
+                        iconFileID = texture,
+                        stackCount = slotCache.Count or 0,
+                        isLocked = false,
+                        quality = quality,
+                        -- isReadable and hasLoot can't be answered
+                        hyperlink = slotCache.Link,
+                        -- how to find out if an item is filtered by search here or not?
+                        hasNoValue = false,
+                        itemId = item:GetItemID(),
+                        -- no idea what to do with isBound
+                        itemName = name
+                    }
+                    local isNewItem = AddOnTable.BlizzAPI.IsNewItem(self.Parent.ContainerId, self.SlotIndex)
+                    local isBattlePayItem = AddOnTable.BlizzAPI.IsBattlePayItem(self.Parent.ContainerId, self.SlotIndex)
+                    
+                    self:UpdateContentFromContainerItemInfo(containerItemInfo, isNewItem, isBattlePayItem)
+                    self.hasItem = 1
+                    
+                    finishUpdateCallback(self, containerItemInfo.hyperlink)
+                end)
+            -- ... or a caged battle pet ...
+            elseif (LinkUtil.IsLinkType(slotCache.Link, "battlepet")) then
+                local _, speciesID, _, qualityString = strsplit(":", slotCache.Link)
+                local name, texture = C_PetJournal.GetPetInfoBySpeciesID(speciesID)
+                local quality = tonumber(qualityString)
+
+                -- ... we don't know about everything else
                 local containerItemInfo = {
                     iconFileID = texture,
                     stackCount = slotCache.Count or 0,
@@ -82,18 +103,17 @@ function Prototype:UpdateContent(useCache, slotCache, finishUpdateCallback)
                     hyperlink = slotCache.Link,
                     -- how to find out if an item is filtered by search here or not?
                     hasNoValue = false,
-                    itemId = item:GetItemID(),
+                    -- the closest thing to an item id is a battlepet id or species id, both of which don't seem to be correct.
                     -- no idea what to do with isBound
                     itemName = name
                 }
                 local isNewItem = AddOnTable.BlizzAPI.IsNewItem(self.Parent.ContainerId, self.SlotIndex)
                 local isBattlePayItem = AddOnTable.BlizzAPI.IsBattlePayItem(self.Parent.ContainerId, self.SlotIndex)
-
+                
                 self:UpdateContentFromContainerItemInfo(containerItemInfo, isNewItem, isBattlePayItem)
                 self.hasItem = 1
-
                 finishUpdateCallback(self, containerItemInfo.hyperlink)
-            end)
+            end
         else
             self:UpdateContentFromContainerItemInfo({}, false, false)
         end
