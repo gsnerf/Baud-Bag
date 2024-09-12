@@ -11,6 +11,8 @@ Func = function(self, event, ...)
     local slot = ...
     Funcs.DebugMessage("BankReagent", "Updating Slot", slot)
 
+    if not AddOnTable.State.BankOpen then return end
+
     local showColor = BBConfig.RarityColor
     local rarityIntensity = BBConfig.RarityIntensity
 
