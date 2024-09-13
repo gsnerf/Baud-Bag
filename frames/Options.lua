@@ -480,6 +480,8 @@ local function UpdateBagButtons(self)
                 Texture = GetInventoryItemTexture("player", AddOnTable.BlizzAPI.ContainerIDToInventoryID(Bag))
             elseif bagCache and bagCache.BagLink then
                 Texture = GetItemIcon(bagCache.BagLink)
+            elseif bagCache and bagCache.TabData then
+                Texture = bagCache.TabData.icon
             else
                 Texture = nil
             end
