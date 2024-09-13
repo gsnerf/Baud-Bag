@@ -62,6 +62,7 @@ function Prototype:UpdateContentFromCache(slotCache, finishUpdateCallback)
             item:ContinueOnItemLoad(function()
                 local name, _, quality, _, _, _, _, _, _, texture = AddOnTable.BlizzAPI.GetItemInfo(slotCache.Link)
 
+                ---@type ContainerItemInfo
                 local containerItemInfo = {
                     iconFileID = texture,
                     stackCount = slotCache.Count or 0,
@@ -71,7 +72,7 @@ function Prototype:UpdateContentFromCache(slotCache, finishUpdateCallback)
                     hyperlink = slotCache.Link,
                     -- how to find out if an item is filtered by search here or not?
                     hasNoValue = false,
-                    itemId = item:GetItemID(),
+                    itemID = item:GetItemID(),
                     -- no idea what to do with isBound
                     itemName = name
                 }
