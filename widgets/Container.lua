@@ -331,8 +331,7 @@ function BaudBagContainerMixin:OnUpdate(event, ...)
 
     if (self.Refresh) then
         containerObject:Update()
-        -- todo
-        BaudBagUpdateOpenBagHighlight()
+        containerObject:UpdateBagHighlight()
     end
 
     if (self.UpdateSlots) then
@@ -377,8 +376,9 @@ function BaudBagContainerMixin:OnHide(event, ...)
     self.Closing = true
     PlaySound(SOUNDKIT.IG_BACKPACK_CLOSE)
     self.AutoOpened = false
-    -- todo
-    BaudBagUpdateOpenBagHighlight()
+
+    local containerObject = AddOnTable.Sets[self.BagSet].Containers[self:GetID()]
+    containerObject:UpdateBagHighlight()
 
     --[[TODO: look into merging the set specific close handling!!!]]--
     --[[
