@@ -141,6 +141,7 @@ function BaudBagFirstAccountBankMixin:OnAccountBankEvent(event, ...)
         if self.UnlockInfo ~= nil then
             endUnlockMode(self)
             AddOnTable.Sets[BagSetType.AccountBank.Id].Containers[1]:Rebuild()
+            AddOnTable.Sets[BagSetType.AccountBank.Id].Containers[1].BagsFrame:Update()
         end
     elseif (event == "ACCOUNT_MONEY") then
         MoneyFrame_UpdateMoney(self.MoneyFrame)
@@ -285,6 +286,7 @@ function BaudBagAccountBagsFrameMixin:Initialize()
         accountBankSet.BagButtons[bag] = bagButton
     end
 
+    self.PurchaseFrame.PurchaseButton:SetAttribute("clickbutton", AccountBankPanel.PurchasePrompt.TabCostFrame.PurchaseButton)
     local firstBagButton = accountBankSet.BagButtons[1]
     self:SetWidth(15 + (firstBagButton:GetWidth() * 2))
     self:Update()
