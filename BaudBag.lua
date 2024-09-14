@@ -34,6 +34,8 @@ local EventFuncs = {
         -- the rest of the bank slots are cleared in the next event
         -- TODO: recheck why this is necessary and if it can be avoided
         BaudBagBankSlotPurchaseButton:Disable()
+
+        AddOnTable.ApplyOverrides()
     end,
 
     PLAYER_LOGIN = function(self, event, ...)
@@ -192,11 +194,13 @@ Func = function(self, event, ...)
                 button:Hide()
                 button:Show()
             end
+            backpackSet:UpdateBagHighlight()
         end
         if bankAffected then
-            AddOnTable.Sets[BagSetType.Bank.Id]:RebuildContainers()
+            local bankSet = AddOnTable.Sets[BagSetType.Bank.Id]
+            bankSet:RebuildContainers()
+            bankSet:UpdateBagHighlight()
         end
-        BaudBagUpdateOpenBagHighlight()
     else
         -- single bag update otherwise
         for bagId, _ in pairs(collectedBagEvents) do
@@ -291,14 +295,6 @@ end
 function BaudBagUpdateOpenBags()
     for _, subContainer in pairs(AddOnTable["SubBags"]) do
         subContainer:UpdateItemOverlays()
-    end
-end
-
---[[ Sets the highlight texture of bag slots indicating wether the contained bag is opened or not ]]--
-function BaudBagUpdateOpenBagHighlight()
-    AddOnTable.Functions.DebugMessage("Bags", "[BaudBagUpdateOpenBagHighlight]")
-    for _, SubContainer in pairs(AddOnTable["SubBags"]) do
-        SubContainer:UpdateOpenBagHighlight()
     end
 end
 

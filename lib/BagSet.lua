@@ -149,6 +149,12 @@ function Prototype:UpdateSlotInfo()
     end
 end
 
+function Prototype:UpdateBagHighlight()
+    for _, container in ipairs(self.Containers) do
+        container:UpdateBagHighlight()
+    end
+end
+
 function Prototype:ApplyConfiguration(configuration)
 end
 

@@ -11,6 +11,8 @@ Func = function(self, event, ...)
     local slot = ...
     Funcs.DebugMessage("BankReagent", "Updating Slot", slot)
 
+    if not AddOnTable.State.BankOpen then return end
+
     local showColor = BBConfig.RarityColor
     local rarityIntensity = BBConfig.RarityIntensity
 
@@ -22,11 +24,7 @@ Func = function(self, event, ...)
     end
 
     subBagObject.Items[slot]:SetRarityOptions(showColor, rarityIntensity)
-    local _, newCacheEntry  = subBagObject.Items[slot]:UpdateContent(
-        false,
-        nil,
-        finishItemButtonUpdateCallback
-    )
+    subBagObject.Items[slot]:UpdateContentFromLiveData(finishItemButtonUpdateCallback)
 end
 Events.PLAYERREAGENTBANKSLOTS_CHANGED = Func
 

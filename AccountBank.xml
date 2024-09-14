@@ -7,7 +7,10 @@
 				<Frames>
 					<Frame parentKey="PurchaseFrame" setAllPoints="true">
 						<Frames>
-							<Button parentKey="PurchaseButton" inherits="UIPanelButtonTemplate" text="BANKSLOTPURCHASE">
+							<Button parentKey="PurchaseButton" inherits="UIPanelButtonTemplate,InsecureActionButtonTemplate" registerForClicks="AnyUp, AnyDown" text="BANKSLOTPURCHASE">
+								<Attributes>
+									<Attribute name="type" value="click" />
+								</Attributes>
 								<Size>
 									<AbsDimension x="0" y="21" />
 								</Size>
@@ -16,12 +19,6 @@
 									<Anchor point="LEFT" x="5" y="0" />
 									<Anchor point="RIGHT" x="-5" y="0" />
 								</Anchors>
-								<Scripts>
-									<OnClick>
-										PlaySound(SOUNDKIT.IG_MAINMENU_OPTION);
-										StaticPopup_Show("CONFIRM_BUY_BANK_SLOT");
-									</OnClick>
-								</Scripts>
 							</Button>
 							<Frame name="$parentMoneyFrame" parentKey="MoneyFrame" inherits="SmallMoneyFrameTemplate">
 								<Anchors>

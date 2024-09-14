@@ -1,4 +1,12 @@
 ﻿=== Changelog ===
+v11.0.2.6
+  - adapted how baud bag overrides calls to original bags, to only be called when the addon should be consistently loaded
+  - now only updating the reagent bank on update even, when the bank is actually open
+  - extended options handling to show the correct icon for warband bags
+  - fixed custom version of ItemButton to correctly work with cached battlepet information again
+  - fixed a bug where moving stuff around in bags supporting caches (banks) lead to the item appear in the new and the old slot at the same time
+  - fixed handling of cached elements to correctly retrieve the item id
+  - fixed the purchase button in warbandbanks bag frame to actually work
 v11.0.2.5
   - added support for warband bank
     - you can currently only put items into it by manually moving it there, rightclicking from bags does not work and instead try to put into regular bank
