@@ -25,6 +25,10 @@ local function extendBaseType()
             for bag = AddOnTable.BlizzConstants.ACCOUNT_BANK_FIRST_SUB_CONTAINER, AddOnTable.BlizzConstants.ACCOUNT_BANK_LAST_SUB_CONTAINER do
                 table.insert(BagSetType.AccountBank.ContainerIterationOrder, bag)
             end
+
+            for index, bagId in ipairs(BagSetType.AccountBank.ContainerIterationOrder) do
+                AddOnTable.ContainerIdOptionsIndexMap[bagId] = index
+            end
         end,
         NumberOfContainers = math.max(1, AddOnTable.BlizzAPI.FetchNumPurchasedBankTabs(Enum.BankType.Account)),
         DefaultConfig = {
@@ -64,8 +68,6 @@ local function extendBaseType()
     tinsert(BagSetTypeArray, BagSetType.AccountBank)
 
     AddOnTable.State.AccountBankOpen = false
-
-    --AddOnTable.ContainerIdOptionsIndexMap[AddOnTable.BlizzConstants.KEYRING_CONTAINER] = 1
 end
 hooksecurefunc(AddOnTable, "ExtendBaseTypes", extendBaseType)
 
