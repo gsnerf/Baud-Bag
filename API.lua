@@ -8,7 +8,9 @@ local interfaceVersion = select(4, GetBuildInfo())
 AddOnTable.BlizzAPI = {
     CloseBankFrame = CloseBankFrame,
     GetInventorySlotInfo = GetInventorySlotInfo,
+    GetItemIcon = GetItemIcon,
     GetItemInfo = GetItemInfo,
+    GetItemFamily = GetItemFamily,
     GetDetailedItemLevelInfo = GetDetailedItemLevelInfo,
     ---returns the number of watched tokens or the maximum number of watched tokens in old API
     ---@return integer
@@ -142,7 +144,9 @@ else
 end
 
 if C_Item ~= nil then
+    API.GetItemIcon = C_Item.GetItemIconByID;
 	API.GetItemInfo = C_Item.GetItemInfo;
+    API.GetItemFamily = C_Item.GetItemFamily;
 	API.GetDetailedItemLevelInfo = C_Item.GetDetailedItemLevelInfo;
 end
 
