@@ -251,7 +251,6 @@ local function UpdateTooltip(self)
 end
 
 local function OnClick(self, button)
-    -- TODO: this should trigger the tab configuration window
     if button == "RightButton" and self.TabData then
         Funcs.DebugMessage("AccountBank", "BagButton#OnClick: recognized right click on already bought bank tab", self.TabData, self.SubContainerId)
         self:GetParent().TabSettingsMenu.selectedTabData = self.TabData
