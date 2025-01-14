@@ -152,7 +152,7 @@ function BaudBagOptionsNameEditBox_OnTextChanged(self, wasUserInput)
         return
     end
 
-    BBConfig[SelectedBags][SelectedContainer].Name = BaudBagOptions.GroupContainer.NameInput:GetText()
+    BBConfig[SelectedBags][SelectedContainer].Name =self:GetText()
     AddOnTable.Sets[SelectedBags].Containers[SelectedContainer]:UpdateName() -- TODO: move to BaudBagBBConfig save?
 end
 
