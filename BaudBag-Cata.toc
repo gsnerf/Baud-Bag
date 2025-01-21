@@ -34,7 +34,7 @@ widgets\buttons\BagButton.xml
 widgets\buttons\ItemButton.lua
 widgets\BagsFrame.xml
 widgets\Container.xml
-widgets\OptionsPopout.xml
+widgets\OptionsDropdown.xml
 frames\ContainerMenu.xml
 Events.lua
 config\ConfigOptions.lua
