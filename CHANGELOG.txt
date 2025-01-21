@@ -1,4 +1,10 @@
 ﻿=== Changelog ===
+v11.0.7.1
+  - fixed some edge case issues on item information retrieval
+  - fixed error when trying to change container names
+  - added suppor for deposit/withdrawal on warband bank
+  - enabled item search for warband bank
+  - updating classic versions with recent API changes
 v11.0.2.6
   - adapted how baud bag overrides calls to original bags, to only be called when the addon should be consistently loaded
   - now only updating the reagent bank on update even, when the bank is actually open
