@@ -31,7 +31,7 @@ function Prototype:UpdateContentFromLiveData(finishUpdateCallback)
         item:ContinueOnItemLoad(function()
             local containerItemInfo = {
                 iconFileID = item:GetItemIcon(),
-                stackCount = item:GetStackCount(),
+                stackCount = item.GetStackCount ~= nil and item:GetStackCount() or 0,
                 isLocked = item:IsItemLocked(),
                 quality = item:GetItemQuality(),
                 isReadable = false, -- doesn't seem to be contained in item
