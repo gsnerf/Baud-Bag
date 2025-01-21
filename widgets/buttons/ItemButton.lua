@@ -29,7 +29,19 @@ function Prototype:UpdateContentFromLiveData(finishUpdateCallback)
     local item = Item:CreateFromBagAndSlot(self.Parent.ContainerId, self.SlotIndex)
     if not item:IsItemEmpty() then
         item:ContinueOnItemLoad(function()
-            local containerItemInfo = AddOnTable.BlizzAPI.GetContainerItemInfo(self.Parent.ContainerId, self.SlotIndex)
+            local containerItemInfo = {
+                iconFileID = item:GetItemIcon(),
+                stackCount = item.GetStackCount ~= nil and item:GetStackCount() or 0,
+                isLocked = item:IsItemLocked(),
+                quality = item:GetItemQuality(),
+                isReadable = false, -- doesn't seem to be contained in item
+                hasLoot = false, -- doesn't seem to be contained in item
+                hyperlink = item:GetItemLink(),
+                isFiltered = false, -- doesn't seem to be contained in item
+                hasNoValue = false, -- unsure what this is used for
+                itemID = item:GetItemID(),
+                isBound = false, -- this should be important, but I don't know how to retrieve this
+            }
             local isNewItem, isBattlePayItem
             local cacheEntry = nil
             
@@ -96,7 +108,7 @@ function Prototype:UpdateContentFromCache(slotCache, finishUpdateCallback)
                 stackCount = slotCache.Count or 0,
                 isLocked = false,
                 quality = quality,
-                -- isReadable and hasLoot can't be answered
+                isReadable = false,
                 hyperlink = slotCache.Link,
                 -- how to find out if an item is filtered by search here or not?
                 hasNoValue = false,

@@ -257,7 +257,7 @@ function Prototype:GetSlotInfo()
 
         -- if we don't have a hit in the cache make sure to return values that make sense
         local link = cache.BagLink
-        if not AddOnTable.Functions.IsDefaultContainer(self.ContainerId) and (not link or (GetItemFamily(link) ~= 0)) then
+        if not AddOnTable.Functions.IsDefaultContainer(self.ContainerId) and (not link or (AddOnTable.BlizzAPI.GetItemFamily(link) ~= 0)) then
             return 0, 0
         end
 

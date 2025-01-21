@@ -86,7 +86,7 @@ end
 
 --[[ this method ensures that the bank bags are either placed as childs under UIParent or BaudBag ]]
 function AddOnTable:UpdateBagParents()
-    local newParent = UIParent
+    local newParent = ContainerFrameContainer
     if AddOnTable.Functions.BagHandledByBaudBag(AddOnTable.BlizzConstants.BACKPACK_CONTAINER) then
         newParent = BaudBag_OriginalBagsHideFrame
     end

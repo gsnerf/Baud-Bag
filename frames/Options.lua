@@ -152,7 +152,7 @@ function BaudBagOptionsNameEditBox_OnTextChanged(self, wasUserInput)
         return
     end
 
-    BBConfig[SelectedBags][SelectedContainer].Name = BaudBagOptions.GroupContainer.NameInput:GetText()
+    BBConfig[SelectedBags][SelectedContainer].Name =self:GetText()
     AddOnTable.Sets[SelectedBags].Containers[SelectedContainer]:UpdateName() -- TODO: move to BaudBagBBConfig save?
 end
 
@@ -479,7 +479,7 @@ local function UpdateBagButtons(self)
             elseif(SelectedBags == BagSetType.Backpack.Id)then
                 Texture = GetInventoryItemTexture("player", AddOnTable.BlizzAPI.ContainerIDToInventoryID(Bag))
             elseif bagCache and bagCache.BagLink then
-                Texture = GetItemIcon(bagCache.BagLink)
+                Texture = AddOnTable.BlizzAPI.GetItemIcon(bagCache.BagLink)
             elseif bagCache and bagCache.TabData then
                 Texture = bagCache.TabData.icon
             else

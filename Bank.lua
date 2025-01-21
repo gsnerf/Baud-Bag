@@ -205,7 +205,7 @@ end
 
 --[[ this method ensures that the bank bags are either placed as childs under UIParent or BaudBag ]]
 function AddOnTable:UpdateBankParents()
-    local newParent = UIParent
+    local newParent = ContainerFrameContainer
     if AddOnTable.Functions.BagHandledByBaudBag(AddOnTable.BlizzConstants.BANK_CONTAINER) then
         newParent = BaudBag_OriginalBagsHideFrame
     end
@@ -213,5 +213,17 @@ function AddOnTable:UpdateBankParents()
     BankFrame:SetParent(newParent)
     for i = AddOnTable.BlizzConstants.BANK_FIRST_CONTAINER, AddOnTable.BlizzConstants.BANK_LAST_CONTAINER do
         _G["ContainerFrame"..(i+1)]:SetParent(newParent)
+    end
+
+    if not AddOnTable.Functions.BagHandledByBaudBag(AddOnTable.BlizzConstants.BANK_CONTAINER) and AddOnTable.Functions.BagHandledByBaudBag(AddOnTable.BlizzConstants.BACKPACK_CONTAINER) then
+        ---@type Frame
+        local firstContainer = _G["ContainerFrame1"]
+        local _, _, _, offX, offY = firstContainer:GetPointByName("BOTTOMRIGHT")
+        ---@type Frame
+        local firstBankContainer = _G["ContainerFrame"..(AddOnTable.BlizzConstants.BANK_FIRST_CONTAINER+1)]
+        firstBankContainer:SetAllPoints()
+        firstBankContainer:SetPoint("BOTTOMRIGHT", ContainerFrameContainer, "BOTTOMRIGHT",  offX, offY)
+        DevTools_Dump(firstBankContainer:GetNumPoints())
+        DevTools_Dump(firstBankContainer:GetPointByName("BOTTOMRIGHT"))
     end
 end

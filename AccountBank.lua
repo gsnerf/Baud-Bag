@@ -122,7 +122,11 @@ function BaudBagFirstAccountBankMixin:Initialize()
     if table.getn(purchasedBankTabsIds) == 0 then
         switchToUnlockMode(self)
     end
-    MoneyFrame_SetType(self.MoneyFrame, "ACCOUNT")
+    MoneyFrame_SetType(self.MoneyFrame.SmallMoneyFrame, "ACCOUNT")
+    self.MoneyFrame.SmallMoneyFrame:SetPoint("RIGHT", self.MoneyFrame.DepositFrame, "LEFT", -4, 0)
+    self.MoneyFrame.DepositFrame:Show()
+    self.MoneyFrame.DepositFrame.DepositButton:SetScript("OnClick", self.OnDeposit)
+    self.MoneyFrame.DepositFrame.WithdrawButton:SetScript("OnClick", self.OnWithdrawal)
 end
 
 function BaudBagFirstAccountBankMixin:OnAccountBankShow()
@@ -133,7 +137,8 @@ function BaudBagFirstAccountBankMixin:OnAccountBankShow()
 	end]]
 
     self:RegisterEvent("ACCOUNT_MONEY")
-    MoneyFrame_UpdateMoney(self.MoneyFrame)
+    MoneyFrame_UpdateMoney(self.MoneyFrame.SmallMoneyFrame)
+    self:RefreshDepositButtons()
     self:OnShow()
 end
 
@@ -146,7 +151,8 @@ function BaudBagFirstAccountBankMixin:OnAccountBankEvent(event, ...)
             AddOnTable.Sets[BagSetType.AccountBank.Id].Containers[1].BagsFrame:Update()
         end
     elseif (event == "ACCOUNT_MONEY") then
-        MoneyFrame_UpdateMoney(self.MoneyFrame)
+        MoneyFrame_UpdateMoney(self.MoneyFrame.SmallMoneyFrame)
+        self:RefreshDepositButtons()
     end
 
     self:OnContainerEvent(event, ...)
@@ -162,6 +168,47 @@ function BaudBagFirstAccountBankMixin:OnAccountBankHide()
     self:OnHide()
 end
 
+function BaudBagFirstAccountBankMixin:RefreshDepositButtons()
+    local isAccountBankLocked = not C_PlayerInfo.HasAccountInventoryLock()
+    local disabledTooltip = isAccountBankLocked and ACCOUNT_BANK_ERROR_NO_LOCK or nil;
+
+    local canWithdrawMoney = C_Bank.CanWithdrawMoney(Enum.BankType.Account);
+    local canDepositMoney = C_Bank.CanDepositMoney(Enum.BankType.Account);
+
+    self.MoneyFrame.DepositFrame.WithdrawButton:SetEnabled(canWithdrawMoney);
+    self.MoneyFrame.DepositFrame.DepositButton:SetEnabled(canDepositMoney);
+
+    self.MoneyFrame.DepositFrame.WithdrawButton.disabledTooltip = disabledTooltip
+    self.MoneyFrame.DepositFrame.DepositButton.disabledTooltip = disabledTooltip
+end
+
+function BaudBagFirstAccountBankMixin:OnWithdrawal()
+	PlaySound(SOUNDKIT.IG_MAINMENU_OPTION);
+
+	StaticPopup_Hide("BANK_MONEY_DEPOSIT");
+
+	local alreadyShown = StaticPopup_Visible("BANK_MONEY_WITHDRAW");
+	if alreadyShown then
+		StaticPopup_Hide("BANK_MONEY_WITHDRAW");
+		return;
+	end
+
+	StaticPopup_Show("BANK_MONEY_WITHDRAW", nil, nil, { bankType = Enum.BankType.Account });
+end
+
+function BaudBagFirstAccountBankMixin:OnDeposit()
+	PlaySound(SOUNDKIT.IG_MAINMENU_OPTION);
+
+	StaticPopup_Hide("BANK_MONEY_WITHDRAW");
+
+	local alreadyShown = StaticPopup_Visible("BANK_MONEY_DEPOSIT");
+	if alreadyShown then
+		StaticPopup_Hide("BANK_MONEY_DEPOSIT");
+		return;
+	end
+
+	StaticPopup_Show("BANK_MONEY_DEPOSIT", nil, nil, { bankType = Enum.BankType.Account });
+end
 
 --[[ ####################################### UnlockInfo frame ####################################### ]]
 BaudBagAccountBankUnlockMixin = {}
@@ -251,7 +298,6 @@ local function UpdateTooltip(self)
 end
 
 local function OnClick(self, button)
-    -- TODO: this should trigger the tab configuration window
     if button == "RightButton" and self.TabData then
         Funcs.DebugMessage("AccountBank", "BagButton#OnClick: recognized right click on already bought bank tab", self.TabData, self.SubContainerId)
         self:GetParent().TabSettingsMenu.selectedTabData = self.TabData

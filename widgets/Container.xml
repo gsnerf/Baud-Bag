@@ -103,10 +103,66 @@
 				<HighlightTexture file="Interface\Buttons\UI-Common-MouseHilight" alphaMode="ADD" />
 				<CheckedTexture file="Interface\Buttons\UI-SpellbookIcon-PrevPage-Down" />
 			</CheckButton>
-			<Frame name="$parentMoneyFrame" parentKey="MoneyFrame" inherits="SmallMoneyFrameTemplate">
+			<Frame name="$parentMoneyFrame" parentKey="MoneyFrame">
 				<Size>
 					<AbsDimension x="206" y="20" />
 				</Size>
+				<Frames>
+					<Frame parentKey="DepositFrame" hidden="true">
+						<Size>
+							<AbsDimension x="30" y ="13" />
+						</Size>
+						<Anchors>
+							<Anchor point="RIGHT" x="-8" y="0" />
+						</Anchors>
+						<Frames>
+							<Button parentKey="WithdrawButton" inherits="MoneyFrameButtonTemplate">
+								<Size x="13" y="13"/>
+								<Anchors>
+									<Anchor point="RIGHT" x="0" y="0"/>
+								</Anchors>
+								<!--NormalTexture atlas="128-RedButton-Minus"-->
+								<NormalTexture atlas="RedButton-Expand">
+									<Size x="13" y="13"/>
+									<Anchors>
+										<Anchor point="RIGHT"/>
+									</Anchors>
+								</NormalTexture>
+								<!--PushedTexture atlas="128-RedButton-Minus-Pressed" />
+								<HighlightTexture atlas="128-RedButton-Minus-Highlight" />
+								<DisabledTexture atlas="128-RedButton-Minus-Disabled" /-->
+								<PushedTexture atlas="RedButton-Expand-Pressed" />
+								<HighlightTexture atlas="RedButton-Highlight" />
+								<DisabledTexture atlas="RedButton-Expand-Disabled" />
+							</Button>
+							<Button parentKey="DepositButton" inherits="MoneyFrameButtonTemplate">
+								<Size x="13" y="13"/>
+								<Anchors>
+									<Anchor point="RIGHT" relativeKey="$parent.WithdrawButton" relativePoint="LEFT" x="-4" y="0"/>
+								</Anchors>
+								<!--NormalTexture atlas="128-RedButton-Plus"-->
+								<NormalTexture atlas="RedButton-Condense">
+									<Size x="13" y="13"/>
+									<Anchors>
+										<Anchor point="RIGHT"/>
+									</Anchors>
+								</NormalTexture>
+								<!--PushedTexture atlas="128-RedButton-Plus-Pressed" />
+								<HighlightTexture atlas="128-RedButton-Plus-Highlight" />
+								<DisabledTexture atlas="128-RedButton-Plus-Disabled" /-->
+								<PushedTexture atlas="RedButton-Condense-Pressed" />
+								<HighlightTexture atlas="RedButton-Highlight" />
+								<DisabledTexture atlas="RedButton-Condense-Disabled" />
+							</Button>
+						</Frames>
+					</Frame>
+					<Frame name="$parentSmallMoneyFrame" parentKey="SmallMoneyFrame" inherits="SmallMoneyFrameTemplate">
+						<Anchors>
+							<Anchor point="RIGHT" x="-4" y="0" />
+						</Anchors>
+					</Frame>
+					
+				</Frames>
 			</Frame>
 			<Frame name="$parentTokenFrame" parentKey="TokenFrame" inherits="BaudBagTokenFrameTemplate" hidden="true">
 				<Size>
