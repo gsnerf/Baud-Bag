@@ -121,30 +121,38 @@
 								<Anchors>
 									<Anchor point="RIGHT" x="0" y="0"/>
 								</Anchors>
-								<NormalTexture atlas="128-RedButton-Minus">
+								<!--NormalTexture atlas="128-RedButton-Minus"-->
+								<NormalTexture atlas="RedButton-Expand">
 									<Size x="13" y="13"/>
 									<Anchors>
 										<Anchor point="RIGHT"/>
 									</Anchors>
 								</NormalTexture>
-								<PushedTexture atlas="128-RedButton-Minus-Pressed" />
+								<!--PushedTexture atlas="128-RedButton-Minus-Pressed" />
 								<HighlightTexture atlas="128-RedButton-Minus-Highlight" />
-								<DisabledTexture atlas="128-RedButton-Minus-Disabled" />
+								<DisabledTexture atlas="128-RedButton-Minus-Disabled" /-->
+								<PushedTexture atlas="RedButton-Expand-Pressed" />
+								<HighlightTexture atlas="RedButton-Highlight" />
+								<DisabledTexture atlas="RedButton-Expand-Disabled" />
 							</Button>
 							<Button parentKey="DepositButton" inherits="MoneyFrameButtonTemplate">
 								<Size x="13" y="13"/>
 								<Anchors>
 									<Anchor point="RIGHT" relativeKey="$parent.WithdrawButton" relativePoint="LEFT" x="-4" y="0"/>
 								</Anchors>
-								<NormalTexture atlas="128-RedButton-Plus">
+								<!--NormalTexture atlas="128-RedButton-Plus"-->
+								<NormalTexture atlas="RedButton-Condense">
 									<Size x="13" y="13"/>
 									<Anchors>
 										<Anchor point="RIGHT"/>
 									</Anchors>
 								</NormalTexture>
-								<PushedTexture atlas="128-RedButton-Plus-Pressed" />
+								<!--PushedTexture atlas="128-RedButton-Plus-Pressed" />
 								<HighlightTexture atlas="128-RedButton-Plus-Highlight" />
-								<DisabledTexture atlas="128-RedButton-Plus-Disabled" />
+								<DisabledTexture atlas="128-RedButton-Plus-Disabled" /-->
+								<PushedTexture atlas="RedButton-Condense-Pressed" />
+								<HighlightTexture atlas="RedButton-Highlight" />
+								<DisabledTexture atlas="RedButton-Condense-Disabled" />
 							</Button>
 						</Frames>
 					</Frame>
