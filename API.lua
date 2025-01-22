@@ -148,6 +148,7 @@ if C_Item ~= nil then
 	API.GetItemInfo = C_Item.GetItemInfo;
     API.GetItemFamily = C_Item.GetItemFamily;
 	API.GetDetailedItemLevelInfo = C_Item.GetDetailedItemLevelInfo;
+    API.GetStackCount = C_Item.GetStackCount;
 end
 
 -- introduced with tww
