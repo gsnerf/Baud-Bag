@@ -13,6 +13,18 @@
 ## Title-zhTW: 背包整合 Baud Bag
 ## Version: 11.0.7.3-DEV
 ## IconAtlas: bag-main
+## Category: Inventory
+## Category-enUS: Inventory
+## Category-deDE: Inventar
+## Category-esES: Inventario
+## Category-esMX: Inventario
+## Category-frFR: Inventaire
+## Category-itIT: Inventario
+## Category-koKR: 소지품
+## Category-ptBR: Inventário
+## Category-ruRU: Предметы
+## Category-zhCN: 物品栏
+## Category-zhTW: 物品欄
 
 # english has to be the first locale!
 localization\Localization.en.lua
