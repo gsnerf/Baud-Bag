@@ -191,18 +191,13 @@ function BaudBagContainerMenuMixin:SetupGeneral()
     -- create general buttons if applicable
 
     if (self.BagSet == BagSetType.Backpack.Id) then
-        local showBankButton = CreateFrame("CheckButton", nil, self.General, "BaudBagContainerMenuCheckButtonTemplate")
-        showBankButton:SetText(Localized.ShowBank)
-        showBankButton:SetScript("OnClick", showBankButton.ToggleBank)
-        showBankButton:SetPoint("TOP", self.General.ShowOptions, "BOTTOM")
-        self.General.ShowBankButton = showBankButton
-        table.insert(self.checkButtons, showBankButton)
-
+        -- call hooks
         local buttonsToAdd = {}
         AddOnTable:ExtendContainerMenuWithGeneralEntriesForBackpack(self.General, buttonsToAdd)
-        AddOnTable.Functions.DebugMessage("Temp", "trying to extend container menu with dynamic entries", buttonsToAdd)
+
+        -- process hooks
         if (type(buttonsToAdd) == "table") then
-            local previousEntry = showBankButton
+            local previousEntry = self.General.ShowOptions
             for _, checkButton in ipairs (buttonsToAdd) do
                 checkButton:SetPoint("TOP", previousEntry, "BOTTOM")
                 table.insert(self.checkButtons, checkButton)
