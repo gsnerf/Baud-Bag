@@ -79,15 +79,6 @@ function BaudBagContainerMenuButtonMixin:ToggleBank()
     containerMenu:Hide()
 end
 
-function BaudBagContainerMenuButtonMixin:ToggleEnableBank()
-    local currentValue = AddOnTable.Config[2].Enabled
-    AddOnTable.Config[2].Enabled = not currentValue
-    AddOnTable.Sets[2]:Close()
-    BaudBagUpdateFromBBConfig()
-    --AddOnTable.UpdateBankParents()
-    self:GetParent().EnableBankButton:SetChecked(AddOnTable.Config[2].Enabled)
-end
-
 function BaudBagContainerMenuButtonMixin:AddSlots()
     StaticPopup_Show("BACKPACK_INCREASE_SIZE")
 
@@ -207,19 +198,11 @@ function BaudBagContainerMenuMixin:SetupGeneral()
         self.General.ShowBankButton = showBankButton
         table.insert(self.checkButtons, showBankButton)
 
-        local enableBankButton = CreateFrame("CheckButton", nil, self.General, "BaudBagContainerMenuCheckButtonTemplate")
-        enableBankButton:SetText(Localized.EnableBank)
-        enableBankButton:SetScript("OnClick", enableBankButton.ToggleEnableBank)
-        enableBankButton:SetPoint("TOP", showBankButton, "BOTTOM" )
-        enableBankButton:SetChecked(AddOnTable.Config[BagSetType.Bank.Id].Enabled)
-        self.General.EnableBankButton = enableBankButton
-        table.insert(self.checkButtons, enableBankButton)
-
         local buttonsToAdd = {}
         AddOnTable:ExtendContainerMenuWithGeneralEntriesForBackpack(self.General, buttonsToAdd)
         AddOnTable.Functions.DebugMessage("Temp", "trying to extend container menu with dynamic entries", buttonsToAdd)
         if (type(buttonsToAdd) == "table") then
-            local previousEntry = enableBankButton
+            local previousEntry = showBankButton
             for _, checkButton in ipairs (buttonsToAdd) do
                 checkButton:SetPoint("TOP", previousEntry, "BOTTOM")
                 table.insert(self.checkButtons, checkButton)
