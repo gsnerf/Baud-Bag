@@ -215,6 +215,18 @@ function BaudBagContainerMenuMixin:SetupGeneral()
         self.General.EnableBankButton = enableBankButton
         table.insert(self.checkButtons, enableBankButton)
 
+        local buttonsToAdd = {}
+        AddOnTable:ExtendContainerMenuWithGeneralEntriesForBackpack(self.General, buttonsToAdd)
+        AddOnTable.Functions.DebugMessage("Temp", "trying to extend container menu with dynamic entries", buttonsToAdd)
+        if (type(buttonsToAdd) == "table") then
+            local previousEntry = enableBankButton
+            for _, checkButton in ipairs (buttonsToAdd) do
+                checkButton:SetPoint("TOP", previousEntry, "BOTTOM")
+                table.insert(self.checkButtons, checkButton)
+                previousEntry = checkButton
+            end
+        end
+
         local backpackCanBeExtended = not (IsAccountSecured() and AddOnTable.BlizzAPI.GetContainerNumSlots(AddOnTable.BlizzConstants.BACKPACK_CONTAINER) > AddOnTable.BlizzConstants.BACKPACK_BASE_SIZE)
         if (backpackCanBeExtended) then
             local extendBackpack = CreateFrame("CheckButton", nil, self.General, "BaudBagContainerMenuCheckButtonTemplate")
