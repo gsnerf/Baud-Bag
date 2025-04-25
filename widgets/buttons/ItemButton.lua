@@ -98,7 +98,7 @@ function Prototype:UpdateContentFromCache(slotCache, finishUpdateCallback)
             end)
         -- ... or a caged battle pet ...
         elseif (LinkUtil.IsLinkType(slotCache.Link, "battlepet")) then
-            local _, speciesID, _, qualityString = strsplit(":", slotCache.Link)
+            local _, _, speciesID, _, qualityString = strsplit(":", slotCache.Link)
             local name, texture = C_PetJournal.GetPetInfoBySpeciesID(speciesID)
             local quality = tonumber(qualityString)
 
