@@ -172,7 +172,6 @@ end
 function ReloadConfigDependant()
     AddOnTable.Functions.DebugMessage("Config", "Reloading configuration depending objects");
     BaudUpdateJoinedBags();
-    BaudBagUpdateBagFrames();
 end
 
 --[[--------------------------------------------------------------------------------

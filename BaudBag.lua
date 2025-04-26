@@ -333,28 +333,11 @@ function BaudBagSubBag_OnEvent(self, event, ...)
     SubBagEvents[event](self, event, ...)
 end
 
-function BaudBagUpdateBagFrames()
-    AddOnTable.Functions.DebugMessage("Bags", "Called BaudBagUpdateBagFrames()")
-    local Shown, BagFrame, FrameName
-    for BagSet = 1, 2 do
-        Shown = (BBConfig[BagSet].ShowBags ~= false)
-        _G[Prefix.."Container"..BagSet.."_1BagsButton"]:SetChecked(Shown)
-        BagFrame = _G[Prefix.."Container"..BagSet.."_1BagsFrame"]
-        AddOnTable.Functions.DebugMessage("Bags", "Updating (bagName, shown)", BagFrame:GetName(), Shown)
-        if Shown then
-            BagFrame:Show()
-        else
-            BagFrame:Hide()
-        end
-    end
-end
-
 -- TODO: after changes there is some weird behavior after applying changes (like changing the name)
 -- Seems to be in Background drawing for Slot Count
 --[[ this can probably be removed as this is only called on classic and a new way to bubble updates needs to be found ]]
 function BaudBagUpdateFromBBConfig()
     BaudUpdateJoinedBags()
-    BaudBagUpdateBagFrames()
     for _, bagSet in pairs(BagSetType) do
     
         if (BBConfig[bagSet.Id].Enabled ~= true) then
