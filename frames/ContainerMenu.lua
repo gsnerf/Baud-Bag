@@ -195,7 +195,7 @@ function BaudBagContainerMenuMixin:SetupGeneral()
         local buttonsToAdd = {}
         AddOnTable:ExtendContainerMenuWithGeneralEntriesForBackpack(self.General, buttonsToAdd)
 
-        -- process hooks
+        -- add and connect buttons provided by hooks
         if (type(buttonsToAdd) == "table") then
             local previousEntry = self.General.ShowOptions
             for _, checkButton in ipairs (buttonsToAdd) do
