@@ -171,7 +171,9 @@ end
 
 function ReloadConfigDependant()
     AddOnTable.Functions.DebugMessage("Config", "Reloading configuration depending objects");
-    BaudUpdateJoinedBags();
+    for _, bagSet in pairs(BagSetType) do
+        AddOnTable.Sets[bagSet.Id]:ReloadConfig()
+    end
 end
 
 --[[--------------------------------------------------------------------------------

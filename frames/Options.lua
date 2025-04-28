@@ -651,7 +651,7 @@ function BaudBagOptionsCheckButtonMixin:OnClick()
         else
             tinsert(BBConfig[SelectedBags], ContNum, AddOnTable.Functions.CopyTable(BBConfig[SelectedBags][ContNum-1]))
         end
-        BaudUpdateJoinedBags()
+        AddOnTable.Sets[SelectedBags]:ReloadConfig()
     end
     BaudBagOptions:Update()
 end

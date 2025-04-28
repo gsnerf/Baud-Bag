@@ -281,17 +281,6 @@ function BaudBag_OnEvent(self, event, ...)
     AddOnTable.Functions.OnEvent(self, event, ...)
 end
 
---[[ This function updates the parent containers for each bag, according to the options setup ]]--
-function BaudUpdateJoinedBags()
-    AddOnTable.Functions.DebugMessage("Bags", "Updating joined bags...")
-    
-    for _, bagSet in pairs(BagSetType) do
-        AddOnTable.Sets[bagSet.Id]:RebuildContainers()
-    end
-
-    AddOnTable.BagsReady = true
-end
-
 function BaudBagUpdateOpenBags()
     for _, subContainer in pairs(AddOnTable["SubBags"]) do
         subContainer:UpdateItemOverlays()
@@ -337,13 +326,13 @@ end
 -- Seems to be in Background drawing for Slot Count
 --[[ this can probably be removed as this is only called on classic and a new way to bubble updates needs to be found ]]
 function BaudBagUpdateFromBBConfig()
-    BaudUpdateJoinedBags()
     for _, bagSet in pairs(BagSetType) do
-    
+        AddOnTable.Sets[bagSet.Id]:RebuildContainers()
         if (BBConfig[bagSet.Id].Enabled ~= true) then
             AddOnTable.Sets[bagSet.Id]:Close()
         end
     end
+    AddOnTable.BagsReady = true
     AddOnTable:UpdateBagParents()
     AddOnTable:UpdateBankParents()
 end
