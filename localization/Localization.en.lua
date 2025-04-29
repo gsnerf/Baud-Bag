@@ -18,7 +18,6 @@ AddOnTable["Localized"] = {
     LockPosition = "Lock Position",
     UnlockPosition = "Unlock Position",
     ShowBank = "Show Bank",
-    EnableBank = "Enable Bank",
     Options = "Options",
     Free = " Free",
     Offline = " (Offline)",
@@ -84,4 +83,5 @@ AddOnTable["Localized"] = {
     OptionsResetContainerPosition = "Reset container position",
     OptionsResetContainerPositionTooltip = "Use this if you dragged the selected container of screen by accident.",
     AccountBank = "Warband Bank",
+    ShowAccountBank = "Show Warband Bank",
 }

@@ -73,4 +73,5 @@ if (GetLocale() == "deDE") then
     L.OptionsResetContainerPosition = "Container zentrieren"
     L.OptionsResetContainerPositionTooltip = "Verwende dies um einen aus dem Bildschirmbreich geschobenen Container in die Mitte des Bildschirms zu versetzen."
     L.AccountBank = "Kriegsmeutenbank"
+    L.ShowAccountBank = "Kriegsmeutenbank anzeigen"
 end

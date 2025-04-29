@@ -466,6 +466,8 @@ hooksecurefunc(AddOnTable, "ItemSlot_Created", function(self, bagSet, containerI
 end)
 
 
+--[[ ####################################### Base for Bindings ###################################### ]]
+
 function BaudBagToggleWarbandBank()
     local warbandBankSet = AddOnTable.Sets[BagSetType.AccountBank.Id]
     local firstContainer = warbandBankSet.Containers[1]
@@ -477,3 +479,19 @@ function BaudBagToggleWarbandBank()
         warbandBankSet:AutoOpen()
     end
 end
+
+--[[ #################################### Container Menu Entries #################################### ]]
+local function toggleAccountBankMenuEntry(self)
+    BaudBagToggleWarbandBank()
+    self:GetParent():GetParent():Hide()
+end
+
+hooksecurefunc(AddOnTable, "ExtendContainerMenuWithGeneralEntriesForBackpack", function(addOnTable, menuGroup, addedButtons)
+    local showAccountBankButton = CreateFrame("CheckButton", nil, menuGroup, "BaudBagContainerMenuCheckButtonTemplate")
+    showAccountBankButton:SetText(Localized.ShowAccountBank)
+    showAccountBankButton:SetScript("OnClick", toggleAccountBankMenuEntry)
+    menuGroup.ShowAccountBankButton = showAccountBankButton
+
+    table.insert(addedButtons, showAccountBankButton)
+end)
+

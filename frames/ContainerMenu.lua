@@ -79,15 +79,6 @@ function BaudBagContainerMenuButtonMixin:ToggleBank()
     containerMenu:Hide()
 end
 
-function BaudBagContainerMenuButtonMixin:ToggleEnableBank()
-    local currentValue = AddOnTable.Config[2].Enabled
-    AddOnTable.Config[2].Enabled = not currentValue
-    AddOnTable.Sets[2]:Close()
-    BaudBagUpdateFromBBConfig()
-    --AddOnTable.UpdateBankParents()
-    self:GetParent().EnableBankButton:SetChecked(AddOnTable.Config[2].Enabled)
-end
-
 function BaudBagContainerMenuButtonMixin:AddSlots()
     StaticPopup_Show("BACKPACK_INCREASE_SIZE")
 
@@ -200,20 +191,19 @@ function BaudBagContainerMenuMixin:SetupGeneral()
     -- create general buttons if applicable
 
     if (self.BagSet == BagSetType.Backpack.Id) then
-        local showBankButton = CreateFrame("CheckButton", nil, self.General, "BaudBagContainerMenuCheckButtonTemplate")
-        showBankButton:SetText(Localized.ShowBank)
-        showBankButton:SetScript("OnClick", showBankButton.ToggleBank)
-        showBankButton:SetPoint("TOP", self.General.ShowOptions, "BOTTOM")
-        self.General.ShowBankButton = showBankButton
-        table.insert(self.checkButtons, showBankButton)
+        -- call hooks
+        local buttonsToAdd = {}
+        AddOnTable:ExtendContainerMenuWithGeneralEntriesForBackpack(self.General, buttonsToAdd)
 
-        local enableBankButton = CreateFrame("CheckButton", nil, self.General, "BaudBagContainerMenuCheckButtonTemplate")
-        enableBankButton:SetText(Localized.EnableBank)
-        enableBankButton:SetScript("OnClick", enableBankButton.ToggleEnableBank)
-        enableBankButton:SetPoint("TOP", showBankButton, "BOTTOM" )
-        enableBankButton:SetChecked(AddOnTable.Config[BagSetType.Bank.Id].Enabled)
-        self.General.EnableBankButton = enableBankButton
-        table.insert(self.checkButtons, enableBankButton)
+        -- add and connect buttons provided by hooks
+        if (type(buttonsToAdd) == "table") then
+            local previousEntry = self.General.ShowOptions
+            for _, checkButton in ipairs (buttonsToAdd) do
+                checkButton:SetPoint("TOP", previousEntry, "BOTTOM")
+                table.insert(self.checkButtons, checkButton)
+                previousEntry = checkButton
+            end
+        end
 
         local backpackCanBeExtended = not (IsAccountSecured() and AddOnTable.BlizzAPI.GetContainerNumSlots(AddOnTable.BlizzConstants.BACKPACK_CONTAINER) > AddOnTable.BlizzConstants.BACKPACK_BASE_SIZE)
         if (backpackCanBeExtended) then

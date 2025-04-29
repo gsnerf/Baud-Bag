@@ -16,7 +16,8 @@
                 "-Force",
                 "-Exclude",
                 ".*"
-            ]
+            ],
+            "problemMatcher": []
         },
         {
             "label": "copy to ptr",

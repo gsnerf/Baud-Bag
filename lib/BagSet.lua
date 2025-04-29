@@ -40,6 +40,10 @@ function Prototype:PerformInitialBuild()
 end
 
 --[[ This will be called on first load as well as every configuration change (via options screen) ]]
+function Prototype:ReloadConfig()
+    self:RebuildContainers()
+end
+
 function Prototype:RebuildContainers()
     ---comment
     ---@param localContainerObject Container
