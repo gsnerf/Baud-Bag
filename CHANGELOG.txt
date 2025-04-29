@@ -1,10 +1,16 @@
 ﻿=== Changelog ===
+v11.1.5.1
+  - fixes handling of changed itemlinks for battlepets
+  - fixes "shown" state of bagframe for warband bank not being followed
+  - added support for addon categories
+  - added menu entry for showing warband bank
+  - removed "enable bank" toggle from menu
 v11.0.7.2
   - fixes missing item counts in bags for classic versions
 v11.0.7.1
   - fixed some edge case issues on item information retrieval
   - fixed error when trying to change container names
-  - added suppor for deposit/withdrawal on warband bank
+  - added support for deposit/withdrawal on warband bank
   - enabled item search for warband bank
   - updating classic versions with recent API changes
 v11.0.2.6
