@@ -44,7 +44,7 @@ BaudBagToolTips.lua
 frames/Options.xml
 TokenBar.xml
 Backpack.lua
-Bank.lua
+Bank.xml
 Keyring.xml
 frames\BaudBagSearchFrame.xml
 Overrides.lua
