@@ -58,6 +58,8 @@ BagSetType = {
         ShouldUseCache = function() return false end,
         -- intended to be set in Backpack.lua
         BagOverview_Initialize = nil,
+        BagFilterGetFunction = AddOnTable.BlizzAPI.GetBagSlotFlag,
+        BagFilterSetFunction = AddOnTable.BlizzAPI.SetBagSlotFlag,
     },
     Bank = {
         Id = 2,
@@ -133,6 +135,8 @@ BagSetType = {
         ShouldUseCache = function() return not AddOnTable.State.BankOpen end,
         -- intended to be set in Bank.lua
         BagOverview_Initialize = nil,
+        BagFilterGetFunction = AddOnTable.BlizzAPI.GetBankBagSlotFlag,
+        BagFilterSetFunction = AddOnTable.BlizzAPI.SetBankBagSlotFlag,
     },
 }
 

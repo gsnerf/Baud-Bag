@@ -65,6 +65,8 @@ local function extendBaseType()
         SupportsCache = true,
         ShouldUseCache = function() return not AddOnTable.State.AccountBankOpen end,
         BagOverview_Initialize = function() _G["BaudBagContainer6_1"].BagsFrame:Initialize() end,
+        BagFilterGetFunction = nil,
+        BagFilterSetFunction = function() end,
     }
     tinsert(BagSetTypeArray, BagSetType.AccountBank)
 

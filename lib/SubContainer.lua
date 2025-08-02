@@ -279,13 +279,8 @@ function Prototype:GetFilterType()
     if (not self.FilterType) then
         local funcToExec
 
-        if (self.BagSet.Id == BagSetType.Backpack.Id) then
-            funcToExec = AddOnTable.BlizzAPI.GetBagSlotFlag
-        end
-        if (self.BagSet.Id == BagSetType.Bank.Id) then
-            funcToExec = AddOnTable.BlizzAPI.GetBankBagSlotFlag
-        end
-
+        funcToExec = self.BagSet.BagFilterGetFunction
+        
         if (funcToExec) then
             for _, flag in  AddOnTable.BlizzAPI.EnumerateBagGearFilters() do
                 if (funcToExec(self.ContainerId, flag)) then
@@ -299,12 +294,7 @@ function Prototype:GetFilterType()
 end
 
 function Prototype:SetFilterType(type, value)
-    if (self.BagSet.Id == BagSetType.Backpack.Id) then
-        AddOnTable.BlizzAPI.SetBagSlotFlag(self.ContainerId, type, value)
-    end
-    if (self.BagSet.Id == BagSetType.Bank.Id) then
-        AddOnTable.BlizzAPI.SetBankBagSlotFlag(self.ContainerId, type, value)
-    end
+    self.BagSet.BagFilterSetFunction(self.ContainerId, type, value)
     self.FilterType = nil
 end
 
