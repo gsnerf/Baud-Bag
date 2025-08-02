@@ -128,7 +128,7 @@ local Func = function(self, event, ...)
 
     -- this is the ID of the affected container as known to WoW
     local bagId = ...
-    if AddOnTable.Functions.IsBankContainer(bagId) or AddOnTable.Functions.IsInventory(bagId) then
+    if AddOnTable.Functions.IsInventory(bagId) then
         if collectedBagEvents[bagId] == nil then
             collectedBagEvents[bagId] = {}
         end
@@ -137,70 +137,32 @@ local Func = function(self, event, ...)
         -- temporary until BAG_UPDATE_DELAYED is fixed again
         AddOnTable["SubBags"][bagId]:UpdateSlotContents()
     end
-
-    -- old stuff, for compatibility until the stuff above works as expected
-    -- if there are new bank slots the whole view has to be updated
-    if (event == "PLAYERBANKSLOTS_CHANGED") then
-        -- bank bag slot
-        if (bagId > AddOnTable.BlizzConstants.BANK_SLOTS_NUM) then
-            local bankBagId = bagId-AddOnTable.BlizzConstants.BANK_SLOTS_NUM
-            local bankBagButton = AddOnTable.Sets[BagSetType.Bank.Id].BagButtons[bankBagId]
-            bankBagButton:UpdateContent()
-            return
-        end
-
-        -- if the main bank bag is visible make sure the content of the sub-bags is also shown
-        local BankBag = _G[Prefix.."SubBag-1"]
-        if BankBag:GetParent():IsShown() then
-            AddOnTable["SubBags"][-1]:UpdateSlotContents()
-        end
-        local Container = _G[Prefix.."Container2_1"]
-        if not Container:IsShown() then
-            return
-        end
-        Container.UpdateSlots = true
-    end
 end
 EventFuncs.BAG_OPEN = Func
 EventFuncs.BAG_UPDATE = Func
 EventFuncs.BAG_CLOSED = Func
-EventFuncs.PLAYERBANKSLOTS_CHANGED = Func
 
 Func = function(self, event, ...)
     AddOnTable.Functions.DebugMessage("Bags", "BAG_UPDATE_DELAYED (collectedBagEvents)", collectedBagEvents)
     -- collect information on last action
     local affectedContainerCount = 0
-    local bankAffected = false
-    local bagsAffected = false
     for bagId, _ in pairs(collectedBagEvents) do
         affectedContainerCount = affectedContainerCount + 1
-        if AddOnTable.BlizzConstants.BACKPACK_FIRST_CONTAINER <= bagId and bagId <= AddOnTable.BlizzConstants.BACKPACK_LAST_CONTAINER then
-            bagsAffected = true
-        elseif bagId == AddOnTable.BlizzConstants.REAGENTBANK_CONTAINER or bagId == AddOnTable.BlizzConstants.BANK_CONTAINER or AddOnTable.BlizzConstants.BANK_FIRST_CONTAINER <= bagId then
-            bankAffected = true
-        end
     end
 
     -- full rebuild if it seems the bags could have been swapped (something like this will probably be necessary for classic, so it stays for the moment)
     if affectedContainerCount > 1 then
-        if bagsAffected then
-            local backpackSet = AddOnTable.Sets[BagSetType.Backpack.Id]
-            backpackSet:RebuildContainers()
-            for _, button in ipairs(backpackSet.BagButtons) do
-                button:Hide()
-                button:Show()
-            end
-            for _, button in ipairs(backpackSet.ReagentBagButtons) do
-                button:Hide()
-                button:Show()
-            end
-            backpackSet:UpdateBagHighlight()
+        local backpackSet = AddOnTable.Sets[BagSetType.Backpack.Id]
+        backpackSet:RebuildContainers()
+        for _, button in ipairs(backpackSet.BagButtons) do
+            button:Hide()
+            button:Show()
         end
-        if bankAffected then
-            local bankSet = AddOnTable.Sets[BagSetType.Bank.Id]
-            bankSet:RebuildContainers()
-            bankSet:UpdateBagHighlight()
+        for _, button in ipairs(backpackSet.ReagentBagButtons) do
+            button:Hide()
+            button:Show()
         end
+        backpackSet:UpdateBagHighlight()
     else
         -- single bag update otherwise
         for bagId, _ in pairs(collectedBagEvents) do
@@ -265,15 +227,14 @@ function BaudBag_OnLoad(self, event, ...)
     for Key, Value in pairs(EventFuncs)do
         self:RegisterEvent(Key)
     end
-    BaudBag_RegisterBankEvents(self)
     BaudBag_RegisterBackpackEvents(self)
     AddOnTable.Functions.RegisterEvents(self)
+    AddOnTable:RegisterEvents(self)
 end
 
 
 --[[ this will call the correct event handler ]]--
 function BaudBag_OnEvent(self, event, ...)
-    BaudBag_OnBankEvent(self, event, ...)
     BaudBag_OnBackpackEvent(self, event, ...)
     if EventFuncs[event] then
         EventFuncs[event](self, event, ...)

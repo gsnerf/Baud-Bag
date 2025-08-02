@@ -151,17 +151,82 @@ end
 EventFuncs.BANKFRAME_OPENED = Func
 EventFuncs.PLAYERBANKBAGSLOTS_CHANGED = Func
 
-function BaudBag_RegisterBankEvents(self)
-    for Key, Value in pairs(EventFuncs)do
-        self:RegisterEvent(Key)
-    end
-end
+local collectedBagEvents = {}
+Func = function(self, event, ...)
+    AddOnTable.Functions.DebugMessage("Bags", "Event fired for bank (event, source)", event, self:GetName())
 
-function BaudBag_OnBankEvent(self, event, ...)
-    if EventFuncs[event] then
-        EventFuncs[event](self, event, ...)
+    -- this is the ID of the affected container as known to WoW
+    local bagId = ...
+    if BagSetType.Bank.IsSubContainerOf(bagId) then
+        if collectedBagEvents[bagId] == nil then
+            collectedBagEvents[bagId] = {}
+        end
+        table.insert(collectedBagEvents[bagId], event)
+
+        -- temporary until BAG_UPDATE_DELAYED is fixed again
+        AddOnTable["SubBags"][bagId]:UpdateSlotContents()
+    end
+
+    -- old stuff, for compatibility until the stuff above works as expected
+    -- if there are new bank slots the whole view has to be updated
+    if (event == "PLAYERBANKSLOTS_CHANGED") then
+        -- bank bag slot
+        if (bagId > AddOnTable.BlizzConstants.BANK_SLOTS_NUM) then
+            local bankBagId = bagId-AddOnTable.BlizzConstants.BANK_SLOTS_NUM
+            local bankBagButton = AddOnTable.Sets[BagSetType.Bank.Id].BagButtons[bankBagId]
+            bankBagButton:UpdateContent()
+            return
+        end
+
+        -- if the main bank bag is visible make sure the content of the sub-bags is also shown
+        local BankBag = _G[Prefix.."SubBag-1"]
+        if BankBag:GetParent():IsShown() then
+            AddOnTable["SubBags"][-1]:UpdateSlotContents()
+        end
+        local Container = _G[Prefix.."Container2_1"]
+        if not Container:IsShown() then
+            return
+        end
+        Container.UpdateSlots = true
     end
 end
+EventFuncs.BAG_OPEN = Func
+EventFuncs.BAG_UPDATE = Func
+EventFuncs.BAG_CLOSED = Func
+EventFuncs.PLAYERBANKSLOTS_CHANGED = Func
+
+Func = function(self, event, ...)
+    AddOnTable.Functions.DebugMessage("Bags", "BAG_UPDATE_DELAYED (collectedBagEvents)", collectedBagEvents)
+    -- collect information on last action
+    local affectedContainerCount = 0
+    for bagId, _ in pairs(collectedBagEvents) do
+        affectedContainerCount = affectedContainerCount + 1
+    end
+
+    -- full rebuild if it seems the bags could have been swapped (something like this will probably be necessary for classic, so it stays for the moment)
+    if affectedContainerCount > 1 then
+        local bankSet = AddOnTable.Sets[BagSetType.Bank.Id]
+        bankSet:RebuildContainers()
+        bankSet:UpdateBagHighlight()
+    else
+        -- single bag update otherwise
+        for bagId, _ in pairs(collectedBagEvents) do
+            AddOnTable["SubBags"][bagId]:UpdateSlotContents()
+        end
+    end
+
+    -- reset collected data for next action
+    collectedBagEvents = {}
+end
+EventFuncs.BAG_UPDATE_DELAYED = Func
+
+
+local function registerBankEvents(self)
+    for Key, Value in pairs(EventFuncs)do
+        EventRegistry:RegisterFrameEvent(Key, Value)
+    end
+end
+hooksecurefunc(AddOnTable, "RegisterEvents", registerBankEvents)
 
 --[[
     This method creates the buttons in the banks BagsFrame (frame that pops out and shows the available bags).

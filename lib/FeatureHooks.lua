@@ -16,6 +16,11 @@ function AddOnTable:EssentialsLoaded()
     -- intentionally empty hook to allow usage of dynamic features
 end
 
+--[[ use this hook to register events for your feature ]]
+function AddOnTable:RegisterEvents(self)
+    --intentionally empty hook to allow usage of dynamic features
+end
+
 ---This hook will be called when the container manu is being created.
 ---@param menuGroup Frame use as parent when creating your CheckButton type entries
 ---@param addedButtons table add your created buttons here for them to be added to the actual menu after hook has been executed
