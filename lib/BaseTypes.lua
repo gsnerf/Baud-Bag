@@ -24,6 +24,9 @@ BagSetType = {
             for bag = AddOnTable.BlizzConstants.BACKPACK_FIRST_CONTAINER, AddOnTable.BlizzConstants.BACKPACK_LAST_CONTAINER do
                 table.insert(BagSetType.Backpack.ContainerIterationOrder, bag)
             end
+            for id = AddOnTable.BlizzConstants.BACKPACK_FIRST_CONTAINER, AddOnTable.BlizzConstants.BACKPACK_LAST_CONTAINER do
+                AddOnTable.ContainerIdOptionsIndexMap[id] = id + 1
+            end
         end,
         -- backpack + number of additional bags
         NumberOfContainers = 1 + AddOnTable.BlizzConstants.BACKPACK_TOTAL_BAGS_NUM,
@@ -160,8 +163,4 @@ ContainerType = {
 }
 
 --[[ this is a really dump way to access the config to get the joined state... ]]
-local idIndexMap = {}
-for id = AddOnTable.BlizzConstants.BACKPACK_FIRST_CONTAINER, AddOnTable.BlizzConstants.BACKPACK_LAST_CONTAINER do
-    idIndexMap[id] = id + 1
-end
-AddOnTable.ContainerIdOptionsIndexMap = idIndexMap
+AddOnTable.ContainerIdOptionsIndexMap = {}
