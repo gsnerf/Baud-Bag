@@ -120,19 +120,6 @@ BagSetType = {
         -- intended to be set in Bank.lua
         BagOverview_Initialize = nil,
     },
-    --[[
-        GuildBank = {
-        Id = 4,
-        IsSubContainerOf = function(containerId)
-            return false
-        end
-    },
-    VoidStorage = {
-        Id = 5,
-        IsSubContainerOf = function(containerId)
-            return false
-        end
-    } ]]
 }
 
 --[[

@@ -3,7 +3,6 @@
     It has the following structure (values are initial and may be overwritten):
     
     BaudBag_Cache = {
-        "Void" = {}
         "Bank" = {
             -1 = { Size = NUM_BANKGENERIC_SLOTS }
             6 = { Size  = 0 }
@@ -103,10 +102,6 @@ function AddOnTable:InitCache()
     end
 
     initialized = true
-end
-
-function BaudBagGetVoidCache()
-    return BaudBag_Cache.Void
 end
 
 
