@@ -4,6 +4,12 @@ local _
 local Funcs = AddOnTable.Functions
 local Events = AddOnTable.Events
 
+local interfaceVersion = select(4, GetBuildInfo())
+
+if (interfaceVersion >= 110200) then
+    return
+end
+
 AddOnTable.State.ReagentBankSupported = true
 
 --[[ This updates the visual of the given reagent bank item ]]

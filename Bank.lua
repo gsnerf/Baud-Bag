@@ -4,6 +4,12 @@ local _
 local Prefix = "BaudBag"
 local Localized = AddOnTable.Localized
 
+local interfaceVersion = select(4, GetBuildInfo())
+
+if (interfaceVersion >= 110200) then
+    return
+end
+
 local EventFuncs = {
     BANKFRAME_CLOSED = function(self, event, ...)
         AddOnTable.Functions.DebugMessage("Bank", "Event BANKFRAME_CLOSED fired")
