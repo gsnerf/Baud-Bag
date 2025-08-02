@@ -70,18 +70,7 @@ function RestoreConfigToObject(configObject)
         configObject[bagSetID].Joined   = checkValue(configObject[bagSetID].Joined,   "table",   {},   "- joins for BagSet "..bagSetID.." damaged or missing, creating now")
         configObject[bagSetID].ShowBags = checkValue(configObject[bagSetID].ShowBags, "boolean", (bagSetID == 2), "- show information for BagSet "..bagSetID.." damaged or missing, creating now")
 
-        -- make sure the reagent bank is NOT joined by default!
-        if (bagSetID == BagSetType.Bank.Id and configObject[2].Joined[9] == nil) then
-            AddOnTable.Functions.DebugMessage("Config", "- reagent bank join for BagSet "..bagSetID.." damaged or missing, creating now")
-            configObject[bagSetID].Joined[9] = false
-        end
-
-        -- make sure the reagent bag is NOT joined by default!
-        if (bagSetID == BagSetType.Backpack.Id and configObject[1].Joined[6] == nil) then
-            AddOnTable.Functions.DebugMessage("Config", "- reagent bag join for BagSet "..bagSetID.." damaged or missing, creating now")
-            configObject[bagSetID].Joined[6] = false;
-        end
-
+        bagSetType.ApplyConfigRestorationSpecificalities(configObject)
         local containerID = 0
         AddOnTable.Functions.ForEachBag(bagSetID, function(bagID, index)
 

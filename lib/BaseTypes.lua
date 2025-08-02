@@ -44,6 +44,13 @@ BagSetType = {
             end,
             Background = 1
         },
+        ApplyConfigRestorationSpecificalities = function(configObject)
+            -- make sure the reagent bag is NOT joined by default!
+            if (configObject[BagSetType.Backpack.Id].Joined[6] == nil) then
+                AddOnTable.Functions.DebugMessage("Config", "- reagent bag join for BagSet "..BagSetType.Backpack.Id.." damaged or missing, creating now")
+                configObject[BagSetType.Backpack.Id].Joined[6] = false;
+            end
+        end,
         GetContainerTemplate = function(containerId) return "BaudBagContainerTemplate" end,
         GetItemButtonTemplate = function(containerId) return "ContainerFrameItemButtonTemplate" end,
         GetSize = function(containerId) return AddOnTable.BlizzAPI.GetContainerNumSlots(containerId) end,
@@ -92,6 +99,13 @@ BagSetType = {
             end,
             Background = 2
         },
+        ApplyConfigRestorationSpecificalities = function(configObject)
+            -- make sure the reagent bank is NOT joined by default!
+            if (configObject[BagSetType.Bank.Id].Joined[9] == nil) then
+                AddOnTable.Functions.DebugMessage("Config", "- reagent bank join for BagSet "..BagSetType.Bank.Id.." damaged or missing, creating now")
+                configObject[BagSetType.Bank.Id].Joined[9] = false
+            end
+        end,
         GetContainerTemplate = function(containerId)
             if (containerId == AddOnTable.BlizzConstants.REAGENTBANK_CONTAINER) then
                 return "BaudBagReagentBankTemplate"
