@@ -10,6 +10,98 @@ if (interfaceVersion >= 110200) then
     return
 end
 
+
+local function extendBaseType()
+    Funcs.DebugMessage("Bank", "Bank#extendBaseType()")
+    BagSetType["Bank"] = {
+        Id = 2,
+        Name = Localized.BankBox,
+        TypeName = "Bank",
+        IsSupported = function() return true end,
+        IsSubContainerOf = function(containerId)
+            local isBankDefaultContainer = (containerId == AddOnTable.BlizzConstants.BANK_CONTAINER) or (containerId == AddOnTable.BlizzConstants.REAGENTBANK_CONTAINER)
+            local isBankSubContainer = (AddOnTable.BlizzConstants.BANK_FIRST_CONTAINER <= containerId) and (containerId <= AddOnTable.BlizzConstants.BANK_LAST_CONTAINER)
+            return isBankDefaultContainer or isBankSubContainer
+        end,
+        ContainerIterationOrder = {},
+        Init = function()
+            table.insert(BagSetType.Bank.ContainerIterationOrder, AddOnTable.BlizzConstants.BANK_CONTAINER)
+            for bag = AddOnTable.BlizzConstants.BANK_FIRST_CONTAINER, AddOnTable.BlizzConstants.BANK_LAST_CONTAINER do
+                table.insert(BagSetType.Bank.ContainerIterationOrder, bag)
+            end
+            -- explicitly using the numerical value of the expansion instead of the enum, as classic variants seemingly do not contain those enums
+            if (GetExpansionLevel() >= 5) then
+                table.insert(BagSetType.Bank.ContainerIterationOrder, AddOnTable.BlizzConstants.REAGENTBANK_CONTAINER)
+            end
+
+            AddOnTable.ContainerIdOptionsIndexMap[AddOnTable.BlizzConstants.BANK_CONTAINER] = 1
+            AddOnTable.ContainerIdOptionsIndexMap[AddOnTable.BlizzConstants.REAGENTBANK_CONTAINER] = AddOnTable.BlizzConstants.BANK_CONTAINER_NUM + 2
+            for id = AddOnTable.BlizzConstants.BANK_FIRST_CONTAINER, AddOnTable.BlizzConstants.BANK_LAST_CONTAINER do
+                AddOnTable.ContainerIdOptionsIndexMap[id] = id - AddOnTable.BlizzConstants.BACKPACK_LAST_CONTAINER + 1
+            end
+        end,
+        -- bank container + number of additional bags in bank + optionally reagent bank
+        NumberOfContainers = 1 + AddOnTable.BlizzConstants.BANK_CONTAINER_NUM + (GetExpansionLevel() >= 5 and 1 or 0),
+        DefaultConfig = {
+            Columns = 14,
+            Scale = 100,
+            GetNameAddition = function(bagId)
+                local isReagentBank = bagId == AddOnTable.BlizzConstants.REAGENTBANK_CONTAINER
+                if (isReagentBank) then
+                    return Localized.ReagentBankBox
+                else
+                    return Localized.BankBox
+                end
+            end,
+            RequiresFreshConfig = function(bagId)
+                local isReagentBank = bagId == AddOnTable.BlizzConstants.REAGENTBANK_CONTAINER
+                return isReagentBank
+            end,
+            Background = 2
+        },
+        ApplyConfigRestorationSpecificalities = function(configObject)
+            -- make sure the reagent bank is NOT joined by default!
+            if (configObject[BagSetType.Bank.Id].Joined[9] == nil) then
+                AddOnTable.Functions.DebugMessage("Config", "- reagent bank join for BagSet "..BagSetType.Bank.Id.." damaged or missing, creating now")
+                configObject[BagSetType.Bank.Id].Joined[9] = false
+            end
+        end,
+        GetContainerTemplate = function(containerId)
+            if (containerId == AddOnTable.BlizzConstants.REAGENTBANK_CONTAINER) then
+                return "BaudBagReagentBankTemplate"
+            else
+                return "BaudBagContainerTemplate"
+            end
+        end,
+        GetItemButtonTemplate = function(containerId)
+            if (containerId == AddOnTable.BlizzConstants.REAGENTBANK_CONTAINER) then
+                return "ReagentBankItemButtonGenericTemplate"
+            else
+                return "BankItemButtonGenericTemplate"
+            end
+        end,
+        GetSize = function(containerId)
+            local useCache = not AddOnTable.State.BankOpen
+            if useCache and (containerId ~= AddOnTable.BlizzConstants.REAGENTBANK_CONTAINER) then
+                local bagCache = AddOnTable.Cache:GetBagCache(containerId)
+                return bagCache.Size
+            else
+                return AddOnTable.BlizzAPI.GetContainerNumSlots(containerId)
+            end
+        end,
+        SupportsCache = true,
+        ShouldUseCache = function() return not AddOnTable.State.BankOpen end,
+        -- intended to be set in Bank.lua
+        BagOverview_Initialize = nil,
+        BagFilterGetFunction = AddOnTable.BlizzAPI.GetBankBagSlotFlag,
+        BagFilterSetFunction = AddOnTable.BlizzAPI.SetBankBagSlotFlag,
+    }
+    tinsert(BagSetTypeArray, BagSetType.Bank)
+
+    AddOnTable.State.BankOpen = false
+end
+hooksecurefunc(AddOnTable, "ExtendBaseTypes", extendBaseType)
+
 local EventFuncs = {
     BANKFRAME_CLOSED = function(self, event, ...)
         AddOnTable.Functions.DebugMessage("Bank", "Event BANKFRAME_CLOSED fired")
