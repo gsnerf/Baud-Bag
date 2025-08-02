@@ -68,6 +68,7 @@ local function extendBaseType()
         BagFilterGetFunction = nil,
         BagFilterSetFunction = function() end,
         CanInteractWithBags = function() return AddOnTable.Sets[BagSetType.AccountBank.Id].Containers[1].Frame:IsShown() end,
+        OnItemButtonCustomEnter = function(self) end,
     }
     tinsert(BagSetTypeArray, BagSetType.AccountBank)
 

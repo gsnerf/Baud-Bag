@@ -306,21 +306,7 @@ function Prototype:UpdateNewAndBattlepayoverlays(isNewItem, isBattlePayItem)
 end
 
 function Prototype:OnCustomEnter()
-    local bagSetId = self.Parent.BagSet.Id
-    if (bagSetId == BagSetType.Bank.Id) then
-        local bagId = self:GetParent():GetID()
-        local slotId = self:GetID()
-        AddOnTable.Functions.DebugMessage("Tooltip", "[ItemButton:UpdateTooltip] This button is part of the bank bags... reading from cache")
-        self:UpdateTooltipFromCache(bagId, slotId)
-    elseif (bagSetId == BagSetType.Backpack.Id) then
-        if (ContainerFrameItemButton_OnUpdate ~= nil) then
-            ContainerFrameItemButton_OnUpdate(self)
-        elseif (ContainerFrameItemButton_OnEnter ~= nil) then
-            ContainerFrameItemButton_OnEnter(self)
-        else
-            self:OnUpdate()
-        end
-    end
+    self.Parent.BagSet.Type.OnItemButtonCustomEnter(self)
 end
 
 function Prototype:UpdateTooltipFromCache(bagId, slotId)
@@ -401,7 +387,7 @@ function AddOnTable:CreateItemButton(subContainer, slotIndex, buttonTemplate)
         itemButton.UpgradeIcon:SetPoint("BOTTOMLEFT")
     end
 
-    -- this is an override for the bank items which manually call UpdateTooltip
+    -- this is an override for the (old) bank items which manually call UpdateTooltip
     if (itemButton.UpdateTooltip) then
         itemButton.UpdateTooltip = itemButton.OnCustomEnter
     end

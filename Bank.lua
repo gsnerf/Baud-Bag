@@ -96,6 +96,12 @@ local function extendBaseType()
         BagFilterGetFunction = AddOnTable.BlizzAPI.GetBankBagSlotFlag,
         BagFilterSetFunction = AddOnTable.BlizzAPI.SetBankBagSlotFlag,
         CanInteractWithBags = function() return AddOnTable.Sets[BagSetType.Bank.Id].Containers[1].Frame:IsShown() end,
+        OnItemButtonCustomEnter = function(self)
+            local bagId = self:GetParent():GetID()
+            local slotId = self:GetID()
+            AddOnTable.Functions.DebugMessage("Tooltip", "[ItemButton:UpdateTooltip] This button is part of the bank bags... reading from cache")
+            self:UpdateTooltipFromCache(bagId, slotId)
+        end,
     }
     tinsert(BagSetTypeArray, BagSetType.Bank)
 
