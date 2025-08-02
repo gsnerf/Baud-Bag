@@ -95,6 +95,7 @@ local function extendBaseType()
         BagOverview_Initialize = nil,
         BagFilterGetFunction = AddOnTable.BlizzAPI.GetBankBagSlotFlag,
         BagFilterSetFunction = AddOnTable.BlizzAPI.SetBankBagSlotFlag,
+        CanInteractWithBags = function() return AddOnTable.Sets[BagSetType.Bank.Id].Containers[1].Frame:IsShown() end,
     }
     tinsert(BagSetTypeArray, BagSetType.Bank)
 

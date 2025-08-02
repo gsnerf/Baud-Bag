@@ -63,6 +63,7 @@ BagSetType = {
         BagOverview_Initialize = nil,
         BagFilterGetFunction = AddOnTable.BlizzAPI.GetBagSlotFlag,
         BagFilterSetFunction = AddOnTable.BlizzAPI.SetBagSlotFlag,
+        CanInteractWithBags = function() return true end,
     },
 }
 

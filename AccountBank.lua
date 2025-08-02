@@ -67,6 +67,7 @@ local function extendBaseType()
         BagOverview_Initialize = function() _G["BaudBagContainer6_1"].BagsFrame:Initialize() end,
         BagFilterGetFunction = nil,
         BagFilterSetFunction = function() end,
+        CanInteractWithBags = function() return AddOnTable.Sets[BagSetType.AccountBank.Id].Containers[1].Frame:IsShown() end,
     }
     tinsert(BagSetTypeArray, BagSetType.AccountBank)
 
