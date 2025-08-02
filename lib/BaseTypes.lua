@@ -81,6 +81,12 @@ BagSetType = {
             if (GetExpansionLevel() >= 5) then
                 table.insert(BagSetType.Bank.ContainerIterationOrder, AddOnTable.BlizzConstants.REAGENTBANK_CONTAINER)
             end
+
+            AddOnTable.ContainerIdOptionsIndexMap[AddOnTable.BlizzConstants.BANK_CONTAINER] = 1
+            AddOnTable.ContainerIdOptionsIndexMap[AddOnTable.BlizzConstants.REAGENTBANK_CONTAINER] = AddOnTable.BlizzConstants.BANK_CONTAINER_NUM + 2
+            for id = AddOnTable.BlizzConstants.BANK_FIRST_CONTAINER, AddOnTable.BlizzConstants.BANK_LAST_CONTAINER do
+                AddOnTable.ContainerIdOptionsIndexMap[id] = id - AddOnTable.BlizzConstants.BACKPACK_LAST_CONTAINER + 1
+            end
         end,
         -- bank container + number of additional bags in bank + optionally reagent bank
         NumberOfContainers = 1 + AddOnTable.BlizzConstants.BANK_CONTAINER_NUM + (GetExpansionLevel() >= 5 and 1 or 0),
@@ -155,12 +161,7 @@ ContainerType = {
 
 --[[ this is a really dump way to access the config to get the joined state... ]]
 local idIndexMap = {}
-idIndexMap[AddOnTable.BlizzConstants.BANK_CONTAINER] = 1
-idIndexMap[AddOnTable.BlizzConstants.REAGENTBANK_CONTAINER] = AddOnTable.BlizzConstants.BANK_CONTAINER_NUM + 2
 for id = AddOnTable.BlizzConstants.BACKPACK_FIRST_CONTAINER, AddOnTable.BlizzConstants.BACKPACK_LAST_CONTAINER do
     idIndexMap[id] = id + 1
-end
-for id = AddOnTable.BlizzConstants.BANK_FIRST_CONTAINER, AddOnTable.BlizzConstants.BANK_LAST_CONTAINER do
-    idIndexMap[id] = id - AddOnTable.BlizzConstants.BACKPACK_LAST_CONTAINER + 1
 end
 AddOnTable.ContainerIdOptionsIndexMap = idIndexMap
