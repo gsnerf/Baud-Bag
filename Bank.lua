@@ -367,7 +367,7 @@ function BaudBagToggleBank(self)
 end
 
 --[[ this method ensures that the bank bags are either placed as childs under UIParent or BaudBag ]]
-function AddOnTable:UpdateBankParents()
+local function updateBankParents()
     local newParent = ContainerFrameContainer
     if AddOnTable.Functions.BagHandledByBaudBag(AddOnTable.BlizzConstants.BANK_CONTAINER) then
         newParent = BaudBag_OriginalBagsHideFrame
@@ -390,6 +390,7 @@ function AddOnTable:UpdateBankParents()
         DevTools_Dump(firstBankContainer:GetPointByName("BOTTOMRIGHT"))
     end
 end
+hooksecurefunc(AddOnTable, "ConfigUpdated", updateBankParents)
 
 --[[ #################################### Container Menu Entries #################################### ]]
 local function toggleBankMenuEntry(self)

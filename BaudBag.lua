@@ -45,9 +45,7 @@ local EventFuncs = {
         AddOnTable.Functions.DebugMessage("Bags", "Event PLAYER_LOGIN fired")
 
         BaudBagUpdateFromBBConfig()
-
-        AddOnTable:UpdateBankParents()
-        AddOnTable:UpdateBagParents()
+        AddOnTable:ConfigUpdated()
 
         for _, bagSetType in pairs(BagSetType) do
             bagSetType.BagOverview_Initialize()
@@ -295,7 +293,6 @@ function BaudBagUpdateFromBBConfig()
     end
     AddOnTable.BagsReady = true
     AddOnTable:UpdateBagParents()
-    AddOnTable:UpdateBankParents()
 end
 
 --[[ if the mouse hovers over the bag slot item the slots belonging to this bag should be shown after a certain time (atm 350ms or 0.35s) ]]
