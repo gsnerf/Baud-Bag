@@ -101,6 +101,7 @@ BagSetType = {
                 end
             end,
         },
+        CustomCloseAllFunction = function() end,
     },
 }
 

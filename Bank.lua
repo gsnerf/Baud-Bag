@@ -134,6 +134,11 @@ local function extendBaseType()
                 end
             end,
         },
+        CustomCloseAllFunction = function()
+            if (AddOnTable.State.BankOpen) then
+                AddOnTable.BlizzAPI.CloseBankFrame()
+            end
+        end,
     }
     tinsert(BagSetTypeArray, BagSetType.Bank)
 

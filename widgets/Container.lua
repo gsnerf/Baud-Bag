@@ -346,16 +346,10 @@ function BaudBagContainerMixin:OnHide(event, ...)
     local containerObject = AddOnTable.Sets[self.BagSet].Containers[self:GetID()]
     containerObject:UpdateBagHighlight()
 
-    --[[TODO: look into merging the set specific close handling!!!]]--
-    --[[
-    if the option entry requires it close all remaining containers of the bag set
-    (first the bag set so the "offline" title doesn't show up before closing and then the bank to disconnect)
-    ]]--
+    -- handle "close all" case
     if (self:GetID() == 1) and (BBConfig[self.BagSet].Enabled) and (BBConfig[self.BagSet].CloseAll) then
-        if (self.BagSet == BagSetType.Bank.Id) and AddOnTable.State.BankOpen then
-            AddOnTable.BlizzAPI.CloseBankFrame()
-        end
         AddOnTable.Sets[self.BagSet]:Close()
+        AddOnTable.Sets[self.BagSet].Type.CustomCloseAllFunction()
     end
 
     self:Show()

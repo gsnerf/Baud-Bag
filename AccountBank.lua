@@ -75,6 +75,7 @@ local function extendBaseType()
             GetCleanupIgnore = function(container) return false end,
             SetCleanupIgnore = function(container, value) end,
         },
+        CustomCloseAllFunction = function() end,
     }
     tinsert(BagSetTypeArray, BagSetType.AccountBank)
 
