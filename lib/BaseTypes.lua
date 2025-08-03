@@ -61,6 +61,47 @@ BagSetType = {
         ShouldUseCache = function() return false end,
         -- intended to be set in Backpack.lua
         BagOverview_Initialize = nil,
+        UpdateOpenBagHighlight = function(subContainer)
+            local open = subContainer:IsOpen()
+            if (subContainer.ContainerId == AddOnTable.BlizzConstants.BACKPACK_CONTAINER) then
+                if (MainMenuBarBackpackButton.SlotHighlightTexture) then
+                    if (open) then
+                        MainMenuBarBackpackButton.SlotHighlightTexture:Show()
+                    else
+                        MainMenuBarBackpackButton.SlotHighlightTexture:Hide()
+                    end
+                else
+                    MainMenuBarBackpackButton:SetChecked(open)
+                end
+            else
+                local backpackSet = AddOnTable.Sets[BagSetType.Backpack.Id]
+                local bagId = subContainer.ContainerId -1
+                local mainMenuBarButton = _G["CharacterBag"..bagId.."Slot"]
+                local baudBagBagButton = backpackSet.BagButtons[bagId]
+
+                if (subContainer.ContainerId == 5) then
+                    bagId = subContainer.ContainerId - (AddOnTable.BlizzConstants.BACKPACK_FIRST_CONTAINER + AddOnTable.BlizzConstants.BACKPACK_CONTAINER_NUM + 1)
+                    mainMenuBarButton = _G["CharacterReagentBag"..bagId.."Slot"]
+                    baudBagBagButton = backpackSet.ReagentBagButtons[bagId]
+                end
+                
+                if (open) then
+                    if (mainMenuBarButton.SlotHighlightTexture) then
+                        mainMenuBarButton.SlotHighlightTexture:Show()
+                    else
+                        mainMenuBarButton:SetChecked(true)
+                    end
+                    baudBagBagButton.SlotHighlightTexture:Show()
+                else
+                    if (mainMenuBarButton.SlotHighlightTexture) then
+                        mainMenuBarButton.SlotHighlightTexture:Hide()
+                    else
+                        mainMenuBarButton:SetChecked(false)
+                    end
+                    baudBagBagButton.SlotHighlightTexture:Hide()
+                end
+            end
+        end,
         BagFilterGetFunction = AddOnTable.BlizzAPI.GetBagSlotFlag,
         BagFilterSetFunction = AddOnTable.BlizzAPI.SetBagSlotFlag,
         CanInteractWithBags = function() return true end,

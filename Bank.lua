@@ -119,6 +119,29 @@ local function extendBaseType()
         SupportsCache = true,
         ShouldUseCache = function() return not AddOnTable.State.BankOpen end,
         BagOverview_Initialize = BankBags_Initialize,
+        UpdateOpenBagHighlight = function(subContainer)
+            local open = subContainer:IsOpen()
+            
+            if (subContainer.ContainerId == AddOnTable.BlizzConstants.REAGENTBANK_CONTAINER) then
+                if (open) then
+                    _G["BBReagentsBag"].SlotHighlightTexture:Show()
+                else
+                    _G["BBReagentsBag"].SlotHighlightTexture:Hide()
+                end
+                return
+            end
+
+            if (subContainer.ContainerId ~= AddOnTable.BlizzConstants.BANK_CONTAINER) then
+                local button = AddOnTable.Sets[BagSetType.Bank.Id].BagButtons[subContainer.ContainerId - AddOnTable.BlizzConstants.BACKPACK_LAST_CONTAINER]
+                if (button) then
+                    if (open) then
+                        button.SlotHighlightTexture:Show()
+                    else
+                        button.SlotHighlightTexture:Hide()
+                    end
+                end
+            end
+        end,
         BagFilterGetFunction = AddOnTable.BlizzAPI.GetBankBagSlotFlag,
         BagFilterSetFunction = AddOnTable.BlizzAPI.SetBankBagSlotFlag,
         CanInteractWithBags = function() return AddOnTable.Sets[BagSetType.Bank.Id].Containers[1].Frame:IsShown() end,

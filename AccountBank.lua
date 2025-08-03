@@ -65,6 +65,17 @@ local function extendBaseType()
         SupportsCache = true,
         ShouldUseCache = function() return not AddOnTable.State.AccountBankOpen end,
         BagOverview_Initialize = function() _G["BaudBagContainer6_1"].BagsFrame:Initialize() end,
+        UpdateOpenBagHighlight = function(subContainer)
+            local open = subContainer:IsOpen()
+            local button = AddOnTable.Sets[BagSetType.AccountBank.Id].BagButtons[subContainer.ContainerId - AddOnTable.BlizzConstants.ACCOUNT_BANK_FIRST_SUB_CONTAINER + 1]
+            if (button) then
+                if (open) then
+                    button.SlotHighlightTexture:Show()
+                else
+                    button.SlotHighlightTexture:Hide()
+                end
+            end
+        end,
         BagFilterGetFunction = nil,
         BagFilterSetFunction = function() end,
         CanInteractWithBags = function() return AddOnTable.Sets[BagSetType.AccountBank.Id].Containers[1].Frame:IsShown() end,

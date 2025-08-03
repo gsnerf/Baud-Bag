@@ -169,78 +169,8 @@ function Prototype:UpdateItemOverlays()
     end
 end
 
-local function UpdateBackpackHighlight(subContainer)
-    local open = subContainer:IsOpen()
-    if (subContainer.ContainerId == AddOnTable.BlizzConstants.BACKPACK_CONTAINER) then
-        if (MainMenuBarBackpackButton.SlotHighlightTexture) then
-            if (open) then
-                MainMenuBarBackpackButton.SlotHighlightTexture:Show()
-            else
-                MainMenuBarBackpackButton.SlotHighlightTexture:Hide()
-            end
-        else
-            MainMenuBarBackpackButton:SetChecked(open)
-        end
-    else
-        local backpackSet = AddOnTable.Sets[BagSetType.Backpack.Id]
-        local bagId = subContainer.ContainerId -1
-        local mainMenuBarButton = _G["CharacterBag"..bagId.."Slot"]
-        local baudBagBagButton = backpackSet.BagButtons[bagId]
-
-        if (subContainer.ContainerId == 5) then
-            bagId = subContainer.ContainerId - (AddOnTable.BlizzConstants.BACKPACK_FIRST_CONTAINER + AddOnTable.BlizzConstants.BACKPACK_CONTAINER_NUM + 1)
-            mainMenuBarButton = _G["CharacterReagentBag"..bagId.."Slot"]
-            baudBagBagButton = backpackSet.ReagentBagButtons[bagId]
-        end
-        
-        if (open) then
-            if (mainMenuBarButton.SlotHighlightTexture) then
-                mainMenuBarButton.SlotHighlightTexture:Show()
-            else
-                mainMenuBarButton:SetChecked(true)
-            end
-            baudBagBagButton.SlotHighlightTexture:Show()
-        else
-            if (mainMenuBarButton.SlotHighlightTexture) then
-                mainMenuBarButton.SlotHighlightTexture:Hide()
-            else
-                mainMenuBarButton:SetChecked(false)
-            end
-            baudBagBagButton.SlotHighlightTexture:Hide()
-        end
-    end
-end
-
-local function UpdateBankBagHighlight(subContainer)
-    local open = subContainer:IsOpen()
-    
-    if (subContainer.ContainerId == AddOnTable.BlizzConstants.REAGENTBANK_CONTAINER) then
-        if (open) then
-            _G["BBReagentsBag"].SlotHighlightTexture:Show()
-        else
-            _G["BBReagentsBag"].SlotHighlightTexture:Hide()
-        end
-        return
-    end
-
-    if (subContainer.ContainerId ~= AddOnTable.BlizzConstants.BANK_CONTAINER) then
-        local button = AddOnTable.Sets[BagSetType.Bank.Id].BagButtons[subContainer.ContainerId - AddOnTable.BlizzConstants.BACKPACK_LAST_CONTAINER]
-        if (button) then
-            if (open) then
-                button.SlotHighlightTexture:Show()
-            else
-                button.SlotHighlightTexture:Hide()
-            end
-        end
-    end
-end
-
 function Prototype:UpdateOpenBagHighlight()
-    if (self.BagSet.Id == BagSetType.Backpack.Id) then
-        UpdateBackpackHighlight(self)
-    elseif (self.BagSet.Id == BagSetType.Bank.Id) then
-        UpdateBankBagHighlight(self)
-    end
+    self.BagSet.UpdateOpenBagHighlight(self)
 end
 
 function Prototype:SetSlotHighlighting(shouldHighlight)
