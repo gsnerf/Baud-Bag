@@ -60,6 +60,16 @@ function BaudBag_AccountBank_BagButtonMixin:UpdateTooltip()
 end
 
 function BaudBag_AccountBank_BagButtonMixin:OnClick(button)
+    if button == "LeftButton" and self.TabData then
+        AddOnTable.Functions.DebugMessage("AccountBank", "BagButton#OnClick: recognized left click on already bought bank tab", self.TabData, self.SubContainerId)
+        local bagSet = AddOnTable.Sets[BagSetType.AccountBank.Id]
+        local containerFrame = bagSet.SubContainers[self.SubContainerId].Frame:GetParent()
+        if containerFrame:IsShown() then
+            containerFrame:Hide()
+        else
+            containerFrame:Show()
+        end
+    end
     if button == "RightButton" and self.TabData then
         AddOnTable.Functions.DebugMessage("AccountBank", "BagButton#OnClick: recognized right click on already bought bank tab", self.TabData, self.SubContainerId)
         self:GetParent().TabSettingsMenu.selectedTabData = self.TabData

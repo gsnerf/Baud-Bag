@@ -109,6 +109,7 @@ function BaudBag_BagButtonMixin:Pickup()
 	AddOnTable.BlizzAPI.PickupBagFromSlot( inventoryID )
 end
 
+--[[ actually doesn't only puts items in bags, but also toggles visibility ]]
 function BaudBag_BagButtonMixin:PutItemInBag()
     local hadItem = AddOnTable.BlizzAPI.CursorHasItem()
 	local inventoryID = self:GetInventorySlot()
