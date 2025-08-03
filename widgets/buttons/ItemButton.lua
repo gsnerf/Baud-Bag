@@ -306,7 +306,7 @@ function Prototype:UpdateNewAndBattlepayoverlays(isNewItem, isBattlePayItem)
 end
 
 function Prototype:OnCustomEnter()
-    self.Parent.BagSet.Type.OnItemButtonCustomEnter(self)
+    self.Parent.BagSet.OnItemButtonCustomEnter(self)
 end
 
 function Prototype:UpdateTooltipFromCache(bagId, slotId)
