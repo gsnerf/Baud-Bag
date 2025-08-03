@@ -61,7 +61,7 @@ end
 
 function BaudBag_AccountBank_BagButtonMixin:OnClick(button)
     if button == "RightButton" and self.TabData then
-        Funcs.DebugMessage("AccountBank", "BagButton#OnClick: recognized right click on already bought bank tab", self.TabData, self.SubContainerId)
+        AddOnTable.Functions.DebugMessage("AccountBank", "BagButton#OnClick: recognized right click on already bought bank tab", self.TabData, self.SubContainerId)
         self:GetParent().TabSettingsMenu.selectedTabData = self.TabData
         self:GetParent().TabSettingsMenu:TriggerEvent(BankPanelTabSettingsMenuMixin.Event.OpenTabSettingsRequested, self.SubContainerId)
     end
