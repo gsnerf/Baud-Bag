@@ -625,8 +625,7 @@ function BaudBagOptionsCheckButtonMixin:OnClick()
             if (not self:GetChecked()) then
                 AddOnTable.Sets[SelectedBags]:Close()
             end        
-            AddOnTable.UpdateBagParents()
-            AddOnTable.UpdateBankParents()
+            AddOnTable:ConfigUpdated()
         end
     elseif self.settingsType == "Container" then
         local savedVar = AddOnTable.ConfigOptions.Container.CheckButtons[self:GetID()].SavedVar
