@@ -10,9 +10,36 @@ if (interfaceVersion >= 110200) then
     return
 end
 
+--[[
+    This method creates the buttons in the banks BagsFrame (frame that pops out and shows the available bags).
+  ]]
+local function BankBags_Initialize()
+    local bankSet = AddOnTable.Sets[BagSetType.Bank.Id]
+    local BBContainer2 = _G[Prefix.."Container2_1BagsFrame"]
+
+    -- create BagSlots for regular bags
+    for Bag = 1, NUM_BANKBAGSLOTS do
+        local buttonIndex = Bag
+        local bagButton = AddOnTable:CreateBankBagButton(buttonIndex, BBContainer2)
+        bagButton:SetID(buttonIndex)
+        bagButton:SetPoint("TOPLEFT", 8 + mod(Bag - 1, 2) * 39, -8 - floor((Bag - 1) / 2) * 39)
+        bankSet.BagButtons[Bag] = bagButton
+    end
+
+    AddOnTable:BankBags_Inititalize(BBContainer2)
+
+    BBContainer2:SetWidth(91)
+    --Height changes depending if there is a purchase button
+    BBContainer2.Height = 13 + ceil(NUM_BANKBAGSLOTS / 2) * 39
+    BaudBagBankBags_Update()
+end
+
+function AddOnTable:BankBags_Inititalize(BagContainer)
+    -- just an empty hook for other addons
+end
 
 local function extendBaseType()
-    Funcs.DebugMessage("Bank", "Bank#extendBaseType()")
+    AddOnTable.Functions.DebugMessage("Bank", "Bank#extendBaseType()")
     BagSetType["Bank"] = {
         Id = 2,
         Name = Localized.BankBox,
@@ -91,8 +118,7 @@ local function extendBaseType()
         end,
         SupportsCache = true,
         ShouldUseCache = function() return not AddOnTable.State.BankOpen end,
-        -- intended to be set in Bank.lua
-        BagOverview_Initialize = nil,
+        BagOverview_Initialize = BankBags_Initialize,
         BagFilterGetFunction = AddOnTable.BlizzAPI.GetBankBagSlotFlag,
         BagFilterSetFunction = AddOnTable.BlizzAPI.SetBankBagSlotFlag,
         CanInteractWithBags = function() return AddOnTable.Sets[BagSetType.Bank.Id].Containers[1].Frame:IsShown() end,
@@ -271,47 +297,6 @@ local function registerBankEvents(self)
     end
 end
 hooksecurefunc(AddOnTable, "RegisterEvents", registerBankEvents)
-
-local function createBankBagButton(bagIndex, parentFrame)
-    -- Attention:
-    -- "PaperDollFrame" calls GetInventorySlotInfo on the button created here
-    -- For this to work the name bas to be "BagXSlot" with 9 random chars before that
-    -- TODO: check if this is actually needed or if we can somehow break the connection to that!
-    local bagSetType = BagSetType.Bank
-    local subContainerId = AddOnTable.BlizzConstants.BACKPACK_LAST_CONTAINER + bagIndex
-    local name = "BBBagSet"..bagSetType.Id.."Bag"..bagIndex.."Slot"
-
-    return AddOnTable:CreateBagButton(bagSetType, subContainerId, bagIndex, parentFrame, name)
-end
-
---[[
-    This method creates the buttons in the banks BagsFrame (frame that pops out and shows the available bags).
-  ]]
-local function BankBags_Initialize()
-    local bankSet = AddOnTable.Sets[BagSetType.Bank.Id]
-    local BBContainer2 = _G[Prefix.."Container2_1BagsFrame"]
-
-    -- create BagSlots for regular bags
-    for Bag = 1, NUM_BANKBAGSLOTS do
-        local buttonIndex = Bag
-        local bagButton = createBankBagButton(buttonIndex, BBContainer2)
-        bagButton:SetID(buttonIndex)
-        bagButton:SetPoint("TOPLEFT", 8 + mod(Bag - 1, 2) * 39, -8 - floor((Bag - 1) / 2) * 39)
-        bankSet.BagButtons[Bag] = bagButton
-    end
-
-    AddOnTable:BankBags_Inititalize(BBContainer2)
-
-    BBContainer2:SetWidth(91)
-    --Height changes depending if there is a purchase button
-    BBContainer2.Height = 13 + ceil(NUM_BANKBAGSLOTS / 2) * 39
-    BaudBagBankBags_Update()
-end
-BagSetType.Bank.BagOverview_Initialize = BankBags_Initialize
-
-function AddOnTable:BankBags_Inititalize(BagContainer)
-    -- just an empty hook for other addons
-end
 
 
 --[[

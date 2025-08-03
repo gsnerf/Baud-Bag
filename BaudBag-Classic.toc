@@ -43,7 +43,9 @@ BaudBagCache.lua
 BaudBagToolTips.lua
 frames/Options.xml
 TokenBar.xml
+sets/backpack/BagButton.xml
 Backpack.lua
+sets/bank/BagButton.xml
 Bank.xml
 Keyring.xml
 frames\BaudBagSearchFrame.xml

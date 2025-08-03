@@ -53,8 +53,6 @@
 		<Scripts>
 			<OnLoad  method="OnLoad" />
 			<OnEvent method="OnEvent" />
-			<OnShow  method="OnShow" />
-			<OnHide  method="OnHide" />
 			<OnEnter method="OnEnter" />
 			<OnUpdate method="OnUpdate" />
 			<OnLeave method="OnLeave" />
