@@ -328,18 +328,6 @@ function AddOnTable:CreateReagentBagButton(bagIndex, parentFrame)
     return AddOnTable:CreateBagButton(bagSetType, subContainerId, bagIndex, parentFrame, name)
 end
 
-function AddOnTable:CreateBankBagButton(bagIndex, parentFrame)
-    -- Attention:
-    -- "PaperDollFrame" calls GetInventorySlotInfo on the button created here
-    -- For this to work the name bas to be "BagXSlot" with 9 random chars before that
-    -- TODO: check if this is actually needed or if we can somehow break the connection to that!
-    local bagSetType = BagSetType.Bank
-    local subContainerId = AddOnTable.BlizzConstants.BACKPACK_LAST_CONTAINER + bagIndex
-    local name = "BBBagSet"..bagSetType.Id.."Bag"..bagIndex.."Slot"
-
-    return AddOnTable:CreateBagButton(bagSetType, subContainerId, bagIndex, parentFrame, name)
-end
-
 function AddOnTable:BagSlot_Created(bagSetType, bag, button)
     -- just an empty hook for other addons
 end

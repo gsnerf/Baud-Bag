@@ -272,6 +272,18 @@ local function registerBankEvents(self)
 end
 hooksecurefunc(AddOnTable, "RegisterEvents", registerBankEvents)
 
+local function createBankBagButton(bagIndex, parentFrame)
+    -- Attention:
+    -- "PaperDollFrame" calls GetInventorySlotInfo on the button created here
+    -- For this to work the name bas to be "BagXSlot" with 9 random chars before that
+    -- TODO: check if this is actually needed or if we can somehow break the connection to that!
+    local bagSetType = BagSetType.Bank
+    local subContainerId = AddOnTable.BlizzConstants.BACKPACK_LAST_CONTAINER + bagIndex
+    local name = "BBBagSet"..bagSetType.Id.."Bag"..bagIndex.."Slot"
+
+    return AddOnTable:CreateBagButton(bagSetType, subContainerId, bagIndex, parentFrame, name)
+end
+
 --[[
     This method creates the buttons in the banks BagsFrame (frame that pops out and shows the available bags).
   ]]
@@ -282,7 +294,7 @@ local function BankBags_Initialize()
     -- create BagSlots for regular bags
     for Bag = 1, NUM_BANKBAGSLOTS do
         local buttonIndex = Bag
-        local bagButton = AddOnTable:CreateBankBagButton(buttonIndex, BBContainer2)
+        local bagButton = createBankBagButton(buttonIndex, BBContainer2)
         bagButton:SetID(buttonIndex)
         bagButton:SetPoint("TOPLEFT", 8 + mod(Bag - 1, 2) * 39, -8 - floor((Bag - 1) / 2) * 39)
         bankSet.BagButtons[Bag] = bagButton
