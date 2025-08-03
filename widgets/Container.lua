@@ -164,7 +164,7 @@ function Prototype:UpdateBackground()
     local backgroundId = BBConfig[self.Frame.BagSet][self.Id].Background
     local backdrop = self.Frame.Backdrop
     backdrop:SetFrameLevel(self.Frame:GetFrameLevel())
-    -- This shifts the name of the bank frame over to make room for the extra button
+    -- This shifts the name of the first bag frame over to make room for the extra button (bags button)
     local shiftName = (self.Frame:GetID() == 1) and 25 or 0
     
     local left, right, top, bottom = AddOnTable["Backgrounds"][backgroundId]:Update(self.Frame, backdrop, shiftName)
@@ -199,10 +199,7 @@ end
 
 function Prototype:GetFilterType()
     for _, container in pairs(self.SubContainers) do
-        local id = container.ContainerId
-        if (id ~= BACKPACK_CONTAINER) and (id ~= BANK_CONTAINER) and (id ~= REAGENTBANK_CONTAINER) then
-            return container:GetFilterType()
-        end
+        return self.BagSet.FilterData.GetFilterType(container)
     end
 
     return nil
@@ -210,51 +207,19 @@ end
 
 function Prototype:SetFilterType(type, value)
     for _, container in pairs(self.SubContainers) do
-        local id = container.ContainerId
-        if (id ~= BACKPACK_CONTAINER) and (id ~= BANK_CONTAINER) and (id ~= REAGENTBANK_CONTAINER) then
-            container:SetFilterType(type, value)
-        end
+        self.BagSet.FilterData.SetFilterType(container, type, value)
     end
 end
 
 function Prototype:GetCleanupIgnore()
     for _, container in pairs(self.SubContainers) do
-        local id = container.ContainerId
-        if (id == BACKPACK_CONTAINER) then
-            return AddOnTable.BlizzAPI.GetBackpackAutosortDisabled()
-        end
-        if (id == AddOnTable.BlizzConstants.BANK_CONTAINER or id == AddOnTable.BlizzConstants.REAGENTBANK_CONTAINER) then
-            return AddOnTable.BlizzAPI.GetBankAutosortDisabled()
-        end
-        if (self.BagSet.Id == BagSetType.Backpack.Id) then
-            return AddOnTable.BlizzAPI.GetBagSlotFlag(id, AddOnTable.BlizzAPI.GetIgnoreCleanupFlag())
-        end
-        if (self.BagSet.Id == BagSetType.Bank.Id) then
-            -- TODO: check if the ID is really correct for the newer versions of the API, maybe we need that in the API wrapper instead!
-            return AddOnTable.BlizzAPI.GetBankBagSlotFlag(id - AddOnTable.BlizzConstants.BACKPACK_LAST_CONTAINER, AddOnTable.BlizzAPI.GetIgnoreCleanupFlag())
-        end
-
-        -- fallback
-        return false
+        return self.BagSet.FilterData.GetCleanupIgnore(container)
     end
 end
 
 function Prototype:SetCleanupIgnore(value)
     for _, container in pairs(self.SubContainers) do
-        local id = container.ContainerId
-        if (id == BACKPACK_CONTAINER) then
-            AddOnTable.BlizzAPI.SetBackpackAutosortDisabled(value)
-        end
-        if (id == BANK_CONTAINER) then
-            AddOnTable.BlizzAPI.SetBankAutosortDisabled(value)
-        end
-        if (self.BagSet.Id == BagSetType.Backpack.Id and id ~= BACKPACK_CONTAINER) then
-            AddOnTable.BlizzAPI.SetBagSlotFlag(id, AddOnTable.BlizzAPI.GetIgnoreCleanupFlag(), value)
-        end
-        if (self.BagSet.Id == BagSetType.Bank.Id and id ~= BANK_CONTAINER) then
-            -- TODO: check if the ID is really correct for the newer versions of the API, maybe we need that in the API wrapper instead!
-            AddOnTable.BlizzAPI.SetBankBagSlotFlag(id - AddOnTable.BlizzConstants.BACKPACK_LAST_CONTAINER, AddOnTable.BlizzAPI.GetIgnoreCleanupFlag(), value)
-        end
+        self.BagSet.FilterData.SetCleanupIgnore(container, value)
     end
 end
 

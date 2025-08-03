@@ -102,6 +102,38 @@ local function extendBaseType()
             AddOnTable.Functions.DebugMessage("Tooltip", "[ItemButton:UpdateTooltip] This button is part of the bank bags... reading from cache")
             self:UpdateTooltipFromCache(bagId, slotId)
         end,
+        FilterData = {
+            GetFilterType = function(container)
+                local containerId = container.ContainerId
+                if (containerId ~= AddOnTable.BlizzConstants.BANK_CONTAINER) and (containerId ~= AddOnTable.BlizzConstants.REAGENTBANK_CONTAINER) then
+                    container:GetFilterType()
+                end
+                return nil
+            end,
+            SetFilterType = function(container, type, value)
+                local containerId = container.ContainerId
+                if (containerId ~= AddOnTable.BlizzConstants.BANK_CONTAINER) and (containerId ~= AddOnTable.BlizzConstants.REAGENTBANK_CONTAINER) then
+                    container:SetFilterType(type, value)
+                end
+            end,
+            GetCleanupIgnore = function(container)
+                local containerId = container.ContainerId
+                if (containerId == AddOnTable.BlizzConstants.BANK_CONTAINER or containerId == AddOnTable.BlizzConstants.REAGENTBANK_CONTAINER) then
+                    return AddOnTable.BlizzAPI.GetBankAutosortDisabled()
+                end
+                -- TODO: check if the ID is really correct for the newer versions of the API, maybe we need that in the API wrapper instead!
+                return AddOnTable.BlizzAPI.GetBankBagSlotFlag(containerId - AddOnTable.BlizzConstants.BACKPACK_LAST_CONTAINER, AddOnTable.BlizzAPI.GetIgnoreCleanupFlag())
+            end,
+            SetCleanupIgnore = function(container, value)
+                local containerId = container.ContainerId
+                if (containerId == AddOnTable.BlizzConstants.BANK_CONTAINER) then
+                    AddOnTable.BlizzAPI.SetBankAutosortDisabled(value)
+                else
+                    -- TODO: check if the ID is really correct for the newer versions of the API, maybe we need that in the API wrapper instead!
+                    AddOnTable.BlizzAPI.SetBankBagSlotFlag(containerId - AddOnTable.BlizzConstants.BACKPACK_LAST_CONTAINER, AddOnTable.BlizzAPI.GetIgnoreCleanupFlag(), value)
+                end
+            end,
+        },
     }
     tinsert(BagSetTypeArray, BagSetType.Bank)
 

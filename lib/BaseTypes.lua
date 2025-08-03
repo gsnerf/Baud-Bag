@@ -73,6 +73,34 @@ BagSetType = {
                 self:OnUpdate()
             end
         end,
+        FilterData = {
+            GetFilterType = function(container)
+                if (container.ContainerId ~= AddOnTable.BlizzConstants.BACKPACK_CONTAINER) then
+                    container:GetFilterType()
+                end
+                return nil
+            end,
+            SetFilterType = function(container, type, value)
+                if (container.ContainerId ~= AddOnTable.BlizzConstants.BACKPACK_CONTAINER) then
+                    container:SetFilterType(type, value)
+                end
+            end,
+            GetCleanupIgnore = function(container)
+                local containerId = container.ContainerId
+                if (containerId == AddOnTable.BlizzConstants.BACKPACK_CONTAINER) then
+                    return AddOnTable.BlizzAPI.GetBackpackAutosortDisabled()
+                end
+                return AddOnTable.BlizzAPI.GetBagSlotFlag(containerId, AddOnTable.BlizzAPI.GetIgnoreCleanupFlag())
+            end,
+            SetCleanupIgnore = function(container, value)
+                local containerId = container.ContainerId
+                if (containerId == AddOnTable.BlizzConstants.BACKPACK_CONTAINER) then
+                    AddOnTable.BlizzAPI.SetBackpackAutosortDisabled(value)
+                else
+                    AddOnTable.BlizzAPI.SetBagSlotFlag(containerId, AddOnTable.BlizzAPI.GetIgnoreCleanupFlag(), value)
+                end
+            end,
+        },
     },
 }
 
