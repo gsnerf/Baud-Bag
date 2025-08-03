@@ -245,34 +245,3 @@ function AddOnTable:CreateSubContainer(bagSetType, containerId)
     subContainer.Items = {}
     return subContainer
 end
-
-local function EventUpdateFunction(self, event, ...)
-    -- only update if the event is for the current bag!
-    local idOfBagToUpdate = ...
-    if (self.ContainerId ~= idOfBagToUpdate) then
-        return
-    end
-    AddOnTable.Functions.DebugMessage("ItemHandle", "Event fired for subBag, Params[Event, ID]", event, self.ContainerId)
-    self:Update(event, ...)
-end
-
-local Events = {
-    BAG_UPDATE,
-    BAG_UPDATE_COOLDOWN = EventUpdateFunction,
-    BAG_CLOSED,
-    ITEM_LOCK_CHANGED = EventUpdateFunction,
-    UPDATE_INVENTORY_ALERTS = EventUpdateFunction
-}
-
--- TODO: don't know if this mixup of object orientation and wow function handly really works like that
-function Prototype:OnLoad(self, event, ...)
-
-end
-
--- TODO: don't know if this mixup of object orientation and wow function handly really works like that
-function Prototype:OnEvent(self, event, ...)
-    if not self:GetParent():IsShown() or (self:GetID() >= 6) and not AddOnTable.State.BankOpen then
-        return
-    end
-    Events[event](self, event, ...)
-end
