@@ -195,8 +195,25 @@ local function extendBaseType()
 end
 hooksecurefunc(AddOnTable, "ExtendBaseTypes", extendBaseType)
 
-local EventFuncs = {
-    BANKFRAME_CLOSED = function(self, event, ...)
+local FrameEvents = {
+    BANKFRAME_OPENED = function()
+        AddOnTable.Functions.DebugMessage("Bank", "Event BANKFRAME_OPENED fired")
+        -- not sure if it makes sense to have the state being saved regardles of actual showing or not...
+        local shouldShow = BBConfig[BagSetType.Bank.Id].Enabled and AddOnTable.BlizzAPI.CanUseBank(AddOnTable.BlizzEnum.BankType.Character)
+        AddOnTable:BankBags_UpdateContent(self, shouldShow)
+
+        if not shouldShow then
+            return
+        end
+
+        AddOnTable.State.BankOpen = true
+
+        -- make sure current bag information are processed
+        AddOnTable.Sets[BagSetType.Bank.Id]:RebuildContainers()
+        AddOnTable.Sets[BagSetType.Backpack.Id]:AutoOpen()
+        AddOnTable.Sets[BagSetType.Bank.Id]:AutoOpen()
+    end,
+    BANKFRAME_CLOSED = function()
         AddOnTable.Functions.DebugMessage("Bank", "Event BANKFRAME_CLOSED fired")
         AddOnTable.State.BankOpen = false
 
@@ -214,38 +231,20 @@ local EventFuncs = {
         end
         AddOnTable.Sets[BagSetType.Backpack.Id]:AutoClose()
     end,
-
-    PLAYER_MONEY = function(self, event, ...)
+    PLAYER_MONEY = function()
         AddOnTable.Functions.DebugMessage("Bags", "Event PLAYER_MONEY fired")
         BaudBagBankBags_Update()
     end,
+    PLAYERBANKBAGSLOTS_CHANGED = function()
+        AddOnTable.Functions.DebugMessage("Bank", "Event PLAYERBANKBAGSLOTS_CHANGED fired")
+        AddOnTable:BankBags_UpdateContent(self, false)
+    end,
 }
 
-local Func = function(self, event, ...)
-    AddOnTable.Functions.DebugMessage("Bank", "Event fired", event)
-    
-	-- set bank open marker if it was opend
-    if (event == "BANKFRAME_OPENED" and AddOnTable.BlizzAPI.CanUseBank(AddOnTable.BlizzEnum.BankType.Character)) then
-        AddOnTable.State.BankOpen = true
-    end
-    
-    -- everything coming now is only needed if the bank is visible
-    local bankVisible = BBConfig[2].Enabled and (event == "BANKFRAME_OPENED")
-    AddOnTable:BankBags_UpdateContent(self, bankVisible)
-    if not bankVisible then
-        return
-    end
-    
-    -- make sure current bag information are processed
-    AddOnTable.Sets[BagSetType.Bank.Id]:RebuildContainers()
-    AddOnTable.Sets[BagSetType.Backpack.Id]:AutoOpen()
-    AddOnTable.Sets[BagSetType.Bank.Id]:AutoOpen()
-end
-EventFuncs.BANKFRAME_OPENED = Func
-EventFuncs.PLAYERBANKBAGSLOTS_CHANGED = Func
+local EventFuncs = {}
 
 local collectedBagEvents = {}
-Func = function(self, event, ...)
+local Func = function(self, event, ...)
     AddOnTable.Functions.DebugMessage("Bags", "Event fired for bank (event, source)", event, self:GetName())
 
     -- this is the ID of the affected container as known to WoW
@@ -315,8 +314,10 @@ EventFuncs.BAG_UPDATE_DELAYED = Func
 
 
 local function registerBankEvents(self)
-    for Key, Value in pairs(EventFuncs)do
-        EventRegistry:RegisterFrameEvent(Key, Value)
+    AddOnTable.Functions.DebugMessage("Bank", "Starting to register bank events", FrameEvents, EventFuncs)
+    for Key, Value in pairs(FrameEvents) do
+        EventRegistry:RegisterFrameEventAndCallback(Key, Value)
+        -- TODO: fix "EventFuncs"
     end
 end
 hooksecurefunc(AddOnTable, "RegisterEvents", registerBankEvents)
