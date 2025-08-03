@@ -163,7 +163,7 @@ if C_Bank ~= nil then
     API.CanWithdrawMoney = C_Bank.CanWithdrawMoney
     API.DepositMoney = C_Bank.DepositMoney
     API.FetchDepositedMoney = C_Bank.FetchDepositedMoney
-    API.FetchNextPurchasableBankTabCost = C_Bank.FetchNextPurchasableBankTabCost
+    API.FetchNextPurchasableBankTabData = C_Bank.FetchNextPurchasableBankTabData
     API.FetchNumPurchasedBankTabs = C_Bank.FetchNumPurchasedBankTabs
     API.FetchPurchasedBankTabData = C_Bank.FetchPurchasedBankTabData
     ---@return BankTabData[]
@@ -263,6 +263,15 @@ if (interfaceVersion >= 110000) then -- from "The War Within" onwards
     AddOnTable.BlizzConstants.ACCOUNT_BANK_LAST_SUB_CONTAINER = Enum.BagIndex.AccountBankTab_5 -- 17
     AddOnTable.BlizzConstants.ACCOUNT_BANK_PANEL_TITLE = ACCOUNT_BANK_PANEL_TITLE
     AddOnTable.BlizzConstants.ACCOUNT_BANK_TAB_PURCHASE_PROMPT = ACCOUNT_BANK_TAB_PURCHASE_PROMPT
+end
+
+if (interfaceVersion >= 110200) then -- the big bank rework in "The War Within"
+    AddOnTable.BlizzConstants.REAGENTBANK_CONTAINER = -99999 -- has been removed
+    AddOnTable.BlizzConstants.KEYRING_CONTAINER = Enum.BagIndex.Keyring
+    AddOnTable.BlizzConstants.BANK_CONTAINER = Enum.BagIndex.Characterbanktab
+    AddOnTable.BlizzConstants.BANK_FIRST_CONTAINER = Enum.BagIndex.CharacterBankTab_1
+    AddOnTable.BlizzConstants.BANK_LAST_CONTAINER = Enum.BagIndex.CharacterBankTab_6
+    AddOnTable.BlizzConstants.BANK_CONTAINER_NUM = 6
 end
 
 if C_CurrencyInfo ~= nil and C_CurrencyInfo.GetBackpackCurrencyInfo ~= nil then

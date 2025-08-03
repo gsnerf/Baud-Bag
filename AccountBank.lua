@@ -286,7 +286,7 @@ function BaudBagAccountBagsFrameMixin:Initialize()
         accountBankSet.BagButtons[bag] = bagButton
     end
 
-    self.PurchaseFrame.PurchaseButton:SetAttribute("clickbutton", AccountBankPanel.PurchasePrompt.TabCostFrame.PurchaseButton)
+    self.PurchaseFrame.PurchaseButton:SetAttribute("overrideBankType", Enum.BankType.Character)
     local firstBagButton = accountBankSet.BagButtons[1]
     self:SetWidth(15 + (firstBagButton:GetWidth() * 2))
     self:Update()
@@ -317,13 +317,13 @@ function BaudBagAccountBagsFrameMixin:Update()
         return
     end
 
-    local cost = AddOnTable.BlizzAPI.FetchNextPurchasableBankTabCost(Enum.BankType.Account)
-    if (AddOnTable.BlizzAPI.GetMoney() >= cost) then
+    local nextBankTabData = AddOnTable.BlizzAPI.FetchNextPurchasableBankTabData(Enum.BankType.Account)
+    if (nextBankTabData.canAfford) then
         SetMoneyFrameColorByFrame(self.PurchaseFrame.MoneyFrame)
     else
         SetMoneyFrameColorByFrame(self.PurchaseFrame.MoneyFrame, "red")
     end
-    MoneyFrame_Update(self.PurchaseFrame.MoneyFrame, cost)
+    MoneyFrame_Update(self.PurchaseFrame.MoneyFrame, nextBankTabData.tabCost)
     self.PurchaseFrame:Show()
     self:UpdateHeight(accountBankSet.BagButtons[1]:GetHeight(), true)
 end

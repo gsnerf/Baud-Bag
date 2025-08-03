@@ -7,10 +7,7 @@
 				<Frames>
 					<Frame parentKey="PurchaseFrame" setAllPoints="true">
 						<Frames>
-							<Button parentKey="PurchaseButton" inherits="UIPanelButtonTemplate,InsecureActionButtonTemplate" registerForClicks="AnyUp, AnyDown" text="BANKSLOTPURCHASE">
-								<Attributes>
-									<Attribute name="type" value="click" />
-								</Attributes>
+							<Button parentKey="PurchaseButton" inherits="BankPanelPurchaseButtonScriptTemplate,UIPanelButtonTemplate" text="BANKSLOTPURCHASE">
 								<Size>
 									<AbsDimension x="0" y="21" />
 								</Size>
