@@ -322,6 +322,19 @@ end
 hooksecurefunc(AddOnTable, "RegisterEvents", registerBankEvents)
 
 
+BaudBagBankBagsFrameMixin = {}
+
+function BaudBagBankBagsFrameMixin:OnShow()
+    AddOnTable.Functions.DebugMessage("Bank", "The banks bagsframe is being shown... updating content")
+    if self.PurchaseFrame then
+        if AddOnTable.State.BankOpen then
+            self.PurchaseFrame.PurchaseButton:Enable()
+        else
+            self.PurchaseFrame.PurchaseButton:Disable()
+        end
+    end
+end
+
 --[[
     This analyses the bought bags and updates the bag slot view
     (the little window that pops out the main bank container and shows the bought bags) 

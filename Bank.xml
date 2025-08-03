@@ -3,9 +3,9 @@
 
     <Frame name="BaudBagContainer2_1" inherits="BaudBagFirstContainerTemplate">
 		<Frames>
-			<Frame name="$parentBagsFrame" parentKey="BagsFrame" inherits="BaudBagBagsFrameTemplate" frameStrata="MEDIUM">
+			<Frame name="$parentBagsFrame" parentKey="BagsFrame" inherits="BaudBagBagsFrameTemplate" mixin="BaudBagBankBagsFrameMixin" frameStrata="MEDIUM">
 				<Frames>
-					<Frame name="BaudBagBankSlotPurchaseFrame" setAllPoints="true" parent="BaudBagContainer2_1BagsFrame">
+					<Frame name="BaudBagBankSlotPurchaseFrame" parentKey="PurchaseFrame" setAllPoints="true" parent="BaudBagContainer2_1BagsFrame">
 						<Frames>
 							<Button name="BaudBagBankSlotPurchaseButton" parentKey="PurchaseButton" inherits="UIPanelButtonTemplate" text="BANKSLOTPURCHASE">
 								<Size>
@@ -39,6 +39,9 @@
 						</Frames>
 					</Frame>
 				</Frames>
+				<Scripts>
+					<OnShow method="OnShow" />
+				</Scripts>
 			</Frame>
 		</Frames>
 	</Frame>
