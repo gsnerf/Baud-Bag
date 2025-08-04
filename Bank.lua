@@ -239,6 +239,40 @@ local EventFuncs = {
         AddOnTable.Functions.DebugMessage("Bank", "Event PLAYERBANKBAGSLOTS_CHANGED fired")
         AddOnTable:BankBags_UpdateContent(self, false)
     end,
+    ITEM_LOCK_CHANGED = function(self, event, ...)
+        local Bag, Slot = ...
+
+        AddOnTable.Functions.DebugMessage("ItemHandle", "Event ITEM_LOCK_CHANGED fired for default bank bag (bag, slot) ", Bag, Slot)
+
+        -- early exit checks
+        local isItemInSomeBag = Bag ~= nil and Slot ~= nil
+        local bagVisible = AddOnTable.SubBags[Bag] ~= nil and AddOnTable.SubBags[Bag]:IsOpen()
+        local invalidBankSlot = (Bag == AddOnTable.BlizzConstants.BANK_CONTAINER and Slot > AddOnTable.BlizzConstants.BANK_SLOTS_NUM)
+        
+        if not isItemInSomeBag or not bagVisible or invalidBankSlot then
+            AddOnTable.Functions.DebugMessage("ItemHandle", "... event was for invalid scenario, ignoring (isItemInSomeBag, bagVisible, invalidBankSlot)", isItemInSomeBag, bagVisible, invalidBankSlot)
+            return
+        end
+
+        -- ensure that default bank items are greyed out
+        local isBankDefaultContainer = (Bag == AddOnTable.BlizzConstants.BANK_CONTAINER) or (Bag == AddOnTable.BlizzConstants.REAGENTBANK_CONTAINER)
+        if (isBankDefaultContainer) then
+            local bankBagButton = _G[Prefix.."SubBag"..Bag.."Item"..Slot]
+            BankFrameItemButton_UpdateLocked(bankBagButton)
+        end
+
+        -- when rightclicking reagents they are usually put into a default bank container, this will move them to the reagent bank if possible
+        local containerItemInfo = AddOnTable.BlizzAPI.GetContainerItemInfo(Bag, Slot)
+        local itemLock = AddOnTable.State.ItemLock
+        if ((not containerItemInfo.isLocked) and itemLock.Move) then
+            if (itemLock.IsReagent and (AddOnTable.Functions.IsBankContainer(Bag)) and (Bag ~= AddOnTable.BlizzConstants.REAGENTBANK_CONTAINER)) then
+                BaudBag_FixContainerClickForReagent(Bag, Slot)
+            end
+            itemLock.Move      = false
+            itemLock.IsReagent = false
+        end
+        AddOnTable.Functions.DebugMessage("ItemHandle", "Updating ItemLock Info", itemLock.ItemLock)
+    end,
 }
 
 local collectedBagEvents = {}

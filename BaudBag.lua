@@ -54,44 +54,6 @@ local EventFuncs = {
         end
     end,
 
-    ITEM_LOCK_CHANGED = function(self, event, ...)
-        local Bag, Slot = ...
-
-        -- do nothing if this was called for an equipment slot, rather than a bag slot
-        local notASlot = Slot == nil
-        local invalidBankSlot = (Bag == BANK_CONTAINER and Slot > NUM_BANKGENERIC_SLOTS)
-        local bagNotVisible = not notASlot and (AddOnTable.SubBags[Bag] == nil or not AddOnTable.SubBags[Bag]:IsOpen())
-
-        if (notASlot or invalidBankSlot or bagNotVisible) then
-            return
-        end
-
-        AddOnTable.Functions.DebugMessage("ItemHandle", "Event ITEM_LOCK_CHANGED fired (bag, slot) ", Bag, Slot)
-        if (Bag == BANK_CONTAINER) then
-            if (Slot <= NUM_BANKGENERIC_SLOTS) then
-                BankFrameItemButton_UpdateLocked(_G[Prefix.."SubBag-1Item"..Slot])
-            else
-                local bankBagButton = AddOnTable.Sets[BagSetType.Bank.Id].BagButtons[Slot-NUM_BANKGENERIC_SLOTS]
-                BankFrameItemButton_UpdateLocked(bankBagButton)
-            end
-        elseif (Bag == REAGENTBANK_CONTAINER) then
-            BankFrameItemButton_UpdateLocked(_G[Prefix.."SubBag-3Item"..Slot])
-        end
-
-        if (Slot ~= nil) then
-            local containerItemInfo = AddOnTable.BlizzAPI.GetContainerItemInfo(Bag, Slot)
-            local itemLock = AddOnTable.State.ItemLock
-            if ((not containerItemInfo.isLocked) and itemLock.Move) then
-                if (itemLock.IsReagent and (AddOnTable.Functions.IsBankContainer(Bag)) and (Bag ~= REAGENTBANK_CONTAINER)) then
-                    BaudBag_FixContainerClickForReagent(Bag, Slot)
-                end
-                itemLock.Move      = false
-                itemLock.IsReagent = false
-            end
-            AddOnTable.Functions.DebugMessage("ItemHandle", "Updating ItemLock Info", itemLock.ItemLock)
-        end
-    end,
-
     ITEM_PUSH = function(self, event, ...)
         local BagID, Icon = ...
         AddOnTable.Functions.DebugMessage("ItemHandle", "Received new item", BagID)
@@ -187,7 +149,6 @@ function BaudBag_OnLoad(self, event, ...)
     BINDING_HEADER_BaudBag					= "Baud Bag"
     BINDING_NAME_BaudBagToggleBank			= "Toggle Bank"
     BINDING_NAME_BaudBagToggleAccountBank	= "Toggle Warband Bank"
-    BINDING_NAME_BaudBagToggleVoidStorage	= "Show Void Storage"
 
     AddOnTable.Functions.DebugMessage("Bags", "OnLoad was called")
 
@@ -246,8 +207,8 @@ local SubBagEvents = {}
 
 local Func = function(self, event, ...)
     -- only update if the lock is for this bag!
-    local Bag = ...
-    if (self:GetID() ~= Bag) then
+    local Bag, Slot = ...
+    if (Slot == nil or self:GetID() ~= Bag) then
         return
     end
     AddOnTable.Functions.DebugMessage("ItemHandle", "Event ITEM_LOCK_CHANGED fired for subBag (ID)", self:GetID())
