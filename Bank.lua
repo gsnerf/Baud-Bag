@@ -195,7 +195,7 @@ local function extendBaseType()
 end
 hooksecurefunc(AddOnTable, "ExtendBaseTypes", extendBaseType)
 
-local FrameEvents = {
+local EventFuncs = {
     BANKFRAME_OPENED = function()
         AddOnTable.Functions.DebugMessage("Bank", "Event BANKFRAME_OPENED fired")
         -- not sure if it makes sense to have the state being saved regardles of actual showing or not...
@@ -240,8 +240,6 @@ local FrameEvents = {
         AddOnTable:BankBags_UpdateContent(self, false)
     end,
 }
-
-local EventFuncs = {}
 
 local collectedBagEvents = {}
 local Func = function(self, event, ...)
@@ -312,16 +310,22 @@ Func = function(self, event, ...)
 end
 EventFuncs.BAG_UPDATE_DELAYED = Func
 
+BaudBag_Bank_EventFrameMixin = {}
 
-local function registerBankEvents(self)
-    AddOnTable.Functions.DebugMessage("Bank", "Starting to register bank events", FrameEvents, EventFuncs)
-    for Key, Value in pairs(FrameEvents) do
-        EventRegistry:RegisterFrameEventAndCallback(Key, Value)
-        -- TODO: fix "EventFuncs"
+function BaudBag_Bank_EventFrameMixin:OnLoad()
+    AddOnTable.Functions.DebugMessage("Bank", "[Bank/EventFrame/OnLoad]: starting to register bank events")
+    for key, _ in pairs(EventFuncs) do
+        self:RegisterEvent(key)
     end
 end
-hooksecurefunc(AddOnTable, "RegisterEvents", registerBankEvents)
 
+function BaudBag_Bank_EventFrameMixin:OnEvent(event, ...)
+    AddOnTable.Functions.DebugMessage("Bank", "[Bank/EventFrame/OnEvent]: received event "..event, ...)
+    local eventCallback = EventFuncs[event]
+    if eventCallback then
+        eventCallback(self, event, ...)
+    end
+end
 
 BaudBagBankBagsFrameMixin = {}
 
