@@ -530,3 +530,22 @@ hooksecurefunc(AddOnTable, "ExtendContainerMenuWithGeneralEntriesForBackpack", f
     table.insert(addedButtons, showBankButton)
 end)
 
+-- Adds container name when mousing over bags, aswell as simulating offline bank item mouse over
+local INV_ID_BANK_BAG_FIRST = AddOnTable.BlizzAPI.ContainerIDToInventoryID(AddOnTable.BlizzConstants.BANK_FIRST_CONTAINER)
+local INV_ID_BANK_BAG_LAST = AddOnTable.BlizzAPI.ContainerIDToInventoryID(AddOnTable.BlizzConstants.BANK_LAST_CONTAINER)
+hooksecurefunc(GameTooltip, "SetInventoryItem", function (Data, Unit, InvID)
+    if (Unit ~= "player") then
+        AddOnTable.Functions.DebugMessage("Tooltip", "SetInventoryItem called with unit '"..Unit.."' which cannot be handled")
+        return
+    end
+
+    if (InvID >= INV_ID_BANK_BAG_FIRST) and (InvID <= INV_ID_BANK_BAG_LAST) then
+        AddOnTable.Functions.DebugMessage("Tooltip", "Showing tooltip for bank bags in overview...")
+        if BBConfig and (BBConfig[2].Enabled == false) then
+            return
+        end
+        AddOnTable.Functions.DebugMessage("Tooltip", "... success")
+        BaudBagModifyBagTooltip(InvID - INV_ID_BANK_BAG_FIRST + AddOnTable.BlizzConstants.BACKPACK_LAST_CONTAINER + 1)
+    end
+    
+end)
