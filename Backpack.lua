@@ -84,7 +84,7 @@ if PlayerInteractionFrameManager ~= nil then
     EventFuncs.PLAYER_INTERACTION_MANAGER_FRAME_HIDE = Func
 end
 
---[[ this method ensures that the bank bags are either placed as childs under UIParent or BaudBag ]]
+--[[ this method ensures that the bags are either placed as childs under UIParent or BaudBag ]]
 function AddOnTable:UpdateBagParents()
     local newParent = ContainerFrameContainer
     if AddOnTable.Functions.BagHandledByBaudBag(AddOnTable.BlizzConstants.BACKPACK_CONTAINER) then
