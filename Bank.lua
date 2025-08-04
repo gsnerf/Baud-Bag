@@ -237,7 +237,7 @@ local EventFuncs = {
     end,
     PLAYERBANKBAGSLOTS_CHANGED = function()
         AddOnTable.Functions.DebugMessage("Bank", "Event PLAYERBANKBAGSLOTS_CHANGED fired")
-        AddOnTable:BankBags_UpdateContent(self, false)
+        AddOnTable:BankBags_UpdateContent(self, true)
     end,
     ITEM_LOCK_CHANGED = function(self, event, ...)
         local Bag, Slot = ...
@@ -364,14 +364,14 @@ end
 BaudBagBankBagsFrameMixin = {}
 
 function BaudBagBankBagsFrameMixin:OnShow()
-    AddOnTable.Functions.DebugMessage("Bank", "The banks bagsframe is being shown... updating content")
+    --[[AddOnTable.Functions.DebugMessage("Bank", "The banks bagsframe is being shown... updating content")
     if self.PurchaseFrame then
         if AddOnTable.State.BankOpen then
             self.PurchaseFrame.PurchaseButton:Enable()
         else
             self.PurchaseFrame.PurchaseButton:Disable()
         end
-    end
+    end]]
 end
 
 --[[
@@ -479,6 +479,9 @@ function BaudBagToggleBank(self)
     else
         firstBankContainer.Frame:Show()
         bankSet:AutoOpen()
+        if (not AddOnTable.State.BankOpen) then
+            BaudBagBankSlotPurchaseButton:Disable()
+        end
     end
 end
 
