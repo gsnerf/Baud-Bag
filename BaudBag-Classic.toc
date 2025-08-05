@@ -45,8 +45,8 @@ frames/Options.xml
 TokenBar.xml
 sets/backpack/BagButton.xml
 Backpack.lua
-sets/bank/BagButton.xml
-Bank.xml
+sets\classic-bank\BagButton.xml
+sets\classic-bank\Bank.xml
 Keyring.xml
 frames\BaudBagSearchFrame.xml
 Overrides.lua
