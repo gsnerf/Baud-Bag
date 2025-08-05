@@ -1,0 +1,55 @@
+<Ui xmlns="http://www.blizzard.com/wow/ui/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.blizzard.com/wow/ui/ ..\FrameXML\UI.xsd">
+    <Script file="Bank.lua" />
+
+	<Frame name="BaudBag_Bank_EventFrame" mixin="BaudBag_Bank_EventFrameMixin">
+		<Scripts>
+			<OnLoad method="OnLoad" />
+			<OnEvent method="OnEvent" />
+		</Scripts>
+	</Frame>
+
+    <Frame name="BaudBagContainer2_1" inherits="BaudBagFirstContainerTemplate">
+		<Frames>
+			<Frame name="$parentBagsFrame" parentKey="BagsFrame" inherits="BaudBagBagsFrameTemplate" mixin="BaudBagBankBagsFrameMixin" frameStrata="MEDIUM">
+				<Frames>
+					<Frame name="BaudBagBankSlotPurchaseFrame" parentKey="PurchaseFrame" setAllPoints="true" parent="BaudBagContainer2_1BagsFrame">
+						<Frames>
+							<Button name="BaudBagBankSlotPurchaseButton" parentKey="PurchaseButton" inherits="UIPanelButtonTemplate" text="BANKSLOTPURCHASE">
+								<Size>
+									<AbsDimension x="0" y="21" />
+								</Size>
+								<Anchors>
+									<Anchor point="BOTTOM" x="0" y="5" />
+									<Anchor point="LEFT" x="5" y="0" />
+									<Anchor point="RIGHT" x="-5" y="0" />
+								</Anchors>
+								<Scripts>
+									<OnClick>
+										PlaySound(SOUNDKIT.IG_MAINMENU_OPTION);
+										StaticPopup_Show("CONFIRM_BUY_BANK_SLOT");
+									</OnClick>
+								</Scripts>
+							</Button>
+							<Frame name="$parentMoneyFrame" parentKey="MoneyFrame" inherits="SmallMoneyFrameTemplate">
+								<Anchors>
+									<Anchor point="BOTTOM" x="0" y="25" />
+									<Anchor point="LEFT" x="5" y="0" />
+									<Anchor point="RIGHT" x="-5" y="0" />
+								</Anchors>
+								<Scripts>
+									<OnLoad>
+										SmallMoneyFrame_OnLoad(self);
+										MoneyFrame_SetType(self, "STATIC");
+									</OnLoad>
+								</Scripts>
+							</Frame>
+						</Frames>
+					</Frame>
+				</Frames>
+				<Scripts>
+					<OnShow method="OnShow" />
+				</Scripts>
+			</Frame>
+		</Frames>
+	</Frame>
+</Ui>
