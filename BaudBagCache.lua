@@ -13,6 +13,31 @@
 local AddOnTable = select(2, ...)
 local _
 local initialized = false
+local cacheStructureVersion = 110200
+
+
+---@method Migrate 
+
+---@type CacheMigration[]
+local cacheMigrations = {
+    ---@class CacheMigration
+    {
+        ---@type number if the current cache structure version matches this, the migration will be executed
+        OldVersion = nil,
+        ---@type number this is the version the cache structure will show after migration
+        NewVersion = 110200,
+        ---This methods executes the actual migration
+        ---@param cache Cache the cache to change
+        Migrate = function(cache)
+            --[[
+            With 11.2.0 the bank system has been completely changed,
+            unfortunately the caches are useless with this.
+            Migration -> reset now, will be reinitialized after migrations
+            ]]
+            cache["Bank"] = nil
+        end
+    }
+}
 
 local function DebugMsg(message, ...)
     AddOnTable.Functions.DebugMessage("Cache", message, ...)
@@ -88,10 +113,19 @@ function AddOnTable:InitCache()
     -- we might have a saved cache
     if (type(BaudBag_Cache) ~= "table") then
         DebugMsg("no cache found, creating new one")
-        BaudBag_Cache = {}
+        BaudBag_Cache = {
+            StructureVersion = cacheStructureVersion
+        }
     end
     BaudBag_Cache = Mixin(BaudBag_Cache, CacheMixin)
     AddOnTable.Cache = BaudBag_Cache
+
+    for _,migration in pairs(cacheMigrations) do
+        if BaudBag_Cache.StructureVersion == migration.OldVersion then
+            migration.Migrate(BaudBag_Cache)
+            BaudBag_Cache.StructureVersion = migration.NewVersion
+        end
+    end
 
     -- init caches for all bagsets that support it
     for _, bagSetType in pairs(BagSetType) do
