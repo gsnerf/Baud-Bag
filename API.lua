@@ -173,6 +173,11 @@ if C_Bank ~= nil then
     API.PurchaseBankTab = C_Bank.PurchaseBankTab
     API.UpdateBankTabSettings = C_Bank.UpdateBankTabSettings
     API.WithdrawMoney = C_Bank.WithdrawMoney
+    if C_Bank.FetchViewableBankTypes then
+        API.FetchViewableBankTypes = C_Bank.FetchViewableBankTypes
+    else
+        API.FetchViewableBankTypes = function() return { Enum.BankType.Account } end
+    end
 else
     API.CanUseBank = function(bankType)
         if (bankType == AddOnTable.BlizzEnum.BankType.Account) then
@@ -229,6 +234,8 @@ AddOnTable.BlizzConstants = {
     BANK_CONTAINER_NUM = 7, -- == NUM_BANKBAGSLOTS
     BANK_FIRST_CONTAINER = 5, -- == NUM_TOTAL_EQUIPPED_BAG_SLOTS + 1
     BANK_LAST_CONTAINER = 11, -- == NUM_TOTAL_EQUIPPED_BAG_SLOTS + 1 + NUM_BANKBAGSLOTS
+    BANK_PANEL_TITLE = "",
+    BANK_TAB_PURCHASE_PROMPT = "",
     BANK_SLOTS_NUM = NUM_BANKGENERIC_SLOTS,
     BAG_FILTER_ASSIGNED_TO = BAG_FILTER_ASSIGNED_TO, -- localized "Assigned To:"
     BAG_FILTER_LABELS = BAG_FILTER_LABELS, -- list of localized filter names, like "Consumables", "Trade Goods", etc.
@@ -272,6 +279,7 @@ if (interfaceVersion >= 110200) then -- the big bank rework in "The War Within"
     AddOnTable.BlizzConstants.BANK_FIRST_CONTAINER = Enum.BagIndex.CharacterBankTab_1
     AddOnTable.BlizzConstants.BANK_LAST_CONTAINER = Enum.BagIndex.CharacterBankTab_6
     AddOnTable.BlizzConstants.BANK_CONTAINER_NUM = 6
+    AddOnTable.BlizzConstants.BANK_PANEL_TITLE = BANK
 end
 
 if C_CurrencyInfo ~= nil and C_CurrencyInfo.GetBackpackCurrencyInfo ~= nil then

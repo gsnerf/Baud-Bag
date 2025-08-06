@@ -1,20 +1,20 @@
 <Ui xmlns="http://www.blizzard.com/wow/ui/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.blizzard.com/wow/ui/ ..\FrameXML\UI.xsd">
     <Script file="Bank.lua" />
 
-	<Frame name="BaudBag_Bank_EventFrame" mixin="BaudBag_Bank_EventFrameMixin">
+	<!--Frame name="BaudBag_Bank_EventFrame" mixin="BaudBag_Bank_EventFrameMixin">
 		<Scripts>
 			<OnLoad method="OnLoad" />
 			<OnEvent method="OnEvent" />
 		</Scripts>
-	</Frame>
+	</Frame-->
 
-    <Frame name="BaudBagContainer2_1" inherits="BaudBagFirstContainerTemplate">
+    <Frame name="BaudBagContainer2_1" mixin="BaudBagFirstBankMixin,BaudBagBankContainerMixin" inherits="BaudBagFirstContainerTemplate">
 		<Frames>
-			<Frame name="$parentBagsFrame" parentKey="BagsFrame" inherits="BaudBagBagsFrameTemplate" mixin="BaudBagBankBagsFrameMixin" frameStrata="MEDIUM">
+			<Frame parentKey="BagsFrame" inherits="BaudBagBagsFrameTemplate" mixin="BaudBagBankBagsFrameMixin" frameStrata="MEDIUM">
 				<Frames>
-					<Frame name="BaudBagBankSlotPurchaseFrame" parentKey="PurchaseFrame" setAllPoints="true" parent="BaudBagContainer2_1BagsFrame">
+					<Frame parentKey="PurchaseFrame" setAllPoints="true">
 						<Frames>
-							<Button name="BaudBagBankSlotPurchaseButton" parentKey="PurchaseButton" inherits="UIPanelButtonTemplate" text="BANKSLOTPURCHASE">
+							<Button parentKey="PurchaseButton" inherits="BankPanelPurchaseButtonScriptTemplate,UIPanelButtonTemplate" text="BANKSLOTPURCHASE">
 								<Size>
 									<AbsDimension x="0" y="21" />
 								</Size>
@@ -23,12 +23,6 @@
 									<Anchor point="LEFT" x="5" y="0" />
 									<Anchor point="RIGHT" x="-5" y="0" />
 								</Anchors>
-								<Scripts>
-									<OnClick>
-										PlaySound(SOUNDKIT.IG_MAINMENU_OPTION);
-										StaticPopup_Show("CONFIRM_BUY_BANK_SLOT");
-									</OnClick>
-								</Scripts>
 							</Button>
 							<Frame name="$parentMoneyFrame" parentKey="MoneyFrame" inherits="SmallMoneyFrameTemplate">
 								<Anchors>
@@ -45,11 +39,29 @@
 							</Frame>
 						</Frames>
 					</Frame>
+                    <Frame parentKey="TabSettingsMenu" inherits="BankPanelTabSettingsMenuTemplate" mixin="BaudBagBankTabSettingsMixin" hidden="true">
+						<Anchors>
+							<Anchor point="TOPLEFT" relativeKey="$parent" relativePoint="BOTTOMLEFT" x="-5" y="-5"/>
+						</Anchors>
+					</Frame>
 				</Frames>
 				<Scripts>
 					<OnShow method="OnShow" />
 				</Scripts>
 			</Frame>
 		</Frames>
+        <Scripts>
+			<OnLoad method="OnContainerLoad" />
+			<OnShow method="OnBankShow" />
+			<OnEvent method="OnBankEvent" />
+			<OnHide method="OnBankHide" />
+		</Scripts>
+	</Frame>
+
+	<Frame name="BaudBagBankContainerTemplate" inherits="BaudBagContainerTemplate" mixin="BaudBagBankContainerMixin" virtual="true">
+		<Scripts>
+			<OnLoad method="OnContainerLoad" />
+			<OnEvent method="OnContainerEvent" />
+		</Scripts>
 	</Frame>
 </Ui>
