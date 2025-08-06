@@ -40,7 +40,7 @@ local function extendBaseType()
         },
         ApplyConfigRestorationSpecificalities = function(configObject) end,
         GetContainerTemplate = function(containerId) return "BaudBagAccountBankContainerTemplate" end,
-        GetItemButtonTemplate = function(containerId) return "AccountBankItemButtonTemplate" end,
+        GetItemButtonTemplate = function(containerId) return "BankItemButtonTemplate" end,
         GetSize = function(containerId)
             if (BagSetType["AccountBank"].ShouldUseCache()) then
                 local bagCache = AddOnTable.Cache:GetBagCache(containerId)
@@ -286,7 +286,7 @@ function BaudBagAccountBagsFrameMixin:Initialize()
         accountBankSet.BagButtons[bag] = bagButton
     end
 
-    self.PurchaseFrame.PurchaseButton:SetAttribute("overrideBankType", Enum.BankType.Character)
+    self.PurchaseFrame.PurchaseButton:SetAttribute("overrideBankType", Enum.BankType.Account)
     local firstBagButton = accountBankSet.BagButtons[1]
     self:SetWidth(15 + (firstBagButton:GetWidth() * 2))
     self:Update()
@@ -412,7 +412,7 @@ end
 
 hooksecurefunc(AddOnTable, "ItemSlot_Created", function(self, bagSet, containerId, subcontainerId, slot, button)
     if (bagSet == BagSetType.AccountBank) then
-        button:Init(subcontainerId, slot)
+        button:Init(Enum.BankType.Account, subcontainerId, slot)
         button:SetScript("OnEnter", ItemButton_OnCustomEnter)
     end
 end)
