@@ -398,6 +398,22 @@ function BaudBagBankTabSettingsMixin:SetSelectedTab(selectedTabId)
 end
 
 
+--[[ ######################################### Item Buttons ######################################### ]]
+
+---@param self BBItemButton
+local function ItemButton_OnCustomEnter(self)
+    local bagId = self:GetParent():GetID()
+    local slotId = self:GetID()
+    self:UpdateTooltipFromCache(bagId, slotId)
+end
+
+hooksecurefunc(AddOnTable, "ItemSlot_Created", function(self, bagSet, containerId, subcontainerId, slot, button)
+    if (bagSet == BagSetType.Bank) then
+        button:Init(Enum.BankType.Character, subcontainerId, slot)
+        button:SetScript("OnEnter", ItemButton_OnCustomEnter)
+    end
+end)
+
 --[[ ####################################### Base for Bindings ###################################### ]]
 
 function BaudBagToggleBank()
