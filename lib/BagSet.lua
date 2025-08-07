@@ -135,7 +135,7 @@ function Prototype:GetSlotInfo()
     AddOnTable.Functions.DebugMessage("Bags", "Counting free slots for (set)", self.Type.Id)
 
     for id, subContainer in pairs(self.SubContainers) do
-        if (id ~= -3) then
+        if (id ~= AddOnTable.BlizzConstants.REAGENTBANK_CONTAINER) then
             local subFree, subOverall = subContainer:GetSlotInfo()
             free = free + subFree
             overall = overall + subOverall
