@@ -177,10 +177,6 @@ function BaudBagFirstBankMixin:Initialize()
         switchToUnlockMode(self)
     end
     MoneyFrame_SetType(self.MoneyFrame.SmallMoneyFrame, "PLAYER")
-    self.MoneyFrame.SmallMoneyFrame:SetPoint("RIGHT", self.MoneyFrame.DepositFrame, "LEFT", -4, 0)
-    self.MoneyFrame.DepositFrame:Show()
-    self.MoneyFrame.DepositFrame.DepositButton:SetScript("OnClick", self.OnDeposit)
-    self.MoneyFrame.DepositFrame.WithdrawButton:SetScript("OnClick", self.OnWithdrawal)
 end
 
 function BaudBagFirstBankMixin:OnBankShow()
