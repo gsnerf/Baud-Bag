@@ -94,21 +94,50 @@ end
 hooksecurefunc(AddOnTable, "ExtendBaseTypes", extendBaseType)
 
 --[[ ######################################### basic events ######################################### ]]
-EventRegistry:RegisterFrameEventAndCallback("BANKFRAME_OPENED", function(ownerID, ...)
+local bankFrameOpenedOwner = nil
+local function bankFrameOpened()
     Funcs.DebugMessage("Bank", "Bank#bankframeOpened()")
     AddOnTable.State.BankOpen = true
+
     ---@type BagSet
     local bagSet = AddOnTable.Sets[BagSetType.Bank.Id]
     bagSet:RebuildContainers()
     bagSet.Containers[1].Frame.BagsFrame:Update()
     bagSet:Open()
-end, nil)
+end
 
-EventRegistry:RegisterFrameEventAndCallback("BANKFRAME_CLOSED", function(ownerID, ...)
+local bankFrameClosedOwner = nil
+local function bankFrameClosed()
     Funcs.DebugMessage("Bank", "Bank#bankframeClosed()")
     AddOnTable.State.BankOpen = false
 	AddOnTable.Sets[BagSetType.Bank.Id]:Close()
-end, nil)
+end
+
+--[[ this method ensures that the bank bags are either placed as childs under UIParent or BaudBag ]]
+local function updateBankParents()
+    local newParent = UIParent
+    if BBConfig[BagSetType.Bank.Id].Enabled and BBConfig[BagSetType.AccountBank.Id].Enabled then
+        newParent = BaudBag_OriginalBagsHideFrame
+    end
+
+    BankFrame:SetParent(newParent)
+end
+
+hooksecurefunc(AddOnTable, "ConfigUpdated", function()
+    if BBConfig[BagSetType.Bank.Id].Enabled then
+        bankFrameOpenedOwner = EventRegistry:RegisterFrameEventAndCallback("BANKFRAME_OPENED", bankFrameOpened, nil)
+        bankFrameClosedOwner = EventRegistry:RegisterFrameEventAndCallback("BANKFRAME_CLOSED", bankFrameClosed, nil)
+    else
+        if (bankFrameOpenedOwner ~= nil) then
+            EventRegistry:UnregisterCallback("BANKFRAME_OPENED", bankFrameOpenedOwner)
+        end
+        if (bankFrameClosedOwner ~= nil) then
+            EventRegistry:UnregisterCallback("BANKFRAME_CLOSED", bankFrameClosedOwner)
+        end
+    end
+
+    updateBankParents()
+end)
 
 --[[ ####################################### container frames ####################################### ]]
 
@@ -163,6 +192,10 @@ end
 
 
 function BaudBagFirstBankMixin:OnBankEvent(event, ...)
+    if not BBConfig[BagSetType.Bank.Id].Enabled then
+        return
+    end
+
     if (event == "PLAYERBANKSLOTS_CHANGED") then
         Funcs.DebugMessage("Bank", "BankFirstContainer#PLAYERBANKTAB_SLOTS_CHANGED", ...)
         if self.UnlockInfo ~= nil then
@@ -382,16 +415,3 @@ function BaudBagToggleBank()
         bankSet:AutoOpen()
     end
 end
-
-
-
---[[ this method ensures that the bank bags are either placed as childs under UIParent or BaudBag ]]
-local function updateBankParents()
-    local newParent = UIParent
-    if AddOnTable.Functions.BagHandledByBaudBag(AddOnTable.BlizzConstants.BANK_CONTAINER) then
-        newParent = BaudBag_OriginalBagsHideFrame
-    end
-
-    BankFrame:SetParent(newParent)
-end
-hooksecurefunc(AddOnTable, "ConfigUpdated", updateBankParents)

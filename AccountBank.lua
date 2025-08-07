@@ -94,7 +94,10 @@ local function extendBaseType()
 end
 hooksecurefunc(AddOnTable, "ExtendBaseTypes", extendBaseType)
 
-EventRegistry:RegisterFrameEventAndCallback("BANKFRAME_OPENED", function(ownerID, ...)
+--[[ ######################################### basic events ######################################### ]]
+
+local accountBankFrameOpenedOwner = nil
+local function accountBankFrameOpened()
     Funcs.DebugMessage("AccountBank", "AccountBank#bankframeOpened()")
     AddOnTable.State.AccountBankOpen = true
     ---@type BagSet
@@ -102,13 +105,30 @@ EventRegistry:RegisterFrameEventAndCallback("BANKFRAME_OPENED", function(ownerID
     bagSet:RebuildContainers()
     bagSet.Containers[1].Frame.BagsFrame:Update()
     bagSet:Open()
-end, nil)
+end
 
-EventRegistry:RegisterFrameEventAndCallback("BANKFRAME_CLOSED", function(ownerID, ...)
+local accountBankFrameClosedOwner = nil
+local function accountBankFrameClosed()
     Funcs.DebugMessage("AccountBank", "AccountBank#bankframeClosed()")
     AddOnTable.State.AccountBankOpen = false
 	AddOnTable.Sets[BagSetType.AccountBank.Id]:Close()
-end, nil)
+end
+
+hooksecurefunc(AddOnTable, "ConfigUpdated", function()
+    if BBConfig[BagSetType.AccountBank.Id].Enabled then
+        accountBankFrameOpenedOwner = EventRegistry:RegisterFrameEventAndCallback("BANKFRAME_OPENED", accountBankFrameOpened, nil)
+        accountBankFrameClosedOwner = EventRegistry:RegisterFrameEventAndCallback("BANKFRAME_CLOSED", accountBankFrameClosed, nil)
+    else
+        if (accountBankFrameOpenedOwner ~= nil) then
+            EventRegistry:UnregisterCallback("BANKFRAME_OPENED", accountBankFrameOpenedOwner)
+        end
+        if (accountBankFrameClosedOwner ~= nil) then
+            EventRegistry:UnregisterCallback("BANKFRAME_CLOSED", accountBankFrameClosedOwner)
+        end
+    end
+end)
+
+--[[ ####################################### container frames ####################################### ]]
 
 BaudBagFirstAccountBankMixin = {}
 
@@ -166,6 +186,10 @@ function BaudBagFirstAccountBankMixin:OnAccountBankShow()
 end
 
 function BaudBagFirstAccountBankMixin:OnAccountBankEvent(event, ...)
+    if not BBConfig[BagSetType.AccountBank.Id].Enabled then
+        return
+    end
+
     if (event == "PLAYER_ACCOUNT_BANK_TAB_SLOTS_CHANGED") then
         Funcs.DebugMessage("AccountBank", "AccountBankFirstContainer#PLAYER_ACCOUNT_BANK_TAB_SLOTS_CHANGED", ...)
         if self.UnlockInfo ~= nil then
