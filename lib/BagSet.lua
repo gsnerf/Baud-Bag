@@ -50,19 +50,11 @@ function Prototype:RebuildContainers()
     ---@param localIsOpen boolean
     ---@param maxSubContainerIndex integer
     local function FinishContainer(localContainerObject, localIsOpen, maxSubContainerIndex)
-        -- first remove all subcontainers that are not contained anymore
-        local currentSubContainerCount = table.getn(localContainerObject.SubContainers)
-        if (maxSubContainerIndex < currentSubContainerCount) then
-            for i = maxSubContainerIndex + 1, currentSubContainerCount do
-                localContainerObject.SubContainers[i] = nil
-            end
-        end
-        
-        -- and now update complete content
+        -- update complete content
         localContainerObject:Rebuild()
         localContainerObject:Update()
         
-        -- now update visibility
+        -- update visibility
         if localIsOpen then
             AddOnTable.Functions.DebugMessage("Container", "Showing Container (Name)", localContainerObject.Name)
             localContainerObject.Frame:Show()
@@ -104,8 +96,12 @@ function Prototype:RebuildContainers()
                 self.Containers[containerNumber] = containerObject
                 self.MaxContainerNumber = containerNumber
             end
+            -- switch to next container
             containerObject = self.Containers[containerNumber]
+            -- ensure config is up to date with recent changes
             containerObject:UpdateFromConfig()
+            -- to avoid dealing with leftovers later, just reset now and refill with rest of the iteration
+            containerObject.SubContainers = {}
         end
 
         AddOnTable.Functions.DebugMessage("Container", "(orderIndex, id)", subContainerIndex, id)
@@ -121,7 +117,9 @@ function Prototype:RebuildContainers()
 
     -- hide all containers that where created but configured away
     for index = (containerNumber + 1), self.MaxContainerNumber do
-        self.Containers[index].Frame:Hide();
+        self.Containers[index].Frame:Hide()
+        self.Containers[index].SubContainers = {}
+        self.Containers[index]:Update()
     end
 
     self.ContainerNumber = containerNumber
@@ -188,8 +186,12 @@ function Prototype:AutoOpen()
 
             if not container.Frame:IsShown() then
                 AddOnTable.Functions.DebugMessage("BagOpening", "[BagSet:AutoOpen] IsShown == FALSE")
-                container.Frame.AutoOpened = true
-                container.Frame:Show()
+                if (#container.SubContainers > 0) then
+                    container.Frame.AutoOpened = true
+                    container.Frame:Show()
+                else
+                    AddOnTable.Functions.DebugMessage("BagOpening", "[BagSet:AutoOpen] container "..index.." has no sub containers, ignoring show...")
+                end
             else
                 AddOnTable.Functions.DebugMessage("BagOpening", "[BagSet:AutoOpen] IsShown == TRUE")
             end

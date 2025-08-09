@@ -48,6 +48,8 @@ local function extendBaseType()
                     return bagCache.Size
                 end
             end
+
+            -- we seem to be at the bank, let's get live data
             local purchasedBankTabIds  = AddOnTable.BlizzAPI.FetchPurchasedBankTabIDs(Enum.BankType.Character)
 
             -- necessary to get a visible first container even when not bought yet (so that we CAN buy)
@@ -55,7 +57,7 @@ local function extendBaseType()
                 return 98
             end
 
-            for _, tabId in ipairs (purchasedBankTabIds) do
+            for _, tabId in pairs (purchasedBankTabIds) do
                 if tabId == containerId then
                     return 98
                 end
