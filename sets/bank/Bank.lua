@@ -35,9 +35,10 @@ local function extendBaseType()
             Scale = 100,
             GetNameAddition = function(bagId) return Localized.Bank end,
             RequiresFreshConfig = function(bagId) return false end,
-            Background = 2
+            Background = 2,
         },
         ApplyConfigRestorationSpecificalities = function(configObject) end,
+        CanContainerBeJoined = function(subContainerId) return true end,
         GetContainerTemplate = function(containerId) return "BaudBagBankContainerTemplate" end,
         GetItemButtonTemplate = function(containerId) return "BankItemButtonTemplate" end,
         GetSize = function(containerId)

@@ -93,6 +93,7 @@ local function extendBaseType()
                 configObject[BagSetType.Bank.Id].Joined[9] = false
             end
         end,
+        CanContainerBeJoined = function(subContainerId) return subContainerId ~= AddOnTable.BlizzConstants.REAGENTBANK_CONTAINER end,
         GetContainerTemplate = function(containerId)
             if (containerId == AddOnTable.BlizzConstants.REAGENTBANK_CONTAINER) then
                 return "BaudBagReagentBankTemplate"

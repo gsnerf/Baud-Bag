@@ -26,6 +26,7 @@ local function extendBaseType()
             Background = 3
         },
         ApplyConfigRestorationSpecificalities = function(configObject) end,
+        CanContainerBeJoined = function(subContainerId) return true end,
         GetContainerTemplate = function(containerId) return "BaudBagContainerTemplate" end,
         GetItemButtonTemplate = function(containerId) return "ContainerFrameItemButtonTemplate" end,
         GetSize = function(containerId) return AddOnTable.BlizzAPI.GetKeyRingSize() end,

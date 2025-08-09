@@ -39,6 +39,7 @@ local function extendBaseType()
             Background = 2
         },
         ApplyConfigRestorationSpecificalities = function(configObject) end,
+        CanContainerBeJoined = function(subContainerId) return true end,
         GetContainerTemplate = function(containerId) return "BaudBagAccountBankContainerTemplate" end,
         GetItemButtonTemplate = function(containerId) return "BankItemButtonTemplate" end,
         GetSize = function(containerId)

@@ -430,6 +430,7 @@ local function UpdateBagButtons(self)
     local Button, Check, Container, Texture
     local ContNum = 1
     local Bags = SetSize[SelectedBags]
+    local BagSet = AddOnTable.Sets[SelectedBags]
 
     -- load bag specific options (position and show each button that belongs to the current set,
     --		check joined box and create container frames)
@@ -441,7 +442,7 @@ local function UpdateBagButtons(self)
             _G[Prefix.."JoinCheck"..(AddOnTable.BlizzConstants.BACKPACK_FIRST_REAGENT_CONTAINER+1)]:Show()
         end
     end
-    AddOnTable.Sets[SelectedBags]:ForEachBag(
+    BagSet:ForEachBag(
         function(Bag, Index)
             Button	= _G[Prefix.."Bag"..Index]
             Check	= _G[Prefix.."JoinCheck"..Index]
@@ -449,14 +450,14 @@ local function UpdateBagButtons(self)
             if (Index == 1) then
                 -- only the first bag needs its position set, since the others are anchored to it
                 Button:SetPoint("LEFT", self.BagFrame, "CENTER", ((Bags / 2) * -44), 0)
-            elseif (Index == AddOnTable.BlizzConstants.BANK_CONTAINER_NUM + 2 or (SelectedBags == BagSetType.Backpack.Id and AddOnTable.BlizzConstants.BACKPACK_FIRST_REAGENT_CONTAINER ~= nil and Index == (AddOnTable.BlizzConstants.BACKPACK_LAST_CONTAINER + 1))) then
-                -- the reagent bank and the reagent bag might not be joined with anything else (for the moment?)
+            elseif (not BagSet.Type.CanContainerBeJoined(Bag)) then
+                -- some containers, like the reagent bank and the reagent bag might not be joined with anything else
                 _G[Prefix.."Container"..ContNum]:SetPoint("RIGHT", Prefix.."Bag"..(Index - 1), "RIGHT", 6,0)
                 ContNum = ContNum + 1
                 _G[Prefix.."Container"..ContNum]:SetPoint("LEFT", Prefix.."Bag"..Index, "LEFT", -6,0)
             else
                 -- all other bag slots that are actually filled with bags may have a changeable joined state
-                if (AddOnTable.Sets[SelectedBags].SubContainers[Bag].Size == 0) then
+                if (BagSet.SubContainers[Bag].Size == 0) then
                     Check:SetChecked(true)
                     Check:Disable()
                 else
@@ -474,9 +475,9 @@ local function UpdateBagButtons(self)
 			
             -- try to find out which bag texture to use
             local bagCache = AddOnTable.Cache:GetBagCache(Bag)
-            if BaudBagIcons[Bag]then
+            if BaudBagIcons[Bag] then
                 Texture = BaudBagIcons[Bag]
-            elseif(SelectedBags == BagSetType.Backpack.Id)then
+            elseif (SelectedBags == BagSetType.Backpack.Id)then
                 Texture = GetInventoryItemTexture("player", AddOnTable.BlizzAPI.ContainerIDToInventoryID(Bag))
             elseif bagCache and bagCache.BagLink then
                 Texture = AddOnTable.BlizzAPI.GetItemIcon(bagCache.BagLink)

@@ -54,6 +54,7 @@ BagSetType = {
                 configObject[BagSetType.Backpack.Id].Joined[6] = false;
             end
         end,
+        CanContainerBeJoined = function(subContainerId) return subContainerId ~= AddOnTable.BlizzConstants.BACKPACK_FIRST_REAGENT_CONTAINER end,
         GetContainerTemplate = function(containerId) return "BaudBagContainerTemplate" end,
         GetItemButtonTemplate = function(containerId) return "ContainerFrameItemButtonTemplate" end,
         GetSize = function(containerId) return AddOnTable.BlizzAPI.GetContainerNumSlots(containerId) end,
