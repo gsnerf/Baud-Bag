@@ -189,6 +189,15 @@ local function extendBaseType()
                 AddOnTable.BlizzAPI.CloseBankFrame()
             end
         end,
+        GetSpecialBagTexture = function(subContainerId)
+            if (subContainerId == AddOnTable.BlizzConstants.BANK_CONTAINER) then
+                return "Interface\\Icons\\INV_Box_02"
+            elseif (subContainerId == AddOnTable.BlizzConstants.REAGENTBANK_CONTAINER) then
+                return "Interface\\Icons\\INV_MISC_CAT_TRINKET05"
+            else
+                return nil
+            end
+        end,
     }
     tinsert(BagSetTypeArray, BagSetType.Bank)
 

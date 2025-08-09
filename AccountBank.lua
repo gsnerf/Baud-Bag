@@ -88,6 +88,7 @@ local function extendBaseType()
             SetCleanupIgnore = function(container, value) end,
         },
         CustomCloseAllFunction = function() end,
+        GetSpecialBagTexture = function(subContainerId) return nil end,
     }
     tinsert(BagSetTypeArray, BagSetType.AccountBank)
 

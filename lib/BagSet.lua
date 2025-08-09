@@ -228,6 +228,24 @@ function Prototype:AutoClose()
     end
 end
 
+function Prototype:GetSubContainerTexture(subContainerId)
+    local specialTexture = self.Type.GetSpecialBagTexture(subContainerId)
+    if specialTexture ~= nil then
+        return specialTexture
+    elseif (self.Type.SupportsCache) then
+        local bagCache = AddOnTable.Cache:GetBagCache(subContainerId)
+        if bagCache and bagCache.BagLink then
+            return AddOnTable.BlizzAPI.GetItemIcon(bagCache.BagLink)
+        elseif bagCache and bagCache.TabData then
+            return bagCache.TabData.icon
+        else
+            return nil
+        end
+    else
+        local inventoryId = AddOnTable.BlizzAPI.ContainerIDToInventoryID(subContainerId)
+        return AddOnTable.BlizzAPI.GetInventoryItemTexture("player", inventoryId)
+    end
+end
 
 --[[
     This function takes a function, and then applies the function to each bag of the set.

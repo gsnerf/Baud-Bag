@@ -12,13 +12,6 @@ local SelectedBags      = BagSetType.Backpack.Id
 local SelectedContainer = 1
 local SetSize           = {} -- this list will be filled with values read from the specific BagSetType defined at time of AddOnTable:EssentialsLoaded()
 
-BaudBagIcons = {
-    [0]	    = "Interface\\Buttons\\Button-Backpack-Up",
-    [-1]	= "Interface\\Icons\\INV_Box_02",
-    [-2]	= "Interface\\ContainerFrame\\KeyRing-Bag-Icon",
-    [-3]	= "Interface\\Icons\\INV_MISC_CAT_TRINKET05"
-}
-
 local TextureNames = {
     Localized.BlizInventory,
     Localized.BlizBank,
@@ -473,21 +466,8 @@ local function UpdateBagButtons(self)
                 end
             end
 			
-            -- try to find out which bag texture to use
-            local bagCache = AddOnTable.Cache:GetBagCache(Bag)
-            if BaudBagIcons[Bag] then
-                Texture = BaudBagIcons[Bag]
-            elseif (SelectedBags == BagSetType.Backpack.Id)then
-                Texture = GetInventoryItemTexture("player", AddOnTable.BlizzAPI.ContainerIDToInventoryID(Bag))
-            elseif bagCache and bagCache.BagLink then
-                Texture = AddOnTable.BlizzAPI.GetItemIcon(bagCache.BagLink)
-            elseif bagCache and bagCache.TabData then
-                Texture = bagCache.TabData.icon
-            else
-                Texture = nil
-            end
-			
-            -- assign texture, id and get item to be shown
+            -- assign bag texture, id and get item to be shown
+            Texture = BagSet:GetSubContainerTexture(Bag)
             Button.Icon:SetTexture(Texture or select(2, AddOnTable.BlizzAPI.GetInventorySlotInfo("BAG0SLOT")))
             Button:SetID(ContNum)
             Button.SubContainerId = Bag

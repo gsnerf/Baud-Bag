@@ -144,6 +144,13 @@ BagSetType = {
             end,
         },
         CustomCloseAllFunction = function() end,
+        GetSpecialBagTexture = function(subContainerId)
+            if (subContainerId == AddOnTable.BlizzConstants.BACKPACK_CONTAINER) then
+                return "Interface\\Buttons\\Button-Backpack-Up"
+            else
+                return nil
+            end
+        end,
     },
 }
 

@@ -46,6 +46,13 @@ local function extendBaseType()
             SetCleanupIgnore = function(container, value) end,
         },
         CustomCloseAllFunction = function() end,
+        GetSpecialBagTexture = function(subContainerId)
+            if (subContainerId == AddOnTable.BlizzConstants.KEYRING_CONTAINER) then
+                return "Interface\\ContainerFrame\\KeyRing-Bag-Icon"
+            else
+                return nil
+            end
+        end,
     }
     tinsert(BagSetTypeArray, BagSetType.Keyring)
 

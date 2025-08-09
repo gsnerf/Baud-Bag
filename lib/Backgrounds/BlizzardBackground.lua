@@ -230,17 +230,10 @@ function Prototype:UpdateBagPicture(containerFrame, parentName, backdrop)
         texture:SetDrawLayer("BACKGROUND")
     end
 
-    local icon
     local bagID = containerFrame.Bags[1]:GetID()
-    local bagCache = AddOnTable.Cache:GetBagCache(bagID)
-    if (bagID <= 0) then
-        icon = BaudBagIcons[bagID]
-    elseif (containerFrame.BagSet == 2) and not AddOnTable.State.BankOpen and bagCache.BagLink then
-        icon = GetItemIcon(bagCache.BagLink)
-    else
-        icon = GetInventoryItemTexture("player", AddOnTable.BlizzAPI.ContainerIDToInventoryID(bagID))
-    end
-
+    local bagSet = AddOnTable.Sets[containerFrame.BagSet]
+    local icon = bagSet:GetSubContainerTexture(bagID)
+    
     SetPortraitToTexture(texture, icon or "Interface\\Icons\\INV_Misc_QuestionMark")
     backdrop:SetBackdrop(nil)
 end
