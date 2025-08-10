@@ -517,6 +517,15 @@ function BaudBagOptionsBagSetMixin:UpdateContent()
     self.EnabledCheck:SetChecked(BBConfig[SelectedBags].Enabled~=false)
     self.CloseAllCheck:SetChecked(BBConfig[SelectedBags].CloseAll~=false)
 
+    local linkedSetType = AddOnTable.Sets[SelectedBags].Type.LinkedSet()
+    if (linkedSetType) then
+        self.LinkedSet.Image:Show()
+        self.LinkedSet.tooltipText = format( Localized.EnabledLinkedSet, linkedSetType.Name)
+    else
+        self.LinkedSet.Image:Hide()
+        self.LinkedSet.tooltipText = ""
+    end
+
     UpdateBagButtons(self)
 
     -- load container name into the textbox
@@ -553,6 +562,15 @@ end
 function BaudBagOptionsBagSetMixin:ChangeBagSet(bagSetId)
     SelectedBags = bagSetId
     BaudBagOptions:Update()
+end
+
+BaudBagLinkedSetMixin = {}
+
+function BaudBagLinkedSetMixin:LinkedSet_OnEnter()
+    if ( self.tooltipText ) then
+        GetAppropriateTooltip():SetOwner(self, self.tooltipOwnerPoint or "ANCHOR_RIGHT")
+        GetAppropriateTooltip():SetText(self.tooltipText, nil, nil, nil, nil, true)
+    end
 end
 
 ---@class OptionsCheckButton: CheckButton

@@ -41,6 +41,7 @@ AddOnTable["Localized"] = {
     CheckTooltip = "Joined bags",
     Enabled = "Enabled",
     EnabledTooltip = "Enable or disable BaudBag for this bag set.",
+    EnabledLinkedSet = "This bag set is linked with bag set '%s'. Changing one will also change the other.",
     CloseAll = "Close all",
     CloseAllTooltip = "Close all bags of this set when the first container (bank or backpack) is closed.",
     SellJunk = "Sell Junk",

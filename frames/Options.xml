@@ -153,12 +153,33 @@
 				</Anchors>
 			</CheckButton>
 
+			<Frame parentKey="LinkedSet" mixin="BaudBagLinkedSetMixin">
+				<Size x="12" y="26" />
+				<Anchors>
+					<Anchor point="TOPLEFT" relativeKey="$parent.EnabledCheck" relativePoint="TOPRIGHT" />
+				</Anchors>
+				<Layers>
+					<Layer level="ARTWORK">
+						<Texture parentKey="Image" file="interface\tradeskillframe\ui-tradeskill-linkbutton">
+							<Size x="12" y="10" />
+							<Anchors>
+								<Anchor point="TOPLEFT" x="0" y="-8" />
+							</Anchors>
+							<TexCoords left="0.125" right="0.718" top="0" bottom="0.5"/>
+						</Texture>
+					</Layer>
+				</Layers>
+				<Scripts>
+					<OnEnter method="LinkedSet_OnEnter" />
+				</Scripts>
+			</Frame>
+
 			<CheckButton parentKey="CloseAllCheck" inherits="BaudBagOptionsBagSetCheckButtonTemplate">
 				<KeyValues>
 					<KeyValue key="savedVar" value="CloseAll" type="string" />
 				</KeyValues>
 				<Anchors>
-					<Anchor point="TOPLEFT" relativeKey="$parent.EnabledCheck" relativePoint="TOPRIGHT" x="10" />
+					<Anchor point="TOPLEFT" relativeKey="$parent.LinkedSet" relativePoint="TOPRIGHT" x="10" />
 				</Anchors>
 			</CheckButton>
 
