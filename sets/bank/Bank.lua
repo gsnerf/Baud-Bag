@@ -33,7 +33,7 @@ local function extendBaseType()
         DefaultConfig = {
             Columns = 14,
             Scale = 100,
-            GetNameAddition = function(bagId) return Localized.Bank end,
+            GetNameAddition = function(bagId) return Localized.BankBox end,
             RequiresFreshConfig = function(bagId) return false end,
             Background = 2,
         },
@@ -225,6 +225,8 @@ end
 --[[ ####################################### UnlockInfo frame ####################################### ]]
 BaudBagBankUnlockMixin = {}
 
+-- TODO: test and fix bank unlocks!
+
 function BaudBagBankUnlockMixin:OnLoad()
     BaudBagContainerUnlockMixin.OnLoad(self)
     self.Title:SetText(AddOnTable.BlizzConstants.BANK_PANEL_TITLE)
@@ -293,7 +295,7 @@ end
 
 function BaudBagBagsFrameMixin:Update()
     if not canBankBeSeen() then return end
-
+    -- TODO: make this work with cache for offline viewing
     local bankSet = AddOnTable.Sets[BagSetType.Bank.Id]
     local purchasedBankTabData = AddOnTable.BlizzAPI.FetchPurchasedBankTabData(Enum.BankType.Character)
     local numberOfBoughtContainers = #purchasedBankTabData
