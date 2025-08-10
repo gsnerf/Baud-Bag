@@ -225,8 +225,6 @@ end
 --[[ ####################################### UnlockInfo frame ####################################### ]]
 BaudBagBankUnlockMixin = {}
 
--- TODO: test and fix bank unlocks!
-
 function BaudBagBankUnlockMixin:OnLoad()
     BaudBagContainerUnlockMixin.OnLoad(self)
     self.Title:SetText(AddOnTable.BlizzConstants.BANK_PANEL_TITLE)
@@ -261,10 +259,6 @@ end
 BaudBagBankBagsFrameMixin = {}
 
 function BaudBagBankBagsFrameMixin:Initialize()
-    --[[if (#AddOnTable.BlizzAPI.FetchPurchasedBankTabIDs(Enum.BankType.Account) == 0) then
-        return
-    end]]
-
     local bankSet = AddOnTable.Sets[BagSetType.Bank.Id]
 
     for bag = 1, AddOnTable.BlizzConstants.BANK_CONTAINER_NUM do
