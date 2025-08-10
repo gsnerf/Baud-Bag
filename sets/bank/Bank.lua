@@ -39,6 +39,7 @@ local function extendBaseType()
         },
         ApplyConfigRestorationSpecificalities = function(configObject) end,
         CanContainerBeJoined = function(subContainerId) return true end,
+        LinkedSet = function() return BagSetType.AccountBank and BagSetType.AccountBank or nil end,
         GetContainerTemplate = function(containerId) return "BaudBagBankContainerTemplate" end,
         GetItemButtonTemplate = function(containerId) return "BankItemButtonTemplate" end,
         GetSize = function(containerId)

@@ -94,6 +94,7 @@ local function extendBaseType()
             end
         end,
         CanContainerBeJoined = function(subContainerId) return subContainerId ~= AddOnTable.BlizzConstants.REAGENTBANK_CONTAINER end,
+        LinkedSet = function() return BagSetType.AccountBank and BagSetType.AccountBank or nil end,
         GetContainerTemplate = function(containerId)
             if (containerId == AddOnTable.BlizzConstants.REAGENTBANK_CONTAINER) then
                 return "BaudBagReagentBankTemplate"

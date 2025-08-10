@@ -603,8 +603,15 @@ function BaudBagOptionsCheckButtonMixin:OnClick()
         BBConfig[SelectedBags][savedVar] = self:GetChecked()
 
         if (savedVar == "Enabled") then
+            local linkedSetType = AddOnTable.Sets[SelectedBags].Type.LinkedSet()
+            if (linkedSetType) then
+                BBConfig[linkedSetType.Id][savedVar] = self:GetChecked()
+            end
             if (not self:GetChecked()) then
                 AddOnTable.Sets[SelectedBags]:Close()
+                if (linkedSetType) then
+                    AddOnTable.Sets[linkedSetType.Id]:Close()
+                end
             end        
             AddOnTable:ConfigUpdated()
         end
