@@ -231,7 +231,7 @@ function BaudBagBankUnlockMixin:OnLoad()
     BaudBagContainerUnlockMixin.OnLoad(self)
     self.Title:SetText(AddOnTable.BlizzConstants.BANK_PANEL_TITLE)
     self.Text:SetText(AddOnTable.BlizzConstants.BANK_TAB_PURCHASE_PROMPT)
-    self.PurchaseButton:SetAttribute("clickbutton", AccountBankPanel.PurchasePrompt.TabCostFrame.PurchaseButton)
+    self.PurchaseButton:SetAttribute("clickbutton", BankPanel.PurchasePrompt.TabCostFrame.PurchaseButton)
 end
 
 function BaudBagBankUnlockMixin:OnShow()
@@ -250,12 +250,10 @@ function BaudBagBankUnlockMixin:OnHide()
 end
 
 function BaudBagBankUnlockMixin:Refresh()
-	local tabCost = AddOnTable.BlizzAPI.FetchNextPurchasableBankTabCost(Enum.BankType.Account)
-	if tabCost then 
-        -- TODO: check if it is reasonable to wrap that or not
-		MoneyFrame_Update(self.CostMoneyFrame, tabCost);
-		local canAfford = GetMoney() >= tabCost;
-		SetMoneyFrameColorByFrame(self.CostMoneyFrame, canAfford and "white" or "red");
+    local nextBankTabData = AddOnTable.BlizzAPI.FetchNextPurchasableBankTabData(Enum.BankType.Character)
+	if nextBankTabData then 
+		MoneyFrame_Update(self.CostMoneyFrame, nextBankTabData.tabCost);
+		SetMoneyFrameColorByFrame(self.CostMoneyFrame, nextBankTabData.canAfford and "white" or "red");
 	end
 end
 
@@ -321,11 +319,7 @@ function BaudBagBagsFrameMixin:Update()
     end
 
     local nextBankTabData = AddOnTable.BlizzAPI.FetchNextPurchasableBankTabData(Enum.BankType.Character)
-    if (nextBankTabData.canAfford) then
-        SetMoneyFrameColorByFrame(self.PurchaseFrame.MoneyFrame)
-    else
-        SetMoneyFrameColorByFrame(self.PurchaseFrame.MoneyFrame, "red")
-    end
+    SetMoneyFrameColorByFrame(self.PurchaseFrame.MoneyFrame, nextBankTabData.canAfford and "white" or "red");
     MoneyFrame_Update(self.PurchaseFrame.MoneyFrame, nextBankTabData.tabCost)
     self.PurchaseFrame:Show()
     self:UpdateHeight(bankSet.BagButtons[1]:GetHeight(), true)

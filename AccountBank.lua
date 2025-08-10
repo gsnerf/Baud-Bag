@@ -285,12 +285,10 @@ function BaudBagAccountBankUnlockMixin:OnHide()
 end
 
 function BaudBagAccountBankUnlockMixin:Refresh()
-	local tabCost = AddOnTable.BlizzAPI.FetchNextPurchasableBankTabCost(Enum.BankType.Account)
-	if tabCost then 
-        -- TODO: check if it is reasonable to wrap that or not
-		MoneyFrame_Update(self.CostMoneyFrame, tabCost);
-		local canAfford = GetMoney() >= tabCost;
-		SetMoneyFrameColorByFrame(self.CostMoneyFrame, canAfford and "white" or "red");
+    local nextBankTabData = AddOnTable.BlizzAPI.FetchNextPurchasableBankTabData(Enum.BankType.Account)
+	if nextBankTabData then 
+		MoneyFrame_Update(self.CostMoneyFrame, nextBankTabData.tabCost);
+		SetMoneyFrameColorByFrame(self.CostMoneyFrame, nextBankTabData.canAfford and "white" or "red");
 	end
 end
 
@@ -344,11 +342,7 @@ function BaudBagAccountBagsFrameMixin:Update()
     end
 
     local nextBankTabData = AddOnTable.BlizzAPI.FetchNextPurchasableBankTabData(Enum.BankType.Account)
-    if (nextBankTabData.canAfford) then
-        SetMoneyFrameColorByFrame(self.PurchaseFrame.MoneyFrame)
-    else
-        SetMoneyFrameColorByFrame(self.PurchaseFrame.MoneyFrame, "red")
-    end
+    SetMoneyFrameColorByFrame(self.PurchaseFrame.MoneyFrame, nextBankTabData.canAfford and "white" or "red");
     MoneyFrame_Update(self.PurchaseFrame.MoneyFrame, nextBankTabData.tabCost)
     self.PurchaseFrame:Show()
     self:UpdateHeight(accountBankSet.BagButtons[1]:GetHeight(), true)
