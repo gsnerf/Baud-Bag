@@ -107,14 +107,16 @@ local function accountBankFrameOpened()
     local bagSet = AddOnTable.Sets[BagSetType.AccountBank.Id]
     bagSet:RebuildContainers()
     bagSet.Containers[1].Frame.BagsFrame:Update()
-    bagSet:Open()
+    bagSet:AutoOpen()
+    AddOnTable.Sets[BagSetType.Backpack.Id]:AutoOpen()
 end
 
 local accountBankFrameClosedOwner = nil
 local function accountBankFrameClosed()
     Funcs.DebugMessage("AccountBank", "AccountBank#bankframeClosed()")
     AddOnTable.State.AccountBankOpen = false
-	AddOnTable.Sets[BagSetType.AccountBank.Id]:Close()
+	AddOnTable.Sets[BagSetType.AccountBank.Id]:AutoClose()
+    AddOnTable.Sets[BagSetType.Backpack.Id]:AutoClose()
 end
 
 hooksecurefunc(AddOnTable, "ConfigUpdated", function()
@@ -445,11 +447,11 @@ function BaudBagToggleWarbandBank()
     local warbandBankSet = AddOnTable.Sets[BagSetType.AccountBank.Id]
     local firstContainer = warbandBankSet.Containers[1]
     if (firstContainer.Frame:IsShown()) then
-        firstContainer.Frame:Hide()
-        warbandBankSet:AutoClose()
+        --firstContainer.Frame:Hide()
+        warbandBankSet:Close()
     else
-        firstContainer.Frame:Show()
-        warbandBankSet:AutoOpen()
+        --firstContainer.Frame:Show()
+        warbandBankSet:Open()
     end
 end
 

@@ -105,17 +105,19 @@ local function bankFrameOpened()
     AddOnTable.State.BankOpen = true
 
     ---@type BagSet
-    local bagSet = AddOnTable.Sets[BagSetType.Bank.Id]
-    bagSet:RebuildContainers()
-    bagSet.Containers[1].Frame.BagsFrame:Update()
-    bagSet:Open()
+    local bankBagSet = AddOnTable.Sets[BagSetType.Bank.Id]
+    bankBagSet:RebuildContainers()
+    bankBagSet.Containers[1].Frame.BagsFrame:Update()
+    bankBagSet:AutoOpen()
+    AddOnTable.Sets[BagSetType.Backpack.Id]:AutoOpen()
 end
 
 local bankFrameClosedOwner = nil
 local function bankFrameClosed()
     Funcs.DebugMessage("Bank", "Bank#bankframeClosed()")
     AddOnTable.State.BankOpen = false
-	AddOnTable.Sets[BagSetType.Bank.Id]:Close()
+	AddOnTable.Sets[BagSetType.Bank.Id]:AutoClose()
+    AddOnTable.Sets[BagSetType.Backpack.Id]:AutoClose()
 end
 
 --[[ this method ensures that the bank bags are either placed as childs under UIParent or BaudBag ]]
@@ -415,10 +417,10 @@ function BaudBagToggleBank()
     local bankSet = AddOnTable.Sets[BagSetType.Bank.Id]
     local firstContainer = bankSet.Containers[1]
     if (firstContainer.Frame:IsShown()) then
-        firstContainer.Frame:Hide()
-        bankSet:AutoClose()
+        --firstContainer.Frame:Hide()
+        bankSet:Close()
     else
-        firstContainer.Frame:Show()
-        bankSet:AutoOpen()
+        --firstContainer.Frame:Show()
+        bankSet:Open()
     end
 end
