@@ -14,7 +14,7 @@ local AddOnTable = select(2, ...)
 local _
 local initialized = false
 local cacheStructureVersion = 110200
-
+local Localized = AddOnTable.Localized
 
 ---@method Migrate 
 
@@ -35,6 +35,8 @@ local cacheMigrations = {
             Migration -> reset now, will be reinitialized after migrations
             ]]
             cache["Bank"] = nil
+            cache["AccountBank"] = nil
+            DEFAULT_CHAT_FRAME:AddMessage(Localized.Cache_Migration_110200, 1, 0.5, 0.5)
         end
     }
 }
