@@ -427,14 +427,6 @@ local function UpdateBagButtons(self)
 
     -- load bag specific options (position and show each button that belongs to the current set,
     --		check joined box and create container frames)
-    if (AddOnTable.BlizzConstants.BACKPACK_FIRST_REAGENT_CONTAINER ~= nil) then
-        -- for backback set we need to ensure, that the reagent bag(s) cannot be joined with the regular bags
-        if SelectedBags == BagSetType.Backpack.Id then
-            _G[Prefix.."JoinCheck"..(AddOnTable.BlizzConstants.BACKPACK_FIRST_REAGENT_CONTAINER+1)]:Hide()
-        else
-            _G[Prefix.."JoinCheck"..(AddOnTable.BlizzConstants.BACKPACK_FIRST_REAGENT_CONTAINER+1)]:Show()
-        end
-    end
     BagSet:ForEachBag(
         function(Bag, Index)
             Button	= _G[Prefix.."Bag"..Index]
@@ -448,6 +440,8 @@ local function UpdateBagButtons(self)
                 _G[Prefix.."Container"..ContNum]:SetPoint("RIGHT", Prefix.."Bag"..(Index - 1), "RIGHT", 6,0)
                 ContNum = ContNum + 1
                 _G[Prefix.."Container"..ContNum]:SetPoint("LEFT", Prefix.."Bag"..Index, "LEFT", -6,0)
+                Check:SetChecked(false)
+                Check:Disable()
             else
                 -- all other bag slots that are actually filled with bags may have a changeable joined state
                 if (BagSet.SubContainers[Bag].Size == 0) then
@@ -473,7 +467,7 @@ local function UpdateBagButtons(self)
             Button.SubContainerId = Bag
             Button:Show()
         end
-        )
+    )
     _G[Prefix.."Container"..ContNum]:SetPoint("RIGHT", Prefix.."Bag"..Bags,"RIGHT",6,0)
 
     -- make sure all bags after the last visible bag to be shown is hidden (e.g. the inventory has less bags then the bank)
