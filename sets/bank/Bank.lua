@@ -99,9 +99,26 @@ end
 hooksecurefunc(AddOnTable, "ExtendBaseTypes", extendBaseType)
 
 --[[ ######################################### basic events ######################################### ]]
+local function canViewBank()
+    local viewableBankTypes = AddOnTable.BlizzAPI.FetchViewableBankTypes()
+
+    for _,viewableType in pairs(viewableBankTypes) do
+        if (viewableType == AddOnTable.BlizzEnum.BankType.Character) then
+            return true
+        end
+    end
+    return false
+end
+
 local bankFrameOpenedOwner = nil
 local function bankFrameOpened()
     Funcs.DebugMessage("Bank", "Bank#bankframeOpened()")
+
+    if not canViewBank() then
+        Funcs.DebugMessage("Bank", "It seems we have been opened with the warband bank distance inhibitor... skipping regular bank")
+        return
+    end
+    
     AddOnTable.State.BankOpen = true
 
     ---@type BagSet

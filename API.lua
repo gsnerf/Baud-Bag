@@ -176,7 +176,7 @@ if C_Bank ~= nil then
     if C_Bank.FetchViewableBankTypes then
         API.FetchViewableBankTypes = C_Bank.FetchViewableBankTypes
     else
-        API.FetchViewableBankTypes = function() return { Enum.BankType.Account } end
+        API.FetchViewableBankTypes = function() return { Enum.BankType.Character } end
     end
 else
     API.CanUseBank = function(bankType)

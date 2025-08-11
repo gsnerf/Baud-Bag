@@ -99,9 +99,26 @@ hooksecurefunc(AddOnTable, "ExtendBaseTypes", extendBaseType)
 
 --[[ ######################################### basic events ######################################### ]]
 
+local function canViewAccountBank()
+    local viewableBankTypes = AddOnTable.BlizzAPI.FetchViewableBankTypes()
+
+    for _,viewableType in pairs(viewableBankTypes) do
+        if (viewableType == AddOnTable.BlizzEnum.BankType.Account) then
+            return true
+        end
+    end
+    return false
+end
+
 local accountBankFrameOpenedOwner = nil
 local function accountBankFrameOpened()
     Funcs.DebugMessage("AccountBank", "AccountBank#bankframeOpened()")
+
+    if not canViewAccountBank() then
+        Funcs.DebugMessage("AccountBank", "It seems the accountbank is not supported here... skipping")
+        return
+    end
+
     AddOnTable.State.AccountBankOpen = true
     ---@type BagSet
     local bagSet = AddOnTable.Sets[BagSetType.AccountBank.Id]
