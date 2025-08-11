@@ -205,6 +205,7 @@ end
 
 function BaudBagFirstBankMixin:OnBankShow()
     self:RegisterEvent("PLAYER_MONEY")
+    self:RegisterEvent("BANK_TAB_SETTINGS_UPDATED")
     MoneyFrame_UpdateMoney(self.MoneyFrame.SmallMoneyFrame)
     --self:RefreshDepositButtons()
     self:OnShow()
@@ -226,6 +227,12 @@ function BaudBagFirstBankMixin:OnBankEvent(event, ...)
     elseif (event == "PLAYER_MONEY") then
         MoneyFrame_UpdateMoney(self.MoneyFrame.SmallMoneyFrame)
         --self:RefreshDepositButtons()
+    elseif (event == "BANK_TAB_SETTINGS_UPDATED") then
+        local bankType = ...
+        if (bankType == AddOnTable.BlizzEnum.BankType.Character) then
+            AddOnTable.Sets[BagSetType.Bank.Id].Containers[1].Frame.BagsFrame:Update()
+            AddOnTable.Sets[BagSetType.Bank.Id]:RebuildContainers()
+        end
     end
 
     self:OnContainerEvent(event, ...)
@@ -238,6 +245,7 @@ end
 
 function BaudBagFirstBankMixin:OnBankHide()
     self:UnregisterEvent("PLAYER_MONEY")
+    self:UnregisterEvent("BANK_TAB_SETTINGS_UPDATED")
     self:OnHide()
 end
 
