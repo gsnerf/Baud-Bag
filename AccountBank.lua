@@ -126,6 +126,11 @@ local function accountBankFrameOpened()
     bagSet.Containers[1].Frame.BagsFrame:Update()
     bagSet:AutoOpen()
     AddOnTable.Sets[BagSetType.Backpack.Id]:AutoOpen()
+
+    -- if auto open is NOT enabled for the first container, ensure that it is being shown anyways!
+     if not BBConfig[BagSetType.AccountBank.Id][1].AutoOpen then
+        bagSet.Containers[1].Frame:Show()
+     end
 end
 
 local accountBankFrameClosedOwner = nil
@@ -134,6 +139,11 @@ local function accountBankFrameClosed()
     AddOnTable.State.AccountBankOpen = false
 	AddOnTable.Sets[BagSetType.AccountBank.Id]:AutoClose()
     AddOnTable.Sets[BagSetType.Backpack.Id]:AutoClose()
+
+    -- if auto open is NOT enabled for the first container, ensure that it is still being closed.
+     if not BBConfig[BagSetType.AccountBank.Id][1].AutoOpen then
+        AddOnTable.Sets[BagSetType.AccountBank.Id].Containers[1].Frame:Hide()
+     end
 end
 
 hooksecurefunc(AddOnTable, "ConfigUpdated", function()

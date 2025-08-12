@@ -127,6 +127,11 @@ local function bankFrameOpened()
     bankBagSet.Containers[1].Frame.BagsFrame:Update()
     bankBagSet:AutoOpen()
     AddOnTable.Sets[BagSetType.Backpack.Id]:AutoOpen()
+
+    -- if auto open is NOT enabled for the first container, ensure that it is being shown anyways!
+     if not BBConfig[BagSetType.Bank.Id][1].AutoOpen then
+        bankBagSet.Containers[1].Frame:Show()
+     end
 end
 
 local bankFrameClosedOwner = nil
@@ -135,6 +140,11 @@ local function bankFrameClosed()
     AddOnTable.State.BankOpen = false
 	AddOnTable.Sets[BagSetType.Bank.Id]:AutoClose()
     AddOnTable.Sets[BagSetType.Backpack.Id]:AutoClose()
+
+    -- if auto open is NOT enabled for the first container, ensure that it is still being closed.
+     if not BBConfig[BagSetType.Bank.Id][1].AutoOpen then
+        AddOnTable.Sets[BagSetType.Bank.Id].Containers[1].Frame:Hide()
+     end
 end
 
 --[[ this method ensures that the bank bags are either placed as childs under UIParent or BaudBag ]]
