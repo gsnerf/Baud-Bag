@@ -257,6 +257,8 @@ function BaudBagFirstAccountBankMixin:RefreshDepositButtons()
 
     self.MoneyFrame.DepositFrame.WithdrawButton.disabledTooltip = disabledTooltip
     self.MoneyFrame.DepositFrame.DepositButton.disabledTooltip = disabledTooltip
+
+    self.ItemDepositButton:Update()
 end
 
 function BaudBagFirstAccountBankMixin:OnWithdrawal()
@@ -417,6 +419,10 @@ function BaudBagAccountBankContainerMixin:OnContainerLoad()
     self:RegisterEvent("BAG_UPDATE_DELAYED")
 end
 
+function BaudBagAccountBankContainerMixin:OnContainerShow()
+    self.ItemDepositButton:Update()
+end
+
 function BaudBagAccountBankContainerMixin:OnContainerEvent(event, ...)
     if (event == "PLAYER_ACCOUNT_BANK_TAB_SLOTS_CHANGED" or event == "BAG_UPDATE") then
         local containerIndex = ...
@@ -447,6 +453,30 @@ function BaudBagAccountBankContainerMixin:UpdateBagHighlight()
             button.SlotHighlightTexture:Hide()
         end
     end
+end
+
+--[[ ##################################### Ragent Deposit Button #################################### ]]
+BaudBagAccountBankDepositButtonMixin = {}
+
+function BaudBagAccountBankDepositButtonMixin:Update()
+    local autoDepositSupported = AddOnTable.BlizzAPI.DoesBankTypeSupportAutoDeposit(AddOnTable.BlizzEnum.BankType.Account)
+    if (AddOnTable.State.AccountBankOpen and autoDepositSupported) then
+        self:Show()
+    else
+        self:Hide()
+    end
+end
+
+function BaudBagAccountBankDepositButtonMixin:OnClick()
+    PlaySound(SOUNDKIT.IG_MAINMENU_OPTION)
+    BankPanel:SetBankType(AddOnTable.BlizzEnum.BankType.Account)
+    BankPanel.AutoDepositFrame.DepositButton:AutoDepositItems()
+end
+
+function BaudBagAccountBankDepositButtonMixin:OnEnter()
+    GameTooltip:SetOwner(self)
+    GameTooltip:SetText(AddOnTable.BlizzConstants.ACCOUNT_BANK_DEPOSIT_BUTTON_LABEL)
+    GameTooltip:Show()
 end
 
 --[[ ######################################### Item Buttons ######################################### ]]

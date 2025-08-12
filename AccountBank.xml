@@ -42,6 +42,29 @@
 					<OnShow method="OnShow" />
 				</Scripts>
 			</Frame>
+			<Button parentKey="ItemDepositButton" mixin="BaudBagAccountBankDepositButtonMixin">
+				<Size x="16" y="16" />
+				<Anchors>
+					<Anchor point="TOPRIGHT" relativeTo="$parentSearchButton" relativePoint="TOPLEFT" x="0" y="0"/>
+				</Anchors>
+				<NormalTexture file="Interface\EncounterJournal\UI-EncounterJournalTextures">
+					<TexCoords left="0.73046875" right="0.82421875" top="0.61816406" bottom="0.66015625"/>
+				</NormalTexture>
+				<PushedTexture file="Interface\EncounterJournal\UI-EncounterJournalTextures">
+					<TexCoords left="0.63281250" right="0.72656250" top="0.61816406" bottom="0.66015625"/>
+				</PushedTexture>
+				<HighlightTexture file="Interface\Buttons\ButtonHilight-Square" alphaMode="ADD">
+					<Size x="12" y="13"/>
+					<Anchors>
+						<Anchor point="CENTER" x="0" y="0"/>
+					</Anchors>
+				</HighlightTexture>
+				<Scripts>
+					<OnClick method="OnClick" />
+					<OnEnter method="OnEnter" />
+					<OnLeave function="GameTooltip_Hide"/>
+				</Scripts>
+			</Button>
 
 			<!--Frame parentKey="UnlockInfo" inherits="BaudBagContainerUnlockTemplate" mixin="BaudBagAccountBankUnlockMixin" hidden="true" /-->
 		</Frames>
@@ -54,8 +77,34 @@
 	</Frame>
 
 	<Frame name="BaudBagAccountBankContainerTemplate" inherits="BaudBagContainerTemplate" mixin="BaudBagAccountBankContainerMixin" virtual="true">
+		<Frames>
+			<Button parentKey="ItemDepositButton" mixin="BaudBagAccountBankDepositButtonMixin">
+				<Size x="16" y="16" />
+				<Anchors>
+					<Anchor point="TOPRIGHT" relativeTo="$parentSearchButton" relativePoint="TOPLEFT" x="0" y="0"/>
+				</Anchors>
+				<NormalTexture file="Interface\EncounterJournal\UI-EncounterJournalTextures">
+					<TexCoords left="0.73046875" right="0.82421875" top="0.61816406" bottom="0.66015625"/>
+				</NormalTexture>
+				<PushedTexture file="Interface\EncounterJournal\UI-EncounterJournalTextures">
+					<TexCoords left="0.63281250" right="0.72656250" top="0.61816406" bottom="0.66015625"/>
+				</PushedTexture>
+				<HighlightTexture file="Interface\Buttons\ButtonHilight-Square" alphaMode="ADD">
+					<Size x="12" y="13"/>
+					<Anchors>
+						<Anchor point="CENTER" x="0" y="0"/>
+					</Anchors>
+				</HighlightTexture>
+				<Scripts>
+					<OnClick method="OnClick" />
+					<OnEnter method="OnEnter" />
+					<OnLeave function="GameTooltip_Hide"/>
+				</Scripts>
+			</Button>
+		</Frames>
 		<Scripts>
 			<OnLoad method="OnContainerLoad" />
+			<OnShow method="OnContainerShow" />
 			<OnEvent method="OnContainerEvent" />
 		</Scripts>
 	</Frame>

@@ -49,7 +49,7 @@
 					<OnShow method="OnShow" />
 				</Scripts>
 			</Frame>
-			<Button name="$parentDepositButton" parentKey="DepositButton" mixin="BaudBagBankDepositButtonMixin">
+			<Button parentKey="DepositButton" mixin="BaudBagBankDepositButtonMixin">
 				<Size x="16" y="16" />
 				<Anchors>
 					<Anchor point="TOPRIGHT" relativeTo="$parentSearchButton" relativePoint="TOPLEFT" x="0" y="0"/>
@@ -83,7 +83,7 @@
 
 	<Frame name="BaudBagBankContainerTemplate" inherits="BaudBagContainerTemplate" mixin="BaudBagBankContainerMixin" virtual="true">
 		<Frames>
-			<Button name="$parentDepositButton" parentKey="DepositButton" mixin="BaudBagBankDepositButtonMixin">
+			<Button parentKey="DepositButton" mixin="BaudBagBankDepositButtonMixin">
 				<Size x="16" y="16" />
 				<Anchors>
 					<Anchor point="TOPRIGHT" relativeTo="$parentSearchButton" relativePoint="TOPLEFT" x="0" y="0"/>
