@@ -207,7 +207,7 @@ function BaudBagFirstBankMixin:OnBankShow()
     self:RegisterEvent("PLAYER_MONEY")
     self:RegisterEvent("BANK_TAB_SETTINGS_UPDATED")
     MoneyFrame_UpdateMoney(self.MoneyFrame.SmallMoneyFrame)
-    --self:RefreshDepositButtons()
+    self.DepositButton:Update()
     self:OnShow()
 end
 
@@ -226,7 +226,6 @@ function BaudBagFirstBankMixin:OnBankEvent(event, ...)
         end
     elseif (event == "PLAYER_MONEY") then
         MoneyFrame_UpdateMoney(self.MoneyFrame.SmallMoneyFrame)
-        --self:RefreshDepositButtons()
     elseif (event == "BANK_TAB_SETTINGS_UPDATED") then
         local bankType = ...
         if (bankType == AddOnTable.BlizzEnum.BankType.Character) then
@@ -379,6 +378,10 @@ function BaudBagBankContainerMixin:OnContainerLoad()
     self:RegisterEvent("BAG_UPDATE_DELAYED")
 end
 
+function BaudBagBankContainerMixin:OnContainerShow()
+    self.DepositButton:Update()
+end
+
 function BaudBagBankContainerMixin:OnContainerEvent(event, ...)
     if (event == "PLAYERBANKSLOTS_CHANGED" or event == "BAG_UPDATE") then
         local containerIndex = ...
@@ -409,6 +412,30 @@ function BaudBagBankContainerMixin:UpdateBagHighlight()
             button.SlotHighlightTexture:Hide()
         end
     end
+end
+
+--[[ ##################################### Ragent Deposit Button #################################### ]]
+BaudBagBankDepositButtonMixin = {}
+
+function BaudBagBankDepositButtonMixin:Update()
+    local autoDepositSupported = AddOnTable.BlizzAPI.DoesBankTypeSupportAutoDeposit(AddOnTable.BlizzEnum.BankType.Character)
+    if (AddOnTable.State.BankOpen and autoDepositSupported) then
+        self:Show()
+    else
+        self:Hide()
+    end
+end
+
+function BaudBagBankDepositButtonMixin:OnClick()
+    PlaySound(SOUNDKIT.IG_MAINMENU_OPTION)
+    BankPanel:SetBankType(AddOnTable.BlizzEnum.BankType.Character)
+    BankPanel.AutoDepositFrame.DepositButton:AutoDepositItems()
+end
+
+function BaudBagBankDepositButtonMixin:OnEnter()
+    GameTooltip:SetOwner(self)
+    GameTooltip:SetText(AddOnTable.BlizzConstants.CHARACTER_BANK_DEPOSIT_BUTTON_LABEL)
+    GameTooltip:Show()
 end
 
 --[[ ###################################### Bags Settings frame ##################################### ]]

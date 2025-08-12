@@ -178,6 +178,18 @@ if C_Bank ~= nil then
     else
         API.FetchViewableBankTypes = function() return { Enum.BankType.Character } end
     end
+
+    if C_Bank.AutoDepositItemsIntoBank then
+        API.AutoDepositItemsIntoBank = C_Bank.AutoDepositItemsIntoBank
+    else
+        API.AutoDepositItemsIntoBank = function() end
+    end
+
+    if C_Bank.DoesBankTypeSupportAutoDeposit then
+        API.DoesBankTypeSupportAutoDeposit = C_Bank.DoesBankTypeSupportAutoDeposit
+    else
+        API.DoesBankTypeSupportAutoDeposit = function() return false end
+    end
 else
     API.CanUseBank = function(bankType)
         if (bankType == AddOnTable.BlizzEnum.BankType.Account) then
@@ -252,6 +264,9 @@ AddOnTable.BlizzConstants = {
     ACCOUNT_BANK_LAST_SUB_CONTAINER = nil, -- Enum.BagIndex.AccountBankTab_1 (from TWW onwards)
     ACCOUNT_BANK_PANEL_TITLE = "",
     ACCOUNT_BANK_TAB_PURCHASE_PROMPT = "",
+    REAGENTBANK_DEPOSIT = REAGENTBANK_DEPOSIT and REAGENTBANK_DEPOSIT or "",
+    ACCOUNT_BANK_DEPOSIT_BUTTON_LABEL = ACCOUNT_BANK_DEPOSIT_BUTTON_LABEL and ACCOUNT_BANK_DEPOSIT_BUTTON_LABEL or "",
+    CHARACTER_BANK_DEPOSIT_BUTTON_LABEL = CHARACTER_BANK_DEPOSIT_BUTTON_LABEL and CHARACTER_BANK_DEPOSIT_BUTTON_LABEL or "",
 }
 
 if (GetExpansionLevel() >= 9) then
