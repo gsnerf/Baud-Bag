@@ -80,14 +80,18 @@ local function custom_BagSlotButton_OnClick(self, event, ...)
 end
 
 local function OpenAllBags()
+    AddOnTable.Functions.DebugMessage("BagTrigger", "[OpenAllBags] handling ContainerFrame.OpenAllBags event")
     for _, bagSetType in pairs(BagSetType) do
+        AddOnTable.Functions.DebugMessage("BagTrigger", "[OpenAllBags]... processing BagSetType '"..bagSetType.Name.."'")
         if (bagSetType.CanInteractWithBags()) then
+            AddOnTable.Functions.DebugMessage("BagTrigger", "[OpenAllBags]... can show BagSetType, calling open")
             AddOnTable.Sets[bagSetType.Id]:Open()
         end
     end
 end
 
 local function CloseAllBags()
+    AddOnTable.Functions.DebugMessage("BagTrigger", "[CloseAllBags] handling ContainerFrame.CloseAllBags event")
     for _, bagSetType in pairs(BagSetType) do
         if (bagSetType.CanInteractWithBags()) then
             AddOnTable.Sets[bagSetType.Id]:Close()
