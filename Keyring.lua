@@ -25,6 +25,9 @@ local function extendBaseType()
             RequiresFreshConfig = function(bagId) return false end,
             Background = 3
         },
+        ApplyConfigRestorationSpecificalities = function(configObject) end,
+        CanContainerBeJoined = function(subContainerId) return true end,
+        LinkedSet = function() return nil end,
         GetContainerTemplate = function(containerId) return "BaudBagContainerTemplate" end,
         GetItemButtonTemplate = function(containerId) return "ContainerFrameItemButtonTemplate" end,
         GetSize = function(containerId) return AddOnTable.BlizzAPI.GetKeyRingSize() end,
@@ -32,6 +35,25 @@ local function extendBaseType()
         ShouldUseCache = function() return false end,
         -- there are no bags for an overview
         BagOverview_Initialize = function() end,
+        UpdateOpenBagHighlight = function(subContainer) end,
+        BagFilterGetFunction = nil,
+        BagFilterSetFunction = function() end,
+        CanInteractWithBags = function() return true end,
+        OnItemButtonCustomEnter = function(self) end,
+        FilterData = {
+            GetFilterType = function(container) return false end,
+            SetFilterType = function(container, type, value) end,
+            GetCleanupIgnore = function(container) return false end,
+            SetCleanupIgnore = function(container, value) end,
+        },
+        CustomCloseAllFunction = function() end,
+        GetSpecialBagTexture = function(subContainerId)
+            if (subContainerId == AddOnTable.BlizzConstants.KEYRING_CONTAINER) then
+                return "Interface\\ContainerFrame\\KeyRing-Bag-Icon"
+            else
+                return nil
+            end
+        end,
     }
     tinsert(BagSetTypeArray, BagSetType.Keyring)
 

@@ -80,25 +80,21 @@ local function custom_BagSlotButton_OnClick(self, event, ...)
 end
 
 local function OpenAllBags()
-    for i = AddOnTable.BlizzConstants.BACKPACK_FIRST_CONTAINER, AddOnTable.BlizzConstants.BACKPACK_LAST_CONTAINER do
-        openBag(i)
-    end
-    
-    if AddOnTable.Sets[BagSetType.Bank.Id].Containers[1].Frame:IsShown() then
-        for i = AddOnTable.BlizzConstants.BANK_FIRST_CONTAINER,  AddOnTable.BlizzConstants.BANK_LAST_CONTAINER do
-            openBag(i)
+    AddOnTable.Functions.DebugMessage("BagTrigger", "[OpenAllBags] handling ContainerFrame.OpenAllBags event")
+    for _, bagSetType in pairs(BagSetType) do
+        AddOnTable.Functions.DebugMessage("BagTrigger", "[OpenAllBags]... processing BagSetType '"..bagSetType.Name.."'")
+        if (bagSetType.CanInteractWithBags()) then
+            AddOnTable.Functions.DebugMessage("BagTrigger", "[OpenAllBags]... can show BagSetType, calling open")
+            AddOnTable.Sets[bagSetType.Id]:Open()
         end
     end
 end
 
 local function CloseAllBags()
-    for i = AddOnTable.BlizzConstants.BACKPACK_FIRST_CONTAINER, AddOnTable.BlizzConstants.BACKPACK_LAST_CONTAINER do
-        closeBag(i)
-    end
-    
-    if AddOnTable.Sets[BagSetType.Bank.Id].Containers[1].Frame:IsShown() then
-        for i = AddOnTable.BlizzConstants.BANK_FIRST_CONTAINER,  AddOnTable.BlizzConstants.BANK_LAST_CONTAINER do
-            closeBag(i)
+    AddOnTable.Functions.DebugMessage("BagTrigger", "[CloseAllBags] handling ContainerFrame.CloseAllBags event")
+    for _, bagSetType in pairs(BagSetType) do
+        if (bagSetType.CanInteractWithBags()) then
+            AddOnTable.Sets[bagSetType.Id]:Close()
         end
     end
 end
@@ -108,7 +104,7 @@ end
     This is necessary, as the orriginal ToggleBackpack only calls ToggleBag if the bag was closed before.
     If it was open, it instead manually iterates over all container frames and closes them directly via frame:Hide().
 
-    Seems dump at first glance, but probably is an "optimized" way of closing bags, as _every_ other close/toggle/open iterates over all container frames, so calling close 5x would iterate over all 13 containers 5 times.
+    Seems dumb at first glance, but probably is an "optimized" way of closing bags, as _every_ other close/toggle/open iterates over all container frames, so calling close 5x would iterate over all 13 containers 5 times.
     If someone from the blizz team should read this: There is no reason to hold the container frames dynamic this way. It just complicates things and serves no valuable purpose.
     The number of frames are fixed, the content of the frame not freed on close, so here isn't even memory usage limitation at work. Just revert to the retail way please!
 ]]

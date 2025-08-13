@@ -1,9 +1,16 @@
 <Ui xmlns="http://www.blizzard.com/wow/ui/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.blizzard.com/wow/ui/ ..\FrameXML\UI.xsd">
-    <Script file="AccountBank.lua" />
+    <Script file="Bank.lua" />
 
-    <Frame name="BaudBagContainer6_1" mixin="BaudBagFirstAccountBankMixin,BaudBagAccountBankContainerMixin" inherits="BaudBagFirstContainerTemplate">
+	<!--Frame name="BaudBag_Bank_EventFrame" mixin="BaudBag_Bank_EventFrameMixin">
+		<Scripts>
+			<OnLoad method="OnLoad" />
+			<OnEvent method="OnEvent" />
+		</Scripts>
+	</Frame-->
+
+    <Frame name="BaudBagContainer2_1" mixin="BaudBagFirstBankMixin,BaudBagBankContainerMixin" inherits="BaudBagFirstContainerTemplate">
 		<Frames>
-			<Frame parentKey="BagsFrame" inherits="BaudBagBagsFrameTemplate" mixin="BaudBagAccountBagsFrameMixin" frameStrata="MEDIUM">
+			<Frame parentKey="BagsFrame" inherits="BaudBagBagsFrameTemplate" mixin="BaudBagBankBagsFrameMixin" frameStrata="MEDIUM">
 				<Frames>
 					<Frame parentKey="PurchaseFrame" setAllPoints="true">
 						<Frames>
@@ -32,7 +39,7 @@
 							</Frame>
 						</Frames>
 					</Frame>
-					<Frame parentKey="TabSettingsMenu" inherits="BankPanelTabSettingsMenuTemplate" mixin="BaudBagAccountBankTabSettingsMixin" hidden="true">
+                    <Frame parentKey="TabSettingsMenu" inherits="BankPanelTabSettingsMenuTemplate" mixin="BaudBagBankTabSettingsMixin" hidden="true">
 						<Anchors>
 							<Anchor point="TOPLEFT" relativeKey="$parent" relativePoint="BOTTOMLEFT" x="-5" y="-5"/>
 						</Anchors>
@@ -42,7 +49,7 @@
 					<OnShow method="OnShow" />
 				</Scripts>
 			</Frame>
-			<Button parentKey="ItemDepositButton" mixin="BaudBagAccountBankDepositButtonMixin">
+			<Button parentKey="DepositButton" mixin="BaudBagBankDepositButtonMixin">
 				<Size x="16" y="16" />
 				<Anchors>
 					<Anchor point="TOPRIGHT" relativeTo="$parentSearchButton" relativePoint="TOPLEFT" x="0" y="0"/>
@@ -65,20 +72,18 @@
 					<OnLeave function="GameTooltip_Hide"/>
 				</Scripts>
 			</Button>
-
-			<!--Frame parentKey="UnlockInfo" inherits="BaudBagContainerUnlockTemplate" mixin="BaudBagAccountBankUnlockMixin" hidden="true" /-->
 		</Frames>
-		<Scripts>
+        <Scripts>
 			<OnLoad method="OnContainerLoad" />
-			<OnShow method="OnAccountBankShow" />
-			<OnEvent method="OnAccountBankEvent" />
-			<OnHide method="OnAccountBankHide" />
+			<OnShow method="OnBankShow" />
+			<OnEvent method="OnBankEvent" />
+			<OnHide method="OnBankHide" />
 		</Scripts>
 	</Frame>
 
-	<Frame name="BaudBagAccountBankContainerTemplate" inherits="BaudBagContainerTemplate" mixin="BaudBagAccountBankContainerMixin" virtual="true">
+	<Frame name="BaudBagBankContainerTemplate" inherits="BaudBagContainerTemplate" mixin="BaudBagBankContainerMixin" virtual="true">
 		<Frames>
-			<Button parentKey="ItemDepositButton" mixin="BaudBagAccountBankDepositButtonMixin">
+			<Button parentKey="DepositButton" mixin="BaudBagBankDepositButtonMixin">
 				<Size x="16" y="16" />
 				<Anchors>
 					<Anchor point="TOPRIGHT" relativeTo="$parentSearchButton" relativePoint="TOPLEFT" x="0" y="0"/>

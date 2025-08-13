@@ -163,7 +163,7 @@ if C_Bank ~= nil then
     API.CanWithdrawMoney = C_Bank.CanWithdrawMoney
     API.DepositMoney = C_Bank.DepositMoney
     API.FetchDepositedMoney = C_Bank.FetchDepositedMoney
-    API.FetchNextPurchasableBankTabCost = C_Bank.FetchNextPurchasableBankTabCost
+    API.FetchNextPurchasableBankTabData = C_Bank.FetchNextPurchasableBankTabData
     API.FetchNumPurchasedBankTabs = C_Bank.FetchNumPurchasedBankTabs
     API.FetchPurchasedBankTabData = C_Bank.FetchPurchasedBankTabData
     ---@return BankTabData[]
@@ -173,6 +173,23 @@ if C_Bank ~= nil then
     API.PurchaseBankTab = C_Bank.PurchaseBankTab
     API.UpdateBankTabSettings = C_Bank.UpdateBankTabSettings
     API.WithdrawMoney = C_Bank.WithdrawMoney
+    if C_Bank.FetchViewableBankTypes then
+        API.FetchViewableBankTypes = C_Bank.FetchViewableBankTypes
+    else
+        API.FetchViewableBankTypes = function() return { Enum.BankType.Character } end
+    end
+
+    if C_Bank.AutoDepositItemsIntoBank then
+        API.AutoDepositItemsIntoBank = C_Bank.AutoDepositItemsIntoBank
+    else
+        API.AutoDepositItemsIntoBank = function() end
+    end
+
+    if C_Bank.DoesBankTypeSupportAutoDeposit then
+        API.DoesBankTypeSupportAutoDeposit = C_Bank.DoesBankTypeSupportAutoDeposit
+    else
+        API.DoesBankTypeSupportAutoDeposit = function() return false end
+    end
 else
     API.CanUseBank = function(bankType)
         if (bankType == AddOnTable.BlizzEnum.BankType.Account) then
@@ -229,6 +246,8 @@ AddOnTable.BlizzConstants = {
     BANK_CONTAINER_NUM = 7, -- == NUM_BANKBAGSLOTS
     BANK_FIRST_CONTAINER = 5, -- == NUM_TOTAL_EQUIPPED_BAG_SLOTS + 1
     BANK_LAST_CONTAINER = 11, -- == NUM_TOTAL_EQUIPPED_BAG_SLOTS + 1 + NUM_BANKBAGSLOTS
+    BANK_PANEL_TITLE = "",
+    BANK_TAB_PURCHASE_PROMPT = "",
     BANK_SLOTS_NUM = NUM_BANKGENERIC_SLOTS,
     BAG_FILTER_ASSIGNED_TO = BAG_FILTER_ASSIGNED_TO, -- localized "Assigned To:"
     BAG_FILTER_LABELS = BAG_FILTER_LABELS, -- list of localized filter names, like "Consumables", "Trade Goods", etc.
@@ -245,6 +264,9 @@ AddOnTable.BlizzConstants = {
     ACCOUNT_BANK_LAST_SUB_CONTAINER = nil, -- Enum.BagIndex.AccountBankTab_1 (from TWW onwards)
     ACCOUNT_BANK_PANEL_TITLE = "",
     ACCOUNT_BANK_TAB_PURCHASE_PROMPT = "",
+    REAGENTBANK_DEPOSIT = REAGENTBANK_DEPOSIT and REAGENTBANK_DEPOSIT or "",
+    ACCOUNT_BANK_DEPOSIT_BUTTON_LABEL = ACCOUNT_BANK_DEPOSIT_BUTTON_LABEL and ACCOUNT_BANK_DEPOSIT_BUTTON_LABEL or "",
+    CHARACTER_BANK_DEPOSIT_BUTTON_LABEL = CHARACTER_BANK_DEPOSIT_BUTTON_LABEL and CHARACTER_BANK_DEPOSIT_BUTTON_LABEL or "",
 }
 
 if (GetExpansionLevel() >= 9) then
@@ -257,13 +279,22 @@ if (GetExpansionLevel() >= 9) then
 end
 
 if (interfaceVersion >= 110000) then -- from "The War Within" onwards
-    --AddOnTable.BlizzConstants.ACCOUNT_BANK_CONTAINER_NUM = 6 -- according to Enum.BagIndex Accountbanktab + AccountBankTab_1 to *_5
     AddOnTable.BlizzConstants.ACCOUNT_BANK_CONTAINER_NUM = 5 -- according to Enum.BagIndex AccountBankTab_1 to AccountBankTab_5 (Accountbanktab isn't actually a usable bank tab)
     AddOnTable.BlizzConstants.ACCOUNT_BANK_CONTAINER = Enum.BagIndex.Accountbanktab -- -5
     AddOnTable.BlizzConstants.ACCOUNT_BANK_FIRST_SUB_CONTAINER = Enum.BagIndex.AccountBankTab_1 -- 13
     AddOnTable.BlizzConstants.ACCOUNT_BANK_LAST_SUB_CONTAINER = Enum.BagIndex.AccountBankTab_5 -- 17
     AddOnTable.BlizzConstants.ACCOUNT_BANK_PANEL_TITLE = ACCOUNT_BANK_PANEL_TITLE
     AddOnTable.BlizzConstants.ACCOUNT_BANK_TAB_PURCHASE_PROMPT = ACCOUNT_BANK_TAB_PURCHASE_PROMPT
+end
+
+if (interfaceVersion >= 110200) then -- the big bank rework in "The War Within"
+    AddOnTable.BlizzConstants.REAGENTBANK_CONTAINER = -99999 -- has been removed
+    AddOnTable.BlizzConstants.KEYRING_CONTAINER = Enum.BagIndex.Keyring
+    AddOnTable.BlizzConstants.BANK_CONTAINER = Enum.BagIndex.Characterbanktab
+    AddOnTable.BlizzConstants.BANK_FIRST_CONTAINER = Enum.BagIndex.CharacterBankTab_1
+    AddOnTable.BlizzConstants.BANK_LAST_CONTAINER = Enum.BagIndex.CharacterBankTab_6
+    AddOnTable.BlizzConstants.BANK_CONTAINER_NUM = 6
+    AddOnTable.BlizzConstants.BANK_PANEL_TITLE = BANK
 end
 
 if C_CurrencyInfo ~= nil and C_CurrencyInfo.GetBackpackCurrencyInfo ~= nil then

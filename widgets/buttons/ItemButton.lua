@@ -306,21 +306,7 @@ function Prototype:UpdateNewAndBattlepayoverlays(isNewItem, isBattlePayItem)
 end
 
 function Prototype:OnCustomEnter()
-    local bagSetId = self.Parent.BagSet.Id
-    if (bagSetId == BagSetType.Bank.Id) then
-        local bagId = self:GetParent():GetID()
-        local slotId = self:GetID()
-        AddOnTable.Functions.DebugMessage("Tooltip", "[ItemButton:UpdateTooltip] This button is part of the bank bags... reading from cache")
-        self:UpdateTooltipFromCache(bagId, slotId)
-    elseif (bagSetId == BagSetType.Backpack.Id) then
-        if (ContainerFrameItemButton_OnUpdate ~= nil) then
-            ContainerFrameItemButton_OnUpdate(self)
-        elseif (ContainerFrameItemButton_OnEnter ~= nil) then
-            ContainerFrameItemButton_OnEnter(self)
-        else
-            self:OnUpdate()
-        end
-    end
+    self.Parent.BagSet.OnItemButtonCustomEnter(self)
 end
 
 function Prototype:UpdateTooltipFromCache(bagId, slotId)
@@ -351,15 +337,18 @@ function Prototype:ShowHighlight(enabled)
 end
 
 function Prototype:ApplyBaseSkin()
+    local width, height = self:GetSize()
     self.IconBorder:SetTexture([[Interface\Buttons\UI-ActionButton-Border]])
-    self.IconBorder:SetSize(70, 70)
+    self.IconBorder:SetTexCoord(0.218, 0.718 , 0.234, 0.781)
+    self.IconBorder:SetSize(width, height)
     self.IconBorder:SetBlendMode("ADD")
 
     self.BorderFrame:SetTexture([[Interface\Buttons\UI-ActionButton-Border]])
+    self.BorderFrame:SetTexCoord(0.218, 0.718 , 0.234, 0.781)
     self.BorderFrame:SetPoint("CENTER")
     self.BorderFrame:SetBlendMode("ADD")
     self.BorderFrame:SetAlpha(0.8)
-    self.BorderFrame:SetSize(70, 70)
+    self.BorderFrame:SetSize(width, height)
 
     self.ItemLevel:SetPoint("TOP")
 
@@ -401,7 +390,7 @@ function AddOnTable:CreateItemButton(subContainer, slotIndex, buttonTemplate)
         itemButton.UpgradeIcon:SetPoint("BOTTOMLEFT")
     end
 
-    -- this is an override for the bank items which manually call UpdateTooltip
+    -- this is an override for the (old) bank items which manually call UpdateTooltip
     if (itemButton.UpdateTooltip) then
         itemButton.UpdateTooltip = itemButton.OnCustomEnter
     end

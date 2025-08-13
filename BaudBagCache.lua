@@ -3,7 +3,6 @@
     It has the following structure (values are initial and may be overwritten):
     
     BaudBag_Cache = {
-        "Void" = {}
         "Bank" = {
             -1 = { Size = NUM_BANKGENERIC_SLOTS }
             6 = { Size  = 0 }
@@ -14,6 +13,33 @@
 local AddOnTable = select(2, ...)
 local _
 local initialized = false
+local cacheStructureVersion = 110200
+local Localized = AddOnTable.Localized
+
+---@method Migrate 
+
+---@type CacheMigration[]
+local cacheMigrations = {
+    ---@class CacheMigration
+    {
+        ---@type number if the current cache structure version matches this, the migration will be executed
+        OldVersion = nil,
+        ---@type number this is the version the cache structure will show after migration
+        NewVersion = 110200,
+        ---This methods executes the actual migration
+        ---@param cache Cache the cache to change
+        Migrate = function(cache)
+            --[[
+            With 11.2.0 the bank system has been completely changed,
+            unfortunately the caches are useless with this.
+            Migration -> reset now, will be reinitialized after migrations
+            ]]
+            cache["Bank"] = nil
+            cache["AccountBank"] = nil
+            DEFAULT_CHAT_FRAME:AddMessage(Localized.Cache_Migration_110200, 1, 0.5, 0.5)
+        end
+    }
+}
 
 local function DebugMsg(message, ...)
     AddOnTable.Functions.DebugMessage("Cache", message, ...)
@@ -43,9 +69,8 @@ function CacheMixin:UsesCache(Bag)
         end
     end
     -- fallback
-    local usesCache = (BBConfig[2].Enabled and ((Bag < AddOnTable.BlizzConstants.BACKPACK_FIRST_CONTAINER) or (AddOnTable.BlizzConstants.BACKPACK_LAST_CONTAINER < Bag)) and (not AddOnTable.State.BankOpen))
-    DebugMsg("[UseCache] Bag: "..Bag..", Enabled: "..(BBConfig[2].Enabled and "true" or "false")..", bank open: "..(AddOnTable.State.BankOpen and "true" or "false"), usesCache)
-    return usesCache
+    DebugMsg("[UseCache] Bag '"..Bag.."' apparently not covered by bag set types... this is a bug!")
+    return false
 end
 
 
@@ -90,10 +115,19 @@ function AddOnTable:InitCache()
     -- we might have a saved cache
     if (type(BaudBag_Cache) ~= "table") then
         DebugMsg("no cache found, creating new one")
-        BaudBag_Cache = {}
+        BaudBag_Cache = {
+            StructureVersion = cacheStructureVersion
+        }
     end
     BaudBag_Cache = Mixin(BaudBag_Cache, CacheMixin)
     AddOnTable.Cache = BaudBag_Cache
+
+    for _,migration in pairs(cacheMigrations) do
+        if BaudBag_Cache.StructureVersion == migration.OldVersion then
+            migration.Migrate(BaudBag_Cache)
+            BaudBag_Cache.StructureVersion = migration.NewVersion
+        end
+    end
 
     -- init caches for all bagsets that support it
     for _, bagSetType in pairs(BagSetType) do
@@ -103,10 +137,6 @@ function AddOnTable:InitCache()
     end
 
     initialized = true
-end
-
-function BaudBagGetVoidCache()
-    return BaudBag_Cache.Void
 end
 
 

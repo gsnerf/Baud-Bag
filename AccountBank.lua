@@ -30,7 +30,7 @@ local function extendBaseType()
                 AddOnTable.ContainerIdOptionsIndexMap[bagId] = index
             end
         end,
-        NumberOfContainers = math.max(1, AddOnTable.BlizzAPI.FetchNumPurchasedBankTabs(Enum.BankType.Account)),
+        NumberOfContainers = math.max(1, AddOnTable.BlizzConstants.ACCOUNT_BANK_CONTAINER_NUM),
         DefaultConfig = {
             Columns = 14,
             Scale = 100,
@@ -38,8 +38,11 @@ local function extendBaseType()
             RequiresFreshConfig = function(bagId) return false end,
             Background = 2
         },
+        ApplyConfigRestorationSpecificalities = function(configObject) end,
+        CanContainerBeJoined = function(subContainerId) return true end,
+        LinkedSet = function() return BagSetType.Bank and BagSetType.Bank or nil end,
         GetContainerTemplate = function(containerId) return "BaudBagAccountBankContainerTemplate" end,
-        GetItemButtonTemplate = function(containerId) return "AccountBankItemButtonTemplate" end,
+        GetItemButtonTemplate = function(containerId) return "BankItemButtonTemplate" end,
         GetSize = function(containerId)
             if (BagSetType["AccountBank"].ShouldUseCache()) then
                 local bagCache = AddOnTable.Cache:GetBagCache(containerId)
@@ -64,6 +67,29 @@ local function extendBaseType()
         SupportsCache = true,
         ShouldUseCache = function() return not AddOnTable.State.AccountBankOpen end,
         BagOverview_Initialize = function() _G["BaudBagContainer6_1"].BagsFrame:Initialize() end,
+        UpdateOpenBagHighlight = function(subContainer)
+            local open = subContainer:IsOpen()
+            local button = AddOnTable.Sets[BagSetType.AccountBank.Id].BagButtons[subContainer.ContainerId - AddOnTable.BlizzConstants.ACCOUNT_BANK_FIRST_SUB_CONTAINER + 1]
+            if (button) then
+                if (open) then
+                    button.SlotHighlightTexture:Show()
+                else
+                    button.SlotHighlightTexture:Hide()
+                end
+            end
+        end,
+        BagFilterGetFunction = nil,
+        BagFilterSetFunction = function() end,
+        CanInteractWithBags = function() return AddOnTable.Sets[BagSetType.AccountBank.Id].Containers[1].Frame:IsShown() end,
+        OnItemButtonCustomEnter = function(self) end,
+        FilterData = {
+            GetFilterType = function(container) return false end,
+            SetFilterType = function(container, type, value) end,
+            GetCleanupIgnore = function(container) return false end,
+            SetCleanupIgnore = function(container, value) end,
+        },
+        CustomCloseAllFunction = function() end,
+        GetSpecialBagTexture = function(subContainerId) return nil end,
     }
     tinsert(BagSetTypeArray, BagSetType.AccountBank)
 
@@ -71,21 +97,70 @@ local function extendBaseType()
 end
 hooksecurefunc(AddOnTable, "ExtendBaseTypes", extendBaseType)
 
-EventRegistry:RegisterFrameEventAndCallback("BANKFRAME_OPENED", function(ownerID, ...)
+--[[ ######################################### basic events ######################################### ]]
+
+local function canViewAccountBank()
+    local viewableBankTypes = AddOnTable.BlizzAPI.FetchViewableBankTypes()
+
+    for _,viewableType in pairs(viewableBankTypes) do
+        if (viewableType == AddOnTable.BlizzEnum.BankType.Account) then
+            return true
+        end
+    end
+    return false
+end
+
+local accountBankFrameOpenedOwner = nil
+local function accountBankFrameOpened()
     Funcs.DebugMessage("AccountBank", "AccountBank#bankframeOpened()")
+
+    if not canViewAccountBank() then
+        Funcs.DebugMessage("AccountBank", "It seems the accountbank is not supported here... skipping")
+        return
+    end
+
     AddOnTable.State.AccountBankOpen = true
     ---@type BagSet
     local bagSet = AddOnTable.Sets[BagSetType.AccountBank.Id]
     bagSet:RebuildContainers()
     bagSet.Containers[1].Frame.BagsFrame:Update()
-    bagSet:Open()
-end, nil)
+    bagSet:AutoOpen()
+    AddOnTable.Sets[BagSetType.Backpack.Id]:AutoOpen()
 
-EventRegistry:RegisterFrameEventAndCallback("BANKFRAME_CLOSED", function(ownerID, ...)
+    -- if auto open is NOT enabled for the first container, ensure that it is being shown anyways!
+     if not BBConfig[BagSetType.AccountBank.Id][1].AutoOpen then
+        bagSet.Containers[1].Frame:Show()
+     end
+end
+
+local accountBankFrameClosedOwner = nil
+local function accountBankFrameClosed()
     Funcs.DebugMessage("AccountBank", "AccountBank#bankframeClosed()")
     AddOnTable.State.AccountBankOpen = false
-	AddOnTable.Sets[BagSetType.AccountBank.Id]:Close()
-end, nil)
+	AddOnTable.Sets[BagSetType.AccountBank.Id]:AutoClose()
+    AddOnTable.Sets[BagSetType.Backpack.Id]:AutoClose()
+
+    -- if auto open is NOT enabled for the first container, ensure that it is still being closed.
+     if not BBConfig[BagSetType.AccountBank.Id][1].AutoOpen then
+        AddOnTable.Sets[BagSetType.AccountBank.Id].Containers[1].Frame:Hide()
+     end
+end
+
+hooksecurefunc(AddOnTable, "ConfigUpdated", function()
+    if BBConfig[BagSetType.AccountBank.Id].Enabled then
+        accountBankFrameOpenedOwner = EventRegistry:RegisterFrameEventAndCallback("BANKFRAME_OPENED", accountBankFrameOpened, nil)
+        accountBankFrameClosedOwner = EventRegistry:RegisterFrameEventAndCallback("BANKFRAME_CLOSED", accountBankFrameClosed, nil)
+    else
+        if (accountBankFrameOpenedOwner ~= nil) then
+            EventRegistry:UnregisterCallback("BANKFRAME_OPENED", accountBankFrameOpenedOwner)
+        end
+        if (accountBankFrameClosedOwner ~= nil) then
+            EventRegistry:UnregisterCallback("BANKFRAME_CLOSED", accountBankFrameClosedOwner)
+        end
+    end
+end)
+
+--[[ ####################################### container frames ####################################### ]]
 
 BaudBagFirstAccountBankMixin = {}
 
@@ -137,12 +212,17 @@ function BaudBagFirstAccountBankMixin:OnAccountBankShow()
 	end]]
 
     self:RegisterEvent("ACCOUNT_MONEY")
+    self:RegisterEvent("BANK_TAB_SETTINGS_UPDATED")
     MoneyFrame_UpdateMoney(self.MoneyFrame.SmallMoneyFrame)
     self:RefreshDepositButtons()
     self:OnShow()
 end
 
 function BaudBagFirstAccountBankMixin:OnAccountBankEvent(event, ...)
+    if not BBConfig[BagSetType.AccountBank.Id].Enabled then
+        return
+    end
+
     if (event == "PLAYER_ACCOUNT_BANK_TAB_SLOTS_CHANGED") then
         Funcs.DebugMessage("AccountBank", "AccountBankFirstContainer#PLAYER_ACCOUNT_BANK_TAB_SLOTS_CHANGED", ...)
         if self.UnlockInfo ~= nil then
@@ -153,6 +233,12 @@ function BaudBagFirstAccountBankMixin:OnAccountBankEvent(event, ...)
     elseif (event == "ACCOUNT_MONEY") then
         MoneyFrame_UpdateMoney(self.MoneyFrame.SmallMoneyFrame)
         self:RefreshDepositButtons()
+    elseif (event == "BANK_TAB_SETTINGS_UPDATED") then
+        local bankType = ...
+        if (bankType == AddOnTable.BlizzEnum.BankType.Account) then
+            AddOnTable.Sets[BagSetType.AccountBank.Id].Containers[1].Frame.BagsFrame:Update()
+            AddOnTable.Sets[BagSetType.AccountBank.Id]:RebuildContainers()
+        end
     end
 
     self:OnContainerEvent(event, ...)
@@ -165,6 +251,7 @@ end
 
 function BaudBagFirstAccountBankMixin:OnAccountBankHide()
     self:UnregisterEvent("ACCOUNT_MONEY")
+    self:UnregisterEvent("BANK_TAB_SETTINGS_UPDATED")
     self:OnHide()
 end
 
@@ -180,6 +267,8 @@ function BaudBagFirstAccountBankMixin:RefreshDepositButtons()
 
     self.MoneyFrame.DepositFrame.WithdrawButton.disabledTooltip = disabledTooltip
     self.MoneyFrame.DepositFrame.DepositButton.disabledTooltip = disabledTooltip
+
+    self.ItemDepositButton:Update()
 end
 
 function BaudBagFirstAccountBankMixin:OnWithdrawal()
@@ -236,81 +325,14 @@ function BaudBagAccountBankUnlockMixin:OnHide()
 end
 
 function BaudBagAccountBankUnlockMixin:Refresh()
-	local tabCost = AddOnTable.BlizzAPI.FetchNextPurchasableBankTabCost(Enum.BankType.Account)
-	if tabCost then 
-        -- TODO: check if it is reasonable to wrap that or not
-		MoneyFrame_Update(self.CostMoneyFrame, tabCost);
-		local canAfford = GetMoney() >= tabCost;
-		SetMoneyFrameColorByFrame(self.CostMoneyFrame, canAfford and "white" or "red");
+    local nextBankTabData = AddOnTable.BlizzAPI.FetchNextPurchasableBankTabData(Enum.BankType.Account)
+	if nextBankTabData then 
+		MoneyFrame_Update(self.CostMoneyFrame, nextBankTabData.tabCost);
+		SetMoneyFrameColorByFrame(self.CostMoneyFrame, nextBankTabData.canAfford and "white" or "red");
 	end
 end
 
 --[[ ########################################## Bags frame ########################################## ]]
-
-local function UpdateContent(self)
-    -- ensure we load potentially cached data when opening the account bank in offline mode before visiting the bank npc
-    if not self.TabData and not AddOnTable.State.AccountBankOpen then
-        local bagCache = AddOnTable.Cache:GetBagCache(self.SubContainerId)
-        self.TabData = bagCache.TabData
-    end
-
-    -- now that all data should be present update the button content
-    if (self.TabData) then
-        self.ContainerNotPurchasedYet = false
-        self.Icon:SetTexture(self.TabData.icon)
-        self:SetQuality()
-    else
-        self.ContainerNotPurchasedYet = true
-        self:SetItem()
-    end
-end
-
-local function OnShowOverride(self)
-    self:UpdateContent()
-end
-
-local function UpdateTooltip(self)
-    if not self.TabData then
-        return
-    end
-
-    ---@type GameTooltip
-    local tooltip = GameTooltip -- BaudBagBagsFrameTooltip
-    tooltip:SetOwner(self, "ANCHOR_RIGHT")
-    GameTooltip_SetTitle(tooltip, self.TabData.name, NORMAL_FONT_COLOR)
-    if self.TabData.depositFlags then
-        local depositFlags = self.TabData.depositFlags
-        if FlagsUtil.IsSet(depositFlags, Enum.BagSlotFlags.ExpansionCurrent) then
-            GameTooltip_AddNormalLine(tooltip, BANK_TAB_EXPANSION_ASSIGNMENT:format(BANK_TAB_EXPANSION_FILTER_CURRENT))
-        elseif FlagsUtil.IsSet(depositFlags, Enum.BagSlotFlags.ExpansionLegacy) then
-            GameTooltip_AddNormalLine(tooltip, BANK_TAB_EXPANSION_ASSIGNMENT:format(BANK_TAB_EXPANSION_FILTER_LEGACY))
-        end
-        
-        -- TODO: global method
-        local filterList = ContainerFrameUtil_ConvertFilterFlagsToList(depositFlags)
-        if filterList then
-            local wrapText = true
-            GameTooltip_AddNormalLine(tooltip, BANK_TAB_DEPOSIT_ASSIGNMENTS:format(filterList), wrapText)
-        end
-    end
-    GameTooltip_AddInstructionLine(tooltip, BANK_TAB_TOOLTIP_CLICK_INSTRUCTION)
-    tooltip:Show()
-end
-
-local function OnClick(self, button)
-    if button == "RightButton" and self.TabData then
-        Funcs.DebugMessage("AccountBank", "BagButton#OnClick: recognized right click on already bought bank tab", self.TabData, self.SubContainerId)
-        self:GetParent().TabSettingsMenu.selectedTabData = self.TabData
-        self:GetParent().TabSettingsMenu:TriggerEvent(BankPanelTabSettingsMenuMixin.Event.OpenTabSettingsRequested, self.SubContainerId)
-    end
-end
-
-local function OnCustomLeave(self)
-    local tooltip = GameTooltip --BaudBagBagsFrameTooltip
-    tooltip:Hide()
-
-    self:OnLeave()
-end
 
 BaudBagAccountBagsFrameMixin = {}
 
@@ -323,18 +345,12 @@ function BaudBagAccountBagsFrameMixin:Initialize()
 
     for bag = 1, AddOnTable.BlizzConstants.ACCOUNT_BANK_CONTAINER_NUM do
         local subContainerId = AddOnTable.BlizzConstants.BANK_LAST_CONTAINER + bag
-        local bagButton = AddOnTable:CreateBagButton(BagSetType.AccountBank, subContainerId, bag, self)
-        -- bagButton:SetPoint("TOPLEFT", 8, -8 - (bag-1) * bagButton:GetHeight())
+        local bagButton = AddOnTable:CreateBagButton("BaudBag_AccountBank_BagButton", BagSetType.AccountBank, subContainerId, bag, self)
         bagButton:SetPoint("TOPLEFT", 8 + mod(bag - 1, 2) * 39, -8 - floor((bag - 1) / 2) * 39)
-        bagButton.UpdateContent = UpdateContent
-        bagButton.UpdateTooltip = UpdateTooltip
-        bagButton.OnShowOverride = OnShowOverride
-        bagButton:SetScript("OnClick", OnClick)
-        bagButton:SetScript("OnLeave", OnCustomLeave)
         accountBankSet.BagButtons[bag] = bagButton
     end
 
-    self.PurchaseFrame.PurchaseButton:SetAttribute("clickbutton", AccountBankPanel.PurchasePrompt.TabCostFrame.PurchaseButton)
+    self.PurchaseFrame.PurchaseButton:SetAttribute("overrideBankType", Enum.BankType.Account)
     local firstBagButton = accountBankSet.BagButtons[1]
     self:SetWidth(15 + (firstBagButton:GetWidth() * 2))
     self:Update()
@@ -365,13 +381,9 @@ function BaudBagAccountBagsFrameMixin:Update()
         return
     end
 
-    local cost = AddOnTable.BlizzAPI.FetchNextPurchasableBankTabCost(Enum.BankType.Account)
-    if (AddOnTable.BlizzAPI.GetMoney() >= cost) then
-        SetMoneyFrameColorByFrame(self.PurchaseFrame.MoneyFrame)
-    else
-        SetMoneyFrameColorByFrame(self.PurchaseFrame.MoneyFrame, "red")
-    end
-    MoneyFrame_Update(self.PurchaseFrame.MoneyFrame, cost)
+    local nextBankTabData = AddOnTable.BlizzAPI.FetchNextPurchasableBankTabData(Enum.BankType.Account)
+    SetMoneyFrameColorByFrame(self.PurchaseFrame.MoneyFrame, nextBankTabData.canAfford and "white" or "red");
+    MoneyFrame_Update(self.PurchaseFrame.MoneyFrame, nextBankTabData.tabCost)
     self.PurchaseFrame:Show()
     self:UpdateHeight(accountBankSet.BagButtons[1]:GetHeight(), true)
 end
@@ -417,6 +429,10 @@ function BaudBagAccountBankContainerMixin:OnContainerLoad()
     self:RegisterEvent("BAG_UPDATE_DELAYED")
 end
 
+function BaudBagAccountBankContainerMixin:OnContainerShow()
+    self.ItemDepositButton:Update()
+end
+
 function BaudBagAccountBankContainerMixin:OnContainerEvent(event, ...)
     if (event == "PLAYER_ACCOUNT_BANK_TAB_SLOTS_CHANGED" or event == "BAG_UPDATE") then
         local containerIndex = ...
@@ -449,6 +465,30 @@ function BaudBagAccountBankContainerMixin:UpdateBagHighlight()
     end
 end
 
+--[[ ##################################### Ragent Deposit Button #################################### ]]
+BaudBagAccountBankDepositButtonMixin = {}
+
+function BaudBagAccountBankDepositButtonMixin:Update()
+    local autoDepositSupported = AddOnTable.BlizzAPI.DoesBankTypeSupportAutoDeposit(AddOnTable.BlizzEnum.BankType.Account)
+    if (AddOnTable.State.AccountBankOpen and autoDepositSupported) then
+        self:Show()
+    else
+        self:Hide()
+    end
+end
+
+function BaudBagAccountBankDepositButtonMixin:OnClick()
+    PlaySound(SOUNDKIT.IG_MAINMENU_OPTION)
+    BankPanel:SetBankType(AddOnTable.BlizzEnum.BankType.Account)
+    BankPanel.AutoDepositFrame.DepositButton:AutoDepositItems()
+end
+
+function BaudBagAccountBankDepositButtonMixin:OnEnter()
+    GameTooltip:SetOwner(self)
+    GameTooltip:SetText(AddOnTable.BlizzConstants.ACCOUNT_BANK_DEPOSIT_BUTTON_LABEL)
+    GameTooltip:Show()
+end
+
 --[[ ######################################### Item Buttons ######################################### ]]
 
 ---@param self BBItemButton
@@ -460,7 +500,7 @@ end
 
 hooksecurefunc(AddOnTable, "ItemSlot_Created", function(self, bagSet, containerId, subcontainerId, slot, button)
     if (bagSet == BagSetType.AccountBank) then
-        button:Init(subcontainerId, slot)
+        button:Init(Enum.BankType.Account, subcontainerId, slot)
         button:SetScript("OnEnter", ItemButton_OnCustomEnter)
     end
 end)
@@ -472,11 +512,11 @@ function BaudBagToggleWarbandBank()
     local warbandBankSet = AddOnTable.Sets[BagSetType.AccountBank.Id]
     local firstContainer = warbandBankSet.Containers[1]
     if (firstContainer.Frame:IsShown()) then
-        firstContainer.Frame:Hide()
-        warbandBankSet:AutoClose()
+        --firstContainer.Frame:Hide()
+        warbandBankSet:Close()
     else
-        firstContainer.Frame:Show()
-        warbandBankSet:AutoOpen()
+        --firstContainer.Frame:Show()
+        warbandBankSet:Open()
     end
 end
 

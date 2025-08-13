@@ -1,4 +1,28 @@
 ﻿=== Changelog ===
+v11.2.0.1
+  - heavily reworked code to be able to disable the old bank code for retail and still use it for classic
+  - [retail] support new tab based bank system, this includes
+    - tab settings via right click on bag icon in bag overview
+    - deposit button in container header (not in offline bank)
+    - unlocking of new banks via bag overview and full bag purchase view for the first bank tab
+    - bag search
+  - [retail] updated warband bank system to be on par with regular bank system
+  - [retail] linked regular bank and warband bank in options view (enabling one will enable the other and vice versa)
+  - introduced cache migration mechanism to cope with rather substantial structure changes that will make the cache unusable
+    - [retail] caches for bank and warband bank will be reset because of the heavy under the hood changes of wow and baud bag (offline banks will not work until you visit the bank)
+  - fixes for quite a few annoying bugs:
+    - separated warband banks can now be open/closed separately (only whole set worked before)
+    - fixed bag highlighting not working for warband bank
+    - [retail] bags, bank and warband bag now should work correctly if bank/warband bank have been disabled in the settings
+    - view for open/overall bag slots in warband bank now will work even when not visiting the vendor before
+    - warband bank now has the same open/close behavior when visiting the vendor as bags and banks when the "auto open" functionality is used
+    - the warband bank bag overview in the options will now render correctly even when directly opened after wow launch
+    - reduced impact of very annoying bug where the icon borders are replaced (previously that lead to very large borders being shown around the items, this should now stay the correct size even though the border might look slightly different)
+    - fixed strange open/close behavior when mixing opening single bags and open all bags shortcut in case fading animations are disabled (behavior is still strange if fading is enabled)
+  - hopefully achieved some overall stability and performance improvements, due to heave code rework (will continue)
+  - some known issues:
+    - filters for bank bags in the bag drop down menu will not work, use the tab settings menu (right click on bag icon) instead
+    - bank and warband bank containers will use the name from baud bag options and ignore those in tab settings (but icons from tab settings work)
 v11.1.5.1
   - fixes handling of changed itemlinks for battlepets
   - fixes "shown" state of bagframe for warband bank not being followed

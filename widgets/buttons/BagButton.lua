@@ -20,33 +20,19 @@ BaudBag_BagButtonMixin = {
 }
 
 function BaudBag_BagButtonMixin:Initialize()
-    self.IsBankContainer = self.BagSetType == BagSetType.Bank
-    self.IsInventoryContainer = self.BagSetType == BagSetType.Backpack
     self.ContainerNotPurchasedYet = false
-
-    if (self.IsInventoryContainer) then
-        local slotPrefix = self.SubContainerId <= AddOnTable.BlizzConstants.BACKPACK_CONTAINER_NUM and "Bag" or "ReagentBag"
-        local id, textureName = AddOnTable.BlizzAPI.GetInventorySlotInfo(slotPrefix..self.BagIndex.."Slot")
-        self:SetID(id)
-    end
-
     self:UpdateContent()
 end
 
 function BaudBag_BagButtonMixin:UpdateContent()
-    if (self.IsInventoryContainer or AddOnTable.State.BankOpen) then
-        local inventorySlotId = self:GetInventorySlot()
-        local textureName = AddOnTable.BlizzAPI.GetInventoryItemTexture("player", inventorySlotId)
-        local quality = AddOnTable.BlizzAPI.GetInventoryItemQuality("player", inventorySlotId)
-        local itemLink = AddOnTable.BlizzAPI.GetInventoryItemLink("player", inventorySlotId)
+    local inventorySlotId = self:GetInventorySlot()
+    local textureName = AddOnTable.BlizzAPI.GetInventoryItemTexture("player", inventorySlotId)
+    local quality = AddOnTable.BlizzAPI.GetInventoryItemQuality("player", inventorySlotId)
+    local itemLink = AddOnTable.BlizzAPI.GetInventoryItemLink("player", inventorySlotId)
 
-        self.Icon:SetTexture(textureName)
-        self.Icon:SetDesaturated(AddOnTable.BlizzAPI.IsInventoryItemLocked(inventorySlotId))
-        self:SetQuality(quality)
-    else
-        local bagCache = AddOnTable.Cache:GetBagCache(self.SubContainerId)
-        self:SetItem(bagCache.BagLink)
-    end
+    self.Icon:SetTexture(textureName)
+    self.Icon:SetDesaturated(AddOnTable.BlizzAPI.IsInventoryItemLocked(inventorySlotId))
+    self:SetQuality(quality)
 end
 
 function BaudBag_BagButtonMixin:SetQuality(quality)
@@ -102,60 +88,16 @@ end
 end]]
 
 function BaudBag_BagButtonMixin:GetBagID()
-    if ( self.IsInventoryContainer ) then
-        if ( self:GetID() == 0 ) then
-            return 0
-        end
-
-        -- TODO: this seems like a global... do something special with the wrapper?
-        return (self:GetID() - CharacterBag0Slot:GetID()) + 1
-    end
-
-    if (self.IsBankContainer) then
-        return self:GetID() + AddOnTable.BlizzConstants.BACKPACK_LAST_CONTAINER
-    end
+    -- this needs to be bag specific, so override for backpacks and banks
 end
 
 function BaudBag_BagButtonMixin:GetInventorySlot()
-    if (self.IsInventoryContainer) then
-        return self:GetID()
-    end
-
-    if (self.IsBankContainer) then
-        --[[ for reagent related BagButtons ]]
-        if (self.SubContainerId == REAGENTBANK_CONTAINER) then
-            return ReagentBankButtonIDToInvSlotID( self:GetID() )
-        end
-
-        --[[ for bank related BagButtons ]]
-        return BankButtonIDToInvSlotID( self:GetID(), 1 )
-    end
+    -- this needs to be bag specific, so override for backpacks and banks
 end
 
 function BaudBag_BagButtonMixin:UpdateTooltip()
     GameTooltip:SetOwner(self, "ANCHOR_LEFT")
 
-    if (self.IsInventoryContainer) then
-        AddOnTable.Functions.DebugMessage("Tooltip", "[BagButton:UpdateTooltip] bag belongs to inventory, updating with inventory item logic for [bagId]", self.SubContainerId)
-        GameTooltip:SetInventoryItem("player", self:GetID())
-
-        if AddOnTable.BlizzAPI.CanContainerUseFilterMenu( self.SubContainerId ) then
-            for i, flag in AddOnTable.BlizzAPI.EnumerateBagGearFilters() do
-                if AddOnTable.BlizzAPI.GetBagSlotFlag(self.SubContainerId, flag) then
-                    GameTooltip:AddLine(AddOnTable.BlizzConstants.BAG_FILTER_ASSIGNED_TO:format(AddOnTable.BlizzConstants.BAG_FILTER_LABELS[flag]));
-                    break;
-                end
-            end
-        end
-    end
-
-    if (self.IsBankContainer) then
-        local bagCache = AddOnTable.Cache:GetBagCache(self.SubContainerId)
-        if (bagCache.BagLink) then
-            AddOnTable.Functions.DebugMessage("Tooltip", "[BagButton:UpdateTooltip] Showing cached item info [bagId, cacheEntry]", self.SubContainerId, bagCache.BagLink)
-            AddOnTable.Functions.ShowLinkTooltip(self, bagCache.BagLink)
-        end
-    end
 
     GameTooltip:Show()
     BaudBagModifyBagTooltip(self.SubContainerId)
@@ -167,6 +109,7 @@ function BaudBag_BagButtonMixin:Pickup()
 	AddOnTable.BlizzAPI.PickupBagFromSlot( inventoryID )
 end
 
+--[[ actually doesn't only puts items in bags, but also toggles visibility ]]
 function BaudBag_BagButtonMixin:PutItemInBag()
     local hadItem = AddOnTable.BlizzAPI.CursorHasItem()
 	local inventoryID = self:GetInventorySlot()
@@ -209,35 +152,6 @@ function BaudBag_BagButtonMixin:OnEvent( event, ... )
 		end
 
         self:SetItem(self.pendingInfo.item)
-    end
-end
-
-local bagButtonRelatedEvents = {
-    "MERCHANT_UPDATE",
-    "PLAYERBANKSLOTS_CHANGED",
-    "ITEM_LOCK_CHANGED",
-    "CURSOR_CHANGED",
-    "UPDATE_INVENTORY_ALERTS",
-    "AZERITE_ITEM_POWER_LEVEL_CHANGED",
-    "AZERITE_EMPOWERED_ITEM_SELECTION_UPDATED",
-    "BAG_CONTAINER_UPDATE",
-}
-function BaudBag_BagButtonMixin:OnShow()
-    if (self.IsInventoryContainer) then
-        FrameUtil.RegisterFrameForEvents(self, bagButtonRelatedEvents)
-        self:UpdateContent()
-    end
-
-    self:OnShowOverride()
-end
-
-function BaudBag_BagButtonMixin:OnShowOverride()
-    -- intentionally empty, to be overridden by specific bag button flavors
-end
-
-function BaudBag_BagButtonMixin:OnHide()
-    if (self.IsInventoryContainer) then
-        FrameUtil.UnregisterFrameForEvents(self, bagButtonRelatedEvents)
     end
 end
 
@@ -297,11 +211,11 @@ function BaudBag_BagButtonMixin:OnReceiveDrag()
 end
 
 ---@return BagButton
-function AddOnTable:CreateBagButton(bagSetType, subContainerId, bagIndex, parentFrame, name)
+function AddOnTable:CreateBagButton(template, bagSetType, subContainerId, bagIndex, parentFrame, name)
     if (name == nil) then
         name = "BBBagSet"..bagSetType.Id.."Bag"..bagIndex.."Slot"
     end
-    local bagButton = CreateFrame("Button", name, parentFrame, "BaudBag_BagButton")
+    local bagButton = CreateFrame("Button", name, parentFrame, template)
     bagButton.BagSetType = bagSetType
     bagButton.BagIndex = bagIndex
     bagButton.Bag = subContainerId
@@ -311,33 +225,6 @@ function AddOnTable:CreateBagButton(bagSetType, subContainerId, bagIndex, parent
     AddOnTable:BagSlot_Created(bagSetType, subContainerId, bagButton)
 
     return bagButton
-end
-
-function AddOnTable:CreateBackpackBagButton(bagIndex, parentFrame)
-    local bagSetType = BagSetType.Backpack
-    local subContainerId = bagIndex + 1
-
-    return AddOnTable:CreateBagButton(bagSetType, subContainerId, bagIndex, parentFrame)
-end
-
-function AddOnTable:CreateReagentBagButton(bagIndex, parentFrame)
-    local bagSetType = BagSetType.Backpack
-    local subContainerId = bagIndex + AddOnTable.BlizzConstants.BACKPACK_CONTAINER_NUM + 1
-    local name = "BBBagSet1ReagentBag"..bagIndex.."Slot"
-
-    return AddOnTable:CreateBagButton(bagSetType, subContainerId, bagIndex, parentFrame, name)
-end
-
-function AddOnTable:CreateBankBagButton(bagIndex, parentFrame)
-    -- Attention:
-    -- "PaperDollFrame" calls GetInventorySlotInfo on the button created here
-    -- For this to work the name bas to be "BagXSlot" with 9 random chars before that
-    -- TODO: check if this is actually needed or if we can somehow break the connection to that!
-    local bagSetType = BagSetType.Bank
-    local subContainerId = AddOnTable.BlizzConstants.BACKPACK_LAST_CONTAINER + bagIndex
-    local name = "BBBagSet"..bagSetType.Id.."Bag"..bagIndex.."Slot"
-
-    return AddOnTable:CreateBagButton(bagSetType, subContainerId, bagIndex, parentFrame, name)
 end
 
 function AddOnTable:BagSlot_Created(bagSetType, bag, button)

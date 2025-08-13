@@ -31,6 +31,7 @@ if (GetLocale() == "deDE") then
     L.CheckTooltip = "Taschen zusammenfassen"
     L.Enabled = "Aktiviert"
     L.EnabledTooltip = "Aktiviere oder Deaktiviere BaudBag für diesen Taschen-Typ."
+    L.EnabledLinkedSet = "Dieser Taschen-Typ ist mit dem Typ '%s' verknüpft. Änderungen dieses Typs werden auf den anderen übertragen."
     L.CloseAll = "Alle schließen"
     L.CloseAllTooltip = "Schließt alle Taschen des Sets wenn der erste Container (Rucksack/Bank) geschlossen wird."
     L.SellJunk = "Unrat verkaufen"
@@ -74,4 +75,5 @@ if (GetLocale() == "deDE") then
     L.OptionsResetContainerPositionTooltip = "Verwende dies um einen aus dem Bildschirmbreich geschobenen Container in die Mitte des Bildschirms zu versetzen."
     L.AccountBank = "Kriegsmeutenbank"
     L.ShowAccountBank = "Kriegsmeutenbank anzeigen"
+    L.Cache_Migration_110200 = "BaudBag update info: Aufgrund von massiven Änderungen am Bank-System, mussten die Daten für die offline Bank resettet werden. Bitte besuche die Bank einmalig um die Daten neu zu generieren. Die offline Bank wird sich nicht öffnen bis die Daten generiert wurden!"
 end

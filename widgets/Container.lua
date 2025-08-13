@@ -164,7 +164,7 @@ function Prototype:UpdateBackground()
     local backgroundId = BBConfig[self.Frame.BagSet][self.Id].Background
     local backdrop = self.Frame.Backdrop
     backdrop:SetFrameLevel(self.Frame:GetFrameLevel())
-    -- This shifts the name of the bank frame over to make room for the extra button
+    -- This shifts the name of the first bag frame over to make room for the extra button (bags button)
     local shiftName = (self.Frame:GetID() == 1) and 25 or 0
     
     local left, right, top, bottom = AddOnTable["Backgrounds"][backgroundId]:Update(self.Frame, backdrop, shiftName)
@@ -199,10 +199,7 @@ end
 
 function Prototype:GetFilterType()
     for _, container in pairs(self.SubContainers) do
-        local id = container.ContainerId
-        if (id ~= BACKPACK_CONTAINER) and (id ~= BANK_CONTAINER) and (id ~= REAGENTBANK_CONTAINER) then
-            return container:GetFilterType()
-        end
+        return self.BagSet.FilterData.GetFilterType(container)
     end
 
     return nil
@@ -210,51 +207,19 @@ end
 
 function Prototype:SetFilterType(type, value)
     for _, container in pairs(self.SubContainers) do
-        local id = container.ContainerId
-        if (id ~= BACKPACK_CONTAINER) and (id ~= BANK_CONTAINER) and (id ~= REAGENTBANK_CONTAINER) then
-            container:SetFilterType(type, value)
-        end
+        self.BagSet.FilterData.SetFilterType(container, type, value)
     end
 end
 
 function Prototype:GetCleanupIgnore()
     for _, container in pairs(self.SubContainers) do
-        local id = container.ContainerId
-        if (id == BACKPACK_CONTAINER) then
-            return AddOnTable.BlizzAPI.GetBackpackAutosortDisabled()
-        end
-        if (id == AddOnTable.BlizzConstants.BANK_CONTAINER or id == AddOnTable.BlizzConstants.REAGENTBANK_CONTAINER) then
-            return AddOnTable.BlizzAPI.GetBankAutosortDisabled()
-        end
-        if (self.BagSet.Id == BagSetType.Backpack.Id) then
-            return AddOnTable.BlizzAPI.GetBagSlotFlag(id, AddOnTable.BlizzAPI.GetIgnoreCleanupFlag())
-        end
-        if (self.BagSet.Id == BagSetType.Bank.Id) then
-            -- TODO: check if the ID is really correct for the newer versions of the API, maybe we need that in the API wrapper instead!
-            return AddOnTable.BlizzAPI.GetBankBagSlotFlag(id - AddOnTable.BlizzConstants.BACKPACK_LAST_CONTAINER, AddOnTable.BlizzAPI.GetIgnoreCleanupFlag())
-        end
-
-        -- fallback
-        return false
+        return self.BagSet.FilterData.GetCleanupIgnore(container)
     end
 end
 
 function Prototype:SetCleanupIgnore(value)
     for _, container in pairs(self.SubContainers) do
-        local id = container.ContainerId
-        if (id == BACKPACK_CONTAINER) then
-            AddOnTable.BlizzAPI.SetBackpackAutosortDisabled(value)
-        end
-        if (id == BANK_CONTAINER) then
-            AddOnTable.BlizzAPI.SetBankAutosortDisabled(value)
-        end
-        if (self.BagSet.Id == BagSetType.Backpack.Id and id ~= BACKPACK_CONTAINER) then
-            AddOnTable.BlizzAPI.SetBagSlotFlag(id, AddOnTable.BlizzAPI.GetIgnoreCleanupFlag(), value)
-        end
-        if (self.BagSet.Id == BagSetType.Bank.Id and id ~= BANK_CONTAINER) then
-            -- TODO: check if the ID is really correct for the newer versions of the API, maybe we need that in the API wrapper instead!
-            AddOnTable.BlizzAPI.SetBankBagSlotFlag(id - AddOnTable.BlizzConstants.BACKPACK_LAST_CONTAINER, AddOnTable.BlizzAPI.GetIgnoreCleanupFlag(), value)
-        end
+        self.BagSet.FilterData.SetCleanupIgnore(container, value)
     end
 end
 
@@ -300,13 +265,15 @@ end
 function BaudBagContainerMixin:OnShow(event, ...)
     AddOnTable.Functions.DebugMessage("BagOpening", "BaudBagContainer_OnShow was called", self:GetName())
 	
-    -- check if the container was open before and closing now
-    if self.FadeStart then
-        return
+    if BBConfig.EnableFadeAnimation then
+        -- check if the container was open before and closing now
+        if self.FadeStart then
+            return
+        end
+        
+        -- container seems to not be visible, open and update
+        self.FadeStart = GetTime()
     end
-	
-    -- container seems to not be visible, open and update
-    self.FadeStart = GetTime()
     PlaySound(SOUNDKIT.IG_BACKPACK_OPEN)
     local bagSet = AddOnTable.Sets[self.BagSet]
     ---@type Container
@@ -339,7 +306,7 @@ function BaudBagContainerMixin:OnUpdate(event, ...)
         AddOnTable.Sets[self.BagSet]:UpdateSlotInfo()
     end
 
-    if (self.FadeStart) then
+    if (AddOnTable.Config.EnableFadeAnimation and self.FadeStart) then
         local Alpha = (GetTime() - self.FadeStart) / FadeTime
         if not BBConfig.EnableFadeAnimation then
             -- immediate show/hide without animation
@@ -364,36 +331,34 @@ end
 
 function BaudBagContainerMixin:OnHide(event, ...)
     AddOnTable.Functions.DebugMessage("BagOpening", "BaudBagContainer_OnHide was called", self:GetName())
-    -- correctly handle if this is called while the container is still fading out
-    if self.Closing then
-        if self.FadeStart then
-            self:Show()
+    if (AddOnTable.Config.EnableFadeAnimation) then
+        -- correctly handle if this is called while the container is still fading out
+        if self.Closing then
+            if self.FadeStart then
+                self:Show()
+            end
+            return
         end
-        return
-    end
 
-    -- set vars for fading out ans start process
-    self.FadeStart = GetTime()
-    self.Closing = true
+        -- set vars for fading out ans start process
+        self.FadeStart = GetTime()
+        self.Closing = true
+    end
     PlaySound(SOUNDKIT.IG_BACKPACK_CLOSE)
     self.AutoOpened = false
-
+    
     local containerObject = AddOnTable.Sets[self.BagSet].Containers[self:GetID()]
     containerObject:UpdateBagHighlight()
-
-    --[[TODO: look into merging the set specific close handling!!!]]--
-    --[[
-    if the option entry requires it close all remaining containers of the bag set
-    (first the bag set so the "offline" title doesn't show up before closing and then the bank to disconnect)
-    ]]--
+    
+    -- handle "close all" case
     if (self:GetID() == 1) and (BBConfig[self.BagSet].Enabled) and (BBConfig[self.BagSet].CloseAll) then
-        if (self.BagSet == BagSetType.Bank.Id) and AddOnTable.State.BankOpen then
-            AddOnTable.BlizzAPI.CloseBankFrame()
-        end
         AddOnTable.Sets[self.BagSet]:Close()
+        AddOnTable.Sets[self.BagSet].Type.CustomCloseAllFunction()
     end
-
-    self:Show()
+    
+    if (AddOnTable.Config.EnableFadeAnimation) then
+        self:Show()
+    end
     AddOnTable.Sets[self.BagSet].Containers[self:GetID()].Menu:Hide()
 end
 

@@ -135,18 +135,6 @@ function BaudBagSearchFrame_ShowFrame(ParentContainer, Scale, Background)
     EditBox:SetFocus()
 end
 
-local function isSupportedBag(bagId)
-    if (bagId == AddOnTable.BlizzConstants.KEYRING_CONTAINER) then
-        return false
-    end
-
-    if (bagId == AddOnTable.BlizzConstants.REAGENTBANK_CONTAINER and not AddOnTable.State.ReagentBankSupported) then
-        return false
-    end
-    
-    return true
-end
-
 function BaudBagSearchFrameEditBox_OnTextChanged(self, isUserInput)
     AddOnTable.Functions.DebugMessage("Search", "Changed search phrase, searching open bags")
     local compareString = self:GetText()
@@ -158,79 +146,74 @@ function BaudBagSearchFrameEditBox_OnTextChanged(self, isUserInput)
     end
 	
     -- go through all bags to find the open ones
-    local SubBagObject, SubBag, Frame, Open, ItemButton, Link, Name, Texture
+    local SubBag, Open, Link, Name, Texture
     local Status, Result
     local bagCache, slotCache
-    for Bag = AddOnTable.BlizzConstants.REAGENTBANK_CONTAINER, LastBagID do
-        if isSupportedBag(Bag) then
-            SubBagObject = AddOnTable.SubBags[Bag]
-            SubBag = SubBagObject.Frame
-            Open	= SubBag:IsShown()and SubBag:GetParent():IsShown() and not SubBag:GetParent().Closing
-            bagCache = AddOnTable.Cache:GetBagCache(SubBag:GetID())
+    for _,SubBagObject in pairs(AddOnTable.SubBags) do
+        SubBag = SubBagObject.Frame
+        Open	= SubBag:IsShown()and SubBag:GetParent():IsShown() and not SubBag:GetParent().Closing
+        bagCache = AddOnTable.Cache:GetBagCache(SubBag:GetID())
 
-            -- if the bag is open go through its items and compare the itemname
-            if (Open) then
-                AddOnTable.Functions.DebugMessage("Search", "Bag is open, going through items (BagID)", Bag)
-                BagsSearched[Bag] = true
+        -- if the bag is open go through its items and compare the itemname
+        if (Open) then
+            AddOnTable.Functions.DebugMessage("Search", "Bag is open, going through items (BagID)", Bag)
+            BagsSearched[SubBagObject.ContainerId] = true
 
-                for Slot = 1, SubBagObject.BagSet.GetSize(Bag) do
-                    ItemButton = _G[SubBag:GetName().."Item"..Slot]
-                    slotCache = bagCache and bagCache[Slot] or nil
+            for _, ItemButton in pairs(SubBagObject.Items) do
+                slotCache = bagCache and bagCache[ItemButton.SlotIndex] or nil
 
-                    -- get item link according to the type of bag
-                    if (SubBag.BagSet ~= 2) or AddOnTable.State.BankOpen then
-                        Link = AddOnTable.BlizzAPI.GetContainerItemLink(SubBag:GetID(), Slot)
-                    elseif slotCache then
-                        Link = slotCache.Link
-                    end
+                if AddOnTable.Sets[SubBag.BagSet].Type.ShouldUseCache() then
+                    Link = slotCache and slotCache.Link or nil
+                else
+                    Link = AddOnTable.BlizzAPI.GetContainerItemLink(SubBag:GetID(), ItemButton.SlotIndex)
+                end
 
-                    -- get the name for that link
-                    if Link then
-                        -- debug message
-                        local printableLink = gsub(Link, "\124", "\124\124")
-                        AddOnTable.Functions.DebugMessage("Search", "Found a link (link)", printableLink)
+                -- get the name for that link
+                if Link then
+                    -- debug message
+                    local printableLink = gsub(Link, "\124", "\124\124")
+                    AddOnTable.Functions.DebugMessage("Search", "Found a link (link)", printableLink)
 
-                        -- we can have different types of links, usually it is an item...
-                        if (strmatch(Link, "|Hitem:")) then
-                            Name, _, _, _, _, _, _, _, _, _ = AddOnTable.BlizzAPI.GetItemInfo(Link)
+                    -- we can have different types of links, usually it is an item...
+                    if (strmatch(Link, "|Hitem:")) then
+                        Name, _, _, _, _, _, _, _, _, _ = AddOnTable.BlizzAPI.GetItemInfo(Link)
 
-                            -- ... or a cages battle pet ...
-                        elseif (strmatch(Link, "|Hbattlepet:")) then
-                            local _, _, speciesID, _, _, _, _, _, battlePetID = strsplit(":", Link)
-                            Name, _, _, _, _, _, _, _, _, _= C_PetJournal.GetPetInfoBySpeciesID(speciesID)
+                        -- ... or a caged battle pet ...
+                    elseif (strmatch(Link, "|Hbattlepet:")) then
+                        local _, _, speciesID, _, _, _, _, _, battlePetID = strsplit(":", Link)
+                        Name, _, _, _, _, _, _, _, _, _= C_PetJournal.GetPetInfoBySpeciesID(speciesID)
 
-                            -- ... we don't know about everything else
-                        else
-                            Name = "Unknown"
-                        end
-                    end
-
-                    -- add transparency if search active but not a result
-                    Texture = ItemButton
-                    if (Link and compareString ~= "") then
-                        AddOnTable.Functions.DebugMessage("Search", "Searching (searchString, itemName)", compareString, Name)
-
-                        -- first run string search and go through results later (because of error handling)
-                        Status, Result = pcall(string.find, string.lower(Name), string.lower(compareString))
-
-                        -- find was run successfull: act depending on result
-                        if (Status) then
-                            --if (string.find(string.lower(Name), string.lower(compareString)) == nil) then
-                            if (Result == nil) then
-                                AddOnTable.Functions.DebugMessage("Search", "Itemname does not match")
-                                Texture:SetAlpha(0.2)
-                            else
-                                AddOnTable.Functions.DebugMessage("Search", "Item seems to match")
-                                Texture:SetAlpha(1)
-                            end
-                            -- find failed, create debug message
-                        else
-                            AddOnTable.Functions.DebugMessage("Search", "current search creates problem (result)", Result)
-                            return
-                        end
+                        -- ... we don't know about everything else
                     else
-                        Texture:SetAlpha(1)
+                        Name = "Unknown"
                     end
+                end
+
+                -- add transparency if search active but not a result
+                Texture = ItemButton
+                if (Link and compareString ~= "") then
+                    AddOnTable.Functions.DebugMessage("Search", "Searching (searchString, itemName)", compareString, Name)
+
+                    -- first run string search and go through results later (because of error handling)
+                    Status, Result = pcall(string.find, string.lower(Name), string.lower(compareString))
+
+                    -- find was run successfull: act depending on result
+                    if (Status) then
+                        --if (string.find(string.lower(Name), string.lower(compareString)) == nil) then
+                        if (Result == nil) then
+                            AddOnTable.Functions.DebugMessage("Search", "Itemname does not match")
+                            Texture:SetAlpha(0.2)
+                        else
+                            AddOnTable.Functions.DebugMessage("Search", "Item seems to match")
+                            Texture:SetAlpha(1)
+                        end
+                        -- find failed, create debug message
+                    else
+                        AddOnTable.Functions.DebugMessage("Search", "current search creates problem (result)", Result)
+                        return
+                    end
+                else
+                    Texture:SetAlpha(1)
                 end
             end
         end
@@ -238,18 +221,14 @@ function BaudBagSearchFrameEditBox_OnTextChanged(self, isUserInput)
 end
 
 local function RemoveSearchHighlights()
-    local SubBagObject, SubBag, Frame, Open, ItemButton, Link, Name, Texture
-    for Bag = -3, LastBagID do
-        if not (Bag == -2) then
-            if (BagsSearched[Bag]) then
-                SubBagObject = AddOnTable.SubBags[Bag]
-                SubBag = SubBagObject.Frame
-                for Slot = 1, SubBagObject.BagSet.GetSize(Bag) do
-                    ItemButton = _G[SubBag:GetName().."Item"..Slot]
-                    ItemButton:SetAlpha(1)
-                end
-                BagsSearched[Bag] = false
+    local SubBagObject
+    for Bag,Searched in  pairs(BagsSearched) do
+        if (Searched) then
+            SubBagObject = AddOnTable.SubBags[Bag]
+            for _,ItemButton in pairs(SubBagObject.Items) do
+                ItemButton:SetAlpha(1)
             end
+            BagsSearched[Bag] = false
         end
     end
 end

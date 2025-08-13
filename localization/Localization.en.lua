@@ -41,6 +41,7 @@ AddOnTable["Localized"] = {
     CheckTooltip = "Joined bags",
     Enabled = "Enabled",
     EnabledTooltip = "Enable or disable BaudBag for this bag set.",
+    EnabledLinkedSet = "This bag set is linked with bag set '%s'. Changing one will also change the other.",
     CloseAll = "Close all",
     CloseAllTooltip = "Close all bags of this set when the first container (bank or backpack) is closed.",
     SellJunk = "Sell Junk",
@@ -84,4 +85,5 @@ AddOnTable["Localized"] = {
     OptionsResetContainerPositionTooltip = "Use this if you dragged the selected container of screen by accident.",
     AccountBank = "Warband Bank",
     ShowAccountBank = "Show Warband Bank",
+    Cache_Migration_110200 = "BaudBag migration notice: Due to massive changes in the bank system, the cache for bank and warband bank had to be erazed. Please visit the bank once, to refill. Offline banks will not open until cache is refilled!",
 }

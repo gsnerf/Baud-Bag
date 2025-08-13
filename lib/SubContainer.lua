@@ -169,78 +169,8 @@ function Prototype:UpdateItemOverlays()
     end
 end
 
-local function UpdateBackpackHighlight(subContainer)
-    local open = subContainer:IsOpen()
-    if (subContainer.ContainerId == AddOnTable.BlizzConstants.BACKPACK_CONTAINER) then
-        if (MainMenuBarBackpackButton.SlotHighlightTexture) then
-            if (open) then
-                MainMenuBarBackpackButton.SlotHighlightTexture:Show()
-            else
-                MainMenuBarBackpackButton.SlotHighlightTexture:Hide()
-            end
-        else
-            MainMenuBarBackpackButton:SetChecked(open)
-        end
-    else
-        local backpackSet = AddOnTable.Sets[BagSetType.Backpack.Id]
-        local bagId = subContainer.ContainerId -1
-        local mainMenuBarButton = _G["CharacterBag"..bagId.."Slot"]
-        local baudBagBagButton = backpackSet.BagButtons[bagId]
-
-        if (subContainer.ContainerId == 5) then
-            bagId = subContainer.ContainerId - (AddOnTable.BlizzConstants.BACKPACK_FIRST_CONTAINER + AddOnTable.BlizzConstants.BACKPACK_CONTAINER_NUM + 1)
-            mainMenuBarButton = _G["CharacterReagentBag"..bagId.."Slot"]
-            baudBagBagButton = backpackSet.ReagentBagButtons[bagId]
-        end
-        
-        if (open) then
-            if (mainMenuBarButton.SlotHighlightTexture) then
-                mainMenuBarButton.SlotHighlightTexture:Show()
-            else
-                mainMenuBarButton:SetChecked(true)
-            end
-            baudBagBagButton.SlotHighlightTexture:Show()
-        else
-            if (mainMenuBarButton.SlotHighlightTexture) then
-                mainMenuBarButton.SlotHighlightTexture:Hide()
-            else
-                mainMenuBarButton:SetChecked(false)
-            end
-            baudBagBagButton.SlotHighlightTexture:Hide()
-        end
-    end
-end
-
-local function UpdateBankBagHighlight(subContainer)
-    local open = subContainer:IsOpen()
-    
-    if (subContainer.ContainerId == AddOnTable.BlizzConstants.REAGENTBANK_CONTAINER) then
-        if (open) then
-            _G["BBReagentsBag"].SlotHighlightTexture:Show()
-        else
-            _G["BBReagentsBag"].SlotHighlightTexture:Hide()
-        end
-        return
-    end
-
-    if (subContainer.ContainerId ~= AddOnTable.BlizzConstants.BANK_CONTAINER) then
-        local button = AddOnTable.Sets[BagSetType.Bank.Id].BagButtons[subContainer.ContainerId - AddOnTable.BlizzConstants.BACKPACK_LAST_CONTAINER]
-        if (button) then
-            if (open) then
-                button.SlotHighlightTexture:Show()
-            else
-                button.SlotHighlightTexture:Hide()
-            end
-        end
-    end
-end
-
 function Prototype:UpdateOpenBagHighlight()
-    if (self.BagSet.Id == BagSetType.Backpack.Id) then
-        UpdateBackpackHighlight(self)
-    elseif (self.BagSet.Id == BagSetType.Bank.Id) then
-        UpdateBankBagHighlight(self)
-    end
+    self.BagSet.UpdateOpenBagHighlight(self)
 end
 
 function Prototype:SetSlotHighlighting(shouldHighlight)
@@ -257,7 +187,8 @@ function Prototype:GetSlotInfo()
 
         -- if we don't have a hit in the cache make sure to return values that make sense
         local link = cache.BagLink
-        if not AddOnTable.Functions.IsDefaultContainer(self.ContainerId) and (not link or (AddOnTable.BlizzAPI.GetItemFamily(link) ~= 0)) then
+        local tabData = cache.TabData
+        if ((not tabData) and (not link or (AddOnTable.BlizzAPI.GetItemFamily(link) ~= 0))) or cache.Size == nil then
             return 0, 0
         end
 
@@ -279,13 +210,8 @@ function Prototype:GetFilterType()
     if (not self.FilterType) then
         local funcToExec
 
-        if (self.BagSet.Id == BagSetType.Backpack.Id) then
-            funcToExec = AddOnTable.BlizzAPI.GetBagSlotFlag
-        end
-        if (self.BagSet.Id == BagSetType.Bank.Id) then
-            funcToExec = AddOnTable.BlizzAPI.GetBankBagSlotFlag
-        end
-
+        funcToExec = self.BagSet.BagFilterGetFunction
+        
         if (funcToExec) then
             for _, flag in  AddOnTable.BlizzAPI.EnumerateBagGearFilters() do
                 if (funcToExec(self.ContainerId, flag)) then
@@ -299,12 +225,7 @@ function Prototype:GetFilterType()
 end
 
 function Prototype:SetFilterType(type, value)
-    if (self.BagSet.Id == BagSetType.Backpack.Id) then
-        AddOnTable.BlizzAPI.SetBagSlotFlag(self.ContainerId, type, value)
-    end
-    if (self.BagSet.Id == BagSetType.Bank.Id) then
-        AddOnTable.BlizzAPI.SetBankBagSlotFlag(self.ContainerId, type, value)
-    end
+    self.BagSet.BagFilterSetFunction(self.ContainerId, type, value)
     self.FilterType = nil
 end
 
@@ -324,35 +245,4 @@ function AddOnTable:CreateSubContainer(bagSetType, containerId)
     subContainer.ContainerId = containerId
     subContainer.Items = {}
     return subContainer
-end
-
-local function EventUpdateFunction(self, event, ...)
-    -- only update if the event is for the current bag!
-    local idOfBagToUpdate = ...
-    if (self.ContainerId ~= idOfBagToUpdate) then
-        return
-    end
-    AddOnTable.Functions.DebugMessage("ItemHandle", "Event fired for subBag, Params[Event, ID]", event, self.ContainerId)
-    self:Update(event, ...)
-end
-
-local Events = {
-    BAG_UPDATE,
-    BAG_UPDATE_COOLDOWN = EventUpdateFunction,
-    BAG_CLOSED,
-    ITEM_LOCK_CHANGED = EventUpdateFunction,
-    UPDATE_INVENTORY_ALERTS = EventUpdateFunction
-}
-
--- TODO: don't know if this mixup of object orientation and wow function handly really works like that
-function Prototype:OnLoad(self, event, ...)
-
-end
-
--- TODO: don't know if this mixup of object orientation and wow function handly really works like that
-function Prototype:OnEvent(self, event, ...)
-    if not self:GetParent():IsShown() or (self:GetID() >= 6) and not AddOnTable.State.BankOpen then
-        return
-    end
-    Events[event](self, event, ...)
 end

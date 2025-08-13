@@ -4,8 +4,6 @@
     <Button name="BaudBag_BagButton" mixin="BaudBag_BagButtonMixin" virtual="true">
 		<KeyValues>
 			<KeyValue key="isBag" value="1" type="number" />
-			<KeyValue key="IsBankContainer" value="false" type="boolean" />
-			<KeyValue key="IsInventoryContainer" value="false" type="boolean" />
 			<KeyValue key="HighlightBag" value="false" type="boolean" />
 			<KeyValue key="HighlightBagOn" value="false" type="boolean" />
 			<KeyValue key="showMatchHighlight" value="false" type="boolean" />
@@ -53,8 +51,6 @@
 		<Scripts>
 			<OnLoad  method="OnLoad" />
 			<OnEvent method="OnEvent" />
-			<OnShow  method="OnShow" />
-			<OnHide  method="OnHide" />
 			<OnEnter method="OnEnter" />
 			<OnUpdate method="OnUpdate" />
 			<OnLeave method="OnLeave" />

@@ -1,8 +1,7 @@
 ## Author: Thurmal (Author), Suddendeath2000 (Former Author), Baudzila (Original Author)
 ## DefaultState: Enabled
-## Interface: 110105
+## Interface: 110200
 ## LoadOnDemand: 0
-## Dependencies: Blizzard_VoidStorageUI
 ## OptionalDeps: CaedronWardrobe, Masque, Pawn
 ## Notes: Allows you to combine bags as well as customize their display.
 ## Notes-zhCN: 以整合方式显示你的背包和银行|N本地化:Isler
@@ -11,7 +10,7 @@
 ## Title: Baud Bag
 ## Title-zhCN: 背包整合 Baud Bag
 ## Title-zhTW: 背包整合 Baud Bag
-## Version: 11.1.5.1
+## Version: 11.2.0.1
 ## IconAtlas: bag-main
 ## Category: Inventory
 ## Category-enUS: Inventory
@@ -56,10 +55,12 @@ config\ConfigOptions.lua
 BaudBagConfig.lua
 BaudBagCache.lua
 BaudBagToolTips.lua
+sets/backpack/BagButton.xml
 Backpack.lua
-Bank.lua
+sets\bank\BagButton.xml
+sets\bank\Bank.xml
+sets/accountbank/BagButton.xml
 AccountBank.xml
-ReagentBank.xml
 frames/Options.xml
 frames\BaudBagSearchFrame.xml
 Overrides.lua

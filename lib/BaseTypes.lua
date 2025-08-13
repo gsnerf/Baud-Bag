@@ -24,6 +24,9 @@ BagSetType = {
             for bag = AddOnTable.BlizzConstants.BACKPACK_FIRST_CONTAINER, AddOnTable.BlizzConstants.BACKPACK_LAST_CONTAINER do
                 table.insert(BagSetType.Backpack.ContainerIterationOrder, bag)
             end
+            for id = AddOnTable.BlizzConstants.BACKPACK_FIRST_CONTAINER, AddOnTable.BlizzConstants.BACKPACK_LAST_CONTAINER do
+                AddOnTable.ContainerIdOptionsIndexMap[id] = id + 1
+            end
         end,
         -- backpack + number of additional bags
         NumberOfContainers = 1 + AddOnTable.BlizzConstants.BACKPACK_TOTAL_BAGS_NUM,
@@ -44,6 +47,15 @@ BagSetType = {
             end,
             Background = 1
         },
+        ApplyConfigRestorationSpecificalities = function(configObject)
+            -- make sure the reagent bag is NOT joined by default!
+            if (configObject[BagSetType.Backpack.Id].Joined[6] == nil) then
+                AddOnTable.Functions.DebugMessage("Config", "- reagent bag join for BagSet "..BagSetType.Backpack.Id.." damaged or missing, creating now")
+                configObject[BagSetType.Backpack.Id].Joined[6] = false;
+            end
+        end,
+        CanContainerBeJoined = function(subContainerId) return subContainerId ~= AddOnTable.BlizzConstants.BACKPACK_FIRST_REAGENT_CONTAINER end,
+        LinkedSet = function() return nil end,
         GetContainerTemplate = function(containerId) return "BaudBagContainerTemplate" end,
         GetItemButtonTemplate = function(containerId) return "ContainerFrameItemButtonTemplate" end,
         GetSize = function(containerId) return AddOnTable.BlizzAPI.GetContainerNumSlots(containerId) end,
@@ -51,95 +63,103 @@ BagSetType = {
         ShouldUseCache = function() return false end,
         -- intended to be set in Backpack.lua
         BagOverview_Initialize = nil,
-    },
-    Bank = {
-        Id = 2,
-        Name = Localized.BankBox,
-        TypeName = "Bank",
-        IsSupported = function() return true end,
-        IsSubContainerOf = function(containerId)
-            local isBankDefaultContainer = (containerId == AddOnTable.BlizzConstants.BANK_CONTAINER) or (containerId == AddOnTable.BlizzConstants.REAGENTBANK_CONTAINER)
-            local isBankSubContainer = (AddOnTable.BlizzConstants.BANK_FIRST_CONTAINER <= containerId) and (containerId <= AddOnTable.BlizzConstants.BANK_LAST_CONTAINER)
-            return isBankDefaultContainer or isBankSubContainer
-        end,
-        ContainerIterationOrder = {},
-        Init = function()
-            table.insert(BagSetType.Bank.ContainerIterationOrder, AddOnTable.BlizzConstants.BANK_CONTAINER)
-            for bag = AddOnTable.BlizzConstants.BANK_FIRST_CONTAINER, AddOnTable.BlizzConstants.BANK_LAST_CONTAINER do
-                table.insert(BagSetType.Bank.ContainerIterationOrder, bag)
-            end
-            -- explicitly using the numerical value of the expansion instead of the enum, as classic variants seemingly do not contain those enums
-            if (GetExpansionLevel() >= 5) then
-                table.insert(BagSetType.Bank.ContainerIterationOrder, AddOnTable.BlizzConstants.REAGENTBANK_CONTAINER)
-            end
-        end,
-        -- bank container + number of additional bags in bank + optionally reagent bank
-        NumberOfContainers = 1 + AddOnTable.BlizzConstants.BANK_CONTAINER_NUM + (GetExpansionLevel() >= 5 and 1 or 0),
-        DefaultConfig = {
-            Columns = 14,
-            Scale = 100,
-            GetNameAddition = function(bagId)
-                local isReagentBank = bagId == AddOnTable.BlizzConstants.REAGENTBANK_CONTAINER
-                if (isReagentBank) then
-                    return Localized.ReagentBankBox
+        UpdateOpenBagHighlight = function(subContainer)
+            local open = subContainer:IsOpen()
+            if (subContainer.ContainerId == AddOnTable.BlizzConstants.BACKPACK_CONTAINER) then
+                if (MainMenuBarBackpackButton.SlotHighlightTexture) then
+                    if (open) then
+                        MainMenuBarBackpackButton.SlotHighlightTexture:Show()
+                    else
+                        MainMenuBarBackpackButton.SlotHighlightTexture:Hide()
+                    end
                 else
-                    return Localized.BankBox
+                    MainMenuBarBackpackButton:SetChecked(open)
+                end
+            else
+                local backpackSet = AddOnTable.Sets[BagSetType.Backpack.Id]
+                local bagId = subContainer.ContainerId -1
+                local mainMenuBarButton = _G["CharacterBag"..bagId.."Slot"]
+                local baudBagBagButton = backpackSet.BagButtons[bagId]
+
+                if (subContainer.ContainerId == 5) then
+                    bagId = subContainer.ContainerId - (AddOnTable.BlizzConstants.BACKPACK_FIRST_CONTAINER + AddOnTable.BlizzConstants.BACKPACK_CONTAINER_NUM + 1)
+                    mainMenuBarButton = _G["CharacterReagentBag"..bagId.."Slot"]
+                    baudBagBagButton = backpackSet.ReagentBagButtons[bagId]
+                end
+                
+                if (open) then
+                    if (mainMenuBarButton.SlotHighlightTexture) then
+                        mainMenuBarButton.SlotHighlightTexture:Show()
+                    else
+                        mainMenuBarButton:SetChecked(true)
+                    end
+                    baudBagBagButton.SlotHighlightTexture:Show()
+                else
+                    if (mainMenuBarButton.SlotHighlightTexture) then
+                        mainMenuBarButton.SlotHighlightTexture:Hide()
+                    else
+                        mainMenuBarButton:SetChecked(false)
+                    end
+                    baudBagBagButton.SlotHighlightTexture:Hide()
+                end
+            end
+        end,
+        BagFilterGetFunction = AddOnTable.BlizzAPI.GetBagSlotFlag,
+        BagFilterSetFunction = AddOnTable.BlizzAPI.SetBagSlotFlag,
+        CanInteractWithBags = function() return true end,
+        OnItemButtonCustomEnter = function(self)
+            if (ContainerFrameItemButton_OnUpdate ~= nil) then
+                ContainerFrameItemButton_OnUpdate(self)
+            elseif (ContainerFrameItemButton_OnEnter ~= nil) then
+                ContainerFrameItemButton_OnEnter(self)
+            else
+                self:OnUpdate()
+            end
+        end,
+        FilterData = {
+            GetFilterType = function(container)
+                if (container.ContainerId ~= AddOnTable.BlizzConstants.BACKPACK_CONTAINER) then
+                    container:GetFilterType()
+                end
+                return nil
+            end,
+            SetFilterType = function(container, type, value)
+                if (container.ContainerId ~= AddOnTable.BlizzConstants.BACKPACK_CONTAINER) then
+                    container:SetFilterType(type, value)
                 end
             end,
-            RequiresFreshConfig = function(bagId)
-                local isReagentBank = bagId == AddOnTable.BlizzConstants.REAGENTBANK_CONTAINER
-                return isReagentBank
+            GetCleanupIgnore = function(container)
+                local containerId = container.ContainerId
+                if (containerId == AddOnTable.BlizzConstants.BACKPACK_CONTAINER) then
+                    return AddOnTable.BlizzAPI.GetBackpackAutosortDisabled()
+                end
+                return AddOnTable.BlizzAPI.GetBagSlotFlag(containerId, AddOnTable.BlizzAPI.GetIgnoreCleanupFlag())
             end,
-            Background = 2
+            SetCleanupIgnore = function(container, value)
+                local containerId = container.ContainerId
+                if (containerId == AddOnTable.BlizzConstants.BACKPACK_CONTAINER) then
+                    AddOnTable.BlizzAPI.SetBackpackAutosortDisabled(value)
+                else
+                    AddOnTable.BlizzAPI.SetBagSlotFlag(containerId, AddOnTable.BlizzAPI.GetIgnoreCleanupFlag(), value)
+                end
+            end,
         },
-        GetContainerTemplate = function(containerId)
-            if (containerId == AddOnTable.BlizzConstants.REAGENTBANK_CONTAINER) then
-                return "BaudBagReagentBankTemplate"
+        CustomCloseAllFunction = function() end,
+        GetSpecialBagTexture = function(subContainerId)
+            if (subContainerId == AddOnTable.BlizzConstants.BACKPACK_CONTAINER) then
+                return "Interface\\Buttons\\Button-Backpack-Up"
             else
-                return "BaudBagContainerTemplate"
+                return nil
             end
         end,
-        GetItemButtonTemplate = function(containerId)
-            if (containerId == AddOnTable.BlizzConstants.REAGENTBANK_CONTAINER) then
-                return "ReagentBankItemButtonGenericTemplate"
-            else
-                return "BankItemButtonGenericTemplate"
-            end
-        end,
-        GetSize = function(containerId)
-            local useCache = not AddOnTable.State.BankOpen
-            if useCache and (containerId ~= AddOnTable.BlizzConstants.REAGENTBANK_CONTAINER) then
-                local bagCache = AddOnTable.Cache:GetBagCache(containerId)
-                return bagCache.Size
-            else
-                return AddOnTable.BlizzAPI.GetContainerNumSlots(containerId)
-            end
-        end,
-        SupportsCache = true,
-        ShouldUseCache = function() return not AddOnTable.State.BankOpen end,
-        -- intended to be set in Bank.lua
-        BagOverview_Initialize = nil,
     },
-    --[[
-        GuildBank = {
-        Id = 4,
-        IsSubContainerOf = function(containerId)
-            return false
-        end
-    },
-    VoidStorage = {
-        Id = 5,
-        IsSubContainerOf = function(containerId)
-            return false
-        end
-    } ]]
 }
 
 --[[
     This will seem unnecessary at first glance, but it ensures a specific order for iterating over all existing BagSetTypes.
     At the moment this is necessary at least for the tab list in the options as long as BagSetType itself is a "map" type table instead of an "array" type table.
   ]]
-BagSetTypeArray = { BagSetType.Backpack, BagSetType.Bank }
+BagSetTypeArray = { BagSetType.Backpack }
 
 -- Definition
 ---@enum ContainerType
@@ -149,13 +169,4 @@ ContainerType = {
 }
 
 --[[ this is a really dump way to access the config to get the joined state... ]]
-local idIndexMap = {}
-idIndexMap[AddOnTable.BlizzConstants.BANK_CONTAINER] = 1
-idIndexMap[AddOnTable.BlizzConstants.REAGENTBANK_CONTAINER] = AddOnTable.BlizzConstants.BANK_CONTAINER_NUM + 2
-for id = AddOnTable.BlizzConstants.BACKPACK_FIRST_CONTAINER, AddOnTable.BlizzConstants.BACKPACK_LAST_CONTAINER do
-    idIndexMap[id] = id + 1
-end
-for id = AddOnTable.BlizzConstants.BANK_FIRST_CONTAINER, AddOnTable.BlizzConstants.BANK_LAST_CONTAINER do
-    idIndexMap[id] = id - AddOnTable.BlizzConstants.BACKPACK_LAST_CONTAINER + 1
-end
-AddOnTable.ContainerIdOptionsIndexMap = idIndexMap
+AddOnTable.ContainerIdOptionsIndexMap = {}

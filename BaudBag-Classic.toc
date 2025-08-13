@@ -10,7 +10,7 @@
 ## Title: Baud Bag
 ## Title-zhCN: 背包整合 Baud Bag
 ## Title-zhTW: 背包整合 Baud Bag
-## Version: 11.1.5.1
+## Version: 11.2.0.1
 
 # english has to be the first locale!
 localization\Localization.en.lua
@@ -43,8 +43,10 @@ BaudBagCache.lua
 BaudBagToolTips.lua
 frames/Options.xml
 TokenBar.xml
+sets/backpack/BagButton.xml
 Backpack.lua
-Bank.lua
+sets\classic-bank\BagButton.xml
+sets\classic-bank\Bank.xml
 Keyring.xml
 frames\BaudBagSearchFrame.xml
 Overrides.lua

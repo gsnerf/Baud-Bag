@@ -6,7 +6,7 @@ BaudBagBagsFrameMixin = {}
 
 -- this just makes sure the bags will be visible at the correct layer position when opened
 function BaudBagBagsFrameMixin:OnShow(event, ...)
-    local isBags = self:GetName() == "BaudBagContainer1_1BagsFrame"
+    --[[local isBags = self:GetName() == "BaudBagContainer1_1BagsFrame"
     local isBank = self:GetName() == "BaudBagContainer2_1BagsFrame"
     local Level = self:GetFrameLevel() + 1
     AddOnTable.Functions.DebugMessage("Bank", "BaudBagBagsFrame is shown, correcting frame layer lvls of childs (frame, targetLevel)", self:GetName(), Level)
@@ -27,6 +27,6 @@ function BaudBagBagsFrameMixin:OnShow(event, ...)
         if (AddOnTable.State.ReagentBankSupported) then
             _G["BBReagentsBag"]:SetFrameLevel(Level)
         end
-    end
+    end]]
     -- for the moment we leave the rest open and see if something breaks horribly, or if blizzard maybe fixed it's screw up
 end

@@ -3,7 +3,11 @@ local AddOnTable = select(2, ...)
 local _
 
 local Localized = AddOnTable.Localized
-local MaxBags   = 1 + AddOnTable.BlizzConstants.BANK_CONTAINER_NUM + (AddOnTable.State.ReagentBankSupported and 1 or 0) -- 1 for bank + BANK_CONTAINER_NUM + 1 for reagent bank if supported
+local MaxBags   = math.max(
+                    1 + AddOnTable.BlizzConstants.BACKPACK_CONTAINER_NUM + AddOnTable.BlizzConstants.BACKPACK_REAGENT_BAG_NUM, -- number of bag containers
+                    1 + AddOnTable.BlizzConstants.BANK_CONTAINER_NUM + (AddOnTable.State.ReagentBankSupported and 1 or 0), --number of regular bank containers
+                    AddOnTable.BlizzConstants.ACCOUNT_BANK_CONTAINER_NUM
+                ) -- identify the maximum number of bags that any of the known bagsets will contain
 local Prefix    = "BaudBagOptions"
 local Updating  = false
 local category = nil
@@ -11,13 +15,6 @@ local category = nil
 local SelectedBags      = BagSetType.Backpack.Id
 local SelectedContainer = 1
 local SetSize           = {} -- this list will be filled with values read from the specific BagSetType defined at time of AddOnTable:EssentialsLoaded()
-
-BaudBagIcons = {
-    [0]	    = "Interface\\Buttons\\Button-Backpack-Up",
-    [-1]	= "Interface\\Icons\\INV_Box_02",
-    [-2]	= "Interface\\ContainerFrame\\KeyRing-Bag-Icon",
-    [-3]	= "Interface\\Icons\\INV_MISC_CAT_TRINKET05"
-}
 
 local TextureNames = {
     Localized.BlizInventory,
@@ -311,7 +308,7 @@ function BaudBagOptionsGroupContainerMixin:OnLoad()
 
 
     local loadEssentials = function()
-        AddOnTable.Functions.DebugMessage("Temp", "BaudBagOptionsBagSetMixin:EssentialsLoaded()")
+        AddOnTable.Functions.DebugMessage("Options", "BaudBagOptionsBagSetMixin:EssentialsLoaded()")
         local lastTabButton
         for _, type in ipairs(BagSetTypeArray) do
             -- create tabs for bagset selection
@@ -409,7 +406,7 @@ function BaudBagOptionsBagSetMixin:OnLoad()
 end
 
 local function ContainerBackgroundChanged(newBackgroundId)
-    AddOnTable.Functions.DebugMessage("Temp", "container background was changed", newBackgroundId)
+    AddOnTable.Functions.DebugMessage("Options", "container background was changed", newBackgroundId)
 
     BBConfig[SelectedBags][SelectedContainer].Background = newBackgroundId
     local container = AddOnTable.Sets[SelectedBags].Containers[SelectedContainer]
@@ -430,41 +427,44 @@ local function UpdateBagButtons(self)
     local Button, Check, Container, Texture
     local ContNum = 1
     local Bags = SetSize[SelectedBags]
+    local BagSet = AddOnTable.Sets[SelectedBags]
 
     -- load bag specific options (position and show each button that belongs to the current set,
     --		check joined box and create container frames)
-    if (AddOnTable.BlizzConstants.BACKPACK_FIRST_REAGENT_CONTAINER ~= nil) then
-        -- for backback set we need to ensure, that the reagent bag(s) cannot be joined with the regular bags
-        if SelectedBags == BagSetType.Backpack.Id then
-            _G[Prefix.."JoinCheck"..(AddOnTable.BlizzConstants.BACKPACK_FIRST_REAGENT_CONTAINER+1)]:Hide()
-        else
-            _G[Prefix.."JoinCheck"..(AddOnTable.BlizzConstants.BACKPACK_FIRST_REAGENT_CONTAINER+1)]:Show()
-        end
-    end
-    AddOnTable.Sets[SelectedBags]:ForEachBag(
+    BagSet:ForEachBag(
         function(Bag, Index)
             Button	= _G[Prefix.."Bag"..Index]
             Check	= _G[Prefix.."JoinCheck"..Index]
 
+            AddOnTable.Functions.DebugMessage("Options", "[UpdateBagButtons] updating bag '"..Bag.."' with index '"..Index.."'")
+            
             if (Index == 1) then
+                AddOnTable.Functions.DebugMessage("Options", "[UpdateBagButtons] first bag of the set, position it at a reasonable place")
                 -- only the first bag needs its position set, since the others are anchored to it
                 Button:SetPoint("LEFT", self.BagFrame, "CENTER", ((Bags / 2) * -44), 0)
-            elseif (Index == AddOnTable.BlizzConstants.BANK_CONTAINER_NUM + 2 or (SelectedBags == BagSetType.Backpack.Id and AddOnTable.BlizzConstants.BACKPACK_FIRST_REAGENT_CONTAINER ~= nil and Index == (AddOnTable.BlizzConstants.BACKPACK_LAST_CONTAINER + 1))) then
-                -- the reagent bank and the reagent bag might not be joined with anything else (for the moment?)
+            elseif (not BagSet.Type.CanContainerBeJoined(Bag)) then
+                AddOnTable.Functions.DebugMessage("Options", "[UpdateBagButtons] bag cannot be joined with others, disabling the check button")
+                -- some containers, like the reagent bank and the reagent bag might not be joined with anything else
                 _G[Prefix.."Container"..ContNum]:SetPoint("RIGHT", Prefix.."Bag"..(Index - 1), "RIGHT", 6,0)
                 ContNum = ContNum + 1
                 _G[Prefix.."Container"..ContNum]:SetPoint("LEFT", Prefix.."Bag"..Index, "LEFT", -6,0)
+                Check:SetChecked(false)
+                Check:Disable()
             else
+                AddOnTable.Functions.DebugMessage("Options", "[UpdateBagButtons] first bag of the set, position it at a reasonable place")
                 -- all other bag slots that are actually filled with bags may have a changeable joined state
-                if (AddOnTable.Sets[SelectedBags].SubContainers[Bag].Size == 0) then
+                if (BagSet.SubContainers[Bag].Size == 0) then
+                    AddOnTable.Functions.DebugMessage("Options", "[UpdateBagButtons] empty bag (probably no bag in slot or not bought bank slot)")
                     Check:SetChecked(true)
                     Check:Disable()
                 else
+                    AddOnTable.Functions.DebugMessage("Options", "[UpdateBagButtons] regular bag")
                     Check:SetChecked(BBConfig[SelectedBags].Joined[Index]~=false)
                     Check:Enable()
                 end
 
                 if not Check:GetChecked() then
+                    AddOnTable.Functions.DebugMessage("Options", "[UpdateBagButtons] current bag not joined with previous one, starting a new container representation")
                     -- if not joined the last container needs to be aligned to the last bag and the current container needs to start here
                     _G[Prefix.."Container"..ContNum]:SetPoint("RIGHT", Prefix.."Bag"..(Index - 1), "RIGHT", 6,0)
                     ContNum = ContNum + 1
@@ -472,36 +472,27 @@ local function UpdateBagButtons(self)
                 end
             end
 			
-            -- try to find out which bag texture to use
-            local bagCache = AddOnTable.Cache:GetBagCache(Bag)
-            if BaudBagIcons[Bag]then
-                Texture = BaudBagIcons[Bag]
-            elseif(SelectedBags == BagSetType.Backpack.Id)then
-                Texture = GetInventoryItemTexture("player", AddOnTable.BlizzAPI.ContainerIDToInventoryID(Bag))
-            elseif bagCache and bagCache.BagLink then
-                Texture = AddOnTable.BlizzAPI.GetItemIcon(bagCache.BagLink)
-            elseif bagCache and bagCache.TabData then
-                Texture = bagCache.TabData.icon
-            else
-                Texture = nil
-            end
-			
-            -- assign texture, id and get item to be shown
+            -- assign bag texture, id and get item to be shown
+            Texture = BagSet:GetSubContainerTexture(Bag)
+            AddOnTable.Functions.DebugMessage("Options", "[UpdateBagButtons] updating button with texture", Texture)
             Button.Icon:SetTexture(Texture or select(2, AddOnTable.BlizzAPI.GetInventorySlotInfo("BAG0SLOT")))
             Button:SetID(ContNum)
             Button.SubContainerId = Bag
             Button:Show()
         end
-        )
+    )
+    AddOnTable.Functions.DebugMessage("Options", "[UpdateBagButtons] all bag buttons updated, identified "..ContNum.." containers")
     _G[Prefix.."Container"..ContNum]:SetPoint("RIGHT", Prefix.."Bag"..Bags,"RIGHT",6,0)
 
     -- make sure all bags after the last visible bag to be shown is hidden (e.g. the inventory has less bags then the bank)
     for Index = Bags + 1, MaxBags do
+        AddOnTable.Functions.DebugMessage("Options", "[UpdateBagButtons] removing additional bag button "..Index)
         _G[Prefix.."Bag"..Index]:Hide()
     end
 
     -- it must be made sure an existing container is selected
     if (SelectedContainer > ContNum) then
+        AddOnTable.Functions.DebugMessage("Options", "[UpdateBagButtons] last selected container was higher than the number of currently existing ones... switching to container 1")
         SelectedContainer = 1
     end
 
@@ -535,6 +526,15 @@ function BaudBagOptionsBagSetMixin:UpdateContent()
     -- update global checkboxes
     self.EnabledCheck:SetChecked(BBConfig[SelectedBags].Enabled~=false)
     self.CloseAllCheck:SetChecked(BBConfig[SelectedBags].CloseAll~=false)
+
+    local linkedSetType = AddOnTable.Sets[SelectedBags].Type.LinkedSet()
+    if (linkedSetType) then
+        self.LinkedSet.Image:Show()
+        self.LinkedSet.tooltipText = format( Localized.EnabledLinkedSet, linkedSetType.Name)
+    else
+        self.LinkedSet.Image:Hide()
+        self.LinkedSet.tooltipText = ""
+    end
 
     UpdateBagButtons(self)
 
@@ -572,6 +572,15 @@ end
 function BaudBagOptionsBagSetMixin:ChangeBagSet(bagSetId)
     SelectedBags = bagSetId
     BaudBagOptions:Update()
+end
+
+BaudBagLinkedSetMixin = {}
+
+function BaudBagLinkedSetMixin:LinkedSet_OnEnter()
+    if ( self.tooltipText ) then
+        GetAppropriateTooltip():SetOwner(self, self.tooltipOwnerPoint or "ANCHOR_RIGHT")
+        GetAppropriateTooltip():SetText(self.tooltipText, nil, nil, nil, nil, true)
+    end
 end
 
 ---@class OptionsCheckButton: CheckButton
@@ -622,11 +631,17 @@ function BaudBagOptionsCheckButtonMixin:OnClick()
         BBConfig[SelectedBags][savedVar] = self:GetChecked()
 
         if (savedVar == "Enabled") then
+            local linkedSetType = AddOnTable.Sets[SelectedBags].Type.LinkedSet()
+            if (linkedSetType) then
+                BBConfig[linkedSetType.Id][savedVar] = self:GetChecked()
+            end
             if (not self:GetChecked()) then
                 AddOnTable.Sets[SelectedBags]:Close()
+                if (linkedSetType) then
+                    AddOnTable.Sets[linkedSetType.Id]:Close()
+                end
             end        
-            AddOnTable.UpdateBagParents()
-            AddOnTable.UpdateBankParents()
+            AddOnTable:ConfigUpdated()
         end
     elseif self.settingsType == "Container" then
         local savedVar = AddOnTable.ConfigOptions.Container.CheckButtons[self:GetID()].SavedVar
