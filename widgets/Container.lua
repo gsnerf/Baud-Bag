@@ -265,13 +265,15 @@ end
 function BaudBagContainerMixin:OnShow(event, ...)
     AddOnTable.Functions.DebugMessage("BagOpening", "BaudBagContainer_OnShow was called", self:GetName())
 	
-    -- check if the container was open before and closing now
-    if self.FadeStart then
-        return
+    if BBConfig.EnableFadeAnimation then
+        -- check if the container was open before and closing now
+        if self.FadeStart then
+            return
+        end
+        
+        -- container seems to not be visible, open and update
+        self.FadeStart = GetTime()
     end
-	
-    -- container seems to not be visible, open and update
-    self.FadeStart = GetTime()
     PlaySound(SOUNDKIT.IG_BACKPACK_OPEN)
     local bagSet = AddOnTable.Sets[self.BagSet]
     ---@type Container
@@ -304,7 +306,7 @@ function BaudBagContainerMixin:OnUpdate(event, ...)
         AddOnTable.Sets[self.BagSet]:UpdateSlotInfo()
     end
 
-    if (self.FadeStart) then
+    if (AddOnTable.Config.EnableFadeAnimation and self.FadeStart) then
         local Alpha = (GetTime() - self.FadeStart) / FadeTime
         if not BBConfig.EnableFadeAnimation then
             -- immediate show/hide without animation
@@ -329,30 +331,34 @@ end
 
 function BaudBagContainerMixin:OnHide(event, ...)
     AddOnTable.Functions.DebugMessage("BagOpening", "BaudBagContainer_OnHide was called", self:GetName())
-    -- correctly handle if this is called while the container is still fading out
-    if self.Closing then
-        if self.FadeStart then
-            self:Show()
+    if (AddOnTable.Config.EnableFadeAnimation) then
+        -- correctly handle if this is called while the container is still fading out
+        if self.Closing then
+            if self.FadeStart then
+                self:Show()
+            end
+            return
         end
-        return
-    end
 
-    -- set vars for fading out ans start process
-    self.FadeStart = GetTime()
-    self.Closing = true
+        -- set vars for fading out ans start process
+        self.FadeStart = GetTime()
+        self.Closing = true
+    end
     PlaySound(SOUNDKIT.IG_BACKPACK_CLOSE)
     self.AutoOpened = false
-
+    
     local containerObject = AddOnTable.Sets[self.BagSet].Containers[self:GetID()]
     containerObject:UpdateBagHighlight()
-
+    
     -- handle "close all" case
     if (self:GetID() == 1) and (BBConfig[self.BagSet].Enabled) and (BBConfig[self.BagSet].CloseAll) then
         AddOnTable.Sets[self.BagSet]:Close()
         AddOnTable.Sets[self.BagSet].Type.CustomCloseAllFunction()
     end
-
-    self:Show()
+    
+    if (AddOnTable.Config.EnableFadeAnimation) then
+        self:Show()
+    end
     AddOnTable.Sets[self.BagSet].Containers[self:GetID()].Menu:Hide()
 end
 
