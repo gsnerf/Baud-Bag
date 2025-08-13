@@ -3,7 +3,11 @@ local AddOnTable = select(2, ...)
 local _
 
 local Localized = AddOnTable.Localized
-local MaxBags   = 1 + AddOnTable.BlizzConstants.BANK_CONTAINER_NUM + (AddOnTable.State.ReagentBankSupported and 1 or 0) -- 1 for bank + BANK_CONTAINER_NUM + 1 for reagent bank if supported
+local MaxBags   = math.max(
+                    1 + AddOnTable.BlizzConstants.BACKPACK_CONTAINER_NUM + AddOnTable.BlizzConstants.BACKPACK_REAGENT_BAG_NUM, -- number of bag containers
+                    1 + AddOnTable.BlizzConstants.BANK_CONTAINER_NUM + (AddOnTable.State.ReagentBankSupported and 1 or 0), --number of regular bank containers
+                    AddOnTable.BlizzConstants.ACCOUNT_BANK_CONTAINER_NUM
+                ) -- identify the maximum number of bags that any of the known bagsets will contain
 local Prefix    = "BaudBagOptions"
 local Updating  = false
 local category = nil

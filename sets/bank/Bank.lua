@@ -29,7 +29,7 @@ local function extendBaseType()
                 AddOnTable.ContainerIdOptionsIndexMap[bagId] = index
             end
         end,
-        NumberOfContainers = math.max(1, AddOnTable.BlizzAPI.FetchNumPurchasedBankTabs(Enum.BankType.Character)),
+        NumberOfContainers = math.max(1, AddOnTable.BlizzConstants.BANK_CONTAINER_NUM),
         DefaultConfig = {
             Columns = 14,
             Scale = 100,
