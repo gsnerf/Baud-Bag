@@ -323,8 +323,8 @@ local function canBankBeSeen()
 end
 
 function BaudBagBagsFrameMixin:Update()
-    if not canBankBeSeen() then return end
-    -- TODO: make this work with cache for offline viewing
+    local doUpdateBags = canBankBeSeen()
+    
     local bankSet = AddOnTable.Sets[BagSetType.Bank.Id]
     local purchasedBankTabData = AddOnTable.BlizzAPI.FetchPurchasedBankTabData(Enum.BankType.Character)
     local numberOfBoughtContainers = #purchasedBankTabData
@@ -334,15 +334,16 @@ function BaudBagBagsFrameMixin:Update()
     for bag = 1, AddOnTable.BlizzConstants.BANK_CONTAINER_NUM do
         bagSlot = bankSet.BagButtons[bag]
         if bag <= numberOfBoughtContainers then
-            local tabData = purchasedBankTabData[bag]
-            bagSlot.TabData = tabData
             local bagCache = AddOnTable.Cache:GetBagCache(bagSlot.SubContainerId)
-            bagCache.TabData = tabData
+            if (doUpdateBags) then
+                bagCache.TabData = purchasedBankTabData[bag]
+            end
+            bagSlot.TabData = bagCache.TabData
         end
         bagSlot:UpdateContent()
     end
 
-    if (numberOfBoughtContainers == AddOnTable.BlizzConstants.BANK_CONTAINER_NUM) then
+    if (numberOfBoughtContainers == AddOnTable.BlizzConstants.BANK_CONTAINER_NUM or not doUpdateBags) then
         AddOnTable.Functions.DebugMessage("Bank", "BagOverview: all containers bought hiding purchase button")
         self.PurchaseFrame:Hide()
         self:UpdateHeight(bankSet.BagButtons[1]:GetHeight(), false)
