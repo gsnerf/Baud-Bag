@@ -55,8 +55,8 @@ config\ConfigOptions.lua
 BaudBagConfig.lua
 BaudBagCache.lua
 BaudBagToolTips.lua
-sets/backpack/BagButton.xml
-Backpack.lua
+sets\backpack\BagButton.xml
+sets\backpack\Backpack.lua
 sets\bank\BagButton.xml
 sets\bank\Bank.xml
 sets\accountbank\BagButton.xml
