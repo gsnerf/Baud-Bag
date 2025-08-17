@@ -59,8 +59,8 @@ sets/backpack/BagButton.xml
 Backpack.lua
 sets\bank\BagButton.xml
 sets\bank\Bank.xml
-sets/accountbank/BagButton.xml
-AccountBank.xml
+sets\accountbank\BagButton.xml
+sets\accountbank\AccountBank.xml
 frames/Options.xml
 frames\BaudBagSearchFrame.xml
 Overrides.lua
