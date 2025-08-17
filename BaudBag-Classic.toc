@@ -33,6 +33,7 @@ lib\Backgrounds\BackgroundRegistration.lua
 widgets\buttons\BagButton.xml
 widgets\buttons\ItemButton.lua
 widgets\BagsFrame.xml
+widgets\TokenBar.xml
 widgets\Container.xml
 widgets\OptionsDropdown.xml
 frames\ContainerMenu.xml
@@ -42,7 +43,6 @@ config\Config.lua
 BaudBagCache.lua
 BaudBagToolTips.lua
 frames/Options.xml
-TokenBar.xml
 sets\backpack\BagButton.xml
 sets\backpack\Backpack.xml
 sets\classic-bank\BagButton.xml
