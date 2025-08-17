@@ -47,7 +47,7 @@ sets\backpack\BagButton.xml
 sets\backpack\Backpack.xml
 sets\classic-bank\BagButton.xml
 sets\classic-bank\Bank.xml
-Keyring.xml
+sets\keyring\Keyring.xml
 frames\BaudBagSearchFrame.xml
 Overrides.lua
 BaudBag.xml
