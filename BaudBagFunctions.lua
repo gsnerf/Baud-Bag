@@ -39,8 +39,7 @@ local BaudBag_DebugCfg = {
     Cache       = { Name = "Cache",         Active = false },
     Bank        = { Name = "Bank",          Active = false },
     BankReagent = { Name = "Reagent Bank",  Active = false },
-    VoidStorage = { Name = "Void Storage",  Active = false },
-
+    
     -- additional functionality
     Token       = { Name = "Token",         Active = false },
     Search      = { Name = "Search",        Active = false },
