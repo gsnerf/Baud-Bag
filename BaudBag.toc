@@ -52,7 +52,7 @@ widgets\OptionsDropdown.xml
 frames\ContainerMenu.xml
 Events.lua
 config\ConfigOptions.lua
-BaudBagConfig.lua
+config\Config.lua
 BaudBagCache.lua
 BaudBagToolTips.lua
 sets\backpack\BagButton.xml
