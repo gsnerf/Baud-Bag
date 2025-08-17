@@ -56,7 +56,7 @@ BaudBagConfig.lua
 BaudBagCache.lua
 BaudBagToolTips.lua
 sets\backpack\BagButton.xml
-sets\backpack\Backpack.lua
+sets\backpack\Backpack.xml
 sets\bank\BagButton.xml
 sets\bank\Bank.xml
 sets\accountbank\BagButton.xml
