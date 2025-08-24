@@ -149,8 +149,10 @@ function Prototype:UpdateSubContainers(col, row)
         else
             AddOnTable.Functions.DebugMessage("Bags", "Adding (bagName)", container.Name)
 
+            local itemButtonConfig = AddOnTable.Themes[background] and AddOnTable.Themes[background].ItemButton or nil
+            
             -- position item slots
-            container:UpdateSlotContents()
+            container:UpdateSlotContents(itemButtonConfig)
             col, row = container:UpdateSlotPositions(self.Frame, background, col, row, maxCols, slotLevel)
             container.Frame:Show()
         end

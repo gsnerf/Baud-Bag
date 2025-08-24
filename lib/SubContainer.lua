@@ -87,10 +87,12 @@ function Prototype:Rebuild()
     end
 
     -- now update content
+    -- todo: get and pass theme to method
     self:UpdateSlotContents()
 end
 
-function Prototype:UpdateSlotContents()
+---@param itemButtonThemeConfig ThemeIconButton
+function Prototype:UpdateSlotContents(itemButtonThemeConfig)
     local showColor = BBConfig.RarityColor
     local rarityIntensity = BBConfig.RarityIntensity
     local setSupportsCache = self.BagSet.SupportsCache
@@ -120,6 +122,10 @@ function Prototype:UpdateSlotContents()
             itemObject:UpdateContentFromCache(bagCache and bagCache[slot] or nil, finishItemButtonUpdateCallback)
         else
             itemObject:UpdateContentFromLiveData(finishItemButtonUpdateCallback)
+        end
+
+        if itemButtonThemeConfig then
+            itemObject:UpdateBackground(itemButtonThemeConfig.ShowBackground, itemButtonThemeConfig.BackgroundImage)
         end
 
         AddOnTable:ItemSlot_Updated(self.BagSet, self.Frame:GetParent():GetID(), self.ContainerId, slot, itemObject)

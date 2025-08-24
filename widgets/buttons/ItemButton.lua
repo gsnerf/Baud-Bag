@@ -267,6 +267,21 @@ function Prototype:UpdateItemOverlay(itemID)
     end
 end
 
+---@param showBackground boolean
+---@param backgroundImage string
+function Prototype:UpdateBackground(showBackground, backgroundImage)
+    if showBackground then
+        itemButton.emptyBackgroundTexture = backgroundImage
+        if itemButton.Background then
+            itemButton.Background:Show()
+        end
+    else
+        if itemButton.Background then
+            itemButton.Background:Hide()
+        end
+    end
+end
+
 function Prototype:UpdateNewAndBattlepayoverlays(isNewItem, isBattlePayItem)
     local battlepayItemTexture = self.BattlepayItemTexture
     local newItemTexture = self.NewItemTexture
