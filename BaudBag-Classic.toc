@@ -37,6 +37,8 @@ widgets\BagsFrame.xml
 widgets\TokenBar.xml
 widgets\Container.xml
 widgets\OptionsDropdown.xml
+themes\BlizzardThemes.lua
+themes\SimpleThemes.lua
 frames\ContainerMenu.xml
 Events.lua
 config\ConfigOptions.lua
