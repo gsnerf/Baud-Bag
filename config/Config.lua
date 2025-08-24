@@ -13,6 +13,8 @@ BBConfig = {}
 ---@field AutoOpen boolean whether to automatically open the container when going to a merchant, post, bank or whatever
 ---@field AutoClose boolean whether to automatically close the container if it has been opened automatically before
 ---@field BlankTop boolean wheter to show "blank" items (when number of items / columns != 0) on the top or bottom of the container
+---@field Background integer the "old style" background definition for a container
+---@field Theme Theme this replaces the Background field and contains background as well as other things like item button configurations
 
 ---@class BagSetConfig
 ---@field Enabled boolean whether to cover this bag set with baud bag or leave it to stock UI
