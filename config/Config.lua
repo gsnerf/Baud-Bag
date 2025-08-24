@@ -126,6 +126,24 @@ function BaudBagRestoreCfg()
     AddOnTable:Configuration_Loaded()
 end
 
+local function ConvertBackgroundToTheme(backgroundId)
+    if backgroundId == 1 then
+        return "BlizzInventoryClassic"
+    elseif backgroundId == 2 then
+        return "BlizzBankClassic"
+    elseif backgroundId == 3 then
+        return "BlizzKeyring"
+    elseif backgroundId == 4 then
+        return "Transparent"
+    elseif backgroundId == 5 then
+        return "Solid"
+    elseif backgroundId == 6 then
+        return "ElvUI"
+    end
+
+    return nil
+end
+
 function ConvertOldConfig()
     -- take over old sell junk data
     if (type(BBConfig[1]) == "table" and type(BBConfig[1].SellJunk) == "boolean") then
@@ -149,6 +167,20 @@ function ConvertOldConfig()
                     end
                 end
             end);
+        end
+    end
+
+    --take over old background configuration to new theme configuration
+    for _, bagSet in pairs(BagSetType) do
+        local bagSetConfig = BBConfig[bagSet.Id]
+        -- containers in the configuration are assigned to indexes 1..#containers
+        for _, container in ipairs(bagSetConfig) do
+            if container.Theme == nil and container.Background ~= nil then
+                container.Theme = ConvertBackgroundToTheme(container.Background)
+                if container.Theme ~= nil then
+                    container.Background = nil
+                end
+            end
         end
     end
 end
