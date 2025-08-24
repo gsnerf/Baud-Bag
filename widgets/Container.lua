@@ -162,12 +162,18 @@ end
 
 function Prototype:UpdateBackground()
     local backgroundId = BBConfig[self.Frame.BagSet][self.Id].Background
+    local themeId = BBConfig[self.Frame.BagSet][self.Id].Theme
     local backdrop = self.Frame.Backdrop
     backdrop:SetFrameLevel(self.Frame:GetFrameLevel())
     -- This shifts the name of the first bag frame over to make room for the extra button (bags button)
     local shiftName = (self.Frame:GetID() == 1) and 25 or 0
-    
-    local left, right, top, bottom = AddOnTable["Backgrounds"][backgroundId]:Update(self.Frame, backdrop, shiftName)
+    -- TODO: this is a migration path away from "Backgrounds" towards "Themes"
+    local left, right, top, bottom
+    if (AddOnTable.Themes[themeId] ~= nil and AddOnTable.Themes[themeId].ContainerBackground ~= nil) then
+        left, right, top, bottom = AddOnTable.Themes[themeId].ContainerBackground:Update(self.Frame, backdrop, shiftName)
+    else
+        left, right, top, bottom = AddOnTable["Backgrounds"][backgroundId]:Update(self.Frame, backdrop, shiftName)
+    end
     self.Frame.Name:SetPoint("RIGHT", self.Frame:GetName().."MenuButton", "LEFT")
 
     backdrop:ClearAllPoints()
