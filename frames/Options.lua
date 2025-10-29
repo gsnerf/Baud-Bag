@@ -358,17 +358,17 @@ local function CreateBagSetBagButtons(self)
     end
 end
 
-local function ContainerBackgroundChanged(newBackgroundId)
-    AddOnTable.Functions.DebugMessage("Options", "container background was changed", newBackgroundId)
+local function ContainerBackgroundChanged(newThemeId)
+    AddOnTable.Functions.DebugMessage("Options", "container theme was changed", newThemeId)
 
-    BBConfig[SelectedBags][SelectedContainer].Background = newBackgroundId
+    BBConfig[SelectedBags][SelectedContainer].Theme = newThemeId
     local container = AddOnTable.Sets[SelectedBags].Containers[SelectedContainer]
     container:Rebuild()
     container:Update()
 end
 
-local function BackgroundSelection_isSelected(index)
-    return index == BBConfig[SelectedBags][SelectedContainer].Background
+local function BackgroundSelection_isSelected(themeId)
+    return themeId == BBConfig[SelectedBags][SelectedContainer].Theme
 end
 
 --- Initializes the BagSet group frame:
@@ -402,7 +402,12 @@ function BaudBagOptionsBagSetMixin:Initialize()
 
     CreateBagSetBagButtons(self)
 
-    self.BackgroundSelection:Setup(TextureNames, BackgroundSelection_isSelected, ContainerBackgroundChanged)
+    local backgroundList = {}
+    for _, theme in pairs(AddOnTable.Themes) do
+        backgroundList[theme.Id] = theme.Name
+    end
+
+    self.BackgroundSelection:Setup(backgroundList, BackgroundSelection_isSelected, ContainerBackgroundChanged)
 end
 
 local function UpdateBagButtons(self)
