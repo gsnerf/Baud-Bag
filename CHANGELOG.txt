@@ -1,4 +1,13 @@
 ﻿=== Changelog ===
+v11.2.5.1
+  - reworked old background handling to something I call a "theme" and dare it actually might be one in the future
+  - new theme system allows for both container background as well as item button configuration
+  - non blizz themes now shouldn't show the item button background anymore
+  - renamed the original blizzard themes as "classic" variants and added the reworked "dragonflight" ones as new ones
+  - added support for time running chars, avoiding warband bank loading until the char is not in time running mode anymore
+  - fixed errors when merging two containers in the options panel
+  - fixed sizing of the join buttons to not overlap
+  - fixed the bank and warband bank full-frame "buy" buttons (for the first bank/warband bank tab)
 v11.2.0.1
   - heavily reworked code to be able to disable the old bank code for retail and still use it for classic
   - [retail] support new tab based bank system, this includes
