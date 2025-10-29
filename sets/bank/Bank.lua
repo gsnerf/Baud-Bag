@@ -232,7 +232,7 @@ function BaudBagFirstBankMixin:OnBankEvent(event, ...)
         if self.UnlockInfo ~= nil then
             endUnlockMode(self)
             AddOnTable.Sets[BagSetType.Bank.Id].Containers[1]:Rebuild()
-            AddOnTable.Sets[BagSetType.Bank.Id].Containers[1].BagsFrame:Update()
+            AddOnTable.Sets[BagSetType.Bank.Id].Containers[1].Frame.BagsFrame:Update()
         end
     elseif (event == "PLAYER_MONEY") then
         MoneyFrame_UpdateMoney(self.MoneyFrame.SmallMoneyFrame)
@@ -266,7 +266,7 @@ function BaudBagBankUnlockMixin:OnLoad()
     BaudBagContainerUnlockMixin.OnLoad(self)
     self.Title:SetText(AddOnTable.BlizzConstants.BANK_PANEL_TITLE)
     self.Text:SetText(AddOnTable.BlizzConstants.BANK_TAB_PURCHASE_PROMPT)
-    self.PurchaseButton:SetAttribute("clickbutton", BankPanel.PurchasePrompt.TabCostFrame.PurchaseButton)
+    self.PurchaseButton:SetAttribute("overrideBankType", Enum.BankType.Character)
 end
 
 function BaudBagBankUnlockMixin:OnShow()
