@@ -150,7 +150,7 @@ end
 --[[ this method ensures that the bank bags are either placed as childs under UIParent or BaudBag ]]
 local function updateBankParents()
     local newParent = UIParent
-    if BBConfig[BagSetType.Bank.Id].Enabled and BBConfig[BagSetType.AccountBank.Id].Enabled then
+    if BBConfig[BagSetType.Bank.Id].Enabled and BagSetType.AccountBank ~= nil and BBConfig[BagSetType.AccountBank.Id].Enabled then
         newParent = BaudBag_OriginalBagsHideFrame
     end
 

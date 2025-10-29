@@ -95,7 +95,7 @@ local function extendBaseType()
 
     AddOnTable.State.AccountBankOpen = false
 end
-hooksecurefunc(AddOnTable, "ExtendBaseTypes", extendBaseType)
+-- for actual hooking see bottom of file
 
 --[[ ######################################### basic events ######################################### ]]
 
@@ -146,7 +146,7 @@ local function accountBankFrameClosed()
      end
 end
 
-hooksecurefunc(AddOnTable, "ConfigUpdated", function()
+local function configUpdateHook()
     if BBConfig[BagSetType.AccountBank.Id].Enabled then
         accountBankFrameOpenedOwner = EventRegistry:RegisterFrameEventAndCallback("BANKFRAME_OPENED", accountBankFrameOpened, nil)
         accountBankFrameClosedOwner = EventRegistry:RegisterFrameEventAndCallback("BANKFRAME_CLOSED", accountBankFrameClosed, nil)
@@ -158,7 +158,8 @@ hooksecurefunc(AddOnTable, "ConfigUpdated", function()
             EventRegistry:UnregisterCallback("BANKFRAME_CLOSED", accountBankFrameClosedOwner)
         end
     end
-end)
+end
+-- for actual hooking see bottom of file
 
 --[[ ####################################### container frames ####################################### ]]
 
@@ -303,6 +304,8 @@ end
 BaudBagAccountBankUnlockMixin = {}
 
 function BaudBagAccountBankUnlockMixin:OnLoad()
+    if (PlayerGetTimerunningSeasonID ~= nil) then return end
+
     BaudBagContainerUnlockMixin.OnLoad(self)
     self.Title:SetText(AddOnTable.BlizzConstants.ACCOUNT_BANK_PANEL_TITLE)
     self.Text:SetText(AddOnTable.BlizzConstants.ACCOUNT_BANK_TAB_PURCHASE_PROMPT)
@@ -421,6 +424,7 @@ end
 BaudBagAccountBankContainerMixin = {}
 
 function BaudBagAccountBankContainerMixin:OnContainerLoad()
+    if (PlayerGetTimerunningSeasonID ~= nil) then return end
     self:OnLoad()
 
     -- on unload because it should be ensured that hiding also happens when the frame is not currently visible (otherwise the frame might only vanish)
@@ -498,13 +502,13 @@ local function ItemButton_OnCustomEnter(self)
     self:UpdateTooltipFromCache(bagId, slotId)
 end
 
-hooksecurefunc(AddOnTable, "ItemSlot_Created", function(self, bagSet, containerId, subcontainerId, slot, button)
+local function itemSlotCreatedHook(self, bagSet, containerId, subcontainerId, slot, button)
     if (bagSet == BagSetType.AccountBank) then
         button:Init(Enum.BankType.Account, subcontainerId, slot)
         button:SetScript("OnEnter", ItemButton_OnCustomEnter)
     end
-end)
-
+end
+-- for actual hooking see bottom of file
 
 --[[ ####################################### Base for Bindings ###################################### ]]
 
@@ -526,12 +530,24 @@ local function toggleAccountBankMenuEntry(self)
     self:GetParent():GetParent():Hide()
 end
 
-hooksecurefunc(AddOnTable, "ExtendContainerMenuWithGeneralEntriesForBackpack", function(addOnTable, menuGroup, addedButtons)
+local function extendContainerMenuHook(addOnTable, menuGroup, addedButtons)
     local showAccountBankButton = CreateFrame("CheckButton", nil, menuGroup, "BaudBagContainerMenuCheckButtonTemplate")
     showAccountBankButton:SetText(Localized.ShowAccountBank)
     showAccountBankButton:SetScript("OnClick", toggleAccountBankMenuEntry)
     menuGroup.ShowAccountBankButton = showAccountBankButton
 
     table.insert(addedButtons, showAccountBankButton)
-end)
+end
+-- for actual hooking see bottom of file
 
+
+--[[ ################################################################################################ ]]
+--[[ ############ actual hooking should happen here for easy disabling in certain cases ############# ]]
+--[[ ################################################################################################ ]]
+
+if (PlayerGetTimerunningSeasonID() == nil) then
+    hooksecurefunc(AddOnTable, "ExtendBaseTypes", extendBaseType)
+    hooksecurefunc(AddOnTable, "ConfigUpdated", configUpdateHook)
+    hooksecurefunc(AddOnTable, "ItemSlot_Created", itemSlotCreatedHook)
+    hooksecurefunc(AddOnTable, "ExtendContainerMenuWithGeneralEntriesForBackpack", extendContainerMenuHook)
+end
