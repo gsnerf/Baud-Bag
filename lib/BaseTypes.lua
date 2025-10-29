@@ -45,7 +45,7 @@ BagSetType = {
                 local isReagentBag = AddOnTable.BlizzConstants.BACKPACK_FIRST_REAGENT_CONTAINER ~= nil and AddOnTable.BlizzConstants.BACKPACK_FIRST_REAGENT_CONTAINER <= bagId and bagId <= AddOnTable.BlizzConstants.BACKPACK_LAST_CONTAINER
                 return isReagentBag
             end,
-            Background = 1
+            Theme = "BlizzInventoryDragonflight"
         },
         ApplyConfigRestorationSpecificalities = function(configObject)
             -- make sure the reagent bag is NOT joined by default!

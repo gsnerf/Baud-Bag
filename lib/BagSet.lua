@@ -119,7 +119,6 @@ function Prototype:RebuildContainers()
     for index = (containerNumber + 1), self.MaxContainerNumber do
         self.Containers[index].Frame:Hide()
         self.Containers[index].SubContainers = {}
-        self.Containers[index]:Update()
     end
 
     self.ContainerNumber = containerNumber

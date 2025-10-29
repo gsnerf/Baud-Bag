@@ -32,14 +32,6 @@
 		</Scripts>
 	</Frame>
 	
-	<Frame name="BaudBagContainer1_1" inherits="BaudBagFirstContainerTemplate">
-		<Frames>
-			<Frame name="$parentBagsFrame" parentKey="BagsFrame" inherits="BaudBagBagsFrameTemplate">
-			</Frame>
-		</Frames>
-	</Frame>
-	
-	
 
 	<Frame name="BaudBagFrame">
 		<Scripts>

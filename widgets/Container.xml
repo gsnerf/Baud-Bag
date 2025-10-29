@@ -276,10 +276,7 @@
 					<OnLoad method="OnLoad" />
 				</Scripts>
 			</Frame>
-			<Button parentKey="PurchaseButton" inherits="UIPanelButtonTemplate,InsecureActionButtonTemplate" registerForClicks="AnyUp, AnyDown" text="BANKSLOTPURCHASE">
-				<Attributes>
-					<Attribute name="type" value="click" />
-				</Attributes>
+			<Button parentKey="PurchaseButton" inherits="BankPanelPurchaseButtonScriptTemplate,UIPanelButtonTemplate" text="BANKSLOTPURCHASE">
 				<Size x="124" y="21"/>
 				<Anchors>
 					<Anchor point="LEFT" relativeKey="$parent.CostMoneyFrame" relativePoint="RIGHT" x="12" y="0"/>

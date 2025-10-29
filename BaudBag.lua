@@ -31,6 +31,7 @@ local EventFuncs = {
         AddOnTable:InitCache()
         AddOnTable:RegisterDefaultBackgrounds()
         AddOnTable.ApplyOverrides()
+        BaudBagRestoreCfg()
     end,
 
     PLAYER_LOGIN = function(self, event, ...)

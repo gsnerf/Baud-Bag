@@ -87,10 +87,12 @@ function Prototype:Rebuild()
     end
 
     -- now update content
+    -- todo: get and pass theme to method
     self:UpdateSlotContents()
 end
 
-function Prototype:UpdateSlotContents()
+---@param itemButtonThemeConfig ThemeIconButton
+function Prototype:UpdateSlotContents(itemButtonThemeConfig)
     local showColor = BBConfig.RarityColor
     local rarityIntensity = BBConfig.RarityIntensity
     local setSupportsCache = self.BagSet.SupportsCache
@@ -122,6 +124,10 @@ function Prototype:UpdateSlotContents()
             itemObject:UpdateContentFromLiveData(finishItemButtonUpdateCallback)
         end
 
+        if itemButtonThemeConfig then
+            itemObject:UpdateBackground(itemButtonThemeConfig.ShowBackground, itemButtonThemeConfig.BackgroundImage)
+        end
+
         AddOnTable:ItemSlot_Updated(self.BagSet, self.Frame:GetParent():GetID(), self.ContainerId, slot, itemObject)
     end
 
@@ -129,9 +135,9 @@ function Prototype:UpdateSlotContents()
 end
 
 -- returns the adapted col and row values
-function Prototype:UpdateSlotPositions(container, background, col, row, maxCols, slotLevel)
-    local buttonWidth = background <= 3 and 42 or 39
-    local buttonHeight = background <= 3 and -41 or -39
+function Prototype:UpdateSlotPositions(container, itemButtonConfig, col, row, maxCols, slotLevel)
+    local buttonWidth = itemButtonConfig.WidthOffset
+    local buttonHeight = itemButtonConfig.HeightOffset
 
     for slot = 1, self.Size do
         local itemObject = self.Items[slot]

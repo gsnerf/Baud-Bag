@@ -41,30 +41,16 @@ BaudBagOptionsMixin = {}
 
 --[[
     Needed functions:
+    - option window loaded => nothing done at all for the moment
+    - after ensured that cache and options have been loaded => call options initialize
     - option window loaded => set all basic control settings and add dynamic components
     - bagset changed (dropdown event) => load bags, choose first container (see next point)
     - selected container changed => load container specific data
     (name, background, columns, scaling, autoopen, empty spaces on top, rarity coloring)
   ]]
 
---[[ BaudBagOptions frame related events and methods ]]
-function BaudBagOptionsMixin:OnLoad(event, ...)
-    -- the config needs a reference to this
-    self:RegisterEvent("ADDON_LOADED")
-end
-
 --[[ All actual processing needs to be done after we are sure we have a config to load from! ]]
-function BaudBagOptionsMixin:OnEvent(event, ...)
-
-    -- failsafe: we only want to handle the addon loaded event
-    local arg1 = ...
-    if ((event ~= "ADDON_LOADED") or (arg1 ~= "BaudBag")) then return end
-    
-    -- make sure there is a BBConfig and a cache
-    AddOnTable:InitCache()
-    BaudBagRestoreCfg()
-    ConvertOldConfig()
-	
+function BaudBagOptionsMixin:Initialize(event, ...)
     -- add to options windows
     self.name			= "Baud Bag"
     self.okay			= self.OnOkay
@@ -107,7 +93,8 @@ function BaudBagOptionsMixin:OnEvent(event, ...)
         slider.valueStep   = Value.Step
     end
 
-    self.GroupContainer.BagSet:InitializeContent()
+    self.GroupContainer:Initialize()
+    self.GroupContainer.BagSet:Initialize()
 
     -- some slash command settings
     SlashCmdList[Prefix..'_SLASHCMD'] = function()
@@ -130,6 +117,8 @@ function BaudBagOptionsMixin:OnEvent(event, ...)
     -- make sure the view is updated with the data loaded from the config
     self:Update()
 end
+
+--[[ BaudBagOptions frame related events and methods ]]
 
 -- TODO: identify if this is still a thing!
 function BaudBagOptionsMixin:OnRefresh(event, ...)
@@ -300,31 +289,27 @@ local function CreateBagSetTabButton(parent, bagSetType, lastTabButton)
     return tabButton
 end
 
-function BaudBagOptionsGroupContainerMixin:OnLoad()
+function BaudBagOptionsGroupContainerMixin:Initialize()
     self.Header:SetText(Localized.OptionsGroupContainer)
     self.tabButtons = {}
     self.tabFrames = {}
     self.tabsGroup = CreateRadioButtonGroup()
 
+    AddOnTable.Functions.DebugMessage("Options", "BaudBagOptionsBagSetMixin:EssentialsLoaded()")
+    local lastTabButton
+    for _, type in ipairs(BagSetTypeArray) do
+        -- create tabs for bagset selection
+        local tabButton = CreateBagSetTabButton(self, type, lastTabButton)
+        table.insert(self.tabButtons, tabButton)
+        lastTabButton = tabButton
 
-    local loadEssentials = function()
-        AddOnTable.Functions.DebugMessage("Options", "BaudBagOptionsBagSetMixin:EssentialsLoaded()")
-        local lastTabButton
-        for _, type in ipairs(BagSetTypeArray) do
-            -- create tabs for bagset selection
-            local tabButton = CreateBagSetTabButton(self, type, lastTabButton)
-            table.insert(self.tabButtons, tabButton)
-            lastTabButton = tabButton
-
-            -- ensure that we know how many container buttons are needed for this BagSetType
-            SetSize[type.Id] = type.NumberOfContainers
-        end
-    
-        self.tabsGroup:AddButtons(self.tabButtons)
-        self.tabsGroup:SelectAtIndex(1)
-        self.tabsGroup:RegisterCallback(ButtonGroupBaseMixin.Event.Selected, self.OnTabSelected, self)
+        -- ensure that we know how many container buttons are needed for this BagSetType
+        SetSize[type.Id] = type.NumberOfContainers
     end
-    hooksecurefunc(AddOnTable, "EssentialsLoaded", loadEssentials)
+
+    self.tabsGroup:AddButtons(self.tabButtons)
+    self.tabsGroup:SelectAtIndex(1)
+    self.tabsGroup:RegisterCallback(ButtonGroupBaseMixin.Event.Selected, self.OnTabSelected, self)
 end
 
 function BaudBagOptionsGroupContainerMixin:OnTabSelected(tab, tabIndex)
@@ -373,12 +358,25 @@ local function CreateBagSetBagButtons(self)
     end
 end
 
+local function ContainerBackgroundChanged(newThemeId)
+    AddOnTable.Functions.DebugMessage("Options", "container theme was changed", newThemeId)
+
+    BBConfig[SelectedBags][SelectedContainer].Theme = newThemeId
+    local container = AddOnTable.Sets[SelectedBags].Containers[SelectedContainer]
+    container:Rebuild()
+    container:Update()
+end
+
+local function BackgroundSelection_isSelected(themeId)
+    return themeId == BBConfig[SelectedBags][SelectedContainer].Theme
+end
+
 --- Initializes the BagSet group frame:
 --- * puts localized texts on all UI elements
 --- * hooks events
 --- * assigns fixed boundaries
 --- * reates all the bag buttons that might be necessary for all of the bag sets
-function BaudBagOptionsBagSetMixin:OnLoad()
+function BaudBagOptionsBagSetMixin:Initialize()
     -- localized text fields and buttons
     self.NameInput.Text:SetText(Localized.ContainerName)
     self.ResetPositionButton.Text:SetText(Localized.OptionsResetContainerPosition)
@@ -403,23 +401,13 @@ function BaudBagOptionsBagSetMixin:OnLoad()
     end
 
     CreateBagSetBagButtons(self)
-end
 
-local function ContainerBackgroundChanged(newBackgroundId)
-    AddOnTable.Functions.DebugMessage("Options", "container background was changed", newBackgroundId)
+    local backgroundList = {}
+    for _, theme in pairs(AddOnTable.Themes) do
+        backgroundList[theme.Id] = theme.Name
+    end
 
-    BBConfig[SelectedBags][SelectedContainer].Background = newBackgroundId
-    local container = AddOnTable.Sets[SelectedBags].Containers[SelectedContainer]
-    container:Rebuild()
-    container:Update()
-end
-
-local function BackgroundSelection_isSelected(index)
-    return index == BBConfig[SelectedBags][SelectedContainer].Background
-end
-
-function BaudBagOptionsBagSetMixin:InitializeContent()
-    self.BackgroundSelection:Setup(TextureNames, BackgroundSelection_isSelected, ContainerBackgroundChanged)
+    self.BackgroundSelection:Setup(backgroundList, BackgroundSelection_isSelected, ContainerBackgroundChanged)
 end
 
 local function UpdateBagButtons(self)
@@ -670,3 +658,5 @@ function BaudBagOptionsCheckButtonMixin:OnClick()
     end
     BaudBagOptions:Update()
 end
+
+hooksecurefunc(AddOnTable, "Configuration_Loaded", function() BaudBagOptions:Initialize() end)

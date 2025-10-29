@@ -114,6 +114,7 @@
 		<KeyValues>
 			<KeyValue key="settingsType" value="BagJoin" type="string" />
 		</KeyValues>
+		<Size x="26" y="26" />
 	</CheckButton>
 
 	<Slider name="BaudBagOptionsSliderTemplate" inherits="MinimalSliderTemplate" mixin="BaudBagOptionsSliderTemplateMixin" virtual="true">
@@ -260,9 +261,6 @@
 				</Scripts>
 			</Button>
 		</Frames>
-		<Scripts>
-			<OnLoad method="OnLoad" />
-		</Scripts>
 	</Frame>
 
 	<!-- actual frame -->
@@ -400,15 +398,8 @@
 						</Layers>
 					</Frame>
 				</Frames>
-				<Scripts>
-					<OnLoad  method="OnLoad" />
-				</Scripts>
 			</Frame>
 
 		</Frames>
-		<Scripts>
-			<OnLoad  method="OnLoad" />
-			<OnEvent method="OnEvent" />
-		</Scripts>
 	</Frame>
 </Ui>

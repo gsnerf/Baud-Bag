@@ -35,7 +35,7 @@ local function extendBaseType()
             Scale = 100,
             GetNameAddition = function(bagId) return Localized.BankBox end,
             RequiresFreshConfig = function(bagId) return false end,
-            Background = 2,
+            Theme = "BlizzBankDragonflight",
         },
         ApplyConfigRestorationSpecificalities = function(configObject) end,
         CanContainerBeJoined = function(subContainerId) return true end,
@@ -150,7 +150,7 @@ end
 --[[ this method ensures that the bank bags are either placed as childs under UIParent or BaudBag ]]
 local function updateBankParents()
     local newParent = UIParent
-    if BBConfig[BagSetType.Bank.Id].Enabled and BBConfig[BagSetType.AccountBank.Id].Enabled then
+    if BBConfig[BagSetType.Bank.Id].Enabled and (BagSetType.AccountBank == nil or BBConfig[BagSetType.AccountBank.Id].Enabled) then
         newParent = BaudBag_OriginalBagsHideFrame
     end
 
@@ -232,7 +232,7 @@ function BaudBagFirstBankMixin:OnBankEvent(event, ...)
         if self.UnlockInfo ~= nil then
             endUnlockMode(self)
             AddOnTable.Sets[BagSetType.Bank.Id].Containers[1]:Rebuild()
-            AddOnTable.Sets[BagSetType.Bank.Id].Containers[1].BagsFrame:Update()
+            AddOnTable.Sets[BagSetType.Bank.Id].Containers[1].Frame.BagsFrame:Update()
         end
     elseif (event == "PLAYER_MONEY") then
         MoneyFrame_UpdateMoney(self.MoneyFrame.SmallMoneyFrame)
@@ -266,7 +266,7 @@ function BaudBagBankUnlockMixin:OnLoad()
     BaudBagContainerUnlockMixin.OnLoad(self)
     self.Title:SetText(AddOnTable.BlizzConstants.BANK_PANEL_TITLE)
     self.Text:SetText(AddOnTable.BlizzConstants.BANK_TAB_PURCHASE_PROMPT)
-    self.PurchaseButton:SetAttribute("clickbutton", BankPanel.PurchasePrompt.TabCostFrame.PurchaseButton)
+    self.PurchaseButton:SetAttribute("overrideBankType", Enum.BankType.Character)
 end
 
 function BaudBagBankUnlockMixin:OnShow()

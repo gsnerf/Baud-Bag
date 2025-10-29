@@ -10,7 +10,7 @@
 ## Title: Baud Bag
 ## Title-zhCN: 背包整合 Baud Bag
 ## Title-zhTW: 背包整合 Baud Bag
-## Version: 11.2.0.1
+## Version: 11.2.5.1
 
 # english has to be the first locale!
 localization\Localization.en.lua
@@ -30,24 +30,27 @@ lib\TextureHelper.lua
 lib\Backgrounds\BlizzardBackground.lua
 lib\Backgrounds\SimpleBackground.lua
 lib\Backgrounds\BackgroundRegistration.lua
+lib\Themes.lua
 widgets\buttons\BagButton.xml
 widgets\buttons\ItemButton.lua
 widgets\BagsFrame.xml
+widgets\TokenBar.xml
 widgets\Container.xml
 widgets\OptionsDropdown.xml
+themes\BlizzardThemes.lua
+themes\SimpleThemes.lua
 frames\ContainerMenu.xml
 Events.lua
 config\ConfigOptions.lua
-BaudBagConfig.lua
+config\Config.lua
 BaudBagCache.lua
 BaudBagToolTips.lua
 frames/Options.xml
-TokenBar.xml
-sets/backpack/BagButton.xml
-Backpack.lua
+sets\backpack\BagButton.xml
+sets\backpack\Backpack.xml
 sets\classic-bank\BagButton.xml
 sets\classic-bank\Bank.xml
-Keyring.xml
+sets\keyring\Keyring.xml
 frames\BaudBagSearchFrame.xml
 Overrides.lua
 BaudBag.xml
