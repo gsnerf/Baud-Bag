@@ -260,9 +260,6 @@
 				</Scripts>
 			</Button>
 		</Frames>
-		<Scripts>
-			<OnLoad method="OnLoad" />
-		</Scripts>
 	</Frame>
 
 	<!-- actual frame -->
@@ -400,15 +397,8 @@
 						</Layers>
 					</Frame>
 				</Frames>
-				<Scripts>
-					<OnLoad  method="OnLoad" />
-				</Scripts>
 			</Frame>
 
 		</Frames>
-		<Scripts>
-			<OnLoad  method="OnLoad" />
-			<OnEvent method="OnEvent" />
-		</Scripts>
 	</Frame>
 </Ui>

@@ -121,8 +121,9 @@ function BaudBagRestoreCfg()
     -- cofig base
     BaudBag_Cfg = RestoreConfigToObject(BaudBag_Cfg)
     BBConfig = BaudBag_Cfg
-
     AddOnTable.Config = BBConfig
+
+    ConvertOldConfig()
     AddOnTable:Configuration_Loaded()
 end
 
@@ -183,13 +184,6 @@ function ConvertOldConfig()
             end
         end
     end
-end
-
-function BaudBagSaveCfg()
-    AddOnTable.Functions.DebugMessage("Config", "Saving configuration");
-    BaudBag_Cfg = AddOnTable.Functions.CopyTable(BBConfig);
-    ReloadConfigDependant();
-    AddOnTable:Configuration_Updated()
 end
 
 function ReloadConfigDependant()
