@@ -513,6 +513,8 @@ end
 --[[ ####################################### Base for Bindings ###################################### ]]
 
 function BaudBagToggleWarbandBank()
+    if (PlayerGetTimerunningSeasonID() ~= nil) then return end
+    
     local warbandBankSet = AddOnTable.Sets[BagSetType.AccountBank.Id]
     local firstContainer = warbandBankSet.Containers[1]
     if (firstContainer.Frame:IsShown()) then
