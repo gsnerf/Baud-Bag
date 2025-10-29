@@ -84,7 +84,7 @@ local function extendBaseType()
                 local isReagentBank = bagId == AddOnTable.BlizzConstants.REAGENTBANK_CONTAINER
                 return isReagentBank
             end,
-            Background = 2
+            Theme = "BlizzBankClassic"
         },
         ApplyConfigRestorationSpecificalities = function(configObject)
             -- make sure the reagent bank is NOT joined by default!

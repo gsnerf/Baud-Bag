@@ -23,7 +23,7 @@ local function extendBaseType()
             Scale = 100,
             GetNameAddition = function(bagId) return Localized.KeyRing end,
             RequiresFreshConfig = function(bagId) return false end,
-            Background = 3
+            Theme = "BlizzKeyring"
         },
         ApplyConfigRestorationSpecificalities = function(configObject) end,
         CanContainerBeJoined = function(subContainerId) return true end,

@@ -278,8 +278,6 @@ local ThemeItemButton = {
 
 local function initializeBlizzardBackground(id, name, file, itemButtonBackground, itemButtonWidthOffset, itemButtonHeightOffset)
     local background = CreateFromMixins(ThemeBackground)
-    background.Id = id
-    background.Name = name
     background.Insets = { Left = 10, Right = 10, Top = 25, Bottom = 7 }
     background.File = file
 
@@ -291,6 +289,7 @@ local function initializeBlizzardBackground(id, name, file, itemButtonBackground
 
     AddOnTable:RegisterTheme({
         Id = id,
+        Name = name,
         ContainerBackground = background,
         ItemButton = itemButton,
         BorderOffset = {

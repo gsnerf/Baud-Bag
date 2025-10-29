@@ -96,9 +96,9 @@ function RestoreConfigToObject(configObject)
                     configObject[bagSetID][containerID].Name = UnitName("player")..Localized.Of..nameAddition
                 end
 
-                if (type(configObject[bagSetID][containerID].Background) ~= "number") then
-                    AddOnTable.Functions.DebugMessage("Config", "- BagSet["..bagSetID.."], Bag["..bagID.."], Container["..containerID.."] container background damaged or missing, creating now")
-                    configObject[bagSetID][containerID].Background = bagSetType.DefaultConfig.Background
+                if (type(configObject[bagSetID][containerID].Theme) ~= "string") then
+                    AddOnTable.Functions.DebugMessage("Config", "- BagSet["..bagSetID.."], Bag["..bagID.."], Container["..containerID.."] container theme damaged or missing, creating now")
+                    configObject[bagSetID][containerID].Theme = bagSetType.DefaultConfig.Theme
                 end
 
                 for _, sliderConfig in ipairs(AddOnTable.ConfigOptions.Container.SliderBars) do
@@ -176,7 +176,7 @@ function ConvertOldConfig()
         local bagSetConfig = BBConfig[bagSet.Id]
         -- containers in the configuration are assigned to indexes 1..#containers
         for _, container in ipairs(bagSetConfig) do
-            if container.Theme == nil and container.Background ~= nil then
+            if container.Background ~= nil then
                 container.Theme = ConvertBackgroundToTheme(container.Background)
                 if container.Theme ~= nil then
                     container.Background = nil

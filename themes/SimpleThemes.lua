@@ -36,14 +36,13 @@ end
 
 local function initSimpleBackground(id, name, insets, backdrop, color, itemButtonBackground, itemButtonWidthOffset, itemButtonHeightOffset)
     local background = CreateFromMixins(SimpleTheme)
-    background.Id = id
-    background.Name = name
     background.Insets = insets
     background.Backdrop = backdrop
     background.BackdropColor = color
 
     AddOnTable:RegisterTheme({
         Id = id,
+        Name = name,
         ContainerBackground = background,
         ItemButton = {
             ShowBackground = itemButtonBackground ~= nil,

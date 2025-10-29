@@ -36,7 +36,7 @@ local function extendBaseType()
             Scale = 100,
             GetNameAddition = function(bagId) return Localized.AccountBank end,
             RequiresFreshConfig = function(bagId) return false end,
-            Background = 2
+            Theme = "BlizzBankDragonflight"
         },
         ApplyConfigRestorationSpecificalities = function(configObject) end,
         CanContainerBeJoined = function(subContainerId) return true end,
