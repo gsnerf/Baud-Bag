@@ -114,6 +114,7 @@
 		<KeyValues>
 			<KeyValue key="settingsType" value="BagJoin" type="string" />
 		</KeyValues>
+		<Size x="26" y="26" />
 	</CheckButton>
 
 	<Slider name="BaudBagOptionsSliderTemplate" inherits="MinimalSliderTemplate" mixin="BaudBagOptionsSliderTemplateMixin" virtual="true">
