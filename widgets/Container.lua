@@ -95,6 +95,7 @@ function Prototype:Update()
     self.Frame.Refresh   = false
     self:UpdateName()
     local contCfg         = BBConfig[self.Frame.BagSet][self.Id]
+    local theme           = AddOnTable.Themes[contCfg.Theme]
     local numberOfColumns = contCfg.Columns
 
     -- this will happen with the new reagent bag system when no reagent bag is equipped yet..
@@ -119,14 +120,8 @@ function Prototype:Update()
 
     -- now go through all sub bags
     _, row = self:UpdateSubContainers(column, row)
-
-    if (contCfg.Background <= 3) then
-        self.Frame:SetWidth(numberOfColumns * 42 - 5)
-        self.Frame:SetHeight(row * 41 - 4)
-    else
-        self.Frame:SetWidth(numberOfColumns * 39 - 2)
-        self.Frame:SetHeight(row * 39 - 2)
-    end
+    self.Frame:SetWidth(numberOfColumns * math.abs(theme.ItemButton.WidthOffset) - theme.BorderOffset.X)
+    self.Frame:SetHeight(row * math.abs(theme.ItemButton.HeightOffset) - theme.BorderOffset.Y)
     
     AddOnTable.Functions.DebugMessage("Bags", "Finished Arranging Container.")
     AddOnTable:Container_Updated(self.BagSet, self.Id)
@@ -134,7 +129,7 @@ end
 
 function Prototype:UpdateSubContainers(col, row)
     local contCfg       = BBConfig[self.Frame.BagSet][self.Id]
-    local background    = contCfg.Background
+    local background    = contCfg.Theme
     local maxCols       = contCfg.Columns
     local slotLevel     = self.Frame:GetFrameLevel() + 1
     local container
@@ -153,7 +148,7 @@ function Prototype:UpdateSubContainers(col, row)
             
             -- position item slots
             container:UpdateSlotContents(itemButtonConfig)
-            col, row = container:UpdateSlotPositions(self.Frame, background, col, row, maxCols, slotLevel)
+            col, row = container:UpdateSlotPositions(self.Frame, itemButtonConfig, col, row, maxCols, slotLevel)
             container.Frame:Show()
         end
     end

@@ -34,7 +34,7 @@ function SimpleTheme:Update(containerFrame, backdrop, shiftName)
     return self.Insets.Left, self.Insets.Right, self.Insets.Top, Bottom
 end
 
-local function initSimpleBackground(id, name, insets, backdrop, color, itemButtonBackground)
+local function initSimpleBackground(id, name, insets, backdrop, color, itemButtonBackground, itemButtonWidthOffset, itemButtonHeightOffset)
     local background = CreateFromMixins(SimpleTheme)
     background.Id = id
     background.Name = name
@@ -42,14 +42,20 @@ local function initSimpleBackground(id, name, insets, backdrop, color, itemButto
     background.Backdrop = backdrop
     background.BackdropColor = color
 
-    AddOnTable.Themes[id] = {
+    AddOnTable:RegisterTheme({
         Id = id,
         ContainerBackground = background,
         ItemButton = {
             ShowBackground = itemButtonBackground ~= nil,
-            BackgroundImage = itemButtonBackground
+            BackgroundImage = itemButtonBackground,
+            WidthOffset = itemButtonWidthOffset,
+            HeightOffset = itemButtonHeightOffset
+        },
+        BorderOffset = {
+            X = 2,
+            Y = 2
         }
-    }
+    })
 end
 
 initSimpleBackground(
@@ -63,7 +69,9 @@ initSimpleBackground(
         insets = { left = 5, right = 5, top = 5, bottom = 5 }
     },
     { Red = 0.0, Green = 0.0, Blue = 0.0, Alpha = 1 },
-    nil
+    nil,
+    39,
+    -39
 )
 
 initSimpleBackground(
@@ -77,7 +85,9 @@ initSimpleBackground(
         insets = { left = 11, right = 12, top = 12, bottom = 11 }
     },
     { Red = 0.1, Green = 0.1, Blue = 0.1, Alpha = 1 },
-    nil
+    nil,
+    39,
+    -39
 )
 
 initSimpleBackground(
@@ -90,5 +100,7 @@ initSimpleBackground(
         insets = { left = 2, right = 2, top = 2, bottom = 2 }
     },
     { Red = 0.0, Green = 0.0, Blue = 0.0, Alpha = 0.6 },
-    nil
+    nil,
+    39,
+    -39
 )

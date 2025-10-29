@@ -135,9 +135,9 @@ function Prototype:UpdateSlotContents(itemButtonThemeConfig)
 end
 
 -- returns the adapted col and row values
-function Prototype:UpdateSlotPositions(container, background, col, row, maxCols, slotLevel)
-    local buttonWidth = background <= 3 and 42 or 39
-    local buttonHeight = background <= 3 and -41 or -39
+function Prototype:UpdateSlotPositions(container, itemButtonConfig, col, row, maxCols, slotLevel)
+    local buttonWidth = itemButtonConfig.WidthOffset
+    local buttonHeight = itemButtonConfig.HeightOffset
 
     for slot = 1, self.Size do
         local itemObject = self.Items[slot]

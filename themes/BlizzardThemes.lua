@@ -276,7 +276,7 @@ local ThemeItemButton = {
 
 --[[ ######################################### initialization ######################################### ]]
 
-local function initializeBlizzardBackground(id, name, file, itemButtonBackground)
+local function initializeBlizzardBackground(id, name, file, itemButtonBackground, itemButtonWidthOffset, itemButtonHeightOffset)
     local background = CreateFromMixins(ThemeBackground)
     background.Id = id
     background.Name = name
@@ -285,46 +285,62 @@ local function initializeBlizzardBackground(id, name, file, itemButtonBackground
 
     local itemButton = CreateFromMixins(ThemeItemButton)
     itemButton.ShowBackground = itemButtonBackground ~= nil
-    BackgroundImage = itemButtonBackground
+    itemButton.BackgroundImage = itemButtonBackground
+    itemButton.WidthOffset = itemButtonWidthOffset
+    itemButton.HeightOffset = itemButtonHeightOffset
 
-    AddOnTable.Themes[id] = {
+    AddOnTable:RegisterTheme({
         Id = id,
         ContainerBackground = background,
-        ItemButton = itemButton
-    }
+        ItemButton = itemButton,
+        BorderOffset = {
+            X = 5,
+            Y = 4
+        }
+    })
 end
 
 initializeBlizzardBackground(
     "BlizzInventoryClassic",
     Localized.BlizInventory,
     "Interface\\ContainerFrame\\UI-Bag-Components",
-    nil
+    nil,
+    42,
+    -41
 )
 
 initializeBlizzardBackground(
     "BlizzBankClassic",
     Localized.BlizBank,
     "Interface\\ContainerFrame\\UI-Bag-Components-Bank",
-    nil
+    nil,
+    42,
+    -41
 )
 
 initializeBlizzardBackground(
     "BlizzKeyring",
     Localized.BlizKeyring,
     "Interface\\ContainerFrame\\UI-Bag-Components-Keyring",
-    nil
+    nil,
+    42,
+    -41
 )
 
 initializeBlizzardBackground(
     "BlizzInventoryDragonflight",
     Localized.BlizInventory,
     "Interface\\ContainerFrame\\UI-Bag-Components",
-    nil
+    nil,
+    42,
+    -41
 )
 
 initializeBlizzardBackground(
     "BlizzBankDragonflight",
     Localized.BlizBank,
     "Interface\\ContainerFrame\\UI-Bag-Components-Bank",
-    nil
+    nil,
+    42,
+    -41
 )

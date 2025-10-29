@@ -271,13 +271,13 @@ end
 ---@param backgroundImage string
 function Prototype:UpdateBackground(showBackground, backgroundImage)
     if showBackground then
-        itemButton.emptyBackgroundTexture = backgroundImage
-        if itemButton.Background then
-            itemButton.Background:Show()
+        self.emptyBackgroundTexture = backgroundImage
+        if self.Background then
+            self.Background:Show()
         end
     else
-        if itemButton.Background then
-            itemButton.Background:Hide()
+        if self.Background then
+            self.Background:Hide()
         end
     end
 end
