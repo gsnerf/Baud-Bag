@@ -20,7 +20,7 @@ function BaudBagSearchFrame_ShowFrame(parentContainer, scale, themeId)
     local theme = AddOnTable.Themes[themeId]
     theme.SearchFrame:UpdateBackground(parentContainer, SearchFrame, Backdrop)
     theme.SearchFrame:UpdatePositions(parentContainer, SearchFrame, Backdrop)
-    
+
     -- adjust the scaling according to the calling container
     SearchFrame:SetScale(scale)
 	
@@ -29,10 +29,7 @@ function BaudBagSearchFrame_ShowFrame(parentContainer, scale, themeId)
     EditBox:SetFocus()
 end
 
-function BaudBagSearchFrameEditBox_OnTextChanged(self, isUserInput)
-    AddOnTable.Functions.DebugMessage("Search", "Changed search phrase, searching open bags")
-    local compareString = self:GetText()
-	
+local function searchBagsForItem(searchTarget)
     -- check search text for validity
     if (false) then
         -- TODO!!!a
@@ -74,14 +71,14 @@ function BaudBagSearchFrameEditBox_OnTextChanged(self, isUserInput)
                 -- add transparency if search active but not a result
                 Texture = ItemButton
                 if (Link and compareString ~= "") then
-                    AddOnTable.Functions.DebugMessage("Search", "Searching (searchString, itemName)", compareString, Name)
+                    AddOnTable.Functions.DebugMessage("Search", "Searching (searchString, itemName)", searchTarget, Name)
 
                     -- first run string search and go through results later (because of error handling)
-                    Status, Result = pcall(string.find, string.lower(Name), string.lower(compareString))
+                    Status, Result = pcall(string.find, string.lower(Name), string.lower(searchTarget))
 
                     -- find was run successfull: act depending on result
                     if (Status) then
-                        --if (string.find(string.lower(Name), string.lower(compareString)) == nil) then
+                        --if (string.find(string.lower(Name), string.lower(target)) == nil) then
                         if (Result == nil) then
                             AddOnTable.Functions.DebugMessage("Search", "Itemname does not match")
                             Texture:SetAlpha(0.2)
@@ -100,6 +97,12 @@ function BaudBagSearchFrameEditBox_OnTextChanged(self, isUserInput)
             end
         end
     end
+end
+
+function BaudBagSearchFrameEditBox_OnTextChanged(self, isUserInput)
+    AddOnTable.Functions.DebugMessage("Search", "Changed search phrase, searching open bags")
+    local compareString = self:GetText()
+    searchBagsForItem(compareString)
 end
 
 local function RemoveSearchHighlights()
