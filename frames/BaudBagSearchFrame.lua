@@ -67,20 +67,8 @@ function BaudBagSearchFrameEditBox_OnTextChanged(self, isUserInput)
                     -- debug message
                     local printableLink = gsub(Link, "\124", "\124\124")
                     AddOnTable.Functions.DebugMessage("Search", "Found a link (link)", printableLink)
-
-                    -- we can have different types of links, usually it is an item...
-                    if (strmatch(Link, "|Hitem:")) then
-                        Name, _, _, _, _, _, _, _, _, _ = AddOnTable.BlizzAPI.GetItemInfo(Link)
-
-                        -- ... or a caged battle pet ...
-                    elseif (strmatch(Link, "|Hbattlepet:")) then
-                        local _, _, speciesID, _, _, _, _, _, battlePetID = strsplit(":", Link)
-                        Name, _, _, _, _, _, _, _, _, _= C_PetJournal.GetPetInfoBySpeciesID(speciesID)
-
-                        -- ... we don't know about everything else
-                    else
-                        Name = "Unknown"
-                    end
+                    _, _, Name = LinkUtil.ExtractLink(Link)
+                    AddOnTable.Functions.DebugMessage("Search", "extracted name from link", Name)
                 end
 
                 -- add transparency if search active but not a result
