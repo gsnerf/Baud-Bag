@@ -304,7 +304,7 @@ end
 BaudBagAccountBankUnlockMixin = {}
 
 function BaudBagAccountBankUnlockMixin:OnLoad()
-    if (PlayerGetTimerunningSeasonID ~= nil) then return end
+    if (PlayerGetTimerunningSeasonID() ~= nil) then return end
 
     BaudBagContainerUnlockMixin.OnLoad(self)
     self.Title:SetText(AddOnTable.BlizzConstants.ACCOUNT_BANK_PANEL_TITLE)
@@ -424,7 +424,7 @@ end
 BaudBagAccountBankContainerMixin = {}
 
 function BaudBagAccountBankContainerMixin:OnContainerLoad()
-    if (PlayerGetTimerunningSeasonID ~= nil) then return end
+    if (PlayerGetTimerunningSeasonID() ~= nil) then return end
     self:OnLoad()
 
     -- on unload because it should be ensured that hiding also happens when the frame is not currently visible (otherwise the frame might only vanish)
