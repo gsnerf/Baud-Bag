@@ -434,6 +434,7 @@ function BaudBagAccountBankContainerMixin:OnContainerLoad()
 end
 
 function BaudBagAccountBankContainerMixin:OnContainerShow()
+    self:OnShow()
     self.ItemDepositButton:Update()
 end
 
