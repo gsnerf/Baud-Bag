@@ -381,11 +381,11 @@ BaudBagSearchButtonMixin = {}
 
 function BaudBagSearchButtonMixin:OnClick(event, ...)
     -- get references to all needed frames and data
-    local Container		= self:GetParent()
-    local Scale			= BBConfig[Container.BagSet][Container:GetID()].Scale / 100
-    local Background	= BBConfig[Container.BagSet][Container:GetID()].Background
+    local container		= self:GetParent()
+    local scale			= BBConfig[container.BagSet][container:GetID()].Scale / 100
+    local theme	= BBConfig[container.BagSet][container:GetID()].Theme
     
-    BaudBagSearchFrame_ShowFrame(Container, Scale, Background)
+    BaudBagSearchFrame_ShowFrame(container, scale, theme)
 end
 
 function BaudBagSearchButtonMixin:OnEnter(event, ...)

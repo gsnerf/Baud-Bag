@@ -8,7 +8,7 @@ local LastBagID = AddOnTable.BlizzConstants.ACCOUNT_BANK_LAST_SUB_CONTAINER
 
 local BagsSearched = {}
 
-function BaudBagSearchFrame_ShowFrame(ParentContainer, Scale, Background)
+function BaudBagSearchFrame_ShowFrame(parentContainer, scale, theme)
     local SearchFrame	= BaudBagSearchFrame
     local Backdrop		= SearchFrame.Backdrop
     local EditBox		= SearchFrame.EditBox
@@ -16,15 +16,15 @@ function BaudBagSearchFrame_ShowFrame(ParentContainer, Scale, Background)
     local BagSearchHeight		= 20
 	
     -- remember the element the search frame is attached to
-    SearchFrame.AttachedTo = ParentContainer:GetName()
-    SearchFrame:SetParent(ParentContainer)
+    SearchFrame.AttachedTo = parentContainer:GetName()
+    SearchFrame:SetParent(parentContainer)
 	
     -- draw the background depending on the containers background
     Backdrop:SetFrameLevel(SearchFrame:GetFrameLevel());
     local Left, Right, Top, Bottom
 	
     -- these are the default blizz-frames
-    if (Background <= 3) then
+    if (string.sub(theme, 1, 5) == "Blizz") then
 
         Left, Right, Top, Bottom	= 10, 10, 25, 7
         BagSearchHeightOffset		= 22
@@ -34,12 +34,12 @@ function BaudBagSearchFrame_ShowFrame(ParentContainer, Scale, Background)
         -- initialize texture helper
         local helper = AddOnTable:GetTextureHelper()
         helper.Parent = Backdrop.Textures
-        helper.Parent:SetFrameLevel(ParentContainer:GetFrameLevel())
+        helper.Parent:SetFrameLevel(parentContainer:GetFrameLevel())
         helper.Width, helper.Height = 256, 512
         helper.File = "Interface\\ContainerFrame\\UI-Bag-Components"
-        if (Background == 2) then
+        if (theme == "BlizzBankClassic" or theme == "BlizzBankDragonflight") then
             helper.File = helper.File.."-Bank"
-        elseif(Background == 3)then
+        elseif(theme == "BlizzKeyring")then
             helper.File = helper.File.."-Keyring"
         end
         helper.DefaultLayer = "ARTWORK"
@@ -78,8 +78,7 @@ function BaudBagSearchFrame_ShowFrame(ParentContainer, Scale, Background)
         SearchFrame.CloseButton:SetPoint("TOPRIGHT", 9, 10)
         SearchFrame.EditBox:SetPoint("TOPLEFT", -1, 0)
 		
-        if (Background == 5) then
-            -- "solid"
+        if (theme == "Solid") then
             Backdrop:SetBackdrop({
                 bgFile = "Interface\\Buttons\\WHITE8X8",
                 edgeFile = "Interface\\DialogFrame\\UI-DialogBox-Border",
@@ -89,8 +88,7 @@ function BaudBagSearchFrame_ShowFrame(ParentContainer, Scale, Background)
             Left, Right, Top, Bottom = Left+8, Right+8, Top+8, Bottom+8
             BagSearchHeightOffset = BagSearchHeightOffset + 8
             Backdrop:SetBackdropColor(0.1, 0.1, 0.1, 1)
-        elseif (Background == 6) then
-            -- "transparent2"
+        elseif (theme == "ElvUI") then
             Backdrop:SetBackdrop({
                 bgFile = "Interface\\Buttons\\WHITE8X8",
                 tile = true, tileSize = 14, edgeSize = 14,
@@ -98,7 +96,7 @@ function BaudBagSearchFrame_ShowFrame(ParentContainer, Scale, Background)
             })
             Backdrop:SetBackdropColor(0.0, 0.0, 0.0, 0.6)
         else
-            -- "transparent"
+            -- "Transparent"
             Backdrop:SetBackdrop({
                 bgFile = "Interface\\Tooltips\\UI-Tooltip-Background",
                 edgeFile = "Interface\\Tooltips\\UI-Tooltip-Border",
@@ -117,18 +115,18 @@ function BaudBagSearchFrame_ShowFrame(ParentContainer, Scale, Background)
 	
     -- position the frame above the calling container
     SearchFrame:ClearAllPoints()
-    SearchFrame:SetPoint("BOTTOMLEFT", ParentContainer, "TOPLEFT", 0, BagSearchHeightOffset)
-    SearchFrame:SetPoint("RIGHT", ParentContainer, "RIGHT")
+    SearchFrame:SetPoint("BOTTOMLEFT", parentContainer, "TOPLEFT", 0, BagSearchHeightOffset)
+    SearchFrame:SetPoint("RIGHT", parentContainer, "RIGHT")
     SearchFrame:SetHeight(BagSearchHeight)
 	
     -- make sure the frame lies on the same lvl as the calling container
-    SearchFrame:SetFrameLevel(ParentContainer:GetFrameLevel())
+    SearchFrame:SetFrameLevel(parentContainer:GetFrameLevel())
     Backdrop:SetFrameLevel(SearchFrame:GetFrameLevel())
     SearchFrame.CloseButton:SetFrameLevel(SearchFrame:GetFrameLevel()+1)
     SearchFrame.EditBox:SetFrameLevel(SearchFrame:GetFrameLevel()+1)
 	
     -- adjust the scaling according to the calling container
-    SearchFrame:SetScale(Scale)
+    SearchFrame:SetScale(scale)
 	
     -- finally show it
     SearchFrame:Show()
