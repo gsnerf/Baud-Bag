@@ -8,123 +8,19 @@ local LastBagID = AddOnTable.BlizzConstants.ACCOUNT_BANK_LAST_SUB_CONTAINER
 
 local BagsSearched = {}
 
-function BaudBagSearchFrame_ShowFrame(parentContainer, scale, theme)
+function BaudBagSearchFrame_ShowFrame(parentContainer, scale, themeId)
     local SearchFrame	= BaudBagSearchFrame
     local Backdrop		= SearchFrame.Backdrop
     local EditBox		= SearchFrame.EditBox
-    local BagSearchHeightOffset = 0
-    local BagSearchHeight		= 20
 	
     -- remember the element the search frame is attached to
     SearchFrame.AttachedTo = parentContainer:GetName()
     SearchFrame:SetParent(parentContainer)
 	
-    -- draw the background depending on the containers background
-    Backdrop:SetFrameLevel(SearchFrame:GetFrameLevel());
-    local Left, Right, Top, Bottom
-	
-    -- these are the default blizz-frames
-    if (string.sub(theme, 1, 5) == "Blizz") then
-
-        Left, Right, Top, Bottom	= 10, 10, 25, 7
-        BagSearchHeightOffset		= 22
-        local Parent = Backdrop.Textures:GetName()
-        local Texture
-		
-        -- initialize texture helper
-        local helper = AddOnTable:GetTextureHelper()
-        helper.Parent = Backdrop.Textures
-        helper.Parent:SetFrameLevel(parentContainer:GetFrameLevel())
-        helper.Width, helper.Height = 256, 512
-        helper.File = "Interface\\ContainerFrame\\UI-Bag-Components"
-        if (theme == "BlizzBankClassic" or theme == "BlizzBankDragonflight") then
-            helper.File = helper.File.."-Bank"
-        elseif(theme == "BlizzKeyring")then
-            helper.File = helper.File.."-Keyring"
-        end
-        helper.DefaultLayer = "ARTWORK"
-
-
-        -- --------------------------
-        -- create new textures now
-        -- --------------------------
-        -- BORDERS FIRST
-        -- transparent circle top left
-        Texture = helper:GetTexturePiece("Left", 106, 117, 5, 30)
-        Texture:SetPoint("TOPLEFT")
-
-        -- right end of header + transparent piece for close button (with or without blank part on the bottom)
-        Texture = helper:GetTexturePiece("Right", 223, 252, 5, 30)
-        Texture:SetPoint("TOPRIGHT")
-
-        -- container header (contains name, with or without blank part on the bottom)
-        Texture = helper:GetTexturePiece("Center", 117, 222, 5, 30)
-        Texture:SetPoint("TOP")
-        Texture:SetPoint("RIGHT", Parent.."Right", "LEFT")
-        Texture:SetPoint("LEFT", Parent.."Left", "RIGHT")
-
-        -- fix positions of some elements
-        SearchFrame.CloseButton:SetPoint("TOPRIGHT",Backdrop,"TOPRIGHT",3,3)
-        SearchFrame.EditBox:SetPoint("TOPLEFT", -1, 18)
-		
-        -- make sure the backdrop of "else" is removed and the texture is actually shown
-        Backdrop:SetBackdrop(nil)
-        helper.Parent:Show()
-    else
-        Left, Right, Top, Bottom = 8, 8, 8, 8
-        BagSearchHeightOffset = 32
-        BagSearchHeight	= 12
-        Backdrop.Textures:Hide()
-        SearchFrame.CloseButton:SetPoint("TOPRIGHT", 9, 10)
-        SearchFrame.EditBox:SetPoint("TOPLEFT", -1, 0)
-		
-        if (theme == "Solid") then
-            Backdrop:SetBackdrop({
-                bgFile = "Interface\\Buttons\\WHITE8X8",
-                edgeFile = "Interface\\DialogFrame\\UI-DialogBox-Border",
-                tile = true, tileSize = 8, edgeSize = 32,
-                insets = { left = 11, right = 12, top = 12, bottom = 11 }
-            })
-            Left, Right, Top, Bottom = Left+8, Right+8, Top+8, Bottom+8
-            BagSearchHeightOffset = BagSearchHeightOffset + 8
-            Backdrop:SetBackdropColor(0.1, 0.1, 0.1, 1)
-        elseif (theme == "ElvUI") then
-            Backdrop:SetBackdrop({
-                bgFile = "Interface\\Buttons\\WHITE8X8",
-                tile = true, tileSize = 14, edgeSize = 14,
-                insets = { left = 2, right = 2, top = 2, bottom = 2 }
-            })
-            Backdrop:SetBackdropColor(0.0, 0.0, 0.0, 0.6)
-        else
-            -- "Transparent"
-            Backdrop:SetBackdrop({
-                bgFile = "Interface\\Tooltips\\UI-Tooltip-Background",
-                edgeFile = "Interface\\Tooltips\\UI-Tooltip-Border",
-                tile = true, tileSize = 14, edgeSize = 14,
-                insets = { left = 2, right = 2, top = 2, bottom = 2 }
-            })
-            Backdrop:SetBackdropColor(0.0, 0.0, 0.0, 1.0)
-        end
-    end
-	
-    -- correct the sizes depending on the frame backdrop
-    Backdrop:ClearAllPoints()
-    Backdrop:SetPoint("TOPLEFT", -Left, Top)
-    Backdrop:SetPoint("BOTTOMRIGHT", Right, -Bottom)
-    SearchFrame:SetHitRectInsets(-Left, -Right, -Top, -Bottom)
-	
-    -- position the frame above the calling container
-    SearchFrame:ClearAllPoints()
-    SearchFrame:SetPoint("BOTTOMLEFT", parentContainer, "TOPLEFT", 0, BagSearchHeightOffset)
-    SearchFrame:SetPoint("RIGHT", parentContainer, "RIGHT")
-    SearchFrame:SetHeight(BagSearchHeight)
-	
-    -- make sure the frame lies on the same lvl as the calling container
-    SearchFrame:SetFrameLevel(parentContainer:GetFrameLevel())
-    Backdrop:SetFrameLevel(SearchFrame:GetFrameLevel())
-    SearchFrame.CloseButton:SetFrameLevel(SearchFrame:GetFrameLevel()+1)
-    SearchFrame.EditBox:SetFrameLevel(SearchFrame:GetFrameLevel()+1)
-	
+    local theme = AddOnTable.Themes[themeId]
+    theme.SearchFrame:UpdateBackground(parentContainer, SearchFrame, Backdrop)
+    theme.SearchFrame:UpdatePositions(parentContainer, SearchFrame, Backdrop)
+    
     -- adjust the scaling according to the calling container
     SearchFrame:SetScale(scale)
 	

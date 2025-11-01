@@ -8,7 +8,7 @@
 		</Anchors>
 		<Size x="0" y="20" />
 		<Frames>
-			<Frame name="$parentBackdrop" parentKey="Backdrop" inherits="BackdropTemplate">
+			<Frame frameStrata="BACKGROUND" name="$parentBackdrop" parentKey="Backdrop" inherits="BackdropTemplate">
 				<Frames>
 					<Frame name="$parentTextures" parentKey="Textures" setAllPoints="true" />
 				</Frames>
