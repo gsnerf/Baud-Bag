@@ -14,7 +14,12 @@
 				</Frames>
 			</Frame>
 			
-			<Button parentKey="CloseButton" inherits="UIPanelCloseButton">
+			<Button parentKey="CloseButton">
+				<Size x="32" y="32"/>
+				<DisabledTexture file="Interface\Buttons\UI-Panel-MinimizeButton-Disabled"/>
+				<NormalTexture file="Interface\Buttons\UI-Panel-MinimizeButton-Up"/>
+				<PushedTexture file="Interface\Buttons\UI-Panel-MinimizeButton-Down"/>
+				<HighlightTexture file="Interface\Buttons\UI-Panel-MinimizeButton-Highlight" alphaMode="ADD"/>
 				<Anchors>
 					<Anchor point="TOPRIGHT" />
 				</Anchors>
