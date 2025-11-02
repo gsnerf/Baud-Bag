@@ -1,4 +1,12 @@
 ﻿=== Changelog ===
+v11.2.5.2
+  - fixed some issues with time runner recognition, causing issues in warband bank
+  - fixed long standing issue resulting in only 1 to 3 tokens being selectable for backpack (now up to 5 tokens can be shown again)
+  - reworked search frame:
+    - fixed frame not showing up
+    - reworked search frame code to also rely on new theme system and look a bit more consistent with the rest of the container look and feel
+    - fixed some issues with search in offline bank/warband bank because of WoWs item cache system
+  - fixed some weird transparency issues for warband bank and regular bank containers other than the respective first one
 v11.2.5.1
   - reworked old background handling to something I call a "theme" and dare it actually might be one in the future
   - new theme system allows for both container background as well as item button configuration
