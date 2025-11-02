@@ -8,137 +8,28 @@ local LastBagID = AddOnTable.BlizzConstants.ACCOUNT_BANK_LAST_SUB_CONTAINER
 
 local BagsSearched = {}
 
-function BaudBagSearchFrame_ShowFrame(ParentContainer, Scale, Background)
+function BaudBagSearchFrame_ShowFrame(parentContainer, scale, themeId)
     local SearchFrame	= BaudBagSearchFrame
     local Backdrop		= SearchFrame.Backdrop
     local EditBox		= SearchFrame.EditBox
-    local BagSearchHeightOffset = 0
-    local BagSearchHeight		= 20
 	
     -- remember the element the search frame is attached to
-    SearchFrame.AttachedTo = ParentContainer:GetName()
-    SearchFrame:SetParent(ParentContainer)
+    SearchFrame.AttachedTo = parentContainer:GetName()
+    SearchFrame:SetParent(parentContainer)
 	
-    -- draw the background depending on the containers background
-    Backdrop:SetFrameLevel(SearchFrame:GetFrameLevel());
-    local Left, Right, Top, Bottom
-	
-    -- these are the default blizz-frames
-    if (Background <= 3) then
+    local theme = AddOnTable.Themes[themeId]
+    theme.SearchFrame:UpdateBackground(parentContainer, SearchFrame, Backdrop)
+    theme.SearchFrame:UpdatePositions(parentContainer, SearchFrame, Backdrop)
 
-        Left, Right, Top, Bottom	= 10, 10, 25, 7
-        BagSearchHeightOffset		= 22
-        local Parent = Backdrop.Textures:GetName()
-        local Texture
-		
-        -- initialize texture helper
-        local helper = AddOnTable:GetTextureHelper()
-        helper.Parent = Backdrop.Textures
-        helper.Parent:SetFrameLevel(ParentContainer:GetFrameLevel())
-        helper.Width, helper.Height = 256, 512
-        helper.File = "Interface\\ContainerFrame\\UI-Bag-Components"
-        if (Background == 2) then
-            helper.File = helper.File.."-Bank"
-        elseif(Background == 3)then
-            helper.File = helper.File.."-Keyring"
-        end
-        helper.DefaultLayer = "ARTWORK"
-
-
-        -- --------------------------
-        -- create new textures now
-        -- --------------------------
-        -- BORDERS FIRST
-        -- transparent circle top left
-        Texture = helper:GetTexturePiece("Left", 106, 117, 5, 30)
-        Texture:SetPoint("TOPLEFT")
-
-        -- right end of header + transparent piece for close button (with or without blank part on the bottom)
-        Texture = helper:GetTexturePiece("Right", 223, 252, 5, 30)
-        Texture:SetPoint("TOPRIGHT")
-
-        -- container header (contains name, with or without blank part on the bottom)
-        Texture = helper:GetTexturePiece("Center", 117, 222, 5, 30)
-        Texture:SetPoint("TOP")
-        Texture:SetPoint("RIGHT", Parent.."Right", "LEFT")
-        Texture:SetPoint("LEFT", Parent.."Left", "RIGHT")
-
-        -- fix positions of some elements
-        SearchFrame.CloseButton:SetPoint("TOPRIGHT",Backdrop,"TOPRIGHT",3,3)
-        SearchFrame.EditBox:SetPoint("TOPLEFT", -1, 18)
-		
-        -- make sure the backdrop of "else" is removed and the texture is actually shown
-        Backdrop:SetBackdrop(nil)
-        helper.Parent:Show()
-    else
-        Left, Right, Top, Bottom = 8, 8, 8, 8
-        BagSearchHeightOffset = 32
-        BagSearchHeight	= 12
-        Backdrop.Textures:Hide()
-        SearchFrame.CloseButton:SetPoint("TOPRIGHT", 9, 10)
-        SearchFrame.EditBox:SetPoint("TOPLEFT", -1, 0)
-		
-        if (Background == 5) then
-            -- "solid"
-            Backdrop:SetBackdrop({
-                bgFile = "Interface\\Buttons\\WHITE8X8",
-                edgeFile = "Interface\\DialogFrame\\UI-DialogBox-Border",
-                tile = true, tileSize = 8, edgeSize = 32,
-                insets = { left = 11, right = 12, top = 12, bottom = 11 }
-            })
-            Left, Right, Top, Bottom = Left+8, Right+8, Top+8, Bottom+8
-            BagSearchHeightOffset = BagSearchHeightOffset + 8
-            Backdrop:SetBackdropColor(0.1, 0.1, 0.1, 1)
-        elseif (Background == 6) then
-            -- "transparent2"
-            Backdrop:SetBackdrop({
-                bgFile = "Interface\\Buttons\\WHITE8X8",
-                tile = true, tileSize = 14, edgeSize = 14,
-                insets = { left = 2, right = 2, top = 2, bottom = 2 }
-            })
-            Backdrop:SetBackdropColor(0.0, 0.0, 0.0, 0.6)
-        else
-            -- "transparent"
-            Backdrop:SetBackdrop({
-                bgFile = "Interface\\Tooltips\\UI-Tooltip-Background",
-                edgeFile = "Interface\\Tooltips\\UI-Tooltip-Border",
-                tile = true, tileSize = 14, edgeSize = 14,
-                insets = { left = 2, right = 2, top = 2, bottom = 2 }
-            })
-            Backdrop:SetBackdropColor(0.0, 0.0, 0.0, 1.0)
-        end
-    end
-	
-    -- correct the sizes depending on the frame backdrop
-    Backdrop:ClearAllPoints()
-    Backdrop:SetPoint("TOPLEFT", -Left, Top)
-    Backdrop:SetPoint("BOTTOMRIGHT", Right, -Bottom)
-    SearchFrame:SetHitRectInsets(-Left, -Right, -Top, -Bottom)
-	
-    -- position the frame above the calling container
-    SearchFrame:ClearAllPoints()
-    SearchFrame:SetPoint("BOTTOMLEFT", ParentContainer, "TOPLEFT", 0, BagSearchHeightOffset)
-    SearchFrame:SetPoint("RIGHT", ParentContainer, "RIGHT")
-    SearchFrame:SetHeight(BagSearchHeight)
-	
-    -- make sure the frame lies on the same lvl as the calling container
-    SearchFrame:SetFrameLevel(ParentContainer:GetFrameLevel())
-    Backdrop:SetFrameLevel(SearchFrame:GetFrameLevel())
-    SearchFrame.CloseButton:SetFrameLevel(SearchFrame:GetFrameLevel()+1)
-    SearchFrame.EditBox:SetFrameLevel(SearchFrame:GetFrameLevel()+1)
-	
     -- adjust the scaling according to the calling container
-    SearchFrame:SetScale(Scale)
+    SearchFrame:SetScale(scale)
 	
     -- finally show it
     SearchFrame:Show()
     EditBox:SetFocus()
 end
 
-function BaudBagSearchFrameEditBox_OnTextChanged(self, isUserInput)
-    AddOnTable.Functions.DebugMessage("Search", "Changed search phrase, searching open bags")
-    local compareString = self:GetText()
-	
+local function searchBagsForItem(searchTarget)
     -- check search text for validity
     if (false) then
         -- TODO!!!a
@@ -173,33 +64,21 @@ function BaudBagSearchFrameEditBox_OnTextChanged(self, isUserInput)
                     -- debug message
                     local printableLink = gsub(Link, "\124", "\124\124")
                     AddOnTable.Functions.DebugMessage("Search", "Found a link (link)", printableLink)
-
-                    -- we can have different types of links, usually it is an item...
-                    if (strmatch(Link, "|Hitem:")) then
-                        Name, _, _, _, _, _, _, _, _, _ = AddOnTable.BlizzAPI.GetItemInfo(Link)
-
-                        -- ... or a caged battle pet ...
-                    elseif (strmatch(Link, "|Hbattlepet:")) then
-                        local _, _, speciesID, _, _, _, _, _, battlePetID = strsplit(":", Link)
-                        Name, _, _, _, _, _, _, _, _, _= C_PetJournal.GetPetInfoBySpeciesID(speciesID)
-
-                        -- ... we don't know about everything else
-                    else
-                        Name = "Unknown"
-                    end
+                    _, _, Name = LinkUtil.ExtractLink(Link)
+                    AddOnTable.Functions.DebugMessage("Search", "extracted name from link", Name)
                 end
 
                 -- add transparency if search active but not a result
                 Texture = ItemButton
                 if (Link and compareString ~= "") then
-                    AddOnTable.Functions.DebugMessage("Search", "Searching (searchString, itemName)", compareString, Name)
+                    AddOnTable.Functions.DebugMessage("Search", "Searching (searchString, itemName)", searchTarget, Name)
 
                     -- first run string search and go through results later (because of error handling)
-                    Status, Result = pcall(string.find, string.lower(Name), string.lower(compareString))
+                    Status, Result = pcall(string.find, string.lower(Name), string.lower(searchTarget))
 
                     -- find was run successfull: act depending on result
                     if (Status) then
-                        --if (string.find(string.lower(Name), string.lower(compareString)) == nil) then
+                        --if (string.find(string.lower(Name), string.lower(target)) == nil) then
                         if (Result == nil) then
                             AddOnTable.Functions.DebugMessage("Search", "Itemname does not match")
                             Texture:SetAlpha(0.2)
@@ -218,6 +97,12 @@ function BaudBagSearchFrameEditBox_OnTextChanged(self, isUserInput)
             end
         end
     end
+end
+
+function BaudBagSearchFrameEditBox_OnTextChanged(self, isUserInput)
+    AddOnTable.Functions.DebugMessage("Search", "Changed search phrase, searching open bags")
+    local compareString = self:GetText()
+    searchBagsForItem(compareString)
 end
 
 local function RemoveSearchHighlights()

@@ -390,6 +390,7 @@ function BaudBagBankContainerMixin:OnContainerLoad()
 end
 
 function BaudBagBankContainerMixin:OnContainerShow()
+    self:OnShow()
     self.DepositButton:Update()
 end
 

@@ -273,10 +273,74 @@ local ThemeItemButton = {
     BackgroundImage = nil
 }
 
+--[[ ######################################## search frame ä######################################## ]]
+
+--@type ThemeSearchFrame
+local ThemeSearchFrame = {
+    Height = 20,
+    HeightOffset = 22,
+    SourceFile = nil
+}
+
+function ThemeSearchFrame:UpdateBackground(parentContainer, searchFrame, backdrop)
+    local Left, Right, Top, Bottom	= 10, 10, 25, 7
+    local parentName = backdrop.Textures:GetName()
+    local texture
+    
+    -- initialize texture helper
+    local helper = AddOnTable:GetTextureHelper()
+    helper.Parent = backdrop.Textures
+    helper.Width, helper.Height = 256, 512
+    helper.File = self.SourceFile
+    helper.DefaultLayer = "ARTWORK"
+
+
+    -- --------------------------
+    -- create new textures now
+    -- --------------------------
+    -- BORDERS FIRST
+    -- transparent circle top left
+    texture = helper:GetTexturePiece("Left", 106, 117, 5, 30)
+    texture:SetPoint("TOPLEFT")
+
+    -- right end of header + transparent piece for close button (with or without blank part on the bottom)
+    texture = helper:GetTexturePiece("Right", 223, 252, 5, 30)
+    texture:SetPoint("TOPRIGHT")
+
+    -- container header (contains name, with or without blank part on the bottom)
+    texture = helper:GetTexturePiece("Center", 117, 222, 5, 30)
+    texture:SetPoint("TOP")
+    texture:SetPoint("RIGHT", parentName.."Right", "LEFT")
+    texture:SetPoint("LEFT", parentName.."Left", "RIGHT")
+
+    -- make sure the backdrop of "else" is removed and the texture is actually shown
+    backdrop:ClearBackdrop()
+    helper.Parent:Show()
+
+    -- correct the sizes depending on the frame backdrop
+    backdrop:ClearAllPoints()
+    backdrop:SetPoint("TOPLEFT", -Left, Top)
+    backdrop:SetPoint("BOTTOMRIGHT", Right, -Bottom)
+    searchFrame:SetHitRectInsets(-Left, -Right, -Top, -Bottom)
+end
+
+function ThemeSearchFrame:UpdatePositions(parentContainer, searchFrame, backdrop)
+    -- elements within the search frame
+    searchFrame.CloseButton:SetPoint("TOPRIGHT",backdrop,"TOPRIGHT",3,3)
+    searchFrame.EditBox:SetPoint("TOPLEFT", -1, 18)
+
+    -- search frame itself
+    searchFrame:ClearAllPoints()
+    searchFrame:SetPoint("BOTTOMLEFT", parentContainer, "TOPLEFT", 0, self.HeightOffset)
+    searchFrame:SetPoint("RIGHT", parentContainer, "RIGHT")
+    searchFrame:SetHeight(self.Height)
+    searchFrame:SetFrameLevel(parentContainer:GetFrameLevel())
+end
+
 
 --[[ ######################################### initialization ######################################### ]]
 
-local function initializeBlizzardBackground(id, name, file, itemButtonBackground, itemButtonWidthOffset, itemButtonHeightOffset)
+local function initializeBlizzardBackground(id, name, file, itemButtonBackground, itemButtonWidthOffset, itemButtonHeightOffset, searchConfig)
     local background = CreateFromMixins(ThemeBackground)
     background.Insets = { Left = 10, Right = 10, Top = 25, Bottom = 7 }
     background.File = file
@@ -287,11 +351,15 @@ local function initializeBlizzardBackground(id, name, file, itemButtonBackground
     itemButton.WidthOffset = itemButtonWidthOffset
     itemButton.HeightOffset = itemButtonHeightOffset
 
+    local searchFrame = CreateFromMixins(ThemeSearchFrame)
+    searchFrame.SourceFile = file
+
     AddOnTable:RegisterTheme({
         Id = id,
         Name = name,
         ContainerBackground = background,
         ItemButton = itemButton,
+        SearchFrame = searchFrame,
         BorderOffset = {
             X = 5,
             Y = 4

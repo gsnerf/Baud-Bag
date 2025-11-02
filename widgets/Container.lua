@@ -182,6 +182,9 @@ function Prototype:UpdateBackground()
         self.Frame.UnlockInfo:SetPoint("TOPLEFT", -10, 3)
         self.Frame.UnlockInfo:SetPoint("BOTTOMRIGHT", 10, -3)
     end
+    if (self.Frame.TokenFrame) then
+        BackpackTokenFrame:SetWidth(self.Frame.TokenFrame:GetWidth())
+    end
 end
 
 function Prototype:UpdateFreeSlotsOverview(free, overall)
@@ -381,11 +384,11 @@ BaudBagSearchButtonMixin = {}
 
 function BaudBagSearchButtonMixin:OnClick(event, ...)
     -- get references to all needed frames and data
-    local Container		= self:GetParent()
-    local Scale			= BBConfig[Container.BagSet][Container:GetID()].Scale / 100
-    local Background	= BBConfig[Container.BagSet][Container:GetID()].Background
+    local container		= self:GetParent()
+    local scale			= BBConfig[container.BagSet][container:GetID()].Scale / 100
+    local theme	= BBConfig[container.BagSet][container:GetID()].Theme
     
-    BaudBagSearchFrame_ShowFrame(Container, Scale, Background)
+    BaudBagSearchFrame_ShowFrame(container, scale, theme)
 end
 
 function BaudBagSearchButtonMixin:OnEnter(event, ...)
