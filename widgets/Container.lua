@@ -182,6 +182,9 @@ function Prototype:UpdateBackground()
         self.Frame.UnlockInfo:SetPoint("TOPLEFT", -10, 3)
         self.Frame.UnlockInfo:SetPoint("BOTTOMRIGHT", 10, -3)
     end
+    if (self.Frame.TokenFrame) then
+        BackpackTokenFrame:SetWidth(self.Frame.TokenFrame:GetWidth())
+    end
 end
 
 function Prototype:UpdateFreeSlotsOverview(free, overall)
