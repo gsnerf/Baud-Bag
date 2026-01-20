@@ -1,4 +1,7 @@
 ﻿=== Changelog ===
+v12.0.0.1
+  - Reworked some deprecated API accesses.
+  - Streamlined TOC usage for classic versions.
 v11.2.5.2
   - fixed some issues with time runner recognition, causing issues in warband bank
   - fixed long standing issue resulting in only 1 to 3 tokens being selectable for backpack (now up to 5 tokens can be shown again)

@@ -232,11 +232,19 @@ function ThemeBackground:UpdateBagPicture(containerFrame, parentName, backdrop)
         texture:SetDrawLayer("BACKGROUND")
     end
 
+    if not backdrop.Textures.BagMask then
+        local maskTexture = backdrop.Textures:CreateMaskTexture()
+        maskTexture:SetAllPoints(texture)
+        maskTexture:SetTexture("Interface/CHARACTERFRAME/TempPortraitAlphaMask", "CLAMPTOBLACKADDITIVE", "CLAMPTOBLACKADDITIVE")
+        texture:AddMaskTexture(maskTexture)
+        backdrop.Textures.BagMask = maskTexture
+    end
+
     local bagID = containerFrame.Bags[1]:GetID()
     local bagSet = AddOnTable.Sets[containerFrame.BagSet]
     local icon = bagSet:GetSubContainerTexture(bagID)
     
-    SetPortraitToTexture(texture, icon or "Interface\\Icons\\INV_Misc_QuestionMark")
+    texture:SetTexture(icon or "Interface\\Icons\\INV_Misc_QuestionMark")
     backdrop:SetBackdrop(nil)
 end
 
