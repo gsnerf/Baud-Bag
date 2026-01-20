@@ -65,7 +65,7 @@
             ]
         },
         {
-            "label": "copy to wotlk",
+            "label": "copy to classic",
             "type": "shell",
             "command": "copy",
             "args": [
@@ -81,7 +81,7 @@
             "problemMatcher": []
         },
         {
-            "label": "copy to wotlk ptr",
+            "label": "copy to classic ptr",
             "type": "shell",
             "command": "copy",
             "args": [
@@ -97,7 +97,7 @@
             "problemMatcher": []
         },
         {
-            "label": "copy to vanilla",
+            "label": "copy to era",
             "type": "shell",
             "command": "copy",
             "args": [
@@ -113,7 +113,7 @@
             "problemMatcher": []
         },
         {
-            "label": "copy to vanilla ptr",
+            "label": "copy to era ptr",
             "type": "shell",
             "command": "copy",
             "args": [
@@ -121,6 +121,22 @@
                 "${workspaceRoot}\\*",
                 "-Destination",
                 "C:\\Program Files (x86)\\World of Warcraft\\_classic_era_ptr_\\Interface\\addons\\BaudBag",
+                "-Recurse",
+                "-Force",
+                "-Exclude",
+                ".*"
+            ],
+            "problemMatcher": []
+        },
+        {
+            "label": "copy to anniversary",
+            "type": "shell",
+            "command": "copy",
+            "args": [
+                "-Path",
+                "${workspaceRoot}\\*",
+                "-Destination",
+                "C:\\Program Files (x86)\\World of Warcraft\\_anniversary_\\Interface\\addons\\BaudBag",
                 "-Recurse",
                 "-Force",
                 "-Exclude",
