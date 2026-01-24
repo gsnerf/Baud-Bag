@@ -320,10 +320,6 @@ function Prototype:UpdateNewAndBattlepayoverlays(isNewItem, isBattlePayItem)
     end
 end
 
-function Prototype:OnCustomEnter()
-    self.Parent.BagSet.OnItemButtonCustomEnter(self)
-end
-
 function Prototype:UpdateTooltipFromCache(bagId, slotId)
     GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
 
@@ -389,7 +385,6 @@ function AddOnTable:CreateItemButton(subContainer, slotIndex, buttonTemplate)
     itemButton.Parent = subContainer
     itemButton.BorderFrame = itemButton:CreateTexture(itemButton.Name.."Border", "OVERLAY")
     itemButton.BorderFrame:Hide()
-    itemButton:SetScript("OnEnter", itemButton.OnCustomEnter)
     itemButton.emptyBackgroundTexture = nil
     itemButton.emptyBackgroundAtlas = nil
     itemButton.ItemLevel = itemButton:CreateFontString(nil, "OVERLAY", "NumberFontNormalYellow")
@@ -403,11 +398,6 @@ function AddOnTable:CreateItemButton(subContainer, slotIndex, buttonTemplate)
     if itemButton.UpgradeIcon then
         itemButton.UpgradeIcon:ClearAllPoints()
         itemButton.UpgradeIcon:SetPoint("BOTTOMLEFT")
-    end
-
-    -- this is an override for the (old) bank items which manually call UpdateTooltip
-    if (itemButton.UpdateTooltip) then
-        itemButton.UpdateTooltip = itemButton.OnCustomEnter
     end
     
     itemButton:ApplyBaseSkin()

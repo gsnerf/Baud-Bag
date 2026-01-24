@@ -107,15 +107,6 @@ BagSetType = {
         BagFilterGetFunction = AddOnTable.BlizzAPI.GetBagSlotFlag,
         BagFilterSetFunction = AddOnTable.BlizzAPI.SetBagSlotFlag,
         CanInteractWithBags = function() return true end,
-        OnItemButtonCustomEnter = function(self)
-            if (ContainerFrameItemButton_OnUpdate ~= nil) then
-                ContainerFrameItemButton_OnUpdate(self)
-            elseif (ContainerFrameItemButton_OnEnter ~= nil) then
-                ContainerFrameItemButton_OnEnter(self)
-            else
-                self:OnUpdate()
-            end
-        end,
         FilterData = {
             GetFilterType = function(container)
                 if (container.ContainerId ~= AddOnTable.BlizzConstants.BACKPACK_CONTAINER) then

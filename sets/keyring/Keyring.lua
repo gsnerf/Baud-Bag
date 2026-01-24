@@ -39,7 +39,6 @@ local function extendBaseType()
         BagFilterGetFunction = nil,
         BagFilterSetFunction = function() end,
         CanInteractWithBags = function() return true end,
-        OnItemButtonCustomEnter = function(self) end,
         FilterData = {
             GetFilterType = function(container) return false end,
             SetFilterType = function(container, type, value) end,
