@@ -81,7 +81,6 @@ local function extendBaseType()
         BagFilterGetFunction = nil,
         BagFilterSetFunction = function() end,
         CanInteractWithBags = function() return AddOnTable.Sets[BagSetType.AccountBank.Id].Containers[1].Frame:IsShown() end,
-        OnItemButtonCustomEnter = function(self) end,
         FilterData = {
             GetFilterType = function(container) return false end,
             SetFilterType = function(container, type, value) end,
@@ -108,6 +107,22 @@ local function canViewAccountBank()
         end
     end
     return false
+end
+
+local function canViewOnlyAccountBank()
+    local viewableBankTypes = AddOnTable.BlizzAPI.FetchViewableBankTypes()
+    local bankViewable = false
+    local accountBankViewable = false
+
+    for _,viewableType in pairs(viewableBankTypes) do
+        if (viewableType == AddOnTable.BlizzEnum.BankType.Character) then
+            bankViewable = true
+        end
+        if (viewableType == AddOnTable.BlizzEnum.BankType.Account) then
+            accountBankViewable = true
+        end
+    end
+    return not bankViewable and accountBankViewable
 end
 
 local accountBankFrameOpenedOwner = nil
@@ -254,6 +269,9 @@ function BaudBagFirstAccountBankMixin:OnAccountBankHide()
     self:UnregisterEvent("ACCOUNT_MONEY")
     self:UnregisterEvent("BANK_TAB_SETTINGS_UPDATED")
     self:OnHide()
+    if (canViewOnlyAccountBank()) then
+        C_Bank.CloseBankFrame()
+    end
 end
 
 function BaudBagFirstAccountBankMixin:RefreshDepositButtons()

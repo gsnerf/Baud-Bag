@@ -82,7 +82,6 @@ local function extendBaseType()
         BagFilterGetFunction = nil,
         BagFilterSetFunction = function() end,
         CanInteractWithBags = function() return AddOnTable.Sets[BagSetType.Bank.Id].Containers[1].Frame:IsShown() end,
-        OnItemButtonCustomEnter = function(self) end,
         FilterData = {
             GetFilterType = function(container) return false end,
             SetFilterType = function(container, type, value) end,
@@ -256,6 +255,7 @@ function BaudBagFirstBankMixin:OnBankHide()
     self:UnregisterEvent("PLAYER_MONEY")
     self:UnregisterEvent("BANK_TAB_SETTINGS_UPDATED")
     self:OnHide()
+    C_Bank.CloseBankFrame()
 end
 
 

@@ -147,12 +147,6 @@ local function extendBaseType()
         BagFilterGetFunction = AddOnTable.BlizzAPI.GetBankBagSlotFlag,
         BagFilterSetFunction = AddOnTable.BlizzAPI.SetBankBagSlotFlag,
         CanInteractWithBags = function() return AddOnTable.Sets[BagSetType.Bank.Id].Containers[1].Frame:IsShown() end,
-        OnItemButtonCustomEnter = function(self)
-            local bagId = self:GetParent():GetID()
-            local slotId = self:GetID()
-            AddOnTable.Functions.DebugMessage("Tooltip", "[ItemButton:UpdateTooltip] This button is part of the bank bags... reading from cache")
-            self:UpdateTooltipFromCache(bagId, slotId)
-        end,
         FilterData = {
             GetFilterType = function(container)
                 local containerId = container.ContainerId
@@ -323,6 +317,10 @@ local Func = function(self, event, ...)
             return
         end
         Container.UpdateSlots = true
+    end
+
+    if (event == "BAG_CLOSED" and bagId == AddOnTable.BlizzConstants.BANK_FIRST_CONTAINER) then
+        C_Bank.CloseBankFrame()
     end
 end
 EventFuncs.BAG_OPEN = Func
@@ -562,4 +560,21 @@ hooksecurefunc(GameTooltip, "SetInventoryItem", function (Data, Unit, InvID)
         BaudBagModifyBagTooltip(InvID - INV_ID_BANK_BAG_FIRST + AddOnTable.BlizzConstants.BACKPACK_LAST_CONTAINER + 1)
     end
     
+end)
+
+
+--[[ ######################################### Item Buttons ######################################### ]]
+
+---@param self BBItemButton
+local function ItemButton_OnCustomEnter(self)
+    local bagId = self:GetParent():GetID()
+    local slotId = self:GetID()
+    AddOnTable.Functions.DebugMessage("Tooltip", "[ItemButton:UpdateTooltip] This button is part of the bank bags... reading from cache")
+    self:UpdateTooltipFromCache(bagId, slotId)
+end
+
+hooksecurefunc(AddOnTable, "ItemSlot_Created", function(self, bagSet, containerId, subcontainerId, slot, button)
+    if (bagSet == BagSetType.Bank) then
+        button:SetScript("OnEnter", ItemButton_OnCustomEnter)
+    end
 end)
