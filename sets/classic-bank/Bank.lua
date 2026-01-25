@@ -318,6 +318,10 @@ local Func = function(self, event, ...)
         end
         Container.UpdateSlots = true
     end
+
+    if (event == "BAG_CLOSED" and bagId == AddOnTable.BlizzConstants.BANK_FIRST_CONTAINER) then
+        C_Bank.CloseBankFrame()
+    end
 end
 EventFuncs.BAG_OPEN = Func
 EventFuncs.BAG_UPDATE = Func

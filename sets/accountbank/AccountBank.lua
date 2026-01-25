@@ -109,6 +109,22 @@ local function canViewAccountBank()
     return false
 end
 
+local function canViewOnlyAccountBank()
+    local viewableBankTypes = AddOnTable.BlizzAPI.FetchViewableBankTypes()
+    local bankViewable = false
+    local accountBankViewable = false
+
+    for _,viewableType in pairs(viewableBankTypes) do
+        if (viewableType == AddOnTable.BlizzEnum.BankType.Character) then
+            bankViewable = true
+        end
+        if (viewableType == AddOnTable.BlizzEnum.BankType.Account) then
+            accountBankViewable = true
+        end
+    end
+    return not bankViewable and accountBankViewable
+end
+
 local accountBankFrameOpenedOwner = nil
 local function accountBankFrameOpened()
     Funcs.DebugMessage("AccountBank", "AccountBank#bankframeOpened()")
@@ -253,6 +269,9 @@ function BaudBagFirstAccountBankMixin:OnAccountBankHide()
     self:UnregisterEvent("ACCOUNT_MONEY")
     self:UnregisterEvent("BANK_TAB_SETTINGS_UPDATED")
     self:OnHide()
+    if (canViewOnlyAccountBank()) then
+        C_Bank.CloseBankFrame()
+    end
 end
 
 function BaudBagFirstAccountBankMixin:RefreshDepositButtons()

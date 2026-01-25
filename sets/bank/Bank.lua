@@ -255,6 +255,7 @@ function BaudBagFirstBankMixin:OnBankHide()
     self:UnregisterEvent("PLAYER_MONEY")
     self:UnregisterEvent("BANK_TAB_SETTINGS_UPDATED")
     self:OnHide()
+    C_Bank.CloseBankFrame()
 end
 
 

@@ -1,4 +1,7 @@
 ﻿=== Changelog ===
+v12.0.0.2
+  - fixed an occurance where BB breaks the tooltip comparison
+  - now correctly leaving bank(s) when closing the first bank container (on bank vendor) or the first warband bank container (on inhibitor)
 v12.0.0.1
   - Reworked some deprecated API accesses.
   - Streamlined TOC usage for classic versions.
