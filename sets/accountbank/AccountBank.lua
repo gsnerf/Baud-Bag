@@ -402,11 +402,14 @@ function BaudBagAccountBagsFrameMixin:Update()
         return
     end
 
+    -- for WHATEVER reason we can reach that when all containers have been bought even though we check it just above... needs investigating why. For now 
     local nextBankTabData = AddOnTable.BlizzAPI.FetchNextPurchasableBankTabData(Enum.BankType.Account)
-    SetMoneyFrameColorByFrame(self.PurchaseFrame.MoneyFrame, nextBankTabData.canAfford and "white" or "red");
-    MoneyFrame_Update(self.PurchaseFrame.MoneyFrame, nextBankTabData.tabCost)
-    self.PurchaseFrame:Show()
-    self:UpdateHeight(accountBankSet.BagButtons[1]:GetHeight(), true)
+    if (nextBankTabData ~= nil) then
+        SetMoneyFrameColorByFrame(self.PurchaseFrame.MoneyFrame, nextBankTabData.canAfford and "white" or "red");
+        MoneyFrame_Update(self.PurchaseFrame.MoneyFrame, nextBankTabData.tabCost)
+        self.PurchaseFrame:Show()
+        self:UpdateHeight(accountBankSet.BagButtons[1]:GetHeight(), true)
+    end
 end
 
 ---@param withPurchaseFrame boolean
