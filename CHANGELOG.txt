@@ -1,4 +1,8 @@
 ﻿=== Changelog ===
+v12.1.0.1
+  - fixed initialization of warband bank, when all slots have been bought
+  - fixed positioning of gold requirement when not all slots in the warband bank have been bought
+  - fixed junk selling not working anymore
 v12.0.0.2
   - fixed an occurance where BB breaks the tooltip comparison
   - now correctly leaving bank(s) when closing the first bank container (on bank vendor) or the first warband bank container (on inhibitor)
