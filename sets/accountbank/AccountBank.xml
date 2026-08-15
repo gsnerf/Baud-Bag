@@ -21,7 +21,11 @@
 								<Anchors>
 									<Anchor point="BOTTOM" x="0" y="25" />
 									<Anchor point="LEFT" x="5" y="0" />
-									<Anchor point="RIGHT" x="-5" y="0" />
+									<!-- 
+										as this is counter-intuive:
+										* account bank prices are always in gold
+										* the gold price is positioned 4px left to the silver price, which is positioned 4px left to the bronze price... at least 8px whitespace that is never used! -->
+									<Anchor point="RIGHT" x="3" y="0" />
 								</Anchors>
 								<Scripts>
 									<OnLoad>
