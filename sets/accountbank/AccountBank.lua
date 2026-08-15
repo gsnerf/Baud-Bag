@@ -395,21 +395,21 @@ function BaudBagAccountBagsFrameMixin:Update()
         bagSlot:UpdateContent()
     end
 
-    if (numberOfBoughtContainers == AddOnTable.BlizzConstants.ACCOUNT_BANK_CONTAINER_NUM) then
+    -- when called from within :Initialze(), we are not at a bank, thus purchasedBankTabData will be empty (number == 0)
+    -- BUT: FetchNextPurchasableBankTabData _always_ returns a valid value when the user hasn't bought all slots yet!
+    local nextBankTabData = AddOnTable.BlizzAPI.FetchNextPurchasableBankTabData(Enum.BankType.Account)
+    if (nextBankTabData == nil) then
         AddOnTable.Functions.DebugMessage("AccountBank", "BagOverview: all containers bought hiding purchase button")
         self.PurchaseFrame:Hide()
         self:UpdateHeight(accountBankSet.BagButtons[1]:GetHeight(), false)
         return
     end
 
-    -- for WHATEVER reason we can reach that when all containers have been bought even though we check it just above... needs investigating why. For now 
-    local nextBankTabData = AddOnTable.BlizzAPI.FetchNextPurchasableBankTabData(Enum.BankType.Account)
-    if (nextBankTabData ~= nil) then
-        SetMoneyFrameColorByFrame(self.PurchaseFrame.MoneyFrame, nextBankTabData.canAfford and "white" or "red");
-        MoneyFrame_Update(self.PurchaseFrame.MoneyFrame, nextBankTabData.tabCost)
-        self.PurchaseFrame:Show()
-        self:UpdateHeight(accountBankSet.BagButtons[1]:GetHeight(), true)
-    end
+    AddOnTable.Functions.DebugMessage("AccountBank", "BagOverview: there are still containers to be bought, updating money frame")
+    SetMoneyFrameColorByFrame(self.PurchaseFrame.MoneyFrame, nextBankTabData.canAfford and "white" or "red");
+    MoneyFrame_Update(self.PurchaseFrame.MoneyFrame, nextBankTabData.tabCost)
+    self.PurchaseFrame:Show()
+    self:UpdateHeight(accountBankSet.BagButtons[1]:GetHeight(), true)
 end
 
 ---@param withPurchaseFrame boolean
