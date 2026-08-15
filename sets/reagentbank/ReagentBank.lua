@@ -83,7 +83,7 @@ hooksecurefunc(AddOnTable, "BankBags_UpdateContent", ReagentBankBagUpdateContent
 --[[ this prepares the visual style of the reagent bag slot ]]
 function ReagentBankSlotButton_OnLoad(self, event, ...)
     -- for the time beeing we use the texture of manastorms duplicator for the reagent bank button
-    local texture = C_Item.GetItemIconByID(118938)
+    local texture = AddOnTable.BlizzAPI.GetItemIcon(118938)
     Funcs.DebugMessage("BankReagent", "[SlotButton_OnLoad] Updating texture of reagent bank slot")
     SetItemButtonTexture(self, texture)
 end

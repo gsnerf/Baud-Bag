@@ -46,43 +46,41 @@ end
 BagSetType.Backpack.BagOverview_Initialize = BackpackBagOverview_Initialize
 
 
-if PlayerInteractionFrameManager ~= nil then
-    local function HandleMerchantShow()
-        AddOnTable.Functions.DebugMessage("Junk", "MerchandFrame was shown checking if we need to sell junk")
-        if (BBConfig.SellJunk and BBConfig[1].Enabled and MerchantFrame:IsShown()) then
-            AddOnTable.Functions.DebugMessage("Junk", "junk selling active and merchant frame is shown, identifiyng junk now")
-            AddOnTable.Sets[BagSetType.Backpack.Id]:ForEachBag(
-                function(Bag, _)
-                    for Slot = 1, AddOnTable.BlizzAPI.GetContainerNumSlots(Bag) do
-                        local containerItemInfo = AddOnTable.BlizzAPI.GetContainerItemInfo(Bag, Slot)
-                        if (containerItemInfo and containerItemInfo.quality and containerItemInfo.quality == 0) then
-                            AddOnTable.Functions.DebugMessage("Junk", "Found junk (Container, Slot)", Bag, Slot)
-                            --[[
-                                TODO: additionally check if this is something that can be collected for transmog and optionally skip that
-                                - transmog stuff was introduced with legion
-                                - transmog base info can be retrieved from C_TransmogCollection.GetItemInfo through itemID/link/name
-                                - if it is already collected can be found from C_TransmogCollection.GetAppearanceSourceInfo and C_TransmogCollection.PlayerCanCollectSource
-                            ]]
-                            AddOnTable.BlizzAPI.UseContainerItem(Bag, Slot)
-                        end
+local function HandleMerchantShow()
+    AddOnTable.Functions.DebugMessage("Junk", "MerchandFrame was shown checking if we need to sell junk")
+    if (BBConfig.SellJunk and BBConfig[1].Enabled and MerchantFrame:IsShown()) then
+        AddOnTable.Functions.DebugMessage("Junk", "junk selling active and merchant frame is shown, identifiyng junk now")
+        AddOnTable.Sets[BagSetType.Backpack.Id]:ForEachBag(
+            function(Bag, _)
+                for Slot = 1, AddOnTable.BlizzAPI.GetContainerNumSlots(Bag) do
+                    local containerItemInfo = AddOnTable.BlizzAPI.GetContainerItemInfo(Bag, Slot)
+                    if (containerItemInfo and containerItemInfo.quality and containerItemInfo.quality == 0) then
+                        AddOnTable.Functions.DebugMessage("Junk", "Found junk (Container, Slot)", Bag, Slot)
+                        --[[
+                            TODO: additionally check if this is something that can be collected for transmog and optionally skip that
+                            - transmog stuff was introduced with legion
+                            - transmog base info can be retrieved from C_TransmogCollection.GetItemInfo through itemID/link/name
+                            - if it is already collected can be found from C_TransmogCollection.GetAppearanceSourceInfo and C_TransmogCollection.PlayerCanCollectSource
+                        ]]
+                        AddOnTable.BlizzAPI.UseContainerItem(Bag, Slot)
                     end
                 end
-            )
-        end
-    end
-
-    local Func = function(self, event, ...)
-        local type = ...
-
-        if type == Enum.PlayerInteractionType.Merchant then
-            if event == "PLAYER_INTERACTION_MANAGER_FRAME_SHOW" then
-                HandleMerchantShow()
             end
+        )
+    end
+end
+
+local Func = function(self, event, ...)
+    local type = ...
+
+    if type == Enum.PlayerInteractionType.Merchant then
+        if event == "PLAYER_INTERACTION_MANAGER_FRAME_SHOW" then
+            HandleMerchantShow()
         end
     end
-    EventFuncs.PLAYER_INTERACTION_MANAGER_FRAME_SHOW = Func
-    EventFuncs.PLAYER_INTERACTION_MANAGER_FRAME_HIDE = Func
 end
+EventFuncs.PLAYER_INTERACTION_MANAGER_FRAME_SHOW = Func
+EventFuncs.PLAYER_INTERACTION_MANAGER_FRAME_HIDE = Func
 
 --[[ this method ensures that the bags are either placed as childs under UIParent or BaudBag ]]
 function AddOnTable:UpdateBagParents()
