@@ -38,6 +38,11 @@ function BaudBagContainerMenuButtonMixin:SortBankBags()
     self.Menu:Hide()
 end
 
+function BaudBagContainerMenuButtonMixin:SortAccountBankBags()
+    AddOnTable.BlizzAPI.SortAccountBankBags()
+    self.Menu:Hide()
+end
+
 function BaudBagContainerMenuButtonMixin:SortReagentBankBags()
     AddOnTable.BlizzAPI.SortReagentBankBags()
     self.Menu:Hide()
@@ -236,6 +241,12 @@ local function finishCleanupButtonSetup(menu)
         cleanupBagsButton:SetShown(AddOnTable.State.BankOpen)
         cleanupBagsButton:SetText(isReagentBank and AddOnTable.BlizzConstants.BAG_CLEANUP_REAGENT_BANK or AddOnTable.BlizzConstants.BAG_CLEANUP_BANK)
         cleanupBagsButton:SetScript("OnClick", isReagentBank and cleanupBagsButton.SortReagentBankBags or cleanupBagsButton.SortBankBags)
+    end
+    if (menu.BagSet == BagSetType.AccountBank.Id) then
+        local cleanupBagsButton = menu.BagSpecific.Cleanup.CleanupBags
+        cleanupBagsButton:SetShown(AddOnTable.State.AccountBankOpen)
+        cleanupBagsButton:SetText(AddOnTable.BlizzConstants.BAG_CLEANUP_ACCOUNT_BANK)
+        cleanupBagsButton:SetScript("OnClick", cleanupBagsButton.SortAccountBankBags)
     end
 end
 
