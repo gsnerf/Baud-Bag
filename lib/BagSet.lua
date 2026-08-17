@@ -229,6 +229,27 @@ function Prototype:AutoClose()
     end
 end
 
+function Prototype:Toggle()
+    if (self:IsOpen()) then
+        self:Close()
+    else
+        self:Open()
+    end
+end
+
+function Prototype:AutoToggle()
+    if (self:IsOpen()) then
+        self:AutoClose()
+    else
+        self:AutoOpen()
+    end
+end
+
+function Prototype:IsOpen()
+    local firstContainer = self.Containers[1]
+    return firstContainer.Frame:IsShown()
+end
+
 function Prototype:GetSubContainerTexture(subContainerId)
     local specialTexture = self.Type.GetSpecialBagTexture(subContainerId)
     if specialTexture ~= nil then

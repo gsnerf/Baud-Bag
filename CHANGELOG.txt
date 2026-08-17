@@ -1,6 +1,7 @@
 ﻿=== Changelog ===
 v12.1.0.2
   - fixed clanup button for warband bank container
+  - added toggles for other bag sets to the menu of each container
 v12.1.0.1
   - fixed initialization of warband bank, when all slots have been bought
   - fixed positioning of gold requirement when not all slots in the warband bank have been bought

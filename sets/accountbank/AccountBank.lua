@@ -548,22 +548,6 @@ function BaudBagToggleWarbandBank()
     end
 end
 
---[[ #################################### Container Menu Entries #################################### ]]
-local function toggleAccountBankMenuEntry(self)
-    BaudBagToggleWarbandBank()
-    self:GetParent():GetParent():Hide()
-end
-
-local function extendContainerMenuHook(addOnTable, menuGroup, addedButtons)
-    local showAccountBankButton = CreateFrame("CheckButton", nil, menuGroup, "BaudBagContainerMenuCheckButtonTemplate")
-    showAccountBankButton:SetText(Localized.ShowAccountBank)
-    showAccountBankButton:SetScript("OnClick", toggleAccountBankMenuEntry)
-    menuGroup.ShowAccountBankButton = showAccountBankButton
-
-    table.insert(addedButtons, showAccountBankButton)
-end
--- for actual hooking see bottom of file
-
 
 --[[ ################################################################################################ ]]
 --[[ ############ actual hooking should happen here for easy disabling in certain cases ############# ]]
@@ -573,5 +557,4 @@ if (PlayerGetTimerunningSeasonID() == nil) then
     hooksecurefunc(AddOnTable, "ExtendBaseTypes", extendBaseType)
     hooksecurefunc(AddOnTable, "ConfigUpdated", configUpdateHook)
     hooksecurefunc(AddOnTable, "ItemSlot_Created", itemSlotCreatedHook)
-    hooksecurefunc(AddOnTable, "ExtendContainerMenuWithGeneralEntriesForBackpack", extendContainerMenuHook)
 end

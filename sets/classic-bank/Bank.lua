@@ -520,27 +520,7 @@ local function updateBankParents()
 end
 hooksecurefunc(AddOnTable, "ConfigUpdated", updateBankParents)
 
---[[ #################################### Container Menu Entries #################################### ]]
-local function toggleBankMenuEntry(self)
-    local firstBankContainer = AddOnTable.Sets[BagSetType.Bank.Id].Containers[1]
-    if firstBankContainer.Frame:IsShown() then
-        firstBankContainer.Frame:Hide()
-        AddOnTable.Sets[BagSetType.Bank.Id]:AutoClose()
-    else
-        firstBankContainer.Frame:Show()
-        AddOnTable.Sets[BagSetType.Bank.Id]:AutoOpen()
-    end
-    self:GetParent():GetParent():Hide()
-end
-
-hooksecurefunc(AddOnTable, "ExtendContainerMenuWithGeneralEntriesForBackpack", function(addOnTable, menuGroup, addedButtons)
-    local showBankButton = CreateFrame("CheckButton", nil, menuGroup, "BaudBagContainerMenuCheckButtonTemplate")
-    showBankButton:SetText(Localized.ShowBank)
-    showBankButton:SetScript("OnClick", toggleBankMenuEntry)
-    menuGroup.ShowBankButton = showBankButton
-
-    table.insert(addedButtons, showBankButton)
-end)
+--[[ #################################### Bag Button Entries #################################### ]]
 
 -- Adds container name when mousing over bags, aswell as simulating offline bank item mouse over
 local INV_ID_BANK_BAG_FIRST = AddOnTable.BlizzAPI.ContainerIDToInventoryID(AddOnTable.BlizzConstants.BANK_FIRST_CONTAINER)

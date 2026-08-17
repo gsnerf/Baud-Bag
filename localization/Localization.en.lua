@@ -18,6 +18,7 @@ AddOnTable["Localized"] = {
     LockPosition = "Lock Position",
     UnlockPosition = "Unlock Position",
     ShowBank = "Show Bank",
+    ToggleBagSet = "Toggle %s",
     Options = "Options",
     Free = " Free",
     Offline = " (Offline)",

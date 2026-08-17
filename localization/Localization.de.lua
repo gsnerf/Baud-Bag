@@ -8,6 +8,7 @@ if (GetLocale() == "deDE") then
     L.LockPosition = "Fenster fixieren"
     L.UnlockPosition = "Fenster freigeben"
     L.ShowBank = "Bank anzeigen"
+    L.ToggleBagSet = "%s anzeigen/verstecken"
     L.Options = "Optionen"
     L.Free = " frei"
     L.Offline = " (Offline)"
