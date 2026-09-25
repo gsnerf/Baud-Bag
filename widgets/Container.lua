@@ -293,7 +293,7 @@ function BaudBagContainerMixin:OnShow(event, ...)
         end
     end
 
-    if (self:GetID() == 1) then
+    if (self.BagsFrame ~= nil) then
         AddOnTable.Sets[self.BagSet]:UpdateSlotInfo()
         self.BagsFrame:SetShown(BBConfig[self.BagSet].ShowBags ~= false)
     end
