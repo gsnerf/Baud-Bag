@@ -143,6 +143,22 @@
                 ".*"
             ],
             "problemMatcher": []
+        },
+        {
+            "label": "copy to classic beta (forever)",
+            "type": "shell",
+            "command": "copy",
+            "args": [
+                "-Path",
+                "${workspaceRoot}\\*",
+                "-Destination",
+                "C:\\Program Files (x86)\\World of Warcraft\\_classic_beta_\\Interface\\addons\\BaudBag",
+                "-Recurse",
+                "-Force",
+                "-Exclude",
+                ".*"
+            ],
+            "problemMatcher": []
         }
     ]
 }
