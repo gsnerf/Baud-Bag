@@ -372,7 +372,7 @@ function AddOnTable:CreateItemButton(subContainer, slotIndex, buttonTemplate)
     local name = subContainer.Name.."Item"..slotIndex
 
     local itemButton
-    if (GetExpansionLevel() > 7) then
+    if (GetExpansionLevel() > 7 or ItemButtonMixin ~= nil) then
         itemButton = CreateFrame("ItemButton", name, subContainer.Frame, buttonTemplate)
     else
         itemButton = CreateFrame("Button", name, subContainer.Frame, buttonTemplate)
