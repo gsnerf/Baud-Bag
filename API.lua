@@ -232,8 +232,8 @@ end
 ---@emum BlizzConstants
 AddOnTable.BlizzConstants = {
     REAGENTBANK_CONTAINER = -3, -- REAGENTBANK_CONTAINER (from WoD onwards)
-    KEYRING_CONTAINER = -2, -- KEYRING_CONTAINER (only in BC? and WotLK)
-    BANK_CONTAINER = -1, -- BANK_CONTAINER
+    KEYRING_CONTAINER = Enum.BagIndex and Enum.BagIndex.Keyring or -2, -- KEYRING_CONTAINER (only exists in classic BC and WotLK as well as forever, but different value in forever)
+    BANK_CONTAINER = -1, -- BANK_CONTAINER (keyring and bank id swapped in forever)
     BACKPACK_CONTAINER = 0, -- BACKPACK_CONTAINER
     BACKPACK_CONTAINER_NUM = 4, -- NUM_BAG_SLOTS
     BACKPACK_REAGENT_BAG_NUM = 0, -- NUM_REAGENTBAG_SLOTS,
