@@ -1,6 +1,6 @@
 ## Author: Thurmal (Author), Suddendeath2000 (Former Author), Baudzila (Original Author)
 ## DefaultState: Enabled
-## Interface: 120100
+## Interface: 120100, 11509, 20506, 38002, 50504, 16001
 ## LoadOnDemand: 0
 ## OptionalDeps: CaedronWardrobe, Masque, Pawn
 ## Notes: Allows you to combine bags as well as customize their display.
@@ -60,10 +60,13 @@ BaudBagCache.lua
 BaudBagToolTips.lua
 sets\backpack\BagButton.xml
 sets\backpack\Backpack.xml
-sets\bank\BagButton.xml
-sets\bank\Bank.xml
-sets\accountbank\BagButton.xml
-sets\accountbank\AccountBank.xml
+sets\bank\BagButton.xml [AllowLoadGameType standard, camelot]
+sets\bank\Bank.xml [AllowLoadGameType standard, camelot]
+sets\classic-bank\BagButton.xml [AllowLoadGameType classic]
+sets\classic-bank\Bank.xml [AllowLoadGameType classic]
+sets\keyring\Keyring.xml [AllowLoadGameType classic, camelot]
+sets\accountbank\BagButton.xml [AllowLoadGameType standard]
+sets\accountbank\AccountBank.xml [AllowLoadGameType standard]
 frames/Options.xml
 frames\BaudBagSearchFrame.xml
 Overrides.lua
