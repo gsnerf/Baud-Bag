@@ -29,7 +29,6 @@ local EventFuncs = {
 
         -- make sure the cache is initialized
         AddOnTable:InitCache()
-        AddOnTable:RegisterDefaultBackgrounds()
         AddOnTable.ApplyOverrides()
         BaudBagRestoreCfg()
     end,
