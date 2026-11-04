@@ -393,14 +393,17 @@ initializeBlizzardBackground(
     -41
 )
 
-initializeBlizzardBackground(
-    "BlizzKeyring",
-    Localized.BlizKeyring,
-    "Interface\\ContainerFrame\\UI-Bag-Components-Keyring",
-    nil,
-    42,
-    -41
-)
+
+if (C_UIFileAsset.IsKnownFile("Interface\\ContainerFrame\\UI-Bag-Components-Keyring")) then
+    initializeBlizzardBackground(
+        "BlizzKeyring",
+        Localized.BlizKeyring,
+        "Interface\\ContainerFrame\\UI-Bag-Components-Keyring",
+        nil,
+        42,
+        -41
+    )
+end
 
 initializeBlizzardBackground(
     "BlizzInventoryDragonflight",

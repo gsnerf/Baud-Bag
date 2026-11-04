@@ -23,7 +23,7 @@ local function extendBaseType()
             Scale = 100,
             GetNameAddition = function(bagId) return Localized.KeyRing end,
             RequiresFreshConfig = function(bagId) return false end,
-            Theme = "BlizzKeyring"
+            Theme = C_UIFileAsset.IsKnownFile("Interface\\ContainerFrame\\UI-Bag-Components-Keyring") and "BlizzKeyring" or "BlizzInventoryDragonflight"
         },
         ApplyConfigRestorationSpecificalities = function(configObject) end,
         CanContainerBeJoined = function(subContainerId) return true end,
