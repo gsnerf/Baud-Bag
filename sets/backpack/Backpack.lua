@@ -31,7 +31,7 @@ local function BackpackBagOverview_Initialize()
         backpackSet.BagButtons[backpackBagButton] = bagButton
 	end
 
-    if (GetExpansionLevel() >= 9) then
+    if (AddOnTable.BlizzConstants.BACKPACK_REAGENT_BAG_NUM > 0) then
         for reagentBagButton = 0, AddOnTable.BlizzConstants.BACKPACK_REAGENT_BAG_NUM - 1 do
             local bagButton = AddOnTable:CreateReagentBagButton(reagentBagButton, BBContainer1)
             bagButton:SetPoint("TOPLEFT", 8, -8 - (#backpackSet.BagButtons + 1 + reagentBagButton) * bagButton:GetHeight())
