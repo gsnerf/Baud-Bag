@@ -6,174 +6,295 @@
         {
             "label": "copy to retail",
             "type": "shell",
-            "command": "copy",
+            "command": "rsync",
             "args": [
-                "-Path",
-                "${workspaceRoot}\\*",
-                "-Destination",
-                "C:\\Program Files (x86)\\World of Warcraft\\_retail_\\Interface\\addons\\BaudBag",
-                "-Recurse",
-                "-Force",
-                "-Exclude",
-                ".*"
+                "-av",
+                "--delete",
+                "--exclude",
+                "'.*'",
+                "${workspaceRoot}/",
+                "${userHome}/battlenet/drive_c/Program Files (x86)/World of Warcraft/_retail_/Interface/AddOns/BaudBag"
             ],
+            "windows": {
+                "command": "copy",
+                "args": [
+                    "-Path",
+                    "${workspaceRoot}\\*",
+                    "-Destination",
+                    "C:\\Program Files (x86)\\World of Warcraft\\_retail_\\Interface\\addons\\BaudBag",
+                    "-Recurse",
+                    "-Force",
+                    "-Exclude",
+                    ".*"
+                ]
+            },
             "problemMatcher": []
         },
         {
             "label": "copy to ptr",
             "type": "shell",
-            "command": "copy",
+            "command": "rsync",
             "args": [
-                "-Path",
-                "${workspaceRoot}\\*",
-                "-Destination",
-                "C:\\Program Files (x86)\\World of Warcraft\\_ptr_\\Interface\\addons\\BaudBag",
-                "-Recurse",
-                "-Force",
-                "-Exclude",
-                ".*"
-            ]
+                "-av",
+                "--delete",
+                "--exclude",
+                "'.*'",
+                "${workspaceRoot}/",
+                "${userHome}/battlenet/drive_c/Program Files (x86)/World of Warcraft/_ptr_/Interface/AddOns/BaudBag"
+            ],
+            "windows": {
+                "command": "copy",
+                "args": [
+                    "-Path",
+                    "${workspaceRoot}\\*",
+                    "-Destination",
+                    "C:\\Program Files (x86)\\World of Warcraft\\_ptr_\\Interface\\addons\\BaudBag",
+                    "-Recurse",
+                    "-Force",
+                    "-Exclude",
+                    ".*"
+                ]
+            }
         },
         {
             "label": "copy to xptr",
             "type": "shell",
-            "command": "copy",
+            "command": "rsync",
             "args": [
-                "-Path",
-                "${workspaceRoot}\\*",
-                "-Destination",
-                "C:\\Program Files (x86)\\World of Warcraft\\_xptr_\\Interface\\addons\\BaudBag",
-                "-Recurse",
-                "-Force",
-                "-Exclude",
-                ".*"
-            ]
+                "-av",
+                "--delete",
+                "--exclude",
+                "'.*'",
+                "${workspaceRoot}/",
+                "${userHome}/battlenet/drive_c/Program Files (x86)/World of Warcraft/_xptr_/Interface/AddOns/BaudBag"
+            ],
+            "windows": {
+                "command": "copy",
+                "args": [
+                    "-Path",
+                    "${workspaceRoot}\\*",
+                    "-Destination",
+                    "C:\\Program Files (x86)\\World of Warcraft\\_xptr_\\Interface\\addons\\BaudBag",
+                    "-Recurse",
+                    "-Force",
+                    "-Exclude",
+                    ".*"
+                ]
+            }
         },
         {
             "label": "copy to beta",
             "type": "shell",
-            "command": "copy",
+            "command": "rsync",
             "args": [
-                "-Path",
-                "${workspaceRoot}\\*",
-                "-Destination",
-                "C:\\Program Files (x86)\\World of Warcraft\\_beta_\\Interface\\addons\\BaudBag",
-                "-Recurse",
-                "-Force",
-                "-Exclude",
-                ".*"
-            ]
+                "-av",
+                "--delete",
+                "--exclude",
+                "'.*'",
+                "${workspaceRoot}/",
+                "${userHome}/battlenet/drive_c/Program Files (x86)/World of Warcraft/_beta_/Interface/AddOns/BaudBag"
+            ],
+            "windows": {
+                "command": "copy",
+                "args": [
+                    "-Path",
+                    "${workspaceRoot}\\*",
+                    "-Destination",
+                    "C:\\Program Files (x86)\\World of Warcraft\\_beta_\\Interface\\addons\\BaudBag",
+                    "-Recurse",
+                    "-Force",
+                    "-Exclude",
+                    ".*"
+                ]
+            }
         },
         {
             "label": "copy to classic",
             "type": "shell",
-            "command": "copy",
+            "command": "rsync",
             "args": [
-                "-Path",
-                "${workspaceRoot}\\*",
-                "-Destination",
-                "C:\\Program Files (x86)\\World of Warcraft\\_classic_\\Interface\\addons\\BaudBag",
-                "-Recurse",
-                "-Force",
-                "-Exclude",
-                ".*"
+                "-av",
+                "--delete",
+                "--exclude",
+                "'.*'",
+                "${workspaceRoot}/",
+                "${userHome}/battlenet/drive_c/Program Files (x86)/World of Warcraft/_classic_/Interface/AddOns/BaudBag"
             ],
+            "windows": {
+                "command": "copy",
+                "args": [
+                    "-Path",
+                    "${workspaceRoot}\\*",
+                    "-Destination",
+                    "C:\\Program Files (x86)\\World of Warcraft\\_classic_\\Interface\\addons\\BaudBag",
+                    "-Recurse",
+                    "-Force",
+                    "-Exclude",
+                    ".*"
+                ]
+            },
             "problemMatcher": []
         },
         {
             "label": "copy to classic ptr",
             "type": "shell",
-            "command": "copy",
+            "command": "rsync",
             "args": [
-                "-Path",
-                "${workspaceRoot}\\*",
-                "-Destination",
-                "C:\\Program Files (x86)\\World of Warcraft\\_classic_ptr_\\Interface\\addons\\BaudBag",
-                "-Recurse",
-                "-Force",
-                "-Exclude",
-                ".*"
+                "-av",
+                "--delete",
+                "--exclude",
+                "'.*'",
+                "${workspaceRoot}/",
+                "${userHome}/battlenet/drive_c/Program Files (x86)/World of Warcraft/_classic_ptr_/Interface/AddOns/BaudBag"
             ],
+            "windows": {
+                "command": "copy",
+                "args": [
+                    "-Path",
+                    "${workspaceRoot}\\*",
+                    "-Destination",
+                    "C:\\Program Files (x86)\\World of Warcraft\\_classic_ptr_\\Interface\\addons\\BaudBag",
+                    "-Recurse",
+                    "-Force",
+                    "-Exclude",
+                    ".*"
+                ]
+            },
             "problemMatcher": []
         },
         {
             "label": "copy to era",
             "type": "shell",
-            "command": "copy",
+            "command": "rsync",
             "args": [
-                "-Path",
-                "${workspaceRoot}\\*",
-                "-Destination",
-                "C:\\Program Files (x86)\\World of Warcraft\\_classic_era_\\Interface\\addons\\BaudBag",
-                "-Recurse",
-                "-Force",
-                "-Exclude",
-                ".*"
+                "-av",
+                "--delete",
+                "--exclude",
+                "'.*'",
+                "${workspaceRoot}/",
+                "${userHome}/battlenet/drive_c/Program Files (x86)/World of Warcraft/_classic_era_/Interface/AddOns/BaudBag"
             ],
+            "windows": {
+                "command": "copy",
+                "args": [
+                    "-Path",
+                    "${workspaceRoot}\\*",
+                    "-Destination",
+                    "C:\\Program Files (x86)\\World of Warcraft\\_classic_era_\\Interface\\addons\\BaudBag",
+                    "-Recurse",
+                    "-Force",
+                    "-Exclude",
+                    ".*"
+                ]
+            },
             "problemMatcher": []
         },
         {
             "label": "copy to era ptr",
             "type": "shell",
-            "command": "copy",
+            "command": "rsync",
             "args": [
-                "-Path",
-                "${workspaceRoot}\\*",
-                "-Destination",
-                "C:\\Program Files (x86)\\World of Warcraft\\_classic_era_ptr_\\Interface\\addons\\BaudBag",
-                "-Recurse",
-                "-Force",
-                "-Exclude",
-                ".*"
+                "-av",
+                "--delete",
+                "--exclude",
+                "'.*'",
+                "${workspaceRoot}/",
+                "${userHome}/battlenet/drive_c/Program Files (x86)/World of Warcraft/_classic_era_ptr_/Interface/AddOns/BaudBag"
             ],
+            "windows": {
+                "command": "copy",
+                "args": [
+                    "-Path",
+                    "${workspaceRoot}\\*",
+                    "-Destination",
+                    "C:\\Program Files (x86)\\World of Warcraft\\_classic_era_ptr_\\Interface\\addons\\BaudBag",
+                    "-Recurse",
+                    "-Force",
+                    "-Exclude",
+                    ".*"
+                ]
+            },
             "problemMatcher": []
         },
         {
             "label": "copy to anniversary",
             "type": "shell",
-            "command": "copy",
+            "command": "rsync",
             "args": [
-                "-Path",
-                "${workspaceRoot}\\*",
-                "-Destination",
-                "C:\\Program Files (x86)\\World of Warcraft\\_anniversary_\\Interface\\addons\\BaudBag",
-                "-Recurse",
-                "-Force",
-                "-Exclude",
-                ".*"
+                "-av",
+                "--delete",
+                "--exclude",
+                "'.*'",
+                "${workspaceRoot}/",
+                "${userHome}/battlenet/drive_c/Program Files (x86)/World of Warcraft/_anniversary_/Interface/AddOns/BaudBag"
             ],
+            "windows": {
+                "command": "copy",
+                "args": [
+                    "-Path",
+                    "${workspaceRoot}\\*",
+                    "-Destination",
+                    "C:\\Program Files (x86)\\World of Warcraft\\_anniversary_\\Interface\\addons\\BaudBag",
+                    "-Recurse",
+                    "-Force",
+                    "-Exclude",
+                    ".*"
+                ]
+            },
             "problemMatcher": []
         },
         {
             "label": "copy to classic beta",
             "type": "shell",
-            "command": "copy",
+            "command": "rsync",
             "args": [
-                "-Path",
-                "${workspaceRoot}\\*",
-                "-Destination",
-                "C:\\Program Files (x86)\\World of Warcraft\\_classic_beta_\\Interface\\addons\\BaudBag",
-                "-Recurse",
-                "-Force",
-                "-Exclude",
-                ".*"
+                "-av",
+                "--delete",
+                "--exclude",
+                "'.*'",
+                "${workspaceRoot}/",
+                "${userHome}/battlenet/drive_c/Program Files (x86)/World of Warcraft/_classic_beta_/Interface/AddOns/BaudBag"
             ],
+            "windows": {
+                "command": "copy",
+                "args": [
+                    "-Path",
+                    "${workspaceRoot}\\*",
+                    "-Destination",
+                    "C:\\Program Files (x86)\\World of Warcraft\\_classic_beta_\\Interface\\addons\\BaudBag",
+                    "-Recurse",
+                    "-Force",
+                    "-Exclude",
+                    ".*"
+                ]
+            },
             "problemMatcher": []
         },
         {
             "label": "copy to forever",
             "type": "shell",
-            "command": "copy",
+            "command": "rsync",
             "args": [
-                "-Path",
-                "${workspaceRoot}\\*",
-                "-Destination",
-                "C:\\Program Files (x86)\\World of Warcraft\\_forever_\\Interface\\addons\\BaudBag",
-                "-Recurse",
-                "-Force",
-                "-Exclude",
-                ".*"
+                "-av",
+                "--delete",
+                "--exclude",
+                "'.*'",
+                "${workspaceRoot}/",
+                "${userHome}/battlenet/drive_c/Program Files (x86)/World of Warcraft/_forever_/Interface/AddOns/BaudBag"
             ],
+            "windows": {
+                "command": "copy",
+                "args": [
+                    "-Path",
+                    "${workspaceRoot}\\*",
+                    "-Destination",
+                    "C:\\Program Files (x86)\\World of Warcraft\\_forever_\\Interface\\addons\\BaudBag",
+                    "-Recurse",
+                    "-Force",
+                    "-Exclude",
+                    ".*"
+                ]
+            },
             "problemMatcher": []
         },
     ]
