@@ -3,6 +3,9 @@ local AddOnTable = select(2, ...)
 local _
 local Localized = AddOnTable.Localized
 
+local interfaceVersion = select(4, GetBuildInfo())
+local isForever = 16000 <= interfaceVersion and interfaceVersion < 20000
+
 --[[ ######################################### background ######################################### ]]
 
 ---@type ThemeBackground
@@ -198,12 +201,12 @@ end
 
 function ThemeBackground:RenderMoneyFrameBackground(helper, containerFrame, parentName)
     helper.Parent = _G[parentName]
-    helper.File = "Interface\\ContainerFrame\\UI-BackpackBackground.blp"
+    helper.File = "Interface\\ContainerFrame\\UI-BackpackBackground"
     helper.Width, helper.Height = 256, 256
 
     local targetHeight = containerFrame.MoneyFrame:GetHeight()
     local moneyFrameName = containerFrame.MoneyFrame:GetName()
-    local heightOffset = GetExpansionLevel() < 6 and 15 or 0
+    local heightOffset = (GetExpansionLevel() < 6 and not isForever) and 15 or 0
 
     -- left part of ONLY the yellow border
     local texture = helper:GetTexturePiece("MoneyLineLeft", 80,84, 228 - heightOffset,246 - heightOffset, nil, targetHeight)
